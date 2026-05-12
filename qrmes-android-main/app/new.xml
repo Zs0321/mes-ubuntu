@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+
+    <TextView android:id="@+id/tvComponentName" android:layout_width="0dp"
+        android:layout_height="wrap_content" android:layout_weight="1" android:text="组件名称"
+        android:textSize="16sp" />
+
+    <TextView android:id="@+id/tvComponentSerial" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:layout_marginEnd="8dp" android:text="待扫描"
+        android:textColor="@color/material_grey_600" android:textSize="14sp" />
+
+    <Button android:id="@+id/btnScanComponent" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:text="扫描" />
+
+</LinearLayout><?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal"
+android:padding="16dp" android:gravity="center_vertical">
+
+<TextView android:id="@+id/tvComponentName" android:layout_width="0dp" android:layout_height="wrap_content"
+    android:layout_weight="1" android:text="组件名称" android:textSize="16sp" />
+
+<TextView android:id="@+id/tvComponentSerial" android:layout_width="wrap_content"
+    android:layout_height="wrap_content" android:layout_marginEnd="8dp" android:text="待扫描"
+    android:textColor="@color/material_grey_600" android:textSize="14sp" />
+
+<Button android:id="@+id/btnScanComponent" android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:text="扫描" />
+
+</LinearLayout>

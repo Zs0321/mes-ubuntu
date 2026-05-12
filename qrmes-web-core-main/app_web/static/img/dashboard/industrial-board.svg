@@ -1,0 +1,30 @@
+<svg width="900" height="560" viewBox="0 0 900 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="900" y2="560" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111F"/>
+      <stop offset="0.54" stop-color="#0B1728"/>
+      <stop offset="1" stop-color="#102033"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(720 118) rotate(132) scale(420 260)">
+      <stop stop-color="#22D3EE" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M42 0H0V42" stroke="#7DD3FC" stroke-opacity="0.075"/>
+    </pattern>
+  </defs>
+  <rect width="900" height="560" fill="url(#bg)"/>
+  <rect width="900" height="560" fill="url(#grid)"/>
+  <rect width="900" height="560" fill="url(#glow)"/>
+  <path d="M78 403H828" stroke="#38BDF8" stroke-opacity="0.24" stroke-width="2"/>
+  <path d="M136 402V270L226 216L318 270V402" stroke="#7DD3FC" stroke-opacity="0.58" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M318 402V230L436 172L556 230V402" stroke="#38BDF8" stroke-opacity="0.5" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M556 402V286L650 238L748 286V402" stroke="#67E8F9" stroke-opacity="0.45" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="382" y="286" width="108" height="116" rx="10" fill="#020617" fill-opacity="0.42" stroke="#7DD3FC" stroke-opacity="0.25"/>
+  <path d="M416 402V342H456V402" stroke="#E0F2FE" stroke-opacity="0.28" stroke-width="2"/>
+  <path d="M170 402V326H214V402M664 402V332H710V402" stroke="#E0F2FE" stroke-opacity="0.24" stroke-width="2"/>
+  <path d="M114 454H790" stroke="#22D3EE" stroke-opacity="0.1"/>
+  <circle cx="436" cy="172" r="8" fill="#E0F2FE" fill-opacity="0.8"/>
+  <circle cx="650" cy="238" r="6" fill="#E0F2FE" fill-opacity="0.64"/>
+  <circle cx="226" cy="216" r="6" fill="#E0F2FE" fill-opacity="0.58"/>
+</svg>

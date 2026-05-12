@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}通知中心 - MESAPP 管理平台{% endblock %}
+
+{% block content %}
+<style>
+.notice-shell{display:grid;gap:1.5rem}
+.notice-card{background:#141d2e;border:1px solid #1e2d3d;border-radius:20px;box-shadow:0 16px 32px rgba(15,23,42,.05);overflow:hidden}
+.notice-head{padding:1.25rem 1.4rem;border-bottom:1px solid #1e2d3d;background:linear-gradient(135deg,#eff6ff,#0f1a2a)}
+.notice-head h2{margin:0 0 .35rem;color:#0f172a}
+.notice-head p{margin:0;color:#5a6f85;line-height:1.7}
+.notice-list{display:grid;gap:1rem;padding:1.25rem}
+.notice-item{border:1px solid #0d1f33;border-radius:18px;padding:1rem 1.05rem;background:#f8fbff}
+.notice-item-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+.notice-item-head strong{color:#0f172a}
+.notice-time{color:#5a6f85;font-size:.92rem;white-space:nowrap}
+.notice-item p{margin:.65rem 0 0;color:#334155;line-height:1.75}
+.notice-meta{margin-top:.75rem;display:flex;gap:.55rem;flex-wrap:wrap}
+.notice-chip{display:inline-flex;align-items:center;padding:.28rem .72rem;border-radius:999px;background:#0d1f33;color:#1d4ed8;font-size:.82rem;font-weight:700}
+.notice-actions{margin-top:.9rem}
+.notice-link{display:inline-flex;align-items:center;padding:.55rem .95rem;border-radius:999px;background:#0f766e;color:#e2e8f0;text-decoration:none;font-weight:700}
+.notice-empty{padding:2rem 1.4rem;color:#5a6f85;line-height:1.8}
+</style>
+
+<div class="notice-shell">
+  <section class="notice-card">
+    <div class="notice-head">
+      <h2>通知中心</h2>
+      <p>这里显示发给当前登录用户的站内通知。当前先接入客诉模块，新建客诉后，系统会通知拥有“客诉通知接收”权限的人。</p>
+    </div>
+    {% if notifications %}
+    <div class="notice-list">
+      {% for item in notifications %}
+      {% set details = item.details_json if item.details_json is mapping else {} %}
+      <article class="notice-item">
+        <div class="notice-item-head">
+          <strong>{{ item.message or '系统通知' }}</strong>
+          <span class="notice-time">{{ item.timestamp or '-' }}</span>
+        </div>
+        <p>由 {{ details.created_by or '系统' }} 发起{% if details.status %}，当前状态：{{ details.status }}{% endif %}。</p>
+        <div class="notice-meta">
+          <span class="notice-chip">客诉编号：{{ details.complaint_id or item.target or '-' }}</span>
+          <span class="notice-chip">项目：{{ details.project_name or '-' }}</span>
+          <span class="notice-chip">客户：{{ details.customer or '-' }}</span>
+          <span class="notice-chip">问题类型：{{ details.issue_type or '-' }}</span>
+        </div>
+        <div class="notice-actions">
+          <a class="notice-link" href="{{ details.path or '/customer-complaints' }}">查看客诉</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="notice-empty">当前还没有发给你的站内通知。</div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

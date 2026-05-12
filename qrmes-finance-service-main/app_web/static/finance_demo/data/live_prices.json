@@ -1,0 +1,52 @@
+{
+  "fetched_at_utc": "2026-03-04T00:22:05.325372+00:00",
+  "fx_usdcny": 6.91383,
+  "sources": {
+    "USDCNY": {
+      "symbol": "USDCNY",
+      "date": "2026-03-04",
+      "time": "01:21:56",
+      "open": 6.91695,
+      "high": 6.9191,
+      "low": 6.91298,
+      "close": 6.91383
+    },
+    "HG.F": {
+      "symbol": "HG.F",
+      "date": "2026-03-04",
+      "time": "01:21:56",
+      "open": 582.75,
+      "high": 585.2,
+      "low": 582.7,
+      "close": 584.68
+    },
+    "AL.F": {
+      "symbol": "AL.F",
+      "date": "2026-03-02",
+      "time": "23:00:00",
+      "open": 3112.0,
+      "high": 3155.0,
+      "low": 3109.25,
+      "close": 3109.25
+    },
+    "RB.F": {
+      "symbol": "RB.F",
+      "date": "2026-03-02",
+      "time": "23:00:00",
+      "open": 2.484,
+      "high": 2.4955,
+      "low": 2.3274,
+      "close": 2.3706
+    }
+  },
+  "material_prices_cny_per_kg": {
+    "铜": 89.1192,
+    "铝": 21.4968,
+    "钢材": 36.1336
+  },
+  "notes": [
+    "铜: HG.F 按 cents/lb 转换为 CNY/kg",
+    "铝: AL.F 按 USD/ton 转换为 CNY/kg",
+    "钢材: RB.F 作为钢材基准，按 USD/lb 转换为 CNY/kg"
+  ]
+}

@@ -1,0 +1,486 @@
+{% extends "base.html" %}
+
+{% block title %}产品照片管理{% endblock %}
+
+{% block extra_css %}
+<style>
+.photo-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.photo-card {
+    background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(10,15,26,0.98) 100%);
+    border: 1px solid rgba(30,41,59,0.5);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.photo-card:hover {
+    transform: translateY(-2px);
+}
+
+.photo-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.photo-info {
+    padding: 1rem;
+}
+
+.photo-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    color: #e2e8f0;
+    word-break: break-all;
+}
+
+.photo-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.btn-small {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+.search-section {
+    margin-bottom: 2rem;
+}
+
+.search-input {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.products-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.products-table th,
+.products-table td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #1e293b;
+}
+
+.products-table th {
+    background: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9));
+    font-weight: 600;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    background: #667eea;
+    border-radius: 3px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+}
+
+.modal-content-large {
+    background: linear-gradient(180deg, rgba(15,23,42,0.98) 0%, rgba(10,15,26,0.99) 100%);
+    border: 1px solid rgba(30,41,59,0.5);
+    margin: 2% auto;
+    padding: 0;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    text-align: center;
+    padding: 2rem;
+}
+
+.modal-footer {
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9));
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.preview-img {
+    max-width: 100%;
+    max-height: 500px;
+    border-radius: 4px;
+}
+
+.loading {
+    text-align: center;
+    padding: 3rem;
+    color: #94a3b8;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #94a3b8;
+}
+
+.close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #94a3b8;
+}
+
+.close:hover {
+    color: #e2e8f0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>📷 产品照片管理</h2>
+        <p style="margin: 0.5rem 0 0 0; color: #94a3b8;">查看、下载和删除产品测试照片，支持 SMB 和 WebDAV 协议</p>
+    </div>
+
+    <!-- 搜索区域 -->
+    <div class="search-section">
+        <div class="search-input">
+            <input type="text" id="productSerialInput" class="form-control" 
+                   placeholder="请输入产品序列号" style="flex: 1;">
+            <button onclick="loadProductPhotos()" class="btn btn-primary">🔍 查看照片</button>
+            <button onclick="searchProducts()" class="btn btn-secondary">📋 搜索产品</button>
+        </div>
+    </div>
+
+    <!-- 产品列表 -->
+    <div id="productsList" style="display: none;">
+        <h3>有照片的产品列表</h3>
+        <table class="products-table">
+            <thead>
+                <tr>
+                    <th>产品序列号</th>
+                    <th>照片数量</th>
+                    <th>最后修改时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="productsTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- 照片显示区域 -->
+    <div id="photosSection" style="display: none;">
+        <h3 id="photosTitle">📷 照片列表</h3>
+        <div id="photosContainer" class="photo-container"></div>
+    </div>
+
+    <!-- 加载状态 -->
+    <div id="loadingIndicator" class="loading" style="display: none;">
+        <p>🔄 正在加载照片...</p>
+    </div>
+
+    <!-- 空状态 -->
+    <div id="emptyState" class="empty-state">
+        <p>📷 请输入产品序列号查看对应的照片，或点击“搜索产品”查看所有有照片的产品</p>
+    </div>
+</div>
+
+<!-- 照片预览模态框 -->
+<div class="modal" id="photoModal">
+    <div class="modal-content-large">
+        <div class="modal-header">
+            <h3 id="photoModalTitle">照片预览</h3>
+            <button class="close" onclick="closeModal('photoModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <img id="photoModalImage" src="" class="preview-img" alt="照片预览">
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('photoModal')">关闭</button>
+            <button class="btn btn-primary" onclick="downloadCurrentPhoto()">💾 下载</button>
+            <button class="btn btn-danger" onclick="deleteCurrentPhoto()">🗑️ 删除</button>
+        </div>
+    </div>
+</div>
+
+<!-- 删除确认模态框 -->
+<div class="modal" id="deleteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>确认删除</h3>
+            <button class="close" onclick="closeModal('deleteModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>确定要删除照片 <strong id="deletePhotoName"></strong> 吗？</p>
+            <p style="color: #f56565;">⚠️ 此操作不可撤销！</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('deleteModal')">取消</button>
+            <button class="btn btn-danger" onclick="confirmDeletePhoto()">确认删除</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentProductSerial = '';
+let currentPhotoName = '';
+let currentPhotos = [];
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('productSerialInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            loadProductPhotos();
+        }
+    });
+});
+
+// 显示空状态
+function showEmptyState() {
+    document.getElementById('photosSection').style.display = 'none';
+    document.getElementById('productsList').style.display = 'none';
+    document.getElementById('loadingIndicator').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'block';
+}
+
+// 显示加载状态
+function showLoading() {
+    document.getElementById('photosSection').style.display = 'none';
+    document.getElementById('productsList').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('loadingIndicator').style.display = 'block';
+}
+
+// 搜索有照片的产品
+async function searchProducts() {
+    showLoading();
+    
+    try {
+        const response = await fetch('/api/photos/search');
+        const data = await response.json();
+        
+        document.getElementById('loadingIndicator').style.display = 'none';
+        
+        if (data.success) {
+            displayProductsList(data.products);
+        } else {
+            showMessage(data.message || '搜索失败', 'error');
+            showEmptyState();
+        }
+    } catch (error) {
+        document.getElementById('loadingIndicator').style.display = 'none';
+        showMessage('搜索失败: ' + error.message, 'error');
+        showEmptyState();
+    }
+}
+
+// 显示产品列表
+function displayProductsList(products) {
+    const tbody = document.getElementById('productsTableBody');
+    tbody.innerHTML = '';
+    
+    if (products.length === 0) {
+        showEmptyState();
+        return;
+    }
+    
+    products.forEach(product => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><code>${product.serial}</code></td>
+            <td><span class="badge">${product.photo_count}</span></td>
+            <td><small>${product.last_modified || '未知'}</small></td>
+            <td>
+                <button class="btn btn-primary btn-small" onclick="loadProductPhotosFromList('${product.serial}')">
+                    📷 查看照片
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    document.getElementById('productsList').style.display = 'block';
+    document.getElementById('photosSection').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'none';
+}
+
+// 从列表中加载产品照片
+function loadProductPhotosFromList(serial) {
+    document.getElementById('productSerialInput').value = serial;
+    loadProductPhotos();
+}
+
+// 加载产品照片
+async function loadProductPhotos() {
+    const serial = document.getElementById('productSerialInput').value.trim();
+    if (!serial) {
+        showMessage('请输入产品序列号', 'error');
+        return;
+    }
+    
+    currentProductSerial = serial;
+    showLoading();
+    
+    try {
+        const response = await fetch(`/api/photos/${encodeURIComponent(serial)}`);
+        const data = await response.json();
+        
+        document.getElementById('loadingIndicator').style.display = 'none';
+        
+        if (data.success) {
+            currentPhotos = data.photos;
+            if (data.photos.length > 0) {
+                displayPhotos(data.photos, serial);
+            } else {
+                showMessage('该产品没有照片', 'info');
+                showEmptyState();
+            }
+        } else {
+            showMessage(data.message || '加载失败', 'error');
+            showEmptyState();
+        }
+    } catch (error) {
+        document.getElementById('loadingIndicator').style.display = 'none';
+        showMessage('加载失败: ' + error.message, 'error');
+        showEmptyState();
+    }
+}
+
+// 显示照片
+function displayPhotos(photos, serial) {
+    document.getElementById('photosTitle').textContent = `📷 产品 ${serial} 的照片 (${photos.length} 张)`;
+    
+    const container = document.getElementById('photosContainer');
+    container.innerHTML = '';
+    
+    photos.forEach(photo => {
+        const photoCard = document.createElement('div');
+        photoCard.className = 'photo-card';
+        
+        photoCard.innerHTML = `
+            <img src="/api/photos/${encodeURIComponent(serial)}/${encodeURIComponent(photo.filename)}" 
+                 class="photo-img" onclick="previewPhoto('${photo.filename}', '${serial}')"
+                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y4ZjlmYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2Yzc1N2QiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7liqDovb3lpLHotKU8L3RleHQ+PC9zdmc+'"
+                 alt="${photo.filename}">
+            <div class="photo-info">
+                <h4 title="${photo.filename}">${photo.filename}</h4>
+                <div class="photo-actions">
+                    <button class="btn btn-primary btn-small" onclick="previewPhoto('${photo.filename}', '${serial}')">
+                        👁️ 预览
+                    </button>
+                    <button class="btn btn-success btn-small" onclick="downloadPhoto('${photo.filename}', '${serial}')">
+                        💾 下载
+                    </button>
+                    <button class="btn btn-danger btn-small" onclick="deletePhoto('${photo.filename}', '${serial}')">
+                        🗑️ 删除
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(photoCard);
+    });
+    
+    document.getElementById('productsList').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('photosSection').style.display = 'block';
+}
+
+// 预览照片
+function previewPhoto(filename, serial) {
+    currentPhotoName = filename;
+    document.getElementById('photoModalTitle').textContent = `照片预览 - ${filename}`;
+    document.getElementById('photoModalImage').src = `/api/photos/${encodeURIComponent(serial)}/${encodeURIComponent(filename)}`;
+    openModal('photoModal');
+}
+
+// 下载照片
+function downloadPhoto(filename, serial) {
+    const link = document.createElement('a');
+    link.href = `/api/photos/${encodeURIComponent(serial)}/${encodeURIComponent(filename)}`;
+    link.download = filename;
+    link.click();
+}
+
+// 下载当前预览的照片
+function downloadCurrentPhoto() {
+    if (currentPhotoName && currentProductSerial) {
+        downloadPhoto(currentPhotoName, currentProductSerial);
+    }
+}
+
+// 删除照片
+function deletePhoto(filename, serial) {
+    currentPhotoName = filename;
+    document.getElementById('deletePhotoName').textContent = filename;
+    openModal('deleteModal');
+}
+
+// 删除当前预览的照片
+function deleteCurrentPhoto() {
+    if (currentPhotoName && currentProductSerial) {
+        deletePhoto(currentPhotoName, currentProductSerial);
+        closeModal('photoModal');
+    }
+}
+
+// 确认删除照片  
+async function confirmDeletePhoto() {
+    if (!currentPhotoName || !currentProductSerial) {
+        showMessage('删除参数错误', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/photos/${encodeURIComponent(currentProductSerial)}/${encodeURIComponent(currentPhotoName)}`, {
+            method: 'DELETE'
+        });
+        const data = await response.json();
+        
+        closeModal('deleteModal');
+        
+        if (data.success) {
+            showMessage(data.message, 'success');
+            loadProductPhotos(); // 重新加载照片列表
+        } else {
+            showMessage(data.message || '删除失败', 'error');
+        }
+    } catch (error) {
+        closeModal('deleteModal');
+        showMessage('删除失败: ' + error.message, 'error');
+    }
+}
+</script>
+{% endblock %}

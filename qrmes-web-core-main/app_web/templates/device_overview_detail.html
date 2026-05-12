@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}{{ detail_title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  body { background:#020617; }
+  .device-detail-page { max-width:1480px; margin:0 auto; padding:28px 22px 48px; display:grid; gap:18px; color:#e5edf8; }
+  .device-detail-hero, .device-detail-panel { border:1px solid rgba(56,189,248,.16); border-radius:18px; background:linear-gradient(180deg, rgba(15,23,42,.96) 0%, rgba(2,6,23,.96) 100%); box-shadow:0 22px 46px rgba(2,6,23,.3); }
+  .device-detail-hero { padding:22px 24px; }
+  .device-detail-hero a { display:inline-block; margin-bottom:.8rem; color:#7dd3fc; font-weight:800; text-decoration:none; }
+  .device-detail-hero h1 { margin:0; font-size:32px; color:#f8fafc; }
+  .device-detail-hero p, .device-detail-head p, .device-detail-message { color:#94a3b8; line-height:1.7; }
+  .device-detail-head { padding:18px 20px; border-bottom:1px solid rgba(148,163,184,.16); background:rgba(15,23,42,.88); }
+  .device-detail-head h3 { margin:0; font-size:21px; color:#f8fafc; }
+  .device-detail-body { padding:18px 20px 20px; }
+  .device-detail-message { margin-bottom:1rem; padding:12px 14px; border-radius:12px; background:rgba(15,23,42,.72); border:1px solid rgba(56,189,248,.14); }
+  .device-detail-table-wrap { overflow:auto; }
+  .device-detail-table { width:100%; min-width:960px; border-collapse:collapse; font-size:14px; }
+  .device-detail-table th, .device-detail-table td { padding:12px 10px; border-bottom:1px solid rgba(148,163,184,.16); text-align:left; vertical-align:top; color:#e5edf8; }
+  .device-detail-table th { position:sticky; top:0; background:rgba(15,23,42,.88); color:#cbd5e1; font-size:13px; font-weight:800; white-space:nowrap; }
+  .device-detail-complete-button { min-width:96px; min-height:38px; border-radius:10px; border:1px solid #0284c7; background:linear-gradient(135deg,#0284c7 0%,#06b6d4 100%); color:#fff; font-weight:800; cursor:pointer; }
+  .device-detail-complete-button:disabled { opacity:.65; cursor:not-allowed; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="device-detail-page">
+  <section class="device-detail-hero">
+    <a href="{{ url_for('device_overview_page') }}">返回设备总览</a>
+    <h1>{{ detail_title }}</h1>
+    <p>这里展示当前分类下的设备详情，表头固定显示设备台账关键字段。</p>
+  </section>
+
+  <section class="device-detail-panel">
+    <div class="device-detail-head">
+      <h3>{{ detail_title }}</h3>
+      <p>当前分类：{{ detail_title }}</p>
+    </div>
+    <div class="device-detail-body">
+      <div class="device-detail-message" id="deviceDetailMessage">正在加载设备详情...</div>
+      <div class="device-detail-table-wrap">
+        <table class="device-detail-table">
+          <thead>
+            <tr>
+              <th>设备名称</th>
+              <th>设备型号</th>
+              <th>资产编号</th>
+              <th>数量</th>
+              <th>生产厂家</th>
+              <th>生产日期</th>
+              <th>购置日期</th>
+              <th>月保养</th>
+              <th>状态</th>
+              <th>更新时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="deviceDetailTableBody">
+            <tr>
+              <td colspan="11" style="text-align:center;color:#64748b;padding:2rem 1rem;">正在加载设备详情...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var detailFilter = '{{ detail_filter }}';
+
+  function renderRows(rows) {
+    var body = document.getElementById('deviceDetailTableBody');
+    var message = document.getElementById('deviceDetailMessage');
+    body.innerHTML = '';
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#64748b;padding:2rem 1rem;">当前分类下暂无设备记录</td></tr>';
+      message.textContent = '当前分类下暂无设备记录。';
+      return;
+    }
+    rows.forEach(function (item) {
+      var tr = document.createElement('tr');
+      [
+        'deviceName',
+        'deviceModel',
+        'assetNumber',
+        'quantity',
+        'manufacturer',
+        'productionDate',
+        'purchaseDate',
+        'monthlyMaintenance',
+        'status',
+        'updatedAt'
+      ].forEach(function (key) {
+        var td = document.createElement('td');
+        td.textContent = String((item && item[key]) || '');
+        tr.appendChild(td);
+      });
+      var actionTd = document.createElement('td');
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'device-detail-complete-button';
+      button.textContent = '已保养';
+      button.addEventListener('click', function () {
+        markCompleted(String((item && item.assetNumber) || ''), button);
+      });
+      actionTd.appendChild(button);
+      tr.appendChild(actionTd);
+      body.appendChild(tr);
+    });
+    message.textContent = '当前分类共 ' + rows.length + ' 条设备记录。';
+  }
+
+  async function markCompleted(assetNumber, button) {
+    if (!assetNumber) {
+      document.getElementById('deviceDetailMessage').textContent = '缺少资产编号，无法标记已保养。';
+      return;
+    }
+    if (detailFilter === 'expired') {
+      window.location.href = '/admin/device-overview/detail/expired/complete?asset_number=' + encodeURIComponent(assetNumber);
+      return;
+    }
+    button.disabled = true;
+    button.textContent = '处理中...';
+    try {
+      var response = await fetch('/api/device-overview/detail/' + encodeURIComponent(detailFilter) + '/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ asset_number: assetNumber })
+      });
+      var result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error((result && result.message) || '标记失败');
+      }
+      renderRows(result.rows || []);
+      document.getElementById('deviceDetailMessage').textContent = result.message || '已标记为已保养。';
+    } catch (error) {
+      document.getElementById('deviceDetailMessage').textContent = '标记已保养失败：' + (error && error.message ? error.message : error);
+      button.disabled = false;
+      button.textContent = '已保养';
+    }
+  }
+
+  async function loadDetails() {
+    try {
+      var response = await fetch('/api/device-overview/detail/' + encodeURIComponent(detailFilter), { credentials: 'same-origin' });
+      var result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error((result && result.message) || '加载失败');
+      }
+      renderRows(result.rows || []);
+    } catch (error) {
+      document.getElementById('deviceDetailMessage').textContent = '加载设备详情失败：' + (error && error.message ? error.message : error);
+      document.getElementById('deviceDetailTableBody').innerHTML = '<tr><td colspan="11" style="text-align:center;color:#b42318;padding:2rem 1rem;">加载设备详情失败</td></tr>';
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadDetails);
+  } else {
+    loadDetails();
+  }
+})();
+</script>
+{% endblock %}

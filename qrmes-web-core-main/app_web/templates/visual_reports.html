@@ -1,0 +1,689 @@
+{% extends "base.html" %}
+
+{% block title %}测试报告 - MESAPP 管理平台{% endblock %}
+
+{% block content %}
+<style>
+    .vr-shell {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .vr-hero {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.16), rgba(118, 75, 162, 0.12));
+        border: 1px solid rgba(102, 126, 234, 0.14);
+        border-radius: 18px;
+        padding: 1.75rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+
+    .vr-hero h2 {
+        margin: 0 0 0.75rem;
+        font-size: 1.8rem;
+        color: #2d3748;
+    }
+
+    .vr-hero p {
+        margin: 0;
+        max-width: 720px;
+        color: #4a5568;
+    }
+
+    .vr-hero-meta {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(120px, 1fr));
+        gap: 0.85rem;
+        min-width: 340px;
+    }
+
+    .vr-stat {
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 14px;
+        padding: 0.9rem 1rem;
+        box-shadow: 0 10px 24px rgba(102, 126, 234, 0.08);
+    }
+
+    .vr-stat-label {
+        display: block;
+        font-size: 0.8rem;
+        color: #718096;
+        margin-bottom: 0.35rem;
+    }
+
+    .vr-stat-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2d3748;
+    }
+
+    .vr-tabs {
+        display: inline-flex;
+        gap: 0.75rem;
+        background: #edf2f7;
+        padding: 0.4rem;
+        border-radius: 14px;
+        width: fit-content;
+    }
+
+    .vr-tab {
+        border: 0;
+        background: transparent;
+        color: #4a5568;
+        padding: 0.75rem 1.2rem;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .vr-tab.is-active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        box-shadow: 0 8px 18px rgba(102, 126, 234, 0.24);
+    }
+
+    .vr-panel {
+        display: none;
+    }
+
+    .vr-panel.is-active {
+        display: block;
+    }
+
+    .vr-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 1.5rem;
+    }
+
+    .vr-card {
+        background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(10,15,26,0.98) 100%);
+        border-radius: 18px;
+        border: 1px solid #edf2f7;
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4);
+        padding: 1.5rem;
+    }
+
+    .vr-card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .vr-card-head h3 {
+        margin: 0;
+        font-size: 1.15rem;
+        color: #2d3748;
+    }
+
+    .vr-card-head span {
+        color: #718096;
+        font-size: 0.88rem;
+    }
+
+    .vr-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem 1.1rem;
+    }
+
+    .vr-form-block {
+        margin-bottom: 1rem;
+    }
+
+    .vr-form-block label {
+        display: block;
+        margin-bottom: 0.45rem;
+        font-weight: 600;
+        color: #4a5568;
+    }
+
+    .vr-dropzone {
+        border: 1.5px dashed #a3bffa;
+        border-radius: 16px;
+        background: #f7f9ff;
+        padding: 1.4rem;
+    }
+
+    .vr-dropzone strong {
+        display: block;
+        color: #2d3748;
+        margin-bottom: 0.35rem;
+    }
+
+    .vr-dropzone p {
+        margin: 0 0 0.75rem;
+        color: #718096;
+        font-size: 0.92rem;
+    }
+
+    .vr-file-row {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        flex-wrap: wrap;
+    }
+
+    .vr-file-name {
+        color: #4a5568;
+        font-size: 0.9rem;
+    }
+
+    .vr-step-list,
+    .vr-meta-list,
+    .vr-summary-list {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .vr-step-item,
+    .vr-meta-item,
+    .vr-summary-item {
+        background: #111827;
+        border-radius: 14px;
+        padding: 0.95rem 1rem;
+        border: 1px solid #edf2f7;
+    }
+
+    .vr-step-index {
+        display: inline-flex;
+        width: 1.8rem;
+        height: 1.8rem;
+        border-radius: 999px;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-right: 0.65rem;
+    }
+
+    .vr-toolbar {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr 1fr auto;
+        gap: 1rem;
+        align-items: end;
+        margin-bottom: 1.2rem;
+    }
+
+    .vr-browser {
+        display: grid;
+        grid-template-columns: 0.95fr 1.05fr;
+        gap: 1.5rem;
+    }
+
+    .vr-report-list {
+        display: grid;
+        gap: 0.85rem;
+        max-height: 640px;
+        overflow: auto;
+        padding-right: 0.35rem;
+    }
+
+    .vr-report-item {
+        border: 1px solid #1e293b;
+        border-radius: 16px;
+        padding: 1rem;
+        background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(10,15,26,0.98) 100%);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .vr-report-item:hover,
+    .vr-report-item.is-active {
+        border-color: #8da2fb;
+        box-shadow: 0 12px 26px rgba(102, 126, 234, 0.12);
+        transform: translateY(-1px);
+    }
+
+    .vr-report-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 0.45rem;
+    }
+
+    .vr-report-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2d3748;
+    }
+
+    .vr-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        background: #e6fffa;
+        color: #0f766e;
+    }
+
+    .vr-badge.draft {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .vr-report-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem 0.9rem;
+        color: #718096;
+        font-size: 0.88rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .vr-report-summary {
+        color: #4a5568;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .vr-preview {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .vr-preview-hero {
+        border-radius: 18px;
+        background: linear-gradient(135deg, #eef2ff 0%, #f9f5ff 100%);
+        border: 1px solid #e9d8fd;
+        padding: 1.4rem;
+    }
+
+    .vr-preview-hero h3 {
+        margin: 0 0 0.55rem;
+        color: #2d3748;
+    }
+
+    .vr-preview-hero p {
+        margin: 0;
+        color: #4a5568;
+    }
+
+    .vr-preview-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+    }
+
+    .vr-chip-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+    }
+
+    .vr-chip {
+        background: #edf2ff;
+        color: #4c51bf;
+        border-radius: 999px;
+        padding: 0.38rem 0.8rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+    }
+
+    .vr-chart {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        align-items: end;
+        gap: 0.7rem;
+        min-height: 180px;
+    }
+
+    .vr-bar {
+        border-radius: 14px 14px 8px 8px;
+        background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+        position: relative;
+        min-height: 40px;
+    }
+
+    .vr-bar::after {
+        content: attr(data-value);
+        position: absolute;
+        top: -1.6rem;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #4a5568;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .vr-bar-labels {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.7rem;
+        margin-top: 0.6rem;
+        color: #718096;
+        font-size: 0.78rem;
+        text-align: center;
+    }
+
+    .vr-empty {
+        text-align: center;
+        color: #718096;
+        padding: 2rem 1rem;
+    }
+
+    /* 2026-04-27 global readability pass for legacy visual report prototype */
+    .vr-hero {
+        background: linear-gradient(135deg, rgba(15,23,42,0.96), rgba(30,41,59,0.84));
+        border-color: rgba(56,189,248,0.22);
+        box-shadow: 0 18px 54px rgba(0,0,0,0.34);
+    }
+    .vr-hero h2,
+    .vr-card-head h3,
+    .vr-report-title { color: #e5f2ff; }
+    .vr-hero p,
+    .vr-card-head span,
+    .vr-report-meta,
+    .vr-report-summary,
+    .vr-file-name,
+    .vr-empty,
+    .vr-bar-labels { color: #c7d7ea; }
+    .vr-card { border-color: rgba(56,189,248,0.18); }
+    .vr-form-block label { color: #dbeafe; }
+    .vr-tabs {
+        background: rgba(15,23,42,0.76);
+        border: 1px solid rgba(56,189,248,0.18);
+    }
+    .vr-tab { color: #c7d7ea; }
+    .vr-stat,
+    .vr-dropzone,
+    .vr-preview-hero {
+        background: linear-gradient(180deg, rgba(241,248,255,0.98), rgba(232,240,252,0.98));
+        border-color: rgba(148,163,184,0.34);
+    }
+    .vr-stat-label,
+    .vr-dropzone p,
+    .vr-preview-hero p { color: #475569; }
+    .vr-stat-value,
+    .vr-dropzone strong,
+    .vr-preview-hero h3 { color: #0f172a; }
+    .vr-step-item,
+    .vr-meta-item,
+    .vr-summary-item,
+    .vr-report-item {
+        background: rgba(15,23,42,0.82);
+        border-color: rgba(148,163,184,0.22);
+        color: #dbeafe;
+    }
+    .vr-report-item:hover,
+    .vr-report-item.is-active {
+        background: rgba(30,41,59,0.9);
+        border-color: rgba(125,211,252,0.52);
+    }
+    .vr-bar::after { color: #dbeafe; }
+
+    @media (max-width: 1100px) {
+        .vr-grid,
+        .vr-browser {
+            grid-template-columns: 1fr;
+        }
+
+        .vr-toolbar {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .vr-hero {
+            flex-direction: column;
+        }
+
+        .vr-hero-meta {
+            width: 100%;
+            min-width: 0;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .vr-form-grid,
+        .vr-preview-grid,
+        .vr-toolbar,
+        .vr-hero-meta {
+            grid-template-columns: 1fr;
+        }
+
+        .vr-tabs {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .vr-tab {
+            flex: 1;
+        }
+    }
+</style>
+
+<div class="vr-shell">
+    <section class="vr-hero">
+        <div>
+        <h2>测试报告</h2>
+            <p>先把模块的界面骨架搭起来，风格与现有 MES 后台保持一致。当前提供“导入报告”和“查看报告”两个工作区，后续你补充字段和业务规则后，我们再接真实流程。</p>
+        </div>
+        <div class="vr-hero-meta">
+            <div class="vr-stat">
+                <span class="vr-stat-label">模块状态</span>
+                <span class="vr-stat-value">UI 原型</span>
+            </div>
+            <div class="vr-stat">
+                <span class="vr-stat-label">当前入口</span>
+                <span class="vr-stat-value">8891 Web</span>
+            </div>
+            <div class="vr-stat">
+                <span class="vr-stat-label">后续扩展</span>
+                <span class="vr-stat-value">数据接入</span>
+            </div>
+        </div>
+    </section>
+
+        <div class="vr-tabs" role="tablist" aria-label="测试报告功能">
+        <button class="vr-tab is-active" type="button" data-vr-tab="import">导入报告</button>
+        <button class="vr-tab" type="button" data-vr-tab="browse">查看报告</button>
+    </div>
+
+    <section class="vr-panel is-active" data-vr-panel="import">
+        <div class="vr-grid">
+            <div class="vr-card">
+                <div class="vr-card-head">
+                    <div>
+                        <h3>导入配置</h3>
+                        <span>先按 MES 现有表单风格做输入区，后续可接上传和解析接口</span>
+                    </div>
+                </div>
+
+                <div class="vr-form-grid">
+                    <div class="vr-form-block">
+                        <label for="vr-project">项目名称</label>
+                        <select id="vr-project" class="form-control">
+                            <option>LIUZHIYU-MES</option>
+                            <option>QRMES-试产项目</option>
+                            <option>电机装配示范线</option>
+                        </select>
+                    </div>
+
+                    <div class="vr-form-block">
+                        <label for="vr-category">报告类型</label>
+                        <select id="vr-category" class="form-control">
+                            <option>质量分析报告</option>
+                            <option>生产趋势报告</option>
+                            <option>异常追踪报告</option>
+                        </select>
+                    </div>
+
+                    <div class="vr-form-block">
+                        <label for="vr-range">数据周期</label>
+                        <input id="vr-range" class="form-control" type="text" value="2026-04-01 ~ 2026-04-08">
+                    </div>
+
+                    <div class="vr-form-block">
+                        <label for="vr-owner">报告负责人</label>
+                        <input id="vr-owner" class="form-control" type="text" value="{{ user.username if user else 'Guest' }}">
+                    </div>
+                </div>
+
+                <div class="vr-form-block">
+                    <label for="vr-title">报告标题</label>
+                    <input id="vr-title" class="form-control" type="text" value="端盖压装稳定性测试报告">
+                </div>
+
+                <div class="vr-form-block">
+                    <label for="vr-desc">报告说明</label>
+                    <textarea id="vr-desc" class="form-control" rows="4">用于展示当前批次的质量趋势、异常波动点和建议动作，先保留为界面占位，后续再补真实导入规则。</textarea>
+                </div>
+
+                <div class="vr-form-block">
+                    <label>上传文件</label>
+                    <div class="vr-dropzone">
+                        <strong>拖拽报告文件到这里，或选择本地文件</strong>
+                        <p>支持 Excel、CSV、PDF 等格式，当前先完成 UI 展示，不触发真实上传。</p>
+                        <div class="vr-file-row">
+                            <input id="vr-file-input" type="file" class="form-control">
+                            <span class="vr-file-name" id="vr-file-name">未选择文件</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vr-file-row">
+                    <button type="button" class="btn btn-primary">开始导入</button>
+                    <button type="button" class="btn btn-secondary">保存草稿</button>
+                </div>
+            </div>
+
+            <div class="vr-card">
+                <div class="vr-card-head">
+                    <div>
+                        <h3>导入流程预览</h3>
+                        <span>用来承接你后续补充的业务步骤</span>
+                    </div>
+                </div>
+
+                <div class="vr-step-list">
+                    <div class="vr-step-item"><span class="vr-step-index">1</span>选择项目、报告类型和周期范围。</div>
+                    <div class="vr-step-item"><span class="vr-step-index">2</span>上传原始报告或分析源文件。</div>
+                    <div class="vr-step-item"><span class="vr-step-index">3</span>解析关键指标并生成图表摘要。</div>
+                    <div class="vr-step-item"><span class="vr-step-index">4</span>校验后发布到“查看报告”模块。</div>
+                </div>
+
+                <div class="vr-card-head" style="margin-top: 1.5rem;">
+                    <div>
+                        <h3>设计提醒</h3>
+                        <span>这部分帮助我们后续把字段补齐</span>
+                    </div>
+                </div>
+
+                <div class="vr-summary-list">
+                    <div class="vr-summary-item">建议后续增加“导入模板下载”入口，减少字段不一致问题。</div>
+                    <div class="vr-summary-item">可预留版本号、审批状态、是否公开展示等属性。</div>
+                    <div class="vr-summary-item">图表区域可按折线、柱状、异常标记三类来扩展。</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="vr-panel" data-vr-panel="browse">
+        <div class="vr-card">
+            <div class="vr-card-head">
+                <div>
+                    <h3>报告中心</h3>
+                    <span>保持和现有管理页一致的筛选 + 列表 + 预览结构</span>
+                </div>
+            </div>
+
+            <div class="vr-toolbar">
+                <div class="vr-form-block" style="margin-bottom: 0;">
+                    <label for="vr-search">搜索报告</label>
+                    <input id="vr-search" class="form-control" type="text" placeholder="输入标题、项目或标签关键词">
+                </div>
+                <div class="vr-form-block" style="margin-bottom: 0;">
+                    <label for="vr-filter-type">报告类型</label>
+                    <select id="vr-filter-type" class="form-control">
+                        <option value="">全部类型</option>
+                        <option value="质量分析报告">质量分析报告</option>
+                        <option value="生产趋势报告">生产趋势报告</option>
+                        <option value="异常追踪报告">异常追踪报告</option>
+                    </select>
+                </div>
+                <div class="vr-form-block" style="margin-bottom: 0;">
+                    <label for="vr-filter-status">状态</label>
+                    <select id="vr-filter-status" class="form-control">
+                        <option value="">全部状态</option>
+                        <option value="published">已发布</option>
+                        <option value="draft">草稿</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary" id="vr-reset-filter">重置筛选</button>
+            </div>
+
+            <div class="vr-browser">
+                <div class="vr-report-list" id="vr-report-list"></div>
+
+                <div class="vr-preview">
+                    <div class="vr-preview-hero">
+                        <h3 id="vr-preview-title">请选择左侧报告</h3>
+                        <p id="vr-preview-summary">选中报告后，这里会显示摘要、标签、关键指标和图表示意。</p>
+                    </div>
+
+                    <div class="vr-preview-grid">
+                        <div class="vr-card" style="padding: 1.1rem;">
+                            <div class="vr-card-head">
+                                <div>
+                                    <h3>基础信息</h3>
+                                </div>
+                            </div>
+                            <div class="vr-meta-list" id="vr-meta-list">
+                                <div class="vr-meta-item">暂无数据</div>
+                            </div>
+                        </div>
+
+                        <div class="vr-card" style="padding: 1.1rem;">
+                            <div class="vr-card-head">
+                                <div>
+                                    <h3>标签</h3>
+                                </div>
+                            </div>
+                            <div class="vr-chip-wrap" id="vr-chip-wrap">
+                                <span class="vr-chip">待选择</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vr-card" style="padding: 1.1rem;">
+                        <div class="vr-card-head">
+                            <div>
+                                <h3>处理步骤</h3>
+                            </div>
+                        </div>
+                        <div class="vr-step-list" id="vr-checklist">
+                            <div class="vr-step-item">暂无步骤</div>
+                        </div>
+                    </div>
+
+                    <div class="vr-card" style="padding: 1.1rem;">
+                        <div class="vr-card-head">
+                            <div>
+                                <h3>图表预览</h3>
+                                <span>当前为前端静态示意，后续可接真实指标</span>
+                            </div>
+                        </div>
+                        <div class="vr-chart" id="vr-chart"></div>
+                        <div class="vr-bar-labels" id="vr-chart-labels"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/visual-reports.js') }}"></script>
+{% endblock %}

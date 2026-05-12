@@ -1,0 +1,108 @@
+{% extends "motor_qc/base.html" %}
+
+{% block breadcrumb %}
+<a href="{{ url_for('motor_qc.index') }}">项目列表</a>
+<span> / </span>
+<a href="{{ url_for('motor_qc.inspect_tasks', project_id=project_id) }}">{{ project_name or project_id }}</a>
+<span> / </span>
+<span>存储自检</span>
+{% endblock %}
+
+{% block motor_qc_content %}
+<div class="qc-page storage-check-page">
+    <div class="card qc-header">
+        <div class="qc-header-main">
+            <div>
+                <h2>存储自检</h2>
+                <div class="muted">项目：{{ project_name or project_id }}（{{ project_id }}）</div>
+            </div>
+            <div class="qc-header-actions">
+                <a class="btn btn-secondary" href="{{ url_for('motor_qc.inspect_tasks', project_id=project_id) }}">返回任务中心</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card task-filters">
+        <div class="control-row">
+            <label for="storage-filter-serial">序列号</label>
+            <input id="storage-filter-serial" list="storage-serial-options" placeholder="输入或选择序列号">
+        </div>
+        <div class="control-row">
+            <label for="storage-filter-process">工序</label>
+            <input id="storage-filter-process" placeholder="可选，模糊匹配工序名">
+        </div>
+        <div class="control-row">
+            <label for="storage-filter-status">任务状态</label>
+            <select id="storage-filter-status">
+                <option value="">全部状态</option>
+                <option value="pending">待识别</option>
+                <option value="running">识别中</option>
+                <option value="review">待确认</option>
+                <option value="confirmed">已确认</option>
+                <option value="failed">失败</option>
+            </select>
+        </div>
+        <div class="control-actions">
+            <button id="storage-search-btn" type="button" class="btn btn-primary">查询</button>
+            <button id="storage-reset-btn" type="button" class="btn btn-secondary">重置</button>
+            <button id="storage-refresh-btn" type="button" class="btn btn-success">刷新</button>
+        </div>
+        <div id="storage-page-hint" class="muted small"></div>
+    </div>
+
+    <div class="task-summary-grid">
+        <section class="card task-summary-card">
+            <div class="task-summary-title">任务总数</div>
+            <div id="storage-task-total" class="task-summary-value">0</div>
+        </section>
+        <section class="card task-summary-card">
+            <div class="task-summary-title">照片总数</div>
+            <div id="storage-photo-total" class="task-summary-value">0</div>
+        </section>
+        <section class="card task-summary-card">
+            <div class="task-summary-title">已分析照片</div>
+            <div id="storage-photo-analyzed" class="task-summary-value">0</div>
+        </section>
+        <section class="card task-summary-card">
+            <div class="task-summary-title">未分析照片</div>
+            <div id="storage-photo-pending" class="task-summary-value">0</div>
+        </section>
+    </div>
+
+    <div class="card">
+        <div class="panel-title">最后分析时间</div>
+        <div id="storage-last-analyzed" class="muted">-</div>
+        <div id="storage-status-breakdown" class="small muted" style="margin-top: 6px;"></div>
+    </div>
+
+    <div class="card">
+        <div class="panel-title">任务落库明细</div>
+        <div class="table-wrap">
+            <table class="data-table" id="storage-result-table">
+                <thead>
+                    <tr>
+                        <th>序列号</th>
+                        <th>工序</th>
+                        <th>状态</th>
+                        <th>照片总数</th>
+                        <th>已分析</th>
+                        <th>未分析</th>
+                        <th>最后分析</th>
+                        <th>更新时间</th>
+                    </tr>
+                </thead>
+                <tbody id="storage-result-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <datalist id="storage-serial-options"></datalist>
+</div>
+{% endblock %}
+
+{% block motor_qc_js %}
+<script>
+window.MOTOR_QC_STORAGE_PROJECT_ID = {{ project_id|tojson }};
+</script>
+<script src="{{ url_for('motor_qc.static', filename='js/motor_qc/storage-check.js', v='20260218_1') }}"></script>
+{% endblock %}

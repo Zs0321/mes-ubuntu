@@ -1,0 +1,11 @@
+stages:
+  - verify
+
+verify-python-repo:
+  stage: verify
+  tags:
+    - linux
+  script:
+    - python3 --version
+    - test -f requirements.txt
+    - python3 -m py_compile $(find . -name '*.py' -not -path '*/.git/*')

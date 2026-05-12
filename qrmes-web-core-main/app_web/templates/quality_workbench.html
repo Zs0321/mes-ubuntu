@@ -1,0 +1,1718 @@
+{% extends "base.html" %}
+
+{% block title %}质量工作台{% endblock %}
+
+{% block extra_css %}
+<style>
+  .qw-page {
+    display: grid;
+    gap: 1.6rem;
+  }
+
+  .qw-hero {
+    border-radius: 24px;
+    padding: 2rem 2.25rem;
+    background: linear-gradient(135deg, #17345e 0%, #234a79 58%, #2d6599 100%);
+    color: #141d2e;
+    box-shadow: 0 24px 48px rgba(17, 37, 67, 0.22);
+  }
+
+  .qw-hero h1 {
+    margin: 0;
+    font-size: 2.45rem;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+  }
+
+  .qw-hero p {
+    margin: 1rem 0 0;
+    max-width: 1080px;
+    line-height: 1.85;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 1.02rem;
+  }
+
+  .qw-search {
+    margin-top: 1.55rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.9rem;
+    align-items: center;
+  }
+
+  .qw-search input {
+    height: 58px;
+    border: none;
+    border-radius: 14px;
+    padding: 0 1.1rem;
+    font-size: 1.06rem;
+    color: #e8edf5;
+    background: #141d2e;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+  }
+
+  .qw-search button {
+    min-width: 176px;
+    height: 58px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #8b6dff 0%, #6b59d3 100%);
+    color: #141d2e;
+    font-size: 1.02rem;
+    font-weight: 700;
+    box-shadow: 0 12px 24px rgba(107, 89, 211, 0.24);
+  }
+
+  .qw-switches {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 220px));
+    gap: 0.85rem;
+  }
+
+  .qw-switch-btn {
+    height: 48px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #141d2e;
+    font-size: 0.98rem;
+    font-weight: 700;
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+  }
+
+  .qw-switch-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .qw-switch-btn.active {
+    background: #141d2e;
+    color: #17345e;
+    border-color: rgba(255, 255, 255, 0.62);
+    box-shadow: 0 12px 24px rgba(9, 21, 40, 0.14);
+  }
+
+  .qw-card {
+    border: 1px solid #e7edf5;
+    border-radius: 22px;
+    background: #141d2e;
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+  }
+
+  .qw-card-header {
+    padding: 1.25rem 1.4rem;
+    border-bottom: 1px solid #141d2e;
+    background: #141d2e;
+  }
+
+  .qw-card-header h3 {
+    margin: 0;
+    color: #17304f;
+    font-size: 1.22rem;
+    font-weight: 800;
+  }
+
+  .qw-card-header p {
+    margin: 0.48rem 0 0;
+    color: #5a6f85;
+    line-height: 1.8;
+  }
+
+  .qw-card-body {
+    padding: 1.4rem;
+  }
+
+  .qw-empty {
+    padding: 3rem 1.2rem;
+    text-align: center;
+    color: #5a6f85;
+  }
+
+  .qw-empty h4 {
+    margin: 0 0 0.8rem;
+    color: #17304f;
+    font-size: 1.85rem;
+    font-weight: 800;
+  }
+
+  .qw-empty p {
+    margin: 0;
+    line-height: 1.9;
+    font-size: 1rem;
+  }
+
+  .qw-summary {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .qw-banner {
+    border: 1px solid #dae5f1;
+    border-radius: 18px;
+    background: #141d2e;
+    padding: 1.15rem 1.2rem;
+  }
+
+  .qw-banner-title {
+    color: #17304f;
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+
+  .qw-banner-note {
+    margin-top: 0.55rem;
+    color: #55657b;
+    line-height: 1.8;
+  }
+
+  .qw-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.85rem;
+  }
+
+  .qw-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.42rem 0.8rem;
+    border-radius: 3px;
+    border: 1px solid #dbe5ef;
+    background: #141d2e;
+    color: #cbd5e1;
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
+
+  .qw-chip.pass {
+    color: #17693a;
+    background: #eaf7ee;
+    border-color: #cde8d5;
+  }
+
+  .qw-chip.review {
+    color: #9b5a00;
+    background: rgba(124,45,18,0.15); border: 1px solid rgba(251,191,36,0.2);
+    border-color: #f1d3a1;
+  }
+
+  .qw-chip.block {
+    color: #b42318;
+    background: #fdecec;
+    border-color: #f5d0cf;
+  }
+
+  .qw-chip.neutral {
+    color: #cbd5e1;
+    background: #eef3f8;
+    border-color: #dbe5ef;
+  }
+
+  .qw-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .qw-panel {
+    border: 1px solid #e6edf5;
+    border-radius: 18px;
+    background: #141d2e;
+    padding: 1rem 1.05rem;
+  }
+
+  .qw-panel h4 {
+    margin: 0 0 0.8rem;
+    color: #17304f;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  .qw-section-subtitle {
+    margin-bottom: 0.6rem;
+    color: #f8fafc;
+    font-weight: 800;
+  }
+
+  .qw-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .qw-panel-head h4 {
+    margin: 0;
+  }
+
+  .qw-kv {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .qw-kv-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .qw-kv-row span:first-child {
+    color: #5a6f85;
+  }
+
+  .qw-kv-row span:last-child {
+    color: #e8edf5;
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .qw-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .qw-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.72rem;
+    border-radius: 3px;
+    border: 1px solid #1e2d3d;
+    background: #0f1a2a;
+    color: #cbd5e1;
+    font-size: 0.84rem;
+  }
+
+  .qw-candidate-note {
+    margin-top: 0.85rem;
+    padding: 0.85rem 0.95rem;
+    border-radius: 14px;
+    border: 1px solid #f2d7a7;
+    background: rgba(124,45,18,0.1); border: 1px solid rgba(251,191,36,0.15);
+    color: #875100;
+    line-height: 1.8;
+  }
+
+  .qw-table-wrap {
+    overflow: auto;
+    border: 1px solid #e7edf5;
+    border-radius: 18px;
+  }
+
+  .qw-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #141d2e;
+  }
+
+  .qw-table th,
+  .qw-table td {
+    padding: 0.88rem 0.95rem;
+    border-bottom: 1px solid #141d2e;
+    text-align: left;
+    vertical-align: top;
+    font-size: 0.92rem;
+  }
+
+  .qw-table th {
+    background: #f8fbff;
+    color: #8a9bb0;
+    font-weight: 800;
+  }
+
+  .qw-stats {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .qw-summary-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+
+  .qw-summary-card {
+    padding: 1rem 1.05rem;
+    border-radius: 18px;
+    border: 1px solid #dfe7f1;
+    background: #141d2e;
+    min-height: 92px;
+  }
+
+  .qw-summary-label {
+    color: #5a6f85;
+    font-size: 0.92rem;
+  }
+
+  .qw-summary-value {
+    margin-top: 0.55rem;
+    color: #e8edf5;
+    font-size: 1.9rem;
+    line-height: 1;
+    font-weight: 800;
+  }
+
+  .qw-stats-top {
+    display: grid;
+    grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .qw-date-panel {
+    display: grid;
+    gap: 0.8rem;
+    padding: 1rem;
+    border: 1px solid #e7edf5;
+    border-radius: 18px;
+    background: #fbfdff;
+  }
+
+  .qw-date-panel label {
+    color: #17304f;
+    font-weight: 700;
+  }
+
+  .qw-date-panel input {
+    height: 52px;
+    border-radius: 14px;
+    border: 1px solid #d7e3ef;
+    padding: 0 0.95rem;
+    font-size: 1rem;
+  }
+
+  .qw-date-panel button {
+    width: fit-content;
+    min-width: 136px;
+    height: 46px;
+    border: none;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #4d77e6 0%, #3557bb 100%);
+    color: #141d2e;
+    font-weight: 700;
+  }
+
+  .qw-stat-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .qw-stat-card {
+    padding: 1rem 1.05rem;
+    border-radius: 18px;
+    border: 1px solid #eadbc0;
+    background: #141d2e;
+  }
+
+  .qw-stat-label {
+    color: #5a6f85;
+    font-size: 0.92rem;
+  }
+
+  .qw-stat-value {
+    margin-top: 0.42rem;
+    color: #c56a11;
+    font-size: 2.2rem;
+    line-height: 1;
+    font-weight: 800;
+  }
+
+  .qw-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .qw-rule-list {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .qw-rule-item {
+    border: 1px solid #e7edf5;
+    border-radius: 18px;
+    background: #fbfdff;
+    padding: 1rem 1.05rem;
+  }
+
+  .qw-rule-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .qw-rule-title {
+    color: #17304f;
+    font-size: 1.02rem;
+    font-weight: 800;
+  }
+
+  .qw-rule-detail {
+    margin-top: 0.7rem;
+    color: #5a6f85;
+    line-height: 1.85;
+    font-size: 0.92rem;
+  }
+
+  .qw-list {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .qw-list-item {
+    border: 1px solid #e7edf5;
+    border-radius: 4px;
+    background: #141d2e;
+    padding: 0.95rem 1rem;
+  }
+
+  .qw-list-title {
+    color: #17304f;
+    font-weight: 800;
+  }
+
+  .qw-list-meta {
+    margin-top: 0.45rem;
+    color: #5a6f85;
+    line-height: 1.75;
+    font-size: 0.9rem;
+  }
+
+  .qw-hidden {
+    display: none !important;
+  }
+
+  .qw-link-btn {
+    border: none;
+    background: none;
+    color: #00b0ff;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .qw-link-btn:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+  }
+
+  .qw-modal-mask {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.52);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    z-index: 2100;
+  }
+
+  .qw-modal {
+    width: min(1100px, 100%);
+    max-height: 88vh;
+    overflow: auto;
+    border-radius: 24px;
+    background: #141d2e;
+    box-shadow: 0 28px 60px rgba(15, 23, 42, 0.28);
+  }
+
+  .qw-modal-header {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.35rem;
+    border-bottom: 1px solid #e7edf5;
+    position: sticky;
+    top: 0;
+    background: #141d2e;
+    z-index: 1;
+  }
+
+  .qw-modal-header h4 {
+    margin: 0;
+    color: #17304f;
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+
+  .qw-modal-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 3px;
+    border: 1px solid #dbe5ef;
+    background: #f8fbff;
+    color: #cbd5e1;
+    font-size: 1.3rem;
+    cursor: pointer;
+  }
+
+  .qw-modal-body {
+    padding: 1.2rem 1.35rem 1.35rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .qw-detail-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.95fr);
+    gap: 1.1rem;
+    align-items: start;
+  }
+
+  .qw-detail-hero {
+    font-size: 1.28rem;
+    font-weight: 800;
+    color: #17304f;
+  }
+
+  .qw-detail-subtitle {
+    margin-top: 0.45rem;
+    color: #8a9bb0;
+    line-height: 1.8;
+    word-break: break-all;
+  }
+
+  .qw-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.9rem;
+  }
+
+  .qw-photo-card {
+    border: 1px solid #e7edf5;
+    border-radius: 4px;
+    background: #fbfdff;
+    overflow: hidden;
+  }
+
+  .qw-photo-card a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .qw-photo-card img {
+    display: block;
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    background: #e5edf6;
+  }
+
+  .qw-photo-meta {
+    padding: 0.75rem 0.85rem 0.9rem;
+    color: #8a9bb0;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    word-break: break-all;
+  }
+
+  .qw-photo-placeholder {
+    border: 1px dashed #cfdbea;
+    border-radius: 18px;
+    background: #fbfdff;
+    padding: 1.25rem 1.15rem;
+    color: #5a6f85;
+    line-height: 1.9;
+  }
+
+  .qw-detail-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+
+  .qw-detail-stat {
+    border: 1px solid #dfe7f1;
+    border-radius: 18px;
+    background: #141d2e;
+    padding: 1rem 1.05rem;
+    min-height: 108px;
+  }
+
+  .qw-detail-stat-label {
+    color: #5a6f85;
+    font-size: 0.92rem;
+  }
+
+  .qw-detail-stat-value {
+    margin-top: 0.55rem;
+    color: #e8edf5;
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  .qw-detail-summary-box {
+    border: 1px solid #dfe7f1;
+    border-radius: 18px;
+    background: #fbfdff;
+    padding: 1rem 1.05rem;
+    color: #cbd5e1;
+    line-height: 1.9;
+  }
+
+  /* 20260424 readability refresh: 质量工作台统一为清爽浅色工作面 */
+  .qw-page {
+    color: #172033;
+  }
+
+  .qw-hero {
+    background: linear-gradient(135deg, #0f766e 0%, #0f4c81 100%);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 12px;
+    box-shadow: 0 18px 40px rgba(15, 76, 129, 0.22);
+    color: #ffffff;
+  }
+
+  .qw-hero h1,
+  .qw-hero p {
+    color: #ffffff;
+  }
+
+  .qw-search input {
+    background: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    color: #0f172a;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+  }
+
+  .qw-search input::placeholder {
+    color: #64748b;
+  }
+
+  .qw-search button {
+    background: #16a34a;
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    color: #ffffff;
+    box-shadow: 0 10px 24px rgba(22, 163, 74, 0.24);
+  }
+
+  .qw-switch-btn {
+    border-color: rgba(255, 255, 255, 0.36);
+    color: #eef6ff;
+  }
+
+  .qw-switch-btn.active {
+    background: #ffffff;
+    color: #0f4c81;
+  }
+
+  .qw-card,
+  .qw-panel,
+  .qw-banner,
+  .qw-empty,
+  .qw-summary-card,
+  .qw-stat-card,
+  .qw-list-item,
+  .qw-detail-stat,
+  .qw-detail-summary-box,
+  .qw-modal {
+    background: #ffffff;
+    border-color: #d8e2ee;
+    border-radius: 8px;
+    color: #172033;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+  }
+
+  .qw-card-header,
+  .qw-modal-header {
+    background: linear-gradient(180deg, #f8fbff 0%, #eef6fb 100%);
+    border-bottom-color: #d8e2ee;
+    color: #172033;
+  }
+
+  .qw-card-header h3,
+  .qw-panel h4,
+  .qw-panel-head h4,
+  .qw-section-subtitle,
+  .qw-empty h4,
+  .qw-summary-title,
+  .qw-stat-title,
+  .qw-list-title,
+  .qw-detail-hero,
+  .qw-modal-header h3,
+  .qw-kv-label,
+  .qw-detail-stat-label,
+  .qw-page div[style*="color:#17304f"] {
+    color: #172033 !important;
+  }
+
+  .qw-card-header p,
+  .qw-empty p,
+  .qw-summary-desc,
+  .qw-list-desc,
+  .qw-detail-subtitle,
+  .qw-detail-stat-label,
+  .qw-photo-meta,
+  .qw-kv-key,
+  .qw-muted,
+  .qw-page div[style*="color:#8a9bb0"],
+  .qw-page div[style*="color:#5a6f85"] {
+    color: #64748b !important;
+  }
+
+  .qw-kv-value,
+  .qw-detail-stat-value,
+  .qw-summary-value,
+  .qw-stat-value {
+    color: #0f172a;
+  }
+
+  .qw-table,
+  .qw-table table,
+  .qw-table-wrap,
+  .qw-photo-card {
+    background: #ffffff;
+    border-color: #d8e2ee;
+    color: #172033;
+  }
+
+  .qw-table th,
+  .qw-table td {
+    border-bottom-color: #e5edf5;
+    color: #172033;
+  }
+
+  .qw-table th {
+    background: #f1f6fb;
+    color: #30506f;
+  }
+
+  .qw-chip,
+  .qw-tags span,
+  .qw-badge {
+    border-color: #cddbeb;
+    color: #17304f;
+  }
+
+  .qw-chip.neutral,
+  .qw-badge.neutral {
+    background: #edf4fb;
+  }
+
+  .qw-candidate-note,
+  .qw-photo-placeholder {
+    background: #f8fbff;
+    border-color: #cddbeb;
+    color: #4b6178;
+  }
+
+  .qw-modal-close {
+    color: #334155;
+  }
+
+  /* 20260427 readability fix: keep the 8891 dark shell and force all workbench text readable. */
+  .qw-page {
+    color: #e5edf5 !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+
+  .qw-page * {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+
+  .qw-hero {
+    background: linear-gradient(135deg, rgba(15, 118, 110, 0.9) 0%, rgba(15, 76, 129, 0.92) 100%);
+    color: #f8fafc !important;
+  }
+
+  .qw-hero h1,
+  .qw-hero p {
+    color: #f8fafc !important;
+  }
+
+  .qw-search input {
+    background: rgba(15, 23, 42, 0.82);
+    border-color: rgba(148, 163, 184, 0.46);
+    color: #f8fafc !important;
+  }
+
+  .qw-search input::placeholder {
+    color: #aebbd0 !important;
+  }
+
+  .qw-search button {
+    color: #ffffff !important;
+  }
+
+  .qw-switch-btn {
+    color: #e5edf5 !important;
+  }
+
+  .qw-switch-btn.active {
+    background: rgba(226, 232, 240, 0.96);
+    color: #0f172a !important;
+  }
+
+  .qw-card,
+  .qw-panel,
+  .qw-banner,
+  .qw-empty,
+  .qw-summary-card,
+  .qw-stat-card,
+  .qw-list-item,
+  .qw-detail-stat,
+  .qw-detail-summary-box,
+  .qw-modal,
+  .qw-date-panel,
+  .qw-rule-item,
+  .qw-photo-card,
+  .qw-photo-placeholder {
+    background: #101a2a;
+    border-color: #223550;
+    color: #e5edf5 !important;
+  }
+
+  .qw-card-header,
+  .qw-modal-header {
+    background: #132035;
+    border-bottom-color: #223550;
+    color: #e5edf5 !important;
+  }
+
+  .qw-card-header h3,
+  .qw-panel h4,
+  .qw-panel-head h4,
+  .qw-empty h4,
+  .qw-banner-title,
+  .qw-list-title,
+  .qw-rule-title,
+  .qw-detail-hero,
+  .qw-modal-header h4,
+  .qw-date-panel label,
+  .qw-page [style*="color:#17304f"] {
+    color: #f8fafc !important;
+  }
+
+  .qw-card-header p,
+  .qw-empty p,
+  .qw-banner-note,
+  .qw-kv-row span:first-child,
+  .qw-summary-label,
+  .qw-stat-label,
+  .qw-rule-detail,
+  .qw-list-meta,
+  .qw-detail-subtitle,
+  .qw-detail-stat-label,
+  .qw-photo-meta,
+  .qw-photo-placeholder,
+  .qw-page [style*="color:#5a6f85"],
+  .qw-page [style*="color:#8a9bb0"] {
+    color: #cbd5e1 !important;
+  }
+
+  .qw-kv-row span:last-child,
+  .qw-summary-value,
+  .qw-detail-stat-value {
+    color: #f8fafc !important;
+  }
+
+  .qw-table,
+  .qw-table-wrap {
+    background: #101a2a;
+    border-color: #223550;
+    color: #e5edf5 !important;
+  }
+
+  .qw-table th,
+  .qw-table td {
+    border-bottom-color: #223550;
+    color: #e5edf5 !important;
+  }
+
+  .qw-table th {
+    background: #17243a;
+    color: #dbeafe !important;
+  }
+
+  .qw-chip,
+  .qw-tag,
+  .qw-badge {
+    background: #17243a;
+    border-color: #2b4567;
+    color: #e5edf5 !important;
+  }
+
+  .qw-chip.neutral,
+  .qw-badge.neutral {
+    background: #17243a;
+    color: #e5edf5 !important;
+  }
+
+  .qw-chip.pass,
+  .qw-badge.pass {
+    background: rgba(22, 163, 74, 0.24) !important;
+    border-color: rgba(74, 222, 128, 0.78) !important;
+    color: #bbf7d0 !important;
+  }
+
+  .qw-chip.review,
+  .qw-badge.review {
+    background: rgba(245, 158, 11, 0.22) !important;
+    border-color: rgba(251, 191, 36, 0.82) !important;
+    color: #fde68a !important;
+  }
+
+  .qw-chip.block,
+  .qw-badge.block {
+    background: rgba(220, 38, 38, 0.24) !important;
+    border-color: rgba(248, 113, 113, 0.82) !important;
+    color: #fecaca !important;
+  }
+
+  .qw-candidate-note {
+    background: rgba(251, 191, 36, 0.12);
+    border-color: rgba(251, 191, 36, 0.32);
+    color: #fde68a !important;
+  }
+
+  .qw-date-panel input {
+    background: #0f172a;
+    border-color: #2b4567;
+    color: #f8fafc !important;
+  }
+
+  .qw-date-panel button {
+    color: #ffffff !important;
+  }
+
+  .qw-modal-close {
+    background: #17243a;
+    border-color: #2b4567;
+    color: #e5edf5 !important;
+  }
+
+  @media (max-width: 1100px) {
+    .qw-grid-2,
+    .qw-stats-top,
+    .qw-columns,
+    .qw-detail-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .qw-hero {
+      padding: 1.5rem;
+    }
+
+    .qw-hero h1 {
+      font-size: 2rem;
+    }
+
+    .qw-search {
+      grid-template-columns: 1fr;
+    }
+
+    .qw-switches {
+      grid-template-columns: 1fr;
+    }
+
+    .qw-stat-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="qw-page">
+  <section class="qw-hero">
+    <h1>质量工作台</h1>
+    <p>通过序列号聚合产品记录、物料完整性、工序照片与 QC 结论，以及 HIL / 反电势测试关联，辅助质量部门判断是否满足出货状态。</p>
+    <div class="qw-search">
+      <input id="serialInput" type="text" placeholder="输入或粘贴产品序列号，例如 Genesis-TZ310B-XDY210-773-01-B">
+      <button id="btnLoadWorkbench" type="button">查询质量状态</button>
+    </div>
+    <div class="qw-switches">
+      <button id="btnJumpWorkbench" class="qw-switch-btn active" type="button">序列号质量跟踪</button>
+      <button id="btnJumpShipmentStats" class="qw-switch-btn" type="button">今日出厂统计</button>
+    </div>
+  </section>
+
+  <section id="serialWorkbenchSection" class="qw-card">
+    <div class="qw-card-header">
+      <h3>序列号质量追踪</h3>
+      <p>输入产品序列号后，系统会汇总当前产品的记录完整性、照片 / QC 状态和测试报告关联情况。</p>
+    </div>
+    <div class="qw-card-body">
+      <div id="waitingPanel" class="qw-empty">
+        <h4>等待查询</h4>
+        <p>输入产品序列号后，系统会汇总当前产品的记录完整性、照片 / QC 状态和测试报告关联情况。</p>
+      </div>
+
+      <div id="resultPanel" class="qw-hidden">
+        <div id="serialBanner" class="qw-banner"></div>
+        <div id="candidateNote" class="qw-candidate-note qw-hidden"></div>
+
+        <div class="qw-grid-2" style="margin-top:1rem;">
+          <div class="qw-panel">
+            <h4>基础记录</h4>
+            <div id="baseRecordGrid" class="qw-kv"></div>
+          </div>
+          <div class="qw-panel">
+            <h4>出厂拍照跟踪</h4>
+            <div id="shipmentTrackingGrid" class="qw-kv"></div>
+          </div>
+        </div>
+
+        <div class="qw-grid-2" style="margin-top:1rem;">
+          <div class="qw-panel">
+            <h4>物料状态</h4>
+            <div id="materialStatusGrid" class="qw-kv"></div>
+            <div style="margin-top:0.9rem;">
+              <div class="qw-section-subtitle" style="margin-bottom:0.45rem;">缺失物料</div>
+              <div id="missingMaterials" class="qw-tags"></div>
+            </div>
+          </div>
+          <div class="qw-grid-2">
+            <div class="qw-panel">
+              <div class="qw-panel-head">
+                <h4>HIL 测试</h4>
+                <span id="hilBadge" class="qw-chip neutral">未关联</span>
+              </div>
+              <div id="hilReportGrid" class="qw-detail-stat-grid"></div>
+            </div>
+            <div class="qw-panel">
+              <div class="qw-panel-head">
+                <h4>反电势测试</h4>
+                <span id="bemfBadge" class="qw-chip neutral">未关联</span>
+              </div>
+              <div id="bemfReportGrid" class="qw-detail-stat-grid"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="qw-panel" style="margin-top:1rem;">
+          <div class="qw-panel-head">
+            <h4>工序照片与 QC</h4>
+            <span id="processOverallBadge" class="qw-chip neutral">待确认</span>
+          </div>
+          <div id="processOverviewCards" class="qw-summary-cards"></div>
+        </div>
+
+        <div class="qw-panel" style="margin-top:1rem;">
+          <h4>工序明细</h4>
+          <div class="qw-table-wrap">
+            <table class="qw-table">
+              <thead>
+                <tr>
+                  <th style="width:72px;">序号</th>
+                  <th>工序</th>
+                  <th style="width:140px;">状态</th>
+                  <th style="width:100px;">照片数</th>
+                  <th>结论摘要</th>
+                  <th style="width:190px;">最近检测时间</th>
+                  <th style="width:110px;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="processTableBody">
+                <tr><td colspan="7" style="color:#5a6f85;">当前没有工序明细数据。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="qw-panel" style="margin-top:1rem;">
+          <div class="qw-panel-head">
+            <h4>命中规则</h4>
+            <span id="triggeredCountBadge" class="qw-chip neutral">0 项</span>
+          </div>
+          <div id="triggeredChecksList" class="qw-rule-list"></div>
+        </div>
+
+        <div class="qw-panel" style="margin-top:1rem;">
+          <h4>质量结论</h4>
+          <div id="qualityConclusionBlock"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="shipmentStatsSection" class="qw-card qw-hidden">
+    <div class="qw-card-header">
+      <h3>今日出厂统计</h3>
+      <p>统计每天完成出厂检测拍照的机器数量，并查看当天产品型号分布和近 7 天趋势。</p>
+    </div>
+    <div class="qw-card-body qw-stats">
+      <div class="qw-stats-top">
+        <div class="qw-date-panel">
+          <label for="shipmentDate">统计日期</label>
+          <input id="shipmentDate" type="date">
+          <button id="btnRefreshStats" type="button">刷新统计</button>
+          <div class="qw-stat-cards">
+            <div class="qw-stat-card">
+              <div class="qw-stat-label">所选日期</div>
+              <div id="selectedCount" class="qw-stat-value">0</div>
+            </div>
+            <div class="qw-stat-card">
+              <div class="qw-stat-label">今日出货</div>
+              <div id="todayCount" class="qw-stat-value">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="qw-columns">
+          <div class="qw-panel">
+            <h4>当日产品型号统计</h4>
+            <div id="modelList" class="qw-list"></div>
+          </div>
+          <div class="qw-panel">
+            <h4>近 7 天趋势</h4>
+            <div id="trendList" class="qw-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qw-panel">
+        <h4>当日出厂机器列表</h4>
+        <div id="shipmentList" class="qw-list"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="processDetailModal" class="qw-modal-mask qw-hidden">
+  <div class="qw-modal">
+    <div class="qw-modal-header">
+      <div>
+        <div id="processDetailTitle" class="qw-detail-hero">工序详情</div>
+        <div id="processDetailSubtitle" class="qw-detail-subtitle"></div>
+      </div>
+      <button id="processDetailClose" class="qw-modal-close" type="button">×</button>
+    </div>
+    <div class="qw-modal-body">
+      <div class="qw-detail-layout">
+        <div class="qw-panel">
+          <h4>工序图片</h4>
+          <div id="processDetailPhotos" class="qw-photo-grid"></div>
+        </div>
+        <div style="display:grid;gap:1rem;">
+          <div class="qw-detail-stat-grid" id="processDetailStats"></div>
+          <div>
+            <div class="qw-section-subtitle">判定说明</div>
+            <div id="processDetailSummary" class="qw-detail-summary-box">暂无数据</div>
+          </div>
+          <div>
+            <div class="qw-section-subtitle">缺陷列表</div>
+            <div id="processDetailDefects" class="qw-tags"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const serialInput = document.getElementById('serialInput');
+const shipmentDateInput = document.getElementById('shipmentDate');
+const waitingPanel = document.getElementById('waitingPanel');
+const resultPanel = document.getElementById('resultPanel');
+const serialBanner = document.getElementById('serialBanner');
+const candidateNote = document.getElementById('candidateNote');
+const baseRecordGrid = document.getElementById('baseRecordGrid');
+const shipmentTrackingGrid = document.getElementById('shipmentTrackingGrid');
+const materialStatusGrid = document.getElementById('materialStatusGrid');
+const missingMaterials = document.getElementById('missingMaterials');
+const hilBadge = document.getElementById('hilBadge');
+const bemfBadge = document.getElementById('bemfBadge');
+const hilReportGrid = document.getElementById('hilReportGrid');
+const bemfReportGrid = document.getElementById('bemfReportGrid');
+const processOverallBadge = document.getElementById('processOverallBadge');
+const processOverviewCards = document.getElementById('processOverviewCards');
+const triggeredChecksList = document.getElementById('triggeredChecksList');
+const triggeredCountBadge = document.getElementById('triggeredCountBadge');
+const qualityConclusionBlock = document.getElementById('qualityConclusionBlock');
+const processTableBody = document.getElementById('processTableBody');
+const selectedCountEl = document.getElementById('selectedCount');
+const todayCountEl = document.getElementById('todayCount');
+const modelList = document.getElementById('modelList');
+const trendList = document.getElementById('trendList');
+const shipmentList = document.getElementById('shipmentList');
+const serialWorkbenchSection = document.getElementById('serialWorkbenchSection');
+const shipmentStatsSection = document.getElementById('shipmentStatsSection');
+const processDetailModal = document.getElementById('processDetailModal');
+const processDetailTitle = document.getElementById('processDetailTitle');
+const processDetailSubtitle = document.getElementById('processDetailSubtitle');
+const processDetailStats = document.getElementById('processDetailStats');
+const processDetailSummary = document.getElementById('processDetailSummary');
+const processDetailDefects = document.getElementById('processDetailDefects');
+const processDetailPhotos = document.getElementById('processDetailPhotos');
+const currentProcessDetailState = { processName: '' };
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function firstDefined(...values) {
+  for (const value of values) {
+    if (value !== undefined && value !== null && value !== '') {
+      return value;
+    }
+  }
+  return '';
+}
+
+function statusClass(value) {
+  const status = String(value || '').toLowerCase();
+  if (status === 'pass') return 'pass';
+  if (status === 'review' || status === 'ng') return 'review';
+  if (status === 'block' || status === 'fail') return 'block';
+  return '';
+}
+
+function statusLabel(value) {
+  const status = String(value || '').toLowerCase();
+  if (status === 'pass') return '通过';
+  if (status === 'review' || status === 'ng') return '待复核';
+  if (status === 'block' || status === 'fail') return '拦截';
+  return '待确认';
+}
+
+function severityLabel(value) {
+  const level = String(value || '').toLowerCase();
+  if (level === 'block' || level === 'fail') return 'block';
+  if (level === 'review' || level === 'ng') return 'review';
+  if (level === 'pass') return 'pass';
+  return 'neutral';
+}
+
+function renderKvGrid(target, entries) {
+  target.innerHTML = entries.map(([label, value]) => `
+    <div class="qw-kv-row">
+      <span>${escapeHtml(label)}</span>
+      <span>${escapeHtml(value)}</span>
+    </div>
+  `).join('');
+}
+
+function renderSummaryCards(target, entries) {
+  target.innerHTML = entries.map(([label, value]) => `
+    <div class="qw-summary-card">
+      <div class="qw-summary-label">${escapeHtml(label)}</div>
+      <div class="qw-summary-value">${escapeHtml(value)}</div>
+    </div>
+  `).join('');
+}
+
+function renderTags(target, items, emptyText) {
+  if (!items || !items.length) {
+    target.innerHTML = `<div style="color:#5a6f85;">${escapeHtml(emptyText)}</div>`;
+    return;
+  }
+  target.innerHTML = items.map(item => `<span class="qw-tag">${escapeHtml(item)}</span>`).join('');
+}
+
+function renderList(target, rows, emptyText, renderItem) {
+  if (!rows || !rows.length) {
+    target.innerHTML = `<div style="color:#5a6f85;">${escapeHtml(emptyText)}</div>`;
+    return;
+  }
+  target.innerHTML = rows.map(renderItem).join('');
+}
+
+async function fetchJson(url) {
+  const response = await fetch(url, { credentials: 'same-origin' });
+  const payload = await response.json();
+  if (!response.ok || !payload.success) {
+    throw new Error(payload.error || `请求失败 (${response.status})`);
+  }
+  return payload;
+}
+
+function closeProcessDetail() {
+  processDetailModal.classList.add('qw-hidden');
+}
+
+function renderPhotoCards(photos, canDeletePhotos = false) {
+  if (!photos || !photos.length) {
+    processDetailPhotos.innerHTML = `
+      <div class="qw-photo-placeholder">
+        当前工序没有可查看图片。若该工序要求拍照，则该状态会计入缺失工序。
+      </div>`;
+    return;
+  }
+  processDetailPhotos.innerHTML = photos.map(photo => {
+    const relativePath = photo.relative_path || photo.relativePath || '';
+    const showDelete = Boolean(canDeletePhotos && relativePath);
+    return `
+    <div class="qw-photo-card">
+      <a href="${escapeHtml(photo.url || '#')}" target="_blank" rel="noopener noreferrer">
+        <img src="${escapeHtml(photo.thumbnail_url || photo.url || '')}" alt="${escapeHtml(photo.name || '工序照片')}">
+        <div class="qw-photo-meta">
+          <div>${escapeHtml(photo.name || '工序照片')}</div>
+          <div style="margin-top:0.35rem;color:#00b0ff;">点击查看原图</div>
+        </div>
+      </a>
+      ${showDelete ? `
+        <div class="qw-photo-meta" style="padding-top:0;">
+          <button
+            type="button"
+            class="btn btn-danger"
+            style="width:100%;padding:0.55rem 0.75rem;font-size:0.92rem;"
+            data-relative-path="${escapeHtml(relativePath)}"
+            data-photo-name="${escapeHtml(photo.name || '工序照片')}"
+            onclick="deleteWorkbenchPhoto(this.dataset.relativePath, this.dataset.photoName)"
+          >删除照片</button>
+        </div>` : ''}
+    </div>
+  `;
+  }).join('');
+}
+
+async function deleteWorkbenchPhoto(relativePath, photoName) {
+  if (!relativePath) {
+    alert('缺少照片路径，无法删除');
+    return;
+  }
+  if (!confirm(`确定删除照片 ${photoName || ''} 吗？删除后不可恢复。`)) {
+    return;
+  }
+  try {
+    const response = await fetch('/api/quality-workbench/photo', {
+      method: 'DELETE',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path: relativePath })
+    });
+    const payload = await response.json();
+    if (!response.ok || !payload.success) {
+      throw new Error(payload.error || `删除失败 (${response.status})`);
+    }
+    await openProcessDetail(currentProcessDetailState.processName);
+  } catch (error) {
+    alert(error.message || '删除照片失败');
+  }
+}
+
+function renderStatGrid(target, items) {
+  target.innerHTML = items.map(([label, value]) => `
+    <div class="qw-detail-stat">
+      <div class="qw-detail-stat-label">${escapeHtml(label)}</div>
+      <div class="qw-detail-stat-value">${escapeHtml(value)}</div>
+    </div>
+  `).join('');
+}
+
+function renderDetailStats(items) {
+  renderStatGrid(processDetailStats, items);
+}
+
+function setChip(el, text, cls) {
+  el.textContent = text;
+  el.className = `qw-chip ${cls || 'neutral'}`;
+}
+
+async function openProcessDetail(processName) {
+  const serial = serialInput.value.trim();
+  if (!serial || !processName) {
+    return;
+  }
+  currentProcessDetailState.processName = processName;
+  const payload = await fetchJson(`/api/quality-workbench/${encodeURIComponent(serial)}/processes/${encodeURIComponent(processName)}`);
+  const detail = payload.processDetail || {};
+  processDetailTitle.textContent = detail.process || processName || '工序详情';
+  processDetailSubtitle.textContent = `${payload.serialNumber || serial} / ${payload.productType || '-'}`;
+  renderDetailStats([
+    ['工序顺序', detail.order ?? '-'],
+    ['拍照要求', detail.photoRequired ? '必需拍照' : '不要求拍照'],
+    ['照片数量', detail.photoCount ?? '-'],
+    ['当前状态', statusLabel(detail.status || 'pending')],
+    ['AI 判定', detail.aiStatus ? statusLabel(detail.aiStatus) : '-'],
+    ['人工判定', detail.humanStatus ? statusLabel(detail.humanStatus) : '-'],
+    ['最近检查时间', detail.latestInspectionTime || '-']
+  ]);
+  processDetailSummary.innerHTML = `
+    <div><strong>AI 说明：</strong>${escapeHtml(detail.aiSummary || '—')}</div>
+    <div style="margin-top:0.65rem;"><strong>人工说明：</strong>${escapeHtml(detail.humanSummary || '—')}</div>
+    <div style="margin-top:0.65rem;"><strong>最终结论：</strong>${escapeHtml(detail.effectiveSummary || detail.summary || '—')}</div>
+  `;
+  renderTags(processDetailDefects, detail.defects || [], '当前没有缺陷记录。');
+  renderPhotoCards(detail.photos || [], detail.canDeletePhotos === true);
+  processDetailModal.classList.remove('qw-hidden');
+}
+
+async function loadShipmentStats() {
+  const payload = await fetchJson(`/api/quality-workbench/shipment-stats?date=${encodeURIComponent(shipmentDateInput.value)}`);
+  selectedCountEl.textContent = payload.selectedDateCount ?? 0;
+  todayCountEl.textContent = payload.todayCount ?? 0;
+
+  renderList(
+    modelList,
+    payload.modelBreakdown || [],
+    '当天暂无产品型号统计数据。',
+    item => `
+      <div class="qw-list-item">
+        <div class="qw-list-title">${escapeHtml(item.projectName || '-')} / ${escapeHtml(item.productType || '-')}</div>
+        <div class="qw-list-meta">数量：${escapeHtml(item.count || 0)} 台</div>
+      </div>`
+  );
+
+  renderList(
+    trendList,
+    payload.trend || [],
+    '最近 7 天暂无出厂拍照记录。',
+    item => `
+      <div class="qw-list-item">
+        <div class="qw-list-title">${escapeHtml(item.date || '-')}</div>
+        <div class="qw-list-meta">当日完成出厂拍照机器数量：${escapeHtml(item.count || 0)} 台</div>
+      </div>`
+  );
+
+  renderList(
+    shipmentList,
+    payload.recentShipments || [],
+    '当天暂无出厂机器记录。',
+    item => `
+      <div class="qw-list-item">
+        <div class="qw-list-title">${escapeHtml(firstDefined(item.serialNumber, item.serial_number, '-'))}</div>
+        <div class="qw-list-meta">
+          项目：${escapeHtml(firstDefined(item.projectName, item.project_name, '-'))}<br>
+          产品型号：${escapeHtml(firstDefined(item.productType, item.product_type, '-'))}<br>
+          工序：${escapeHtml(firstDefined(item.processStep, item.process_step, '出厂检测'))} / 照片 ${escapeHtml(firstDefined(item.photoCount, item.photo_count, 0))} 张<br>
+          最近时间：${escapeHtml(firstDefined(item.latestPhotoTimeFormatted, item.latest_photo_time_formatted, '-'))}
+        </div>
+      </div>`
+  );
+}
+
+function renderWorkbench(payload) {
+  waitingPanel.classList.add('qw-hidden');
+  resultPanel.classList.remove('qw-hidden');
+
+  const requestedSerial = payload.requestedSerialNumber || payload.serialNumber || '';
+  const resolvedSerial = payload.serialNumber || '';
+  const conclusion = payload.qualityConclusion || {};
+  const baseRecord = payload.baseRecord || {};
+  const materialStatus = payload.materialStatus || {};
+  const processStatus = payload.processStatus || {};
+  const testReports = payload.testReports || {};
+  const associations = payload.associations || {};
+  const checks = (conclusion.triggeredRules && conclusion.triggeredRules.length ? conclusion.triggeredRules : payload.checks) || [];
+  const similarCandidates = associations.similarCandidates || [];
+
+  const chips = [
+    `<span class="qw-chip">项目：${escapeHtml(payload.projectName || '-')}</span>`,
+    `<span class="qw-chip">产品型号：${escapeHtml(payload.productType || '-')}</span>`,
+    `<span class="qw-chip ${statusClass(conclusion.level)}">${escapeHtml(conclusion.label || statusLabel(conclusion.level))}</span>`,
+    `<span class="qw-chip">${conclusion.shipmentReady ? '可出货' : '需处理'}</span>`
+  ].join('');
+
+  let noteHtml = '';
+  if (requestedSerial && resolvedSerial && requestedSerial !== resolvedSerial) {
+    noteHtml = `<div class="qw-banner-note">未找到完全一致的序列号，已按相近规则匹配到最近记录：<strong>${escapeHtml(resolvedSerial)}</strong></div>`;
+  }
+
+  serialBanner.innerHTML = `
+    <div class="qw-banner-title">${escapeHtml(resolvedSerial || requestedSerial || '-')}</div>
+    ${noteHtml}
+    <div class="qw-chip-row">${chips}</div>
+  `;
+
+  if (similarCandidates.length) {
+    candidateNote.classList.remove('qw-hidden');
+    candidateNote.innerHTML = `
+      <strong>候选记录</strong>
+      ${similarCandidates.map(item => `
+        <div style="margin-top:0.45rem;">
+          <strong>${escapeHtml(item.serialNumber || '-')}</strong>
+          / ${escapeHtml(item.projectName || '-')}
+          / ${escapeHtml(item.productType || '-')}
+          / ${escapeHtml(item.latestTimeFormatted || '-')}
+        </div>`).join('')}
+    `;
+  } else {
+    candidateNote.classList.add('qw-hidden');
+    candidateNote.innerHTML = '';
+  }
+
+  renderKvGrid(baseRecordGrid, [
+    ['记录状态', baseRecord.status || '-'],
+    ['最近操作员', baseRecord.operator || '-'],
+    ['最近扫码时间', baseRecord.latestScanTimeFormatted || '-']
+  ]);
+
+  renderKvGrid(shipmentTrackingGrid, [
+    ['是否存在出厂拍照', payload.shipmentTracking?.hasShipmentPhoto ? '是' : '否'],
+    ['最近工序', firstDefined(payload.shipmentTracking?.latestProcessStep, payload.shipmentTracking?.latest_process_step, '-')],
+    ['照片数量', firstDefined(payload.shipmentTracking?.photoCount, payload.shipmentTracking?.photo_count, 0)],
+    ['最近时间', firstDefined(payload.shipmentTracking?.latestPhotoTimeFormatted, payload.shipmentTracking?.latest_photo_time_formatted, '-')]
+  ]);
+
+  renderKvGrid(materialStatusGrid, [
+    ['必需物料总数', materialStatus.requiredTotal ?? 0],
+    ['已记录物料', materialStatus.recordedCount ?? 0],
+    ['缺失数量', materialStatus.missingCount ?? 0],
+    ['是否完整', materialStatus.complete ? '是' : '否']
+  ]);
+  renderTags(missingMaterials, materialStatus.missingMaterials || [], '当前没有缺失物料。');
+
+  setChip(hilBadge, testReports.HIL?.present ? '已关联' : (testReports.HIL?.required === false ? '不要求' : '未关联'), testReports.HIL?.present ? 'pass' : (testReports.HIL?.required === false ? 'neutral' : 'review'));
+  setChip(bemfBadge, testReports.BEMF?.present ? '已关联' : (testReports.BEMF?.required === false ? '不要求' : '未关联'), testReports.BEMF?.present ? 'pass' : (testReports.BEMF?.required === false ? 'neutral' : 'block'));
+  renderStatGrid(hilReportGrid, [
+    ['是否必需', testReports.HIL?.required === false ? '否' : '是'],
+    ['关联数量', testReports.HIL?.count ?? '-'],
+    ['最新文件', testReports.HIL?.latest?.filename || '无'],
+    ['测试结果', testReports.HIL?.latest?.result || '无'],
+    ['测试时间', testReports.HIL?.latest?.timestamp || '无']
+  ]);
+  renderStatGrid(bemfReportGrid, [
+    ['是否必需', testReports.BEMF?.required === false ? '否' : '阻断项'],
+    ['关联数量', testReports.BEMF?.count ?? '-'],
+    ['最新文件', testReports.BEMF?.latest?.filename || '无'],
+    ['测试结果', testReports.BEMF?.latest?.result || '无'],
+    ['测试时间', testReports.BEMF?.latest?.timestamp || '无']
+  ]);
+
+  qualityConclusionBlock.innerHTML = `
+    <div class="qw-kv">
+      <div class="qw-kv-row"><span>质量结论</span><span>${escapeHtml(conclusion.label || statusLabel(conclusion.level))}</span></div>
+      <div class="qw-kv-row"><span>出货判定</span><span>${conclusion.shipmentReady ? '可直接出货' : '暂不建议出货'}</span></div>
+    </div>
+    <div style="margin-top:0.85rem;color:#8a9bb0;line-height:1.8;">${escapeHtml(conclusion.summary || '暂无结论')}</div>
+  `;
+
+  setChip(processOverallBadge, String(processStatus.overallStatus || '待确认').toLowerCase(), severityLabel(processStatus.overallStatus));
+  renderSummaryCards(processOverviewCards, [
+    ['总工序数', processStatus.totalProcesses ?? 0],
+    ['要求拍照工序', processStatus.requiredPhotoProcesses ?? 0],
+    ['缺失照片工序', processStatus.missingPhotoCount ?? (processStatus.missingPhotoProcesses || []).length],
+    ['已完成检查工序', processStatus.inspectedProcesses ?? '-']
+  ]);
+
+  const ruleItems = checks || [];
+  setChip(triggeredCountBadge, `${ruleItems.length} 项`, ruleItems.length ? 'review' : 'neutral');
+  if (!ruleItems.length) {
+    triggeredChecksList.innerHTML = '<div style="color:#5a6f85;">当前未触发额外规则。</div>';
+  } else {
+    triggeredChecksList.innerHTML = ruleItems.map(item => `
+      <div class="qw-rule-item">
+        <div class="qw-rule-head">
+          <div class="qw-rule-title">${escapeHtml(item.summary || item.key || '规则')}</div>
+          <span class="qw-chip ${severityLabel(item.severity)}">${escapeHtml(item.severity || 'ignore')}</span>
+        </div>
+        <div class="qw-rule-detail">${escapeHtml((item.details || []).join(' / ') || '—')}</div>
+      </div>
+    `).join('');
+  }
+
+  const results = processStatus.results || [];
+  if (!results.length) {
+    processTableBody.innerHTML = '<tr><td colspan=\"7\" style=\"color:#5a6f85;\">当前没有工序明细数据。</td></tr>';
+    return;
+  }
+
+  processTableBody.innerHTML = results.map((row, index) => {
+    const effectiveStatus = firstDefined(row.effectiveStatus, row.effective_status, row.status, 'pending');
+    const processName = firstDefined(row.process, row.process_name, '-');
+    return `
+      <tr>
+        <td>${escapeHtml(row.order || index + 1)}</td>
+        <td>${escapeHtml(processName)}</td>
+        <td><span class="qw-chip ${statusClass(effectiveStatus)}">${escapeHtml(statusLabel(effectiveStatus))}</span></td>
+        <td>${escapeHtml(firstDefined(row.photoCount, row.photo_count, 0))}</td>
+        <td>${escapeHtml(firstDefined(row.effectiveSummary, row.effective_summary, row.summary, row.aiSummary, row.ai_summary, row.humanSummary, row.human_summary, '暂无结论'))}</td>
+        <td>${escapeHtml(firstDefined(row.latestInspectionTimeFormatted, row.latest_inspection_time_formatted, row.latestInspectionTime, row.latest_inspection_time, '-'))}</td>
+        <td><button type="button" class="qw-link-btn" data-process-detail="${escapeHtml(processName)}">查看详情</button></td>
+      </tr>`;
+  }).join('');
+
+  processTableBody.querySelectorAll('[data-process-detail]').forEach(button => {
+    button.addEventListener('click', async () => {
+      try {
+        await openProcessDetail(button.getAttribute('data-process-detail') || '');
+      } catch (error) {
+        alert(error.message || '工序详情加载失败');
+      }
+    });
+  });
+}
+
+async function loadWorkbench() {
+  const serial = serialInput.value.trim();
+  if (!serial) {
+    alert('请输入产品序列号');
+    return;
+  }
+  const payload = await fetchJson(`/api/quality-workbench/${encodeURIComponent(serial)}`);
+  renderWorkbench(payload);
+}
+
+document.getElementById('btnLoadWorkbench').addEventListener('click', async () => {
+  try {
+    await loadWorkbench();
+  } catch (error) {
+    alert(error.message || '加载质量工作台失败');
+  }
+});
+
+document.getElementById('btnRefreshStats').addEventListener('click', async () => {
+  try {
+    await loadShipmentStats();
+  } catch (error) {
+    alert(error.message || '刷新统计失败');
+  }
+});
+
+serialInput.addEventListener('keydown', async event => {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  try {
+    await loadWorkbench();
+  } catch (error) {
+    alert(error.message || '加载质量工作台失败');
+  }
+});
+
+shipmentDateInput.value = new Date().toISOString().slice(0, 10);
+loadShipmentStats().catch(error => {
+  shipmentList.innerHTML = `<div style="color:#5a6f85;">${escapeHtml(error.message || '加载统计失败')}</div>`;
+});
+
+const btnJumpWorkbench = document.getElementById('btnJumpWorkbench');
+const btnJumpShipmentStats = document.getElementById('btnJumpShipmentStats');
+
+function showWorkbenchPage(page) {
+  const showSerial = page !== 'stats';
+  serialWorkbenchSection.classList.toggle('qw-hidden', !showSerial);
+  shipmentStatsSection.classList.toggle('qw-hidden', showSerial);
+  btnJumpWorkbench.classList.toggle('active', showSerial);
+  btnJumpShipmentStats.classList.toggle('active', !showSerial);
+}
+
+btnJumpWorkbench.addEventListener('click', () => {
+  showWorkbenchPage('serial');
+});
+
+btnJumpShipmentStats.addEventListener('click', () => {
+  showWorkbenchPage('stats');
+});
+
+showWorkbenchPage('serial');
+
+document.getElementById('processDetailClose').addEventListener('click', closeProcessDetail);
+processDetailModal.addEventListener('click', event => {
+  if (event.target === processDetailModal) {
+    closeProcessDetail();
+  }
+});
+</script>
+{% endblock %}

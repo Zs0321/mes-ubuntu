@@ -1,0 +1,787 @@
+{% extends "base.html" %}
+
+{% block title %}系统设置 - MES系统{% endblock %}
+
+{% block head %}
+<style>
+/* SOP全屏页面样式 */
+.sop-page {
+    display: grid;
+    gap: 1.5rem;
+    color: var(--text-primary);
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+/* 覆盖.container的宽度限制 */
+.container .sop-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.settings-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 2rem;
+}
+
+.settings-nav {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    position: sticky;
+    top: 1rem;
+    height: fit-content;
+}
+
+.settings-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.settings-nav-item:hover {
+    background: var(--surface);
+    color: var(--text-primary);
+}
+
+.settings-nav-item.active {
+    background: rgba(56, 189, 248, 0.16);
+    color: var(--primary);
+}
+
+.settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.settings-section {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.settings-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.settings-section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.settings-section-body {
+    padding: 1.5rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.form-input,
+.form-select {
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.approval-flow-config {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.approval-step-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.step-order {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.step-content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+}
+
+.step-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.step-action-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.step-action-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.watermark-preview {
+    padding: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.watermark-sample {
+    font-size: 1.5rem;
+    color: #ef4444;
+    opacity: 0.7;
+    font-family: 'SimSun', serif;
+}
+
+.color-picker-wrapper {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.color-picker {
+    width: 60px;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+}
+
+.color-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #0a0a0a;
+}
+
+.btn-primary:hover {
+    background: var(--primary-light);
+}
+
+.btn-secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+    border-color: var(--border-strong);
+}
+
+.btn-success {
+    background: #22c55e;
+    color: #0a0a0a;
+}
+
+.maintenance-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.maintenance-action {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.maintenance-action:hover {
+    border-color: var(--primary);
+}
+
+.maintenance-action-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.maintenance-action-desc {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .settings-nav {
+        position: static;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .step-content {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sop-page">
+<div class="settings-container">
+    <div class="page-header">
+        <h1 class="page-title">
+            <span>⚙️</span>
+            SOP系统设置
+        </h1>
+        <a href="{{ url_for('sop.sop_home') }}" class="btn btn-secondary">
+            ← 返回首页
+        </a>
+    </div>
+    
+    <div class="settings-grid">
+        <!-- 侧边导航 -->
+        <div class="settings-nav">
+            <div class="settings-nav-item active" onclick="scrollToSection('approval')">
+                📋 审批流程配置
+            </div>
+            <div class="settings-nav-item" onclick="scrollToSection('number')">
+                🔢 文件编号规则
+            </div>
+            <div class="settings-nav-item" onclick="scrollToSection('watermark')">
+                🏷️ 水印设置
+            </div>
+            <div class="settings-nav-item" onclick="scrollToSection('maintenance')">
+                🔧 系统维护
+            </div>
+        </div>
+        
+        <!-- 设置内容 -->
+        <div class="settings-content">
+            <!-- 审批流程配置 -->
+            <div class="settings-section" id="approval-section">
+                <div class="settings-section-header">
+                    <div class="settings-section-title">
+                        <span>📋</span>
+                        审批流程配置
+                    </div>
+                    <button class="btn btn-secondary" onclick="addApprovalStep()">
+                        ➕ 添加步骤
+                    </button>
+                </div>
+                <div class="settings-section-body">
+                    <div class="approval-flow-config" id="approval-flow-config">
+                        <div class="approval-step-item">
+                            <div class="step-order">1</div>
+                            <div class="step-content">
+                                <div>
+                                    <label class="form-label">步骤名称</label>
+                                    <input type="text" class="form-input" value="编号审核">
+                                </div>
+                                <div>
+                                    <label class="form-label">默认审核人</label>
+                                    <input type="text" class="form-input" value="邱静">
+                                </div>
+                                <div>
+                                    <label class="form-label">角色</label>
+                                    <select class="form-select">
+                                        <option>文档管理员</option>
+                                        <option>研发代表</option>
+                                        <option>质量代表</option>
+                                        <option>生产代表</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="step-actions">
+                                <button class="step-action-btn">⬆️</button>
+                                <button class="step-action-btn">⬇️</button>
+                                <button class="step-action-btn">🗑️</button>
+                            </div>
+                        </div>
+                        
+                        <div class="approval-step-item">
+                            <div class="step-order">2</div>
+                            <div class="step-content">
+                                <div>
+                                    <label class="form-label">步骤名称</label>
+                                    <input type="text" class="form-input" value="研发会签">
+                                </div>
+                                <div>
+                                    <label class="form-label">默认审核人</label>
+                                    <input type="text" class="form-input" value="廖学林">
+                                </div>
+                                <div>
+                                    <label class="form-label">角色</label>
+                                    <select class="form-select">
+                                        <option>研发代表</option>
+                                        <option>文档管理员</option>
+                                        <option>质量代表</option>
+                                        <option>生产代表</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="step-actions">
+                                <button class="step-action-btn">⬆️</button>
+                                <button class="step-action-btn">⬇️</button>
+                                <button class="step-action-btn">🗑️</button>
+                            </div>
+                        </div>
+                        
+                        <div class="approval-step-item">
+                            <div class="step-order">3</div>
+                            <div class="step-content">
+                                <div>
+                                    <label class="form-label">步骤名称</label>
+                                    <input type="text" class="form-input" value="质量会签">
+                                </div>
+                                <div>
+                                    <label class="form-label">默认审核人</label>
+                                    <input type="text" class="form-input" value="褚留欣">
+                                </div>
+                                <div>
+                                    <label class="form-label">角色</label>
+                                    <select class="form-select">
+                                        <option>质量代表</option>
+                                        <option>研发代表</option>
+                                        <option>文档管理员</option>
+                                        <option>生产代表</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="step-actions">
+                                <button class="step-action-btn">⬆️</button>
+                                <button class="step-action-btn">⬇️</button>
+                                <button class="step-action-btn">🗑️</button>
+                            </div>
+                        </div>
+                        
+                        <div class="approval-step-item">
+                            <div class="step-order">4</div>
+                            <div class="step-content">
+                                <div>
+                                    <label class="form-label">步骤名称</label>
+                                    <input type="text" class="form-input" value="生产会签">
+                                </div>
+                                <div>
+                                    <label class="form-label">默认审核人</label>
+                                    <input type="text" class="form-input" value="路敦安">
+                                </div>
+                                <div>
+                                    <label class="form-label">角色</label>
+                                    <select class="form-select">
+                                        <option>生产代表</option>
+                                        <option>研发代表</option>
+                                        <option>质量代表</option>
+                                        <option>文档管理员</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="step-actions">
+                                <button class="step-action-btn">⬆️</button>
+                                <button class="step-action-btn">⬇️</button>
+                                <button class="step-action-btn">🗑️</button>
+                            </div>
+                        </div>
+                        
+                        <div class="approval-step-item">
+                            <div class="step-order">5</div>
+                            <div class="step-content">
+                                <div>
+                                    <label class="form-label">步骤名称</label>
+                                    <input type="text" class="form-input" value="最终批准">
+                                </div>
+                                <div>
+                                    <label class="form-label">默认审核人</label>
+                                    <input type="text" class="form-input" value="邱静">
+                                </div>
+                                <div>
+                                    <label class="form-label">角色</label>
+                                    <select class="form-select">
+                                        <option>文档管理员</option>
+                                        <option>研发代表</option>
+                                        <option>质量代表</option>
+                                        <option>生产代表</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="step-actions">
+                                <button class="step-action-btn">⬆️</button>
+                                <button class="step-action-btn">⬇️</button>
+                                <button class="step-action-btn">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-success" onclick="saveApprovalConfig()">
+                            💾 保存配置
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 文件编号规则 -->
+            <div class="settings-section" id="number-section">
+                <div class="settings-section-header">
+                    <div class="settings-section-title">
+                        <span>🔢</span>
+                        文件编号规则
+                    </div>
+                </div>
+                <div class="settings-section-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">公司代码</label>
+                            <input type="text" class="form-input" value="CQ">
+                            <div class="form-hint">固定前缀，代表公司标识</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">文件类型</label>
+                            <select class="form-select">
+                                <option>WI - 作业指导书</option>
+                                <option>QP - 质量程序</option>
+                                <option>FM - 表单</option>
+                                <option>WI/QP/FM - 全部</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">部门代码</label>
+                            <input type="text" class="form-input" value="D">
+                            <div class="form-hint">部门标识代码</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">起始编号</label>
+                            <input type="number" class="form-input" value="1" min="1">
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label class="form-label">编号示例</label>
+                            <input type="text" class="form-input" value="CQ-WI-D001-A0" disabled>
+                            <div class="form-hint">格式：公司代码-文件类型-序号-版本</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-success" onclick="saveNumberConfig()">
+                            💾 保存配置
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 水印设置 -->
+            <div class="settings-section" id="watermark-section">
+                <div class="settings-section-header">
+                    <div class="settings-section-title">
+                        <span>🏷️</span>
+                        水印设置
+                    </div>
+                </div>
+                <div class="settings-section-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">水印文字</label>
+                            <input type="text" class="form-input" value="受控文件">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">字体</label>
+                            <select class="form-select">
+                                <option>宋体</option>
+                                <option>黑体</option>
+                                <option>微软雅黑</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">字号</label>
+                            <select class="form-select">
+                                <option>初号 (42pt)</option>
+                                <option>小初 (36pt)</option>
+                                <option>一号 (26pt)</option>
+                                <option selected>二号 (22pt)</option>
+                                <option>三号 (16pt)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">颜色</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" class="color-picker" value="#ff0000">
+                                <span class="color-value">#FF0000</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">透明度</label>
+                            <input type="range" class="form-input" min="0" max="100" value="30" style="padding: 0;">
+                            <div class="form-hint">当前: 30%</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">旋转角度</label>
+                            <input type="number" class="form-input" value="-45" min="-180" max="180">
+                            <div class="form-hint">度数，负值为逆时针</div>
+                        </div>
+                    </div>
+                    
+                    <div class="watermark-preview">
+                        <div class="watermark-sample">受控文件</div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-success" onclick="saveWatermarkConfig()">
+                            💾 保存配置
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 系统维护 -->
+            <div class="settings-section" id="maintenance-section">
+                <div class="settings-section-header">
+                    <div class="settings-section-title">
+                        <span>🔧</span>
+                        系统维护
+                    </div>
+                </div>
+                <div class="settings-section-body">
+                    <div class="maintenance-actions">
+                        <div class="maintenance-action" onclick="rebuildIndex()">
+                            <div class="maintenance-action-title">🔄 重建搜索索引</div>
+                            <div class="maintenance-action-desc">重新生成SOP搜索索引，提高查询速度</div>
+                        </div>
+                        
+                        <div class="maintenance-action" onclick="cleanTempFiles()">
+                            <div class="maintenance-action-title">🧹 清理临时文件</div>
+                            <div class="maintenance-action-desc">删除过期的临时上传文件</div>
+                        </div>
+                        
+                        <div class="maintenance-action" onclick="backupDatabase()">
+                            <div class="maintenance-action-title">💾 备份数据库</div>
+                            <div class="maintenance-action-desc">创建SOP数据库备份</div>
+                        </div>
+                        
+                        <div class="maintenance-action" onclick="exportData()">
+                            <div class="maintenance-action-title">📊 导出数据</div>
+                            <div class="maintenance-action-desc">导出SOP统计数据和报表</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function scrollToSection(section) {
+    document.querySelectorAll('.settings-nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+    
+    const sectionEl = document.getElementById(section + '-section');
+    if (sectionEl) {
+        sectionEl.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function addApprovalStep() {
+    const container = document.getElementById('approval-flow-config');
+    const stepCount = container.children.length + 1;
+    
+    const stepHtml = `
+        <div class="approval-step-item">
+            <div class="step-order">${stepCount}</div>
+            <div class="step-content">
+                <div>
+                    <label class="form-label">步骤名称</label>
+                    <input type="text" class="form-input" placeholder="步骤名称">
+                </div>
+                <div>
+                    <label class="form-label">默认审核人</label>
+                    <input type="text" class="form-input" placeholder="审核人">
+                </div>
+                <div>
+                    <label class="form-label">角色</label>
+                    <select class="form-select">
+                        <option>文档管理员</option>
+                        <option>研发代表</option>
+                        <option>质量代表</option>
+                        <option>生产代表</option>
+                    </select>
+                </div>
+            </div>
+            <div class="step-actions">
+                <button class="step-action-btn">⬆️</button>
+                <button class="step-action-btn">⬇️</button>
+                <button class="step-action-btn">🗑️</button>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', stepHtml);
+}
+
+function saveApprovalConfig() {
+    alert('审批流程配置已保存！');
+}
+
+function saveNumberConfig() {
+    alert('文件编号规则已保存！');
+}
+
+function saveWatermarkConfig() {
+    alert('水印设置已保存！');
+}
+
+function rebuildIndex() {
+    if (confirm('确定要重建搜索索引吗？')) {
+        alert('索引重建完成！');
+    }
+}
+
+function cleanTempFiles() {
+    if (confirm('确定要清理临时文件吗？')) {
+        alert('临时文件清理完成！');
+    }
+}
+
+function backupDatabase() {
+    alert('数据库备份完成！');
+}
+
+function exportData() {
+    alert('数据导出功能开发中...');
+}
+</script>
+{% endblock %}

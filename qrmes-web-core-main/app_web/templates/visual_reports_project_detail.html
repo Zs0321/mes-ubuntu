@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project_name }} - 测试报告项目配置{% endblock %}
+
+{% block content %}
+<style>
+    .vr-project-shell { display: grid; gap: 1.5rem; }
+    .vr-project-hero { background: linear-gradient(135deg, rgba(102, 126, 234, 0.16), rgba(118, 75, 162, 0.12)); border: 1px solid rgba(102, 126, 234, 0.14); border-radius: 20px; padding: 1.8rem; display: flex; justify-content: space-between; gap: 1.2rem; align-items: flex-start; flex-wrap: wrap; }
+    .vr-project-hero h2 { margin: 0 0 0.55rem; color: #243b53; font-size: 1.85rem; }
+    .vr-project-hero p { margin: 0; color: #52606d; line-height: 1.75; max-width: 820px; }
+    .vr-project-hero code { background: #eef2ff; color: #4c51bf; padding: 0.15rem 0.4rem; border-radius: 8px; }
+    .vr-project-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .vr-project-grid { display: grid; gap: 1.2rem; }
+    .vr-project-card { background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(10,15,26,0.98) 100%); border: 1px solid rgba(30,41,59,0.5); border-radius: 20px; box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4); overflow: hidden; }
+    .vr-project-card-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; padding: 1.25rem 1.4rem; background: #111827; border-bottom: 1px solid #edf2f7; flex-wrap: wrap; }
+    .vr-project-card-head h3 { margin: 0 0 0.4rem; color: #1f2937; font-size: 1.2rem; }
+    .vr-project-card-head p { margin: 0.2rem 0 0; color: #718096; font-size: 0.92rem; }
+    .vr-project-upload { display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem; }
+    .vr-project-status { color: #6b7280; font-size: 0.88rem; }
+    .vr-project-card-body { padding: 1.25rem 1.4rem 1.4rem; }
+    .vr-project-template-list { display: grid; gap: 0.75rem; }
+    .vr-project-template-item { display: flex; justify-content: space-between; gap: 1rem; align-items: center; padding: 0.85rem 0.95rem; background: #111827; border: 1px solid #edf2f7; border-radius: 14px; flex-wrap: wrap; }
+    .vr-project-template-item strong { color: #1f2937; }
+    .vr-project-template-item span { color: #718096; font-size: 0.86rem; }
+    .vr-project-empty { padding: 1.1rem 1rem; background: #fbfdff; border: 1px dashed #334155; border-radius: 14px; color: #7b8794; text-align: center; }
+    .vr-project-upload-note { margin-top: 0.9rem; color: #6b7280; font-size: 0.88rem; line-height: 1.7; }
+    /* 2026-04-27 readability pass for dark MES shell */
+    .vr-project-hero { background: linear-gradient(135deg, rgba(15,23,42,0.96), rgba(30,41,59,0.84)); border-color: rgba(56,189,248,0.22); box-shadow: 0 18px 54px rgba(0,0,0,0.34); }
+    .vr-project-hero h2 { color: #e5f2ff; }
+    .vr-project-hero p { color: #c7d7ea; }
+    .vr-project-hero code { background: rgba(219,234,254,0.98); color: #1d4ed8; font-weight: 800; }
+    .vr-project-card { border-color: rgba(56,189,248,0.18); }
+    .vr-project-card-head { background: rgba(15,23,42,0.92); border-bottom-color: rgba(226,232,240,0.5); }
+    .vr-project-card-head h3 { color: #dbeafe; }
+    .vr-project-card-head p,
+    .vr-project-status,
+    .vr-project-upload-note { color: #c7d7ea; }
+    .vr-project-card-head code { color: #bfdbfe; }
+    .vr-project-template-item {
+        background: rgba(15,23,42,0.82);
+        border-color: rgba(148,163,184,0.22);
+    }
+    .vr-project-template-item strong { color: #e5f2ff; }
+    .vr-project-template-item span { color: #c7d7ea; }
+    .vr-project-empty {
+        background: rgba(241,248,255,0.98);
+        border-color: rgba(148,163,184,0.54);
+        color: #475569;
+        font-weight: 700;
+    }
+</style>
+
+<div class="vr-project-shell">
+    <section class="vr-project-hero">
+        <div>
+            <h2>{{ project_name }}</h2>
+            <p>这里仅保留当前项目的产品类型配置区。每个产品类型右侧只提供“上传模板”按钮，上传后的 Excel 模板会保存在 <code>QRMES/test-report-template</code> 目录中，不影响原有项目模块页面。</p>
+        </div>
+        <div class="vr-project-actions">
+            <a href="{{ url_for('visual_reports_page') }}" class="btn btn-secondary">返回测试报告</a>
+            <a href="{{ url_for('visual_reports_test_page') }}" class="btn btn-primary">前往测试工作台</a>
+        </div>
+    </section>
+
+    <section class="vr-project-grid">
+        {% if product_types %}
+        {% for product_type in product_types %}
+        <article class="vr-project-card" data-type-name="{{ product_type.type_name }}">
+            <div class="vr-project-card-head">
+                <div>
+                    <h3>{{ product_type.type_name }}</h3>
+                    {% if product_type.model_number %}
+                    <p>产品型号：<code>{{ product_type.model_number }}</code></p>
+                    {% else %}
+                    <p>产品型号：未配置</p>
+                    {% endif %}
+                </div>
+                <div class="vr-project-upload">
+                    <input
+                        type="file"
+                        accept=".xlsx,.xls,.xlsm"
+                        class="vr-template-file-input"
+                        data-upload-url="{{ url_for('api_visual_reports_upload_project_template', project_name=project_name, product_type_name=product_type.type_name) }}"
+                        style="display:none;"
+                    >
+                    <button type="button" class="btn btn-primary vr-upload-button">上传模板</button>
+                    <div class="vr-project-status">等待上传</div>
+                </div>
+            </div>
+            <div class="vr-project-card-body">
+                <div class="vr-project-template-list">
+                    {% if product_type.uploaded_templates %}
+                        {% for template in product_type.uploaded_templates %}
+                        <div class="vr-project-template-item">
+                            <strong>{{ template.file_name }}</strong>
+                            <span>{{ template.updated_at }}</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="vr-project-empty">当前产品类型还没有通过本页面上传模板。</div>
+                    {% endif %}
+                </div>
+                <div class="vr-project-upload-note">上传文件名会自动带上项目和产品类型前缀，便于后续在模板目录中区分。</div>
+            </div>
+        </article>
+        {% endfor %}
+        {% else %}
+        <div class="vr-project-empty">当前项目没有读取到产品类型配置。</div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(() => {
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function renderTemplateList(card, templates) {
+        const host = card.querySelector('.vr-project-template-list');
+        if (!host) return;
+        if (!Array.isArray(templates) || !templates.length) {
+            host.innerHTML = '<div class="vr-project-empty">当前产品类型还没有通过本页面上传模板。</div>';
+            return;
+        }
+        host.innerHTML = templates.map((item) => `
+            <div class="vr-project-template-item">
+                <strong>${escapeHtml(item.file_name || '')}</strong>
+                <span>${escapeHtml(item.updated_at || '')}</span>
+            </div>
+        `).join('');
+    }
+
+    document.querySelectorAll('.vr-project-card').forEach((card) => {
+        const button = card.querySelector('.vr-upload-button');
+        const input = card.querySelector('.vr-template-file-input');
+        const status = card.querySelector('.vr-project-status');
+        if (!button || !input || !status) return;
+
+        button.addEventListener('click', () => input.click());
+        input.addEventListener('change', async () => {
+            const file = input.files && input.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+            button.disabled = true;
+            status.textContent = '正在上传模板...';
+            status.style.color = '#4c51bf';
+
+            try {
+                const response = await fetch(input.dataset.uploadUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    status.textContent = result.message || '模板上传失败';
+                    status.style.color = '#c53030';
+                    return;
+                }
+
+                status.textContent = `上传成功：${result.file_name || file.name}`;
+                status.style.color = '#2f855a';
+                renderTemplateList(card, result.templates || []);
+            } catch (error) {
+                status.textContent = `上传失败：${error.message || error}`;
+                status.style.color = '#c53030';
+            } finally {
+                input.value = '';
+                button.disabled = false;
+            }
+        });
+    });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,311 @@
+{% extends "motor_qc/base.html" %}
+
+{% block breadcrumb %}
+<a href="{{ url_for('motor_qc.index') }}">项目列表</a>
+<span> / </span>
+<span id="breadcrumb-project">{{ project_name or project_id or '未选择项目' }}</span>
+<span> / </span>
+<span>QC任务中心</span>
+{% endblock %}
+
+{% block motor_qc_content %}
+<div class="qc-page task-page">
+    <div class="card qc-header">
+        <div class="qc-header-main">
+            <div>
+                <h2>QC任务中心</h2>
+                <div class="muted">
+                    项目：
+                    {% if project_id %}
+                    {{ project_name or project_id }}（{{ project_id }}）
+                    {% else %}
+                    未选择（请在边缘工位模式中配置项目和工序）
+                    {% endif %}
+                </div>
+            </div>
+            <div class="qc-header-actions">
+                <button type="button" id="task-view-center-btn" class="btn btn-primary">任务中心模式</button>
+                <button type="button" id="task-view-edge-btn" class="btn btn-secondary">边缘工位模式</button>
+                {% if project_id %}
+                <a class="btn btn-primary" href="{{ url_for('motor_qc.manual_review_page', project_id=project_id) }}">人工确认页</a>
+                <a class="btn btn-secondary" href="{{ url_for('motor_qc.storage_check_page', project_id=project_id) }}">存储自检</a>
+                {% else %}
+                <button type="button" class="btn btn-secondary" disabled title="请先在边缘工位模式选择项目">人工确认页</button>
+                <button type="button" class="btn btn-secondary" disabled title="请先在边缘工位模式选择项目">存储自检</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div id="edge-station-shell" class="card edge-shell hidden">
+        <div class="edge-toolbar">
+            <div class="edge-toolbar-left">
+                <div class="control-row">
+                    <label for="edge-station-id">工位</label>
+                    <input id="edge-station-id" value="S01" placeholder="S01">
+                </div>
+                <div class="control-row">
+                    <label for="edge-operator-id">操作员</label>
+                    <input id="edge-operator-id" placeholder="如：u1001">
+                </div>
+                <div class="control-row">
+                    <label for="edge-project-id">项目</label>
+                    <select id="edge-project-id">
+                        <option value="">加载项目中...</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label for="edge-product-type">产品类型</label>
+                    <select id="edge-product-type">
+                        <option value="">自动识别/未指定</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label for="edge-process-name">工序</label>
+                    <select id="edge-process-name">
+                        <option value="">请先选择项目</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <button type="button" id="edge-config-save-btn" class="btn btn-secondary">保存配置</button>
+                </div>
+                <div class="control-row">
+                    <span id="edge-config-status" class="small muted">未保存</span>
+                </div>
+                <div class="control-row">
+                    <label for="edge-camera-source">相机来源</label>
+                    <select id="edge-camera-source">
+                        <option value="browser">浏览器相机</option>
+                        <option value="local_bridge">本地桥接(Hik)</option>
+                        <option value="mock">模拟画面</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label for="edge-button-source">结束按钮来源</label>
+                    <select id="edge-button-source">
+                        <option value="manual">仅页面按钮</option>
+                        <option value="local_bridge">本地桥接按钮</option>
+                        <option value="keyboard">键盘F8模拟</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label for="edge-bridge-url">桥接地址</label>
+                    <input id="edge-bridge-url" value="http://127.0.0.1:19091" placeholder="http://127.0.0.1:19091">
+                </div>
+            </div>
+            <div class="edge-toolbar-right">
+                <div class="edge-chip">会话状态：<span id="edge-session-state">IDLE</span></div>
+                <div class="edge-chip">后端：<span id="edge-backend-status">unknown</span></div>
+                <div class="edge-chip">相机：<span id="edge-camera-status">stopped</span></div>
+                <div class="edge-chip">按钮：<span id="edge-button-status">manual</span></div>
+                <div class="edge-chip">队列：<span id="edge-queue-size">0</span></div>
+            </div>
+        </div>
+
+        <div class="edge-layout">
+            <section class="edge-live card">
+                <div class="edge-live-head">
+                    <div>实时画面</div>
+                    <div class="small muted">15秒判定倒计时：<span id="edge-tick-countdown">15</span>s</div>
+                </div>
+                <video id="edge-live-video" autoplay muted playsinline></video>
+                <canvas id="edge-live-canvas" class="hidden"></canvas>
+            </section>
+
+            <section class="edge-controls card">
+                <div class="control-row">
+                    <label for="edge-scan-input">二维码输入（扫码枪回车）</label>
+                    <input id="edge-scan-input" placeholder="请扫码开始，例如 TZ310D-06A20002">
+                </div>
+                <div class="edge-button-row">
+                    <button type="button" id="edge-scan-btn" class="btn btn-primary">扫码开始</button>
+                    <button type="button" id="edge-end-btn" class="btn btn-danger" disabled>按钮结束</button>
+                    <button type="button" id="edge-reset-btn" class="btn btn-secondary">重置</button>
+                </div>
+                <div class="edge-kv-grid edge-kv-grid-2">
+                    <div class="edge-kv-item">序列号：<span id="edge-current-serial">-</span></div>
+                    <div class="edge-kv-item">项目：<span id="edge-current-project">-</span></div>
+                    <div class="edge-kv-item">产品类型：<span id="edge-current-product-type">-</span></div>
+                    <div class="edge-kv-item">当前工序：<span id="edge-current-process">-</span></div>
+                </div>
+                <div class="edge-conclusion-card" aria-live="polite">
+                    <div class="edge-conclusion-head">
+                        <div>最近识别结论</div>
+                        <div class="small muted" id="edge-conclusion-metrics">等待检测</div>
+                    </div>
+                    <div class="edge-conclusion-status-row">
+                        <span id="edge-conclusion-status" class="edge-conclusion-badge pending">待检测</span>
+                        <span class="small muted">上传：<span id="edge-last-upload">-</span></span>
+                    </div>
+                    <div id="edge-conclusion-summary" class="edge-conclusion-summary muted">暂无识别结果</div>
+                    <div class="edge-kv-item small">
+                        相似度：<span id="edge-last-similarity">-</span>
+                        <span style="margin-left:10px;">结论摘要：<span id="edge-last-conclusion">-</span></span>
+                    </div>
+                    <ul id="edge-conclusion-findings" class="edge-conclusion-findings">
+                        <li class="muted">暂无问题明细</li>
+                    </ul>
+                </div>
+                <section class="edge-prompt-card">
+                    <div class="edge-live-head" style="margin-bottom:6px;">
+                        <div>工序预Prompt配置</div>
+                        <div id="edge-prompt-status" class="small muted">未保存</div>
+                    </div>
+                    <div class="edge-prompt-grid">
+                        <div class="control-row">
+                            <label for="edge-expected-screw-count">应装螺钉数量</label>
+                            <input id="edge-expected-screw-count" type="number" min="0" placeholder="如 12">
+                        </div>
+                        <div class="control-row">
+                            <label for="edge-special-processes">特殊工艺</label>
+                            <input id="edge-special-processes" placeholder="如 点胶、扭矩复检">
+                        </div>
+                        <div class="control-row">
+                            <label for="edge-special-parts">特殊零部件</label>
+                            <input id="edge-special-parts" placeholder="如 电容板、定位支架">
+                        </div>
+                        <div class="control-row">
+                            <label for="edge-extra-focus">检测关注点</label>
+                            <input id="edge-extra-focus" placeholder="逗号分隔，如 螺钉头部朝向,胶路连续性">
+                        </div>
+                    </div>
+                    <div class="control-row">
+                        <label for="edge-preprompt-text">预Prompt（可编辑）</label>
+                        <textarea id="edge-preprompt-text" rows="3" placeholder="自动生成后可手动微调"></textarea>
+                    </div>
+                    <div class="edge-button-row">
+                        <button type="button" id="edge-prompt-generate-btn" class="btn btn-secondary">生成Prompt</button>
+                        <button type="button" id="edge-prompt-save-btn" class="btn btn-success">保存预设</button>
+                    </div>
+                </section>
+                <div id="edge-hint" class="small muted"></div>
+            </section>
+        </div>
+
+        <section class="card edge-timeline-card">
+            <div class="edge-live-head">
+                <div>判定时间线</div>
+                <div class="small muted">每15秒一条：无变化跳过 / 有变化上传 / 最终图必传</div>
+            </div>
+            <div id="edge-timeline" class="edge-timeline-list">
+                <div class="small muted">暂无事件</div>
+            </div>
+        </section>
+    </div>
+
+    <div id="task-center-shell">
+        <div class="card task-filters">
+            <div class="control-row">
+                <label for="task-filter-status">状态</label>
+                <select id="task-filter-status">
+                    <option value="">全部状态</option>
+                    <option value="pending">待识别</option>
+                    <option value="running">识别中</option>
+                    <option value="review">待确认</option>
+                    <option value="confirmed">已确认</option>
+                    <option value="failed">失败</option>
+                </select>
+            </div>
+            <div class="control-row">
+                <label for="task-filter-serial">序列号</label>
+                <input id="task-filter-serial" list="task-serial-options" placeholder="输入或选择序列号">
+            </div>
+            <div class="control-row">
+                <label for="task-filter-process">工序</label>
+                <input id="task-filter-process" list="task-process-options" placeholder="输入或选择工序">
+            </div>
+            <div class="control-row">
+                <label for="task-filter-product-type">产品类型</label>
+                <input id="task-filter-product-type" list="task-product-type-options" placeholder="输入或选择产品类型">
+            </div>
+            <div class="control-row">
+                <label for="task-filter-date-from">开始日期</label>
+                <input id="task-filter-date-from" type="date">
+            </div>
+            <div class="control-row">
+                <label for="task-filter-date-to">结束日期</label>
+                <input id="task-filter-date-to" type="date">
+            </div>
+            <div class="control-row">
+                <label for="task-filter-overdue">超时提醒</label>
+                <select id="task-filter-overdue">
+                    <option value="">全部</option>
+                    <option value="warning">仅黄色(>10分钟)</option>
+                    <option value="danger">仅红色(>30分钟)</option>
+                </select>
+            </div>
+            <div class="control-row">
+                <label for="task-filter-ai">AI结论</label>
+                <select id="task-filter-ai">
+                    <option value="">全部</option>
+                    <option value="pass">识别正确(合格)</option>
+                    <option value="fail">识别错误(不合格/待复核)</option>
+                </select>
+            </div>
+            <div class="control-actions">
+                <button type="button" id="task-search-btn" class="btn btn-primary">查询</button>
+                <button type="button" id="task-reset-btn" class="btn btn-secondary">重置</button>
+                <button type="button" id="task-refresh-btn" class="btn btn-success">刷新</button>
+                <button type="button" id="task-auto-refresh-btn" class="btn btn-secondary">自动刷新: 开</button>
+            </div>
+            <div id="task-page-hint" class="muted small"></div>
+        </div>
+
+        <div class="task-summary-grid">
+            <section class="card task-summary-card">
+                <div class="task-summary-title">待识别</div>
+                <div id="count-pending" class="task-summary-value">0</div>
+            </section>
+            <section class="card task-summary-card">
+                <div class="task-summary-title">识别中</div>
+                <div id="count-running" class="task-summary-value">0</div>
+            </section>
+            <section class="card task-summary-card">
+                <div class="task-summary-title">待确认</div>
+                <div id="count-review" class="task-summary-value">0</div>
+            </section>
+            <section class="card task-summary-card">
+                <div class="task-summary-title">已确认</div>
+                <div id="count-confirmed" class="task-summary-value">0</div>
+            </section>
+        </div>
+
+        <div id="task-groups" class="task-groups"></div>
+    </div>
+
+    <datalist id="task-serial-options"></datalist>
+    <datalist id="task-process-options"></datalist>
+    <datalist id="task-product-type-options"></datalist>
+
+    <div id="task-photo-preview-modal" class="photo-preview-modal hidden">
+        <div class="photo-preview-dialog">
+            <button type="button" class="photo-preview-close" data-close-photo-modal aria-label="关闭">×</button>
+            <img id="task-photo-preview-image" src="" alt="工序照片预览">
+            <div id="task-photo-preview-caption" class="small muted"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block motor_qc_js %}
+<script>
+window.MOTOR_QC_TASK_PROJECT_ID = {{ project_id|tojson }};
+window.MOTOR_QC_TASK_PAGE_MODE = "tasks";
+window.MOTOR_QC_TASK_INITIAL_VIEW = {{ (request.args.get('view') or 'center')|tojson }};
+window.MOTOR_QC_EDGE_DEFAULT_STATION = {{ (request.args.get('station_id') or 'S01')|tojson }};
+window.MOTOR_QC_EDGE_DEFAULT_OPERATOR = {{ (request.args.get('operator_id') or '')|tojson }};
+window.MOTOR_QC_EDGE_DEFAULT_CAMERA_SOURCE = {{ (request.args.get('camera_source') or 'browser')|tojson }};
+window.MOTOR_QC_EDGE_DEFAULT_BUTTON_SOURCE = {{ (request.args.get('button_source') or 'manual')|tojson }};
+window.MOTOR_QC_EDGE_DEFAULT_BRIDGE_URL = {{ (request.args.get('bridge_url') or 'http://127.0.0.1:19091')|tojson }};
+window.MOTOR_QC_EDGE_DEFAULT_PROJECT_ID = {{ (request.args.get('edge_project_id') or project_id or '')|tojson }};
+window.MOTOR_QC_EDGE_DEFAULT_PRODUCT_TYPE = {{ (request.args.get('edge_product_type') or '')|tojson }};
+window.MOTOR_QC_EDGE_DEFAULT_PROCESS_NAME = {{ (request.args.get('edge_process_name') or '')|tojson }};
+</script>
+<script src="{{ url_for('motor_qc.static', filename='js/motor_qc/edge-station-store.js', v='20260227_2') }}"></script>
+<script src="{{ url_for('motor_qc.static', filename='js/motor_qc/edge-camera-adapter.js', v='20260227_2') }}"></script>
+<script src="{{ url_for('motor_qc.static', filename='js/motor_qc/edge-button-adapter.js', v='20260227_2') }}"></script>
+<script src="{{ url_for('motor_qc.static', filename='js/motor_qc/edge-similarity.js', v='20260227_2') }}"></script>
+<script src="{{ url_for('motor_qc.static', filename='js/motor_qc/edge-uploader.js', v='20260227_3') }}"></script>
+<script src="{{ url_for('motor_qc.static', filename='js/motor_qc/tasks.js', v='20260227_5') }}"></script>
+<script src="{{ url_for('motor_qc.static', filename='js/motor_qc/edge-ui.js', v='20260227_8') }}"></script>
+{% endblock %}

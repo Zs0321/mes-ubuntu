@@ -1,0 +1,1010 @@
+{% extends "base.html" %}
+
+{% block title %}数据查询 - QRTestScanner 管理后台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .query-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 1.75rem 2rem;
+        border-radius: var(--radius-lg);
+        background:
+            linear-gradient(135deg, rgba(14,165,233,0.12), rgba(56,189,248,0.06)),
+            linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(10,15,26,0.98) 100%);
+        color: #e2e8f0;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid rgba(30,41,59,0.5);
+        margin-bottom: 1.25rem;
+    }
+    .query-hero::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+    }
+    .query-hero h2 {
+        margin: 0;
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: #e2e8f0;
+    }
+    .query-hero p {
+        margin: 0.4rem 0 0;
+        color: #94a3b8;
+    }
+
+    .query-filter-card {
+        background: linear-gradient(180deg, rgba(15,23,42,0.7) 0%, rgba(10,15,26,0.8) 100%);
+        border: 1px solid rgba(30,41,59,0.5);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .query-filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    .query-filter-grid .form-group {
+        margin-bottom: 0;
+    }
+    .query-filter-grid .form-group label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #94a3b8;
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+    }
+
+    .query-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .query-actions .btn-info {
+        background: linear-gradient(180deg, #22d3ee 0%, #0891b2 100%);
+        border: 1px solid #0e7490;
+        color: #07111f;
+        text-shadow: none;
+    }
+    .query-actions .btn-info:hover {
+        background: linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%);
+        box-shadow: 0 4px 12px rgba(34,211,238,0.28);
+        transform: translateY(-1px);
+    }
+    .query-actions .btn-warning {
+        background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+        border: 1px solid #b45309;
+        color: #111827;
+        text-shadow: none;
+    }
+    .query-actions .btn-warning:hover {
+        background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 100%);
+        box-shadow: 0 4px 12px rgba(245,158,11,0.28);
+        transform: translateY(-1px);
+    }
+    .query-actions .btn-info:disabled,
+    .query-actions .btn-warning:disabled {
+        opacity: 0.72;
+        cursor: wait;
+        color: #111827;
+    }
+
+    .data-source-bar {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding: 0.75rem 1rem;
+        background: linear-gradient(90deg, rgba(14,165,233,0.06), rgba(99,102,241,0.04));
+        border: 1px solid rgba(30,41,59,0.4);
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+    .data-source-bar label {
+        font-weight: 700;
+        color: #e2e8f0;
+        margin: 0;
+    }
+
+    .record-card {
+        background: linear-gradient(180deg, rgba(15,23,42,0.85) 0%, rgba(10,15,26,0.9) 100%);
+        border: 1px solid rgba(30,41,59,0.5);
+        border-radius: 14px;
+        padding: 1.25rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .record-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 3px;
+        height: 100%;
+        background: linear-gradient(180deg, #0ea5e9, #38bdf8);
+        opacity: 0.6;
+    }
+    .record-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(14,165,233,0.1);
+    }
+
+    .record-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+        padding-left: 0.75rem;
+    }
+    .record-type-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.7rem;
+        border-radius: 6px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .record-type-tag.motor {
+        background: rgba(14,165,233,0.12);
+        color: #38bdf8;
+        border: 1px solid rgba(14,165,233,0.2);
+    }
+    .record-type-tag.controller {
+        background: rgba(34,197,94,0.12);
+        color: #34d399;
+        border: 1px solid rgba(34,197,94,0.2);
+    }
+    .record-type-tag.other {
+        background: rgba(148,163,184,0.12);
+        color: #94a3b8;
+        border: 1px solid rgba(148,163,184,0.2);
+    }
+
+    .record-serial {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #e2e8f0;
+        font-family: monospace;
+        letter-spacing: 0.5px;
+        padding-left: 0.75rem;
+    }
+
+    .record-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0.5rem 1rem;
+        padding: 0.75rem 0.75rem 0.5rem;
+    }
+    .record-meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+    .record-meta-item .label {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #64748b;
+        font-weight: 700;
+    }
+    .record-meta-item .value {
+        font-size: 0.88rem;
+        color: #cbd5e1;
+        font-weight: 500;
+    }
+
+    .record-components {
+        background: rgba(15,23,42,0.6);
+        border: 1px solid rgba(30,41,59,0.4);
+        border-radius: 10px;
+        padding: 0.85rem;
+        margin: 0.5rem 0.75rem;
+    }
+    .record-components-title {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #94a3b8;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .record-components-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0.35rem 0.75rem;
+    }
+    .record-component-item {
+        font-size: 0.82rem;
+    }
+    .record-component-item .key {
+        color: #64748b;
+    }
+    .record-component-item .val {
+        color: #e2e8f0;
+        font-family: monospace;
+    }
+
+    .record-material-status {
+        margin: 0.5rem 0.75rem;
+        padding: 0.6rem 0.85rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+    .record-material-status.complete {
+        background: rgba(6,78,59,0.2);
+        border: 1px solid rgba(34,197,94,0.2);
+        color: #34d399;
+    }
+    .record-material-status.incomplete {
+        background: rgba(127,29,29,0.2);
+        border: 1px solid rgba(248,113,113,0.2);
+        color: #f87171;
+    }
+    .record-material-status.none {
+        background: rgba(30,41,59,0.3);
+        border: 1px dashed rgba(100,116,139,0.3);
+        color: #64748b;
+    }
+
+    .record-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0.75rem 0;
+        border-top: 1px solid rgba(30,41,59,0.4);
+        margin-top: 0.5rem;
+    }
+    .record-footer .time {
+        font-size: 0.82rem;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+    .record-footer .actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    /* Duplicate warning */
+    .duplicate-warning {
+        background: linear-gradient(180deg, rgba(127,29,29,0.15) 0%, rgba(69,10,10,0.2) 100%);
+        border: 1px solid rgba(248,113,113,0.2);
+        border-left: 4px solid #ef4444;
+        border-radius: 10px;
+        padding: 1rem;
+        margin: 0 0 1rem 0;
+    }
+    .duplicate-warning .dup-header {
+        color: #fca5a5;
+        font-weight: 600;
+    }
+    .duplicate-table th {
+        color: #fca5a5;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.35rem 0.5rem;
+        text-align: left;
+    }
+    .duplicate-table td {
+        color: #e2e8f0;
+        font-size: 0.85rem;
+        padding: 0.35rem 0.5rem;
+        border-bottom: 1px solid rgba(248,113,113,0.1);
+    }
+
+    /* Modal dark */
+    .record-modal-content {
+        background: linear-gradient(180deg, rgba(15,23,42,0.98) 0%, rgba(10,15,26,0.99) 100%);
+        border: 1px solid rgba(30,41,59,0.5);
+        border-radius: 16px;
+        max-width: 800px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        color: #e2e8f0;
+    }
+    .record-modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(30,41,59,0.5);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    .record-modal-header h3 {
+        margin: 0;
+        color: #e2e8f0;
+        font-size: 1.2rem;
+    }
+    .record-modal-body {
+        padding: 1.5rem;
+    }
+    .record-modal-section {
+        margin-bottom: 1.5rem;
+    }
+    .record-modal-section h4 {
+        color: #94a3b8;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.75rem;
+    }
+    .record-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
+        background: rgba(15,23,42,0.5);
+        border: 1px solid rgba(30,41,59,0.4);
+        border-radius: 10px;
+        padding: 1rem;
+    }
+    .record-info-item .label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #64748b;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+    }
+    .record-info-item .value {
+        color: #e2e8f0;
+        font-size: 0.9rem;
+    }
+    .record-modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid rgba(30,41,59,0.5);
+        background: rgba(15,23,42,0.5);
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        border-radius: 0 0 16px 16px;
+    }
+
+    /* Delete modal */
+    .delete-modal-content {
+        background: linear-gradient(180deg, rgba(15,23,42,0.98) 0%, rgba(10,15,26,0.99) 100%);
+        border: 1px solid rgba(239,68,68,0.3);
+        border-radius: 16px;
+        max-width: 500px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        color: #e2e8f0;
+    }
+    .delete-modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(239,68,68,0.2);
+        text-align: center;
+    }
+    .delete-modal-header h3 {
+        color: #f87171;
+        margin: 0;
+    }
+    .delete-modal-body {
+        padding: 1.5rem;
+    }
+    .delete-notice {
+        background: rgba(127,29,29,0.15);
+        border: 1px solid rgba(248,113,113,0.15);
+        border-radius: 8px;
+        padding: 1rem;
+        color: #fca5a5;
+        font-size: 0.9rem;
+    }
+    .delete-modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid rgba(30,41,59,0.5);
+        background: rgba(15,23,42,0.5);
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        border-radius: 0 0 16px 16px;
+    }
+
+    /* Results summary */
+    .results-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        background: linear-gradient(90deg, rgba(14,165,233,0.06), rgba(99,102,241,0.04));
+        border: 1px solid rgba(30,41,59,0.4);
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+    .results-summary .count {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #e2e8f0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="query-hero">
+    <h2>🔎 数据查询</h2>
+    <p>按项目、序列号和操作员查询扫描记录，支持导出和清理。</p>
+</div>
+
+<div class="query-filter-card">
+    <!-- 数据源 -->
+    <div class="data-source-bar">
+        <label>📊 数据源</label>
+        <button type="button" onclick="syncDataToH2()" class="btn btn-primary" id="syncBtn" data-admin-only>
+            🔄 同步数据到H2
+        </button>
+    </div>
+
+    <!-- 查询条件 -->
+    <form id="searchForm" onsubmit="searchRecords(event)">
+        <div class="query-filter-grid">
+            <div class="form-group">
+                <label for="projectFilter">项目</label>
+                <select id="projectFilter" class="form-control">
+                    <option value="">全部项目</option>
+                    {% for project in projects %}
+                    <option value="{{ project }}">{{ project }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="serialFilter">产品序列号</label>
+                <input type="text" id="serialFilter" class="form-control" placeholder="模糊查询">
+            </div>
+            <div class="form-group">
+                <label for="operatorFilter">操作员</label>
+                <input type="text" id="operatorFilter" class="form-control" placeholder="模糊查询">
+            </div>
+        </div>
+
+        <div class="query-actions">
+            <button type="submit" class="btn btn-primary">🔍 查询</button>
+            <button type="button" onclick="exactSerialSearch()" class="btn btn-info">🎯 精确查询</button>
+            <button type="button" onclick="resetFilters()" class="btn btn-secondary">🔄 重置</button>
+            <button type="button" onclick="exportRecords()" class="btn btn-success" id="exportBtn" disabled data-permission="web:view_records">📥 导出Excel</button>
+            <button type="button" onclick="refreshData()" class="btn btn-warning" id="refreshBtn">♻️ 刷新数据</button>
+        </div>
+    </form>
+</div>
+
+<div class="query-filter-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <h3 style="margin:0; font-size:1.1rem; color:#e2e8f0;">📋 查询结果</h3>
+        <span id="recordCount" style="color:#94a3b8; font-size:0.9rem;">共 0 条记录</span>
+    </div>
+
+    <div id="duplicateWarningContainer" style="display:none;"></div>
+
+    <div id="recordsContainer">
+        <div class="empty-state">
+            <p>请输入查询条件并点击查询按钮</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentRecords = [];
+    let currentDuplicates = [];
+
+    async function searchRecords(event, options = {}) {
+        if (event) event.preventDefault();
+
+        const container = document.getElementById('recordsContainer');
+        container.innerHTML = '<div class="loading"><p>正在查询...</p></div>';
+        renderDuplicateWarning({ duplicate_serial_count: 0, duplicate_row_count: 0, duplicates: [] });
+
+        const exactSerialOnly = !!options.exactSerialOnly;
+        const serial = document.getElementById('serialFilter').value.trim();
+        if (exactSerialOnly && !serial) {
+            container.innerHTML = '<div class="empty-state"><p>请输入产品序列号后再执行精确查询</p></div>';
+            document.getElementById('recordCount').textContent = '共 0 条记录';
+            document.getElementById('exportBtn').disabled = true;
+            return;
+        }
+
+        const params = new URLSearchParams({
+            project: exactSerialOnly ? '' : document.getElementById('projectFilter').value,
+            serial: serial,
+            operator: exactSerialOnly ? '' : document.getElementById('operatorFilter').value,
+            exactSerial: exactSerialOnly ? '1' : '0'
+        });
+
+        const result = await apiRequest(`/api/records?${params}`);
+
+        if (result.success) {
+            currentRecords = result.records;
+            currentDuplicates = Array.isArray(result.duplicates) ? result.duplicates : [];
+            displayRecords(result.records);
+            document.getElementById('recordCount').textContent = `共 ${result.total} 条记录`;
+            document.getElementById('exportBtn').disabled = result.total === 0;
+            renderDuplicateWarning(result);
+        } else {
+            container.innerHTML = `<div class="empty-state"><p>查询失败: ${result.message || '未知错误'}</p></div>`;
+        }
+    }
+
+    function exactSerialSearch() {
+        return searchRecords(null, { exactSerialOnly: true });
+    }
+
+    function renderDuplicateWarning(result) {
+        const container = document.getElementById('duplicateWarningContainer');
+        const duplicateSerialCount = Number(result && result.duplicate_serial_count) || 0;
+        const duplicateRowCount = Number(result && result.duplicate_row_count) || 0;
+        const duplicates = Array.isArray(result && result.duplicates) ? result.duplicates : [];
+
+        if (!container) return;
+        if (duplicateSerialCount <= 0 || duplicateRowCount <= 0) {
+            container.style.display = 'none';
+            container.innerHTML = '';
+            return;
+        }
+
+        const rowsHtml = duplicates.slice(0, 10).map((item) => `
+            <tr>
+                <td style="font-family: monospace;">${escapeHtml(item.product_serial || '')}</td>
+                <td>${Number(item.duplicate_count) || 0}</td>
+                <td>${formatScanTime(item.latest_scan_time)}</td>
+                <td>
+                    <button type="button" class="btn btn-danger" style="padding: 0.25rem 0.6rem; font-size: 0.78rem;"
+                        onclick="cleanupDuplicateForSerial(decodeURIComponent('${encodeURIComponent(String(item.product_serial || ''))}'))"
+                        data-permission="web:delete_records">清理</button>
+                </td>
+            </tr>
+        `).join('');
+
+        container.style.display = 'block';
+        container.innerHTML = `
+            <div class="duplicate-warning">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap: wrap; margin-bottom:0.75rem;">
+                    <div class="dup-header">
+                        ⚠️ 发现 <strong>${duplicateSerialCount}</strong> 个重复序列号，额外重复行 <strong>${duplicateRowCount}</strong> 条
+                    </div>
+                    <button type="button" class="btn btn-danger" style="padding: 0.35rem 0.8rem; font-size:0.8rem;"
+                        onclick="cleanupAllDuplicates()" data-permission="web:delete_records">清理全部重复</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="duplicate-table" style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr><th>序列号</th><th>重复行数</th><th>最新时间</th><th>操作</th></tr>
+                        </thead>
+                        <tbody>${rowsHtml}</tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+
+    function formatScanTime(scanTime) {
+        if (!scanTime) return '-';
+        try {
+            const timestamp = Number(scanTime);
+            if (!Number.isFinite(timestamp) || timestamp <= 0) return '-';
+            return new Date(timestamp).toLocaleString('zh-CN');
+        } catch (e) {
+            return '-';
+        }
+    }
+
+    async function cleanupDuplicateForSerial(productSerial) {
+        const serial = String(productSerial || '').trim();
+        if (!serial) return;
+        if (!confirm(`确认清理序列号 ${serial} 的重复记录吗？将保留最新一条并合并物料字段。`)) return;
+        await cleanupDuplicates([serial]);
+    }
+
+    async function cleanupAllDuplicates() {
+        if (!currentDuplicates || currentDuplicates.length === 0) {
+            showMessage('当前没有重复序列号数据', 'success');
+            return;
+        }
+        if (!confirm(`确认清理全部重复记录吗？涉及 ${currentDuplicates.length} 个序列号。`)) return;
+        const serials = currentDuplicates.map(item => String(item.product_serial || '').trim()).filter(Boolean);
+        await cleanupDuplicates(serials);
+    }
+
+    async function cleanupDuplicates(serials) {
+        try {
+            const response = await fetch('/api/records/duplicates/cleanup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ serials: serials || [] })
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) throw new Error(result.message || '清理失败');
+            showMessage(result.message || '重复数据清理完成', 'success');
+            await searchRecords();
+        } catch (error) {
+            showMessage(`清理重复数据失败: ${error.message || error}`, 'error');
+        }
+    }
+
+    function getMaterialStatus(record) {
+        const rawStatus = record && record.material_status ? record.material_status : {};
+        const requiredTotal = Number(rawStatus.required_total) || 0;
+        const recordedCount = Number(rawStatus.recorded_count) || 0;
+        const missingCount = Number(rawStatus.missing_count) || Math.max(requiredTotal - recordedCount, 0);
+        const missingMaterials = Array.isArray(rawStatus.missing_materials) ? rawStatus.missing_materials : [];
+        const hasRequirements = typeof rawStatus.has_requirements === 'boolean'
+            ? rawStatus.has_requirements : requiredTotal > 0;
+        return {
+            required_total: requiredTotal,
+            recorded_count: recordedCount,
+            missing_count: missingCount,
+            missing_materials: missingMaterials,
+            complete: hasRequirements && missingCount === 0,
+            has_requirements: hasRequirements
+        };
+    }
+
+    function renderMaterialStatus(record) {
+        const status = getMaterialStatus(record);
+        if (!status.has_requirements) {
+            return `<div class="record-material-status none">🧾 该产品未配置必填物料清单</div>`;
+        }
+        const missingPreview = status.complete ? '已完成'
+            : `缺失: ${status.missing_materials.slice(0, 3).map(item => escapeHtml(String(item))).join('、')}${status.missing_materials.length > 3 ? ' ...' : ''}`;
+        return `
+            <div class="record-material-status ${status.complete ? 'complete' : 'incomplete'}">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                    <div><strong>物料记录 ${status.recorded_count}/${status.required_total}</strong></div>
+                    <div style="font-size:0.82em;">缺失 ${status.missing_count}</div>
+                </div>
+                <div style="font-size:0.82em; margin-top:0.25rem; opacity:0.9;">${missingPreview}</div>
+            </div>
+        `;
+    }
+
+    function displayRecords(records) {
+        const container = document.getElementById('recordsContainer');
+        if (!records || records.length === 0) {
+            container.innerHTML = `<div class="empty-state"><p>未找到符合条件的记录</p></div>`;
+            return;
+        }
+
+        let html = `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(520px, 1fr)); gap:1rem;">`;
+
+        records.forEach((record, index) => {
+            let componentInfo = '';
+            try {
+                let rawData = {};
+                if (record.materials) rawData = JSON.parse(record.materials);
+                else if (record.raw_data) rawData = JSON.parse(record.raw_data);
+
+                let fields = [];
+                if (record.product_type === '电机') {
+                    ['定子','转子','轴'].forEach(k => { if(rawData[k]) fields.push({k,v:rawData[k]}); });
+                } else if (record.product_type === '电机控制器') {
+                    ['控制板','驱动板','电容板'].forEach(k => { if(rawData[k]) fields.push({k,v:rawData[k]}); });
+                } else {
+                    const basicFields = ['产品序列号','product_serial','产品类型','product_type','项目名称','project_name','操作员','operator','扫描时间','scan_time'];
+                    fields = Object.entries(rawData).filter(([k,v]) => !basicFields.includes(k) && v && v !== '' && v !== 'nan').map(([k,v]) => ({k,v}));
+                }
+
+                if (fields.length > 0) {
+                    const title = record.product_type === '电机' ? '🔧 电机组件' :
+                        record.product_type === '电机控制器' ? '🎛️ 控制器组件' : '📋 组件信息';
+                    componentInfo = `
+                        <div class="record-components">
+                            <div class="record-components-title">${title}</div>
+                            <div class="record-components-grid">
+                                ${fields.map(f => `<div class="record-component-item"><span class="key">${f.k}:</span> <span class="val">${f.v}</span></div>`).join('')}
+                            </div>
+                        </div>`;
+                }
+            } catch (e) { console.error('解析materials失败:', e); }
+
+            let scanTime = '';
+            try {
+                if (record.scan_time) {
+                    scanTime = new Date(parseInt(record.scan_time)).toLocaleString('zh-CN', {
+                        year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit'
+                    });
+                } else scanTime = '未知时间';
+            } catch (e) { scanTime = record.scan_time || '时间解析失败'; }
+
+            const typeCls = record.product_type === '电机' ? 'motor' :
+                record.product_type === '电机控制器' ? 'controller' : 'other';
+            const typeIcon = record.product_type === '电机' ? '⚡' :
+                record.product_type === '电机控制器' ? '🎛️' : '📦';
+
+            html += `
+                <div class="record-card">
+                    <div class="record-card-header">
+                        <div>
+                            <div class="record-type-tag ${typeCls}">${typeIcon} ${escapeHtml(record.product_type || '未知类型')}</div>
+                            <div class="record-serial">${escapeHtml(record.product_serial || '未知序列号')}</div>
+                        </div>
+                        <span style="background:rgba(30,41,59,0.5); color:#64748b; padding:0.2rem 0.5rem; border-radius:4px; font-size:0.72rem; font-weight:700;">#${index + 1}</span>
+                    </div>
+                    <div class="record-meta-grid">
+                        <div class="record-meta-item">
+                            <div class="label">项目</div>
+                            <div class="value">${escapeHtml(record.project_name || '-')}</div>
+                        </div>
+                        ${record.project_code ? `<div class="record-meta-item"><div class="label">项目号</div><div class="value" style="font-family:monospace;">${escapeHtml(record.project_code)}</div></div>` : ''}
+                        ${record.product_model ? `<div class="record-meta-item"><div class="label">型号</div><div class="value">${escapeHtml(record.product_model)}</div></div>` : ''}
+                        <div class="record-meta-item">
+                            <div class="label">操作员</div>
+                            <div class="value">${escapeHtml(record.operator || '-')}</div>
+                        </div>
+                    </div>
+                    ${componentInfo}
+                    ${renderMaterialStatus(record)}
+                    <div class="record-footer">
+                        <div class="time">🕒 ${scanTime}</div>
+                        <div class="actions">
+                            ${record.file_source ? `<span style="font-size:0.78rem; color:#64748b;">📁 ${escapeHtml(record.file_source)}</span>` : ''}
+                            <button onclick="showRecordDetails(${index})" class="btn btn-secondary" style="font-size:0.78rem; padding:0.3rem 0.7rem;">📊 详情</button>
+                            <button onclick="deleteRecord('${record.product_serial}', ${index})" class="btn btn-danger" style="font-size:0.78rem; padding:0.3rem 0.7rem;" data-permission="web:delete_records">🗑️ 删除</button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    function showRecordDetails(index) {
+        const record = currentRecords[index];
+        if (!record) return;
+
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; display:flex; align-items:center; justify-content:center; padding:2rem;';
+
+        let rawDataContent = '';
+        try {
+            let materialData = null;
+            if (record.materials) materialData = JSON.parse(record.materials);
+            else if (record.raw_data) materialData = JSON.parse(record.raw_data);
+            if (materialData) {
+                const basicFields = ['产品序列号','product_serial','产品类型','product_type','项目名称','project_name','操作员','operator','扫描时间','scan_time'];
+                rawDataContent = Object.entries(materialData)
+                    .filter(([k,v]) => !basicFields.includes(k) && v && v !== '' && v !== 'nan')
+                    .map(([k,v]) => `
+                        <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid rgba(30,41,59,0.3);">
+                            <span style="font-weight:700; color:#94a3b8;">${escapeHtml(k)}</span>
+                            <span style="font-family:monospace; color:#e2e8f0;">${escapeHtml(String(v))}</span>
+                        </div>`).join('');
+            }
+        } catch (e) { rawDataContent = '<div style="color:#f87171;">数据解析失败</div>'; }
+
+        let formattedTime = '';
+        try { if (record.scan_time) formattedTime = new Date(parseInt(record.scan_time)).toLocaleString('zh-CN', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',weekday:'long'}); }
+        catch (e) { formattedTime = record.scan_time || '时间解析失败'; }
+
+        const materialStatus = getMaterialStatus(record);
+        const statusColor = materialStatus.complete ? '#34d399' : '#f87171';
+        const missingTags = materialStatus.missing_materials.map(n =>
+            `<span style="display:inline-block; padding:0.2rem 0.5rem; border-radius:4px; background:rgba(127,29,29,0.3); color:#fca5a5; font-size:0.85em; margin:0.2rem;">${escapeHtml(String(n))}</span>`
+        ).join('');
+
+        modal.innerHTML = `
+            <div class="record-modal-content">
+                <div class="record-modal-header">
+                    <div>
+                        <h3>📋 产品详细信息</h3>
+                        <div style="font-size:1.1em; font-weight:800; color:#38bdf8; font-family:monospace; margin-top:0.3rem;">${escapeHtml(record.product_serial || '未知序列号')}</div>
+                    </div>
+                    <button onclick="this.closest('.modal-backdrop').remove()" class="btn btn-secondary" style="border-radius:50%; width:2.5rem; height:2.5rem; padding:0;">✕</button>
+                </div>
+                <div class="record-modal-body">
+                    <div class="record-modal-section">
+                        <h4>ℹ️ 基本信息</h4>
+                        <div class="record-info-grid">
+                            <div class="record-info-item"><div class="label">产品序列号</div><div class="value">${escapeHtml(record.product_serial || '-')}</div></div>
+                            <div class="record-info-item"><div class="label">产品类型</div><div class="value">${escapeHtml(record.product_type || '-')}</div></div>
+                            <div class="record-info-item"><div class="label">项目名称</div><div class="value">${escapeHtml(record.project_name || '-')}</div></div>
+                            ${record.project_code ? `<div class="record-info-item"><div class="label">项目号</div><div class="value" style="color:#38bdf8; font-family:monospace;">${escapeHtml(record.project_code)}</div></div>` : ''}
+                            ${record.product_model ? `<div class="record-info-item"><div class="label">产品型号</div><div class="value" style="color:#34d399;">${escapeHtml(record.product_model)}</div></div>` : ''}
+                            <div class="record-info-item"><div class="label">操作员</div><div class="value">${escapeHtml(record.operator || '-')}</div></div>
+                            <div class="record-info-item"><div class="label">扫描时间</div><div class="value">${formattedTime}</div></div>
+                            <div class="record-info-item"><div class="label">数据来源</div><div class="value">${escapeHtml(record.file_source || '-')}</div></div>
+                        </div>
+                    </div>
+                    <div class="record-modal-section">
+                        <h4>🧾 物料完整性</h4>
+                        <div style="background:${materialStatus.complete ? 'rgba(6,78,59,0.15)' : 'rgba(127,29,29,0.15)'}; border:1px solid ${materialStatus.complete ? 'rgba(34,197,94,0.2)' : 'rgba(248,113,113,0.2)'}; padding:1rem; border-radius:10px; color:${statusColor};">
+                            ${materialStatus.has_requirements ? `
+                                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+                                    <div><strong>应记录:</strong> ${materialStatus.required_total}</div>
+                                    <div><strong>已记录:</strong> ${materialStatus.recorded_count}</div>
+                                    <div><strong>未记录:</strong> ${materialStatus.missing_count}</div>
+                                    <div><strong>状态:</strong> ${materialStatus.complete ? '已完成 ✅' : '未完成 ❌'}</div>
+                                </div>
+                                ${!materialStatus.complete ? `<div style="margin-top:0.75rem;"><div style="margin-bottom:0.25rem;"><strong>缺失物料:</strong></div><div>${missingTags || '无'}</div></div>` : ''}
+                            ` : '<div style="color:#64748b;">该产品未配置必填物料清单</div>'}
+                        </div>
+                    </div>
+                    ${rawDataContent ? `
+                        <div class="record-modal-section">
+                            <h4>🔧 组件详细数据</h4>
+                            <div style="background:rgba(15,23,42,0.5); border:1px solid rgba(30,41,59,0.4); padding:1rem; border-radius:10px;">${rawDataContent}</div>
+                        </div>
+                    ` : ''}
+                    <div class="record-modal-section">
+                        <h4>🗄️ 数据库信息</h4>
+                        <div class="record-info-grid">
+                            ${record.created_at ? `<div class="record-info-item"><div class="label">创建时间</div><div class="value">${new Date(parseInt(record.created_at)).toLocaleString('zh-CN')}</div></div>` : ''}
+                            ${record.updated_at ? `<div class="record-info-item"><div class="label">更新时间</div><div class="value">${new Date(parseInt(record.updated_at)).toLocaleString('zh-CN')}</div></div>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="record-modal-footer">
+                    <button onclick="this.closest('.modal-backdrop').remove()" class="btn btn-primary">关闭</button>
+                    <button onclick="deleteRecordFromModal('${record.product_serial}', ${index})" class="btn btn-danger" data-permission="web:delete_records">🗑️ 删除记录</button>
+                </div>
+            </div>`;
+
+        modal.className = 'modal-backdrop';
+        document.body.appendChild(modal);
+        modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function resetFilters() {
+        document.getElementById('searchForm').reset();
+        document.getElementById('recordsContainer').innerHTML = '<div class="loading"><p>请输入查询条件并点击查询按钮</p></div>';
+        document.getElementById('recordCount').textContent = '共 0 条记录';
+        document.getElementById('exportBtn').disabled = true;
+        currentRecords = [];
+        currentDuplicates = [];
+        renderDuplicateWarning({ duplicate_serial_count: 0, duplicate_row_count: 0, duplicates: [] });
+    }
+
+    async function exportRecords() {
+        if (currentRecords.length === 0) { showMessage('没有数据可导出', 'error'); return; }
+        const button = document.getElementById('exportBtn');
+        button.disabled = true;
+        button.textContent = '导出中...';
+        try {
+            const response = await fetch('/api/records/export', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ records: currentRecords })
+            });
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `扫描记录_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                showMessage('导出成功！', 'success');
+            } else showMessage('导出失败', 'error');
+        } catch (error) {
+            showMessage('导出失败', 'error');
+        } finally {
+            button.disabled = false;
+            button.textContent = '📥 导出Excel';
+        }
+    }
+
+    async function syncDataToH2() {
+        const button = document.getElementById('syncBtn');
+        const originalText = button.textContent;
+        button.disabled = true;
+        button.textContent = '🔄 同步中...';
+        try {
+            const result = await apiRequest('/api/h2/sync/all', 'POST');
+            if (result.success) {
+                showMessage(`同步完成！${result.summary.success_files}/${result.summary.total_files} 个文件，${result.summary.total_records} 条记录`, 'success');
+            } else {
+                showMessage(result.message || '同步失败', 'error');
+            }
+        } catch (error) {
+            showMessage('同步失败', 'error');
+        } finally {
+            button.disabled = false;
+            button.textContent = originalText;
+        }
+    }
+
+    async function refreshData() {
+        const button = document.getElementById('refreshBtn');
+        const originalText = button.textContent;
+        button.disabled = true;
+        button.textContent = '♻️ 刷新中...';
+        try {
+            await apiRequest('/api/cache/clear', 'POST');
+            if (currentRecords.length > 0) await searchRecords();
+            showMessage('数据已刷新', 'success');
+        } catch (error) {
+            showMessage('刷新失败', 'error');
+        } finally {
+            button.disabled = false;
+            button.textContent = originalText;
+        }
+    }
+
+    async function deleteRecord(productSerial, recordIndex) {
+        await showDeleteConfirmation(productSerial, recordIndex, false);
+    }
+
+    async function deleteRecordFromModal(productSerial, recordIndex) {
+        const modal = document.querySelector('.modal-backdrop');
+        if (modal) modal.remove();
+        await showDeleteConfirmation(productSerial, recordIndex, true);
+    }
+
+    async function showDeleteConfirmation(productSerial, recordIndex, fromModal) {
+        const deleteModal = document.createElement('div');
+        deleteModal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1001; display:flex; align-items:center; justify-content:center; padding:2rem;';
+
+        deleteModal.innerHTML = `
+            <div class="delete-modal-content">
+                <div class="delete-modal-header">
+                    <div style="font-size:3rem; color:#ef4444; margin-bottom:0.5rem;">⚠️</div>
+                    <h3>删除记录确认</h3>
+                    <p style="margin:0.5rem 0 0; color:#94a3b8; line-height:1.5;">
+                        即将删除产品序列号 <strong style="color:#f87171; font-family:monospace;">${productSerial}</strong> 的记录。<br>
+                        <strong style="color:#f87171;">此操作不可撤销！</strong>
+                    </p>
+                </div>
+                <div class="delete-modal-body">
+                    <div class="delete-notice">
+                        📝 <strong>删除说明：</strong><br>
+                        • 删除后记录将从H2数据库和NAS中永久移除<br>
+                        • 建议在删除前先备份相关数据
+                    </div>
+                </div>
+                <div class="delete-modal-footer">
+                    <button onclick="this.closest('.delete-modal').remove()" class="btn btn-secondary">取消</button>
+                    <button onclick="confirmDelete('${productSerial}', ${recordIndex})" class="btn btn-danger">🗑️ 确认删除</button>
+                </div>
+            </div>`;
+
+        deleteModal.className = 'delete-modal';
+        document.body.appendChild(deleteModal);
+        deleteModal.addEventListener('click', function(e) { if (e.target === deleteModal) deleteModal.remove(); });
+    }
+
+    async function confirmDelete(productSerial, recordIndex) {
+        const deleteButton = document.querySelector('.delete-modal .btn-danger');
+        const originalText = deleteButton.textContent;
+        deleteButton.disabled = true;
+        deleteButton.textContent = '🗑️ 删除中...';
+        try {
+            const result = await apiRequest(`/api/records/delete/${encodeURIComponent(productSerial)}`, 'DELETE');
+            if (result.success) {
+                document.querySelector('.delete-modal').remove();
+                currentRecords.splice(recordIndex, 1);
+                displayRecords(currentRecords);
+                document.getElementById('recordCount').textContent = `共 ${currentRecords.length} 条记录`;
+                document.getElementById('exportBtn').disabled = currentRecords.length === 0;
+                showMessage(`记录 ${productSerial} 已成功删除`, 'success');
+            } else showMessage(`删除失败: ${result.message || '未知错误'}`, 'error');
+        } catch (error) {
+            showMessage('删除失败', 'error');
+        } finally {
+            deleteButton.disabled = false;
+            deleteButton.textContent = originalText;
+        }
+    }
+</script>
+{% endblock %}

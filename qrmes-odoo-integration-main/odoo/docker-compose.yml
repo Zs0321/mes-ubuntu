@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 数据库服务
+  postgres:
+    image: postgres:15-alpine
+    container_name: qrmes-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-odoo}
+      - POSTGRES_USER=${POSTGRES_USER:-odoo}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-odoo_password}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # 初始化脚本（可选）
+     #  - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - qrmes-odoo-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-odoo}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Odoo ERP 服务
+  odoo:
+    image: odoo:17.0
+    container_name: qrmes-odoo
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${ODOO_PORT:-8069}:8069"
+      - "${ODOO_LONGPOLLING_PORT:-8072}:8072"
+    environment:
+      - HOST=${POSTGRES_HOST:-postgres}
+      - PORT=${POSTGRES_PORT:-5432}
+      - USER=${POSTGRES_USER:-odoo}
+      - PASSWORD=${POSTGRES_PASSWORD:-odoo_password}
+      # Odoo 配置
+      - ODOO_ADMIN_PASSWD=${ODOO_MASTER_PASSWORD:-admin_master_password}
+      - WORKERS=${ODOO_WORKERS:-4}
+      - MAX_CRON_THREADS=${ODOO_MAX_CRON_THREADS:-2}
+      - LIMIT_MEMORY_SOFT=${ODOO_LIMIT_MEMORY_SOFT:-2147483648}
+      - LIMIT_MEMORY_HARD=${ODOO_LIMIT_MEMORY_HARD:-2684354560}
+      - LIMIT_TIME_CPU=${ODOO_LIMIT_TIME_CPU:-600}
+      - LIMIT_TIME_REAL=${ODOO_LIMIT_TIME_REAL:-1200}
+    volumes:
+      # Odoo 数据持久化
+      - odoo-data:/var/lib/odoo
+      # Odoo 配置文件
+      - ./config/odoo.conf:/etc/odoo/odoo.conf:ro
+      # 自定义模块
+      - ./addons:/mnt/extra-addons
+      # 文件存储（附件）
+      - odoo-filestore:/var/lib/odoo/filestore
+      # 会话存储
+      - odoo-sessions:/var/lib/odoo/sessions
+    networks:
+      - qrmes-odoo-network
+    command: >
+      --
+      --config=/etc/odoo/odoo.conf
+      --database=${POSTGRES_DB:-odoo}
+      --db_host=${POSTGRES_HOST:-postgres}
+      --db_port=${POSTGRES_PORT:-5432}
+      --db_user=${POSTGRES_USER:-odoo}
+      --db_password=${POSTGRES_PASSWORD:-odoo_password}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # pgAdmin (可选，用于数据库管理)
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: qrmes-pgadmin
+  #   restart: unless-stopped
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL:-admin@example.com}
+  #     - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD:-admin}
+  #     - PGADMIN_LISTEN_PORT=80
+  #   ports:
+  #     - "${PGADMIN_PORT:-5050}:80"
+  #   volumes:
+  #     - pgadmin-data:/var/lib/pgadmin
+  #   networks:
+  #     - qrmes-odoo-network
+  #   depends_on:
+  #     - postgres
+
+networks:
+  qrmes-odoo-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+volumes:
+  postgres-data:
+    driver: local
+  odoo-data:
+    driver: local
+  odoo-filestore:
+    driver: local
+  odoo-sessions:
+    driver: local
+  # pgadmin-data:
+  #   driver: local

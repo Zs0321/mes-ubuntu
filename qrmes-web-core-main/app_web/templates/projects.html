@@ -1,0 +1,816 @@
+﻿{% extends "base.html" %}
+
+{% block title %}项目管理 - QRTestScanner 管理后台{% endblock %}
+
+{% block content %}
+<style>
+    .projects-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 2rem 2.1rem;
+        border-radius: var(--radius-lg);
+        background:
+            linear-gradient(135deg, rgba(8,12,20,0.72) 0%, rgba(12,21,34,0.64) 42%, rgba(17,29,45,0.76) 100%),
+            url('{{ url_for("static", filename="ui-backgrounds/mes-hero-industrial-home.svg") }}');
+        background-size: cover;
+        background-position: center;
+        color: #e2e8f0;
+        box-shadow: var(--shadow-xl);
+        border: 1px solid rgba(14,165,233,0.1);
+        margin-bottom: 1.5rem;
+    }
+
+    .projects-hero::after {
+        content: "";
+        position: absolute;
+        right: -42px;
+        top: -28px;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: rgba(14,165,233,0.05);
+        filter: blur(22px);
+    }
+
+    .projects-hero-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .projects-hero h2 {
+        margin: 0;
+        font-size: 1.95rem;
+        line-height: 1.15;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+    }
+
+    .projects-hero p {
+        margin: 0.45rem 0 0;
+        color: rgba(226,232,240,0.84);
+        max-width: 760px;
+    }
+
+    .projects-hero-badges {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-top: 0.9rem;
+    }
+
+    .projects-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.32rem 0.8rem;
+        border-radius: 3px;
+        background: rgba(14,165,233,0.08);
+        border: 1px solid rgba(14,165,233,0.15);
+        color: #e2e8f0;
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .projects-hero-side {
+        display: grid;
+        gap: 0.6rem;
+        min-width: 220px;
+    }
+
+    .projects-hero-stat {
+        padding: 0.78rem 0.95rem;
+        border-radius: 14px;
+        background: rgba(14,165,233,0.05);
+        border: 1px solid rgba(14,165,233,0.1);
+        backdrop-filter: blur(6px);
+    }
+
+    .projects-hero-stat .label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(226,232,240,0.72);
+    }
+
+    .projects-hero-stat .value {
+        font-size: 1.02rem;
+        font-weight: 800;
+        color: #e2e8f0;
+        margin-top: 0.25rem;
+    }
+
+    .projects-workbench {
+        background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(10,15,26,0.98) 100%);
+    }
+
+    .projects-toolbar {
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:1rem;
+        flex-wrap:wrap;
+        margin-bottom: 1rem;
+    }
+
+    .projects-status-panel {
+        display:flex;
+        gap:0.75rem;
+        align-items:center;
+        justify-content:space-between;
+        flex-wrap:wrap;
+        margin-bottom:1rem;
+        padding: 1rem 1.1rem;
+        border-radius: 4px;
+        background: linear-gradient(180deg, #141d2e 0%, #0f1a2a 100%);
+        border: 1px solid rgba(148,163,184,0.16);
+        box-shadow: 0 10px 24px rgba(15,23,42,0.05);
+    }
+
+    .projects-status-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .projects-filter-bar {
+        display: grid;
+        grid-template-columns: minmax(260px, 1.4fr) repeat(2, minmax(180px, 0.8fr));
+        gap: 0.9rem;
+        margin-bottom: 1rem;
+        padding: 1rem 1.1rem;
+        border-radius: 4px;
+        background: linear-gradient(180deg, #141d2e 0%, #0f1a2a 100%);
+        border: 1px solid rgba(148,163,184,0.16);
+        box-shadow: 0 10px 24px rgba(15,23,42,0.05);
+    }
+
+    .projects-filter-bar .form-group {
+        margin-bottom: 0;
+    }
+
+    .projects-status-metric {
+        padding: 0.95rem 1rem;
+        border-radius: 4px;
+        border: 1px solid rgba(148,163,184,0.16);
+        background: linear-gradient(180deg, #141d2e 0%, #0f1a2a 100%);
+        box-shadow: 0 8px 20px rgba(15,23,42,0.05);
+    }
+
+    .projects-status-metric .label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #5a6f85;
+        font-weight: 700;
+    }
+
+    .projects-status-metric .value {
+        margin-top: 0.35rem;
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #e8edf5;
+    }
+
+    .projects-table-wrap {
+        border: 1px solid rgba(148,163,184,0.16);
+        border-radius: 18px;
+        overflow: hidden;
+        background: #141d2e;
+        box-shadow: 0 12px 30px rgba(15,23,42,0.05);
+    }
+
+    .projects-table thead th {
+        background: linear-gradient(180deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9));
+        color: #8a9bb0;
+        font-weight: 700;
+        font-size: 0.76rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        height: 48px;
+    }
+
+    .projects-table tbody tr {
+        transition: background var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .projects-table tbody tr:hover td {
+        background: rgba(14,165,233,0.08);
+    }
+
+    .projects-table tbody tr td:first-child {
+        border-left: 4px solid transparent;
+    }
+
+    .projects-table tbody tr[data-status="active"] td:first-child {
+        border-left-color: #22c55e;
+    }
+
+    .projects-table tbody tr[data-status="inactive"] td:first-child {
+        border-left-color: #ffb300;
+    }
+
+    .projects-table tbody tr[data-archived="1"] td:first-child {
+        border-left-color: #94a3b8;
+    }
+
+    .project-name-cell {
+        display:flex;
+        align-items:flex-start;
+        gap:0.8rem;
+    }
+
+    .project-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        background: linear-gradient(135deg, #e0e7ff, #0d1f33);
+        color: #818cf8;
+        font-size: 1rem;
+        border: 1px solid rgba(99,102,241,0.18);
+        flex-shrink: 0;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+
+    .project-name-main {
+        min-width: 0;
+    }
+
+    .project-name-main .project-title {
+        font-weight: 700;
+        color:#e8edf5;
+        line-height: 1.35;
+    }
+
+    .project-name-main .project-sub {
+        font-size:0.8rem;
+        color:#94a3b8;
+        margin-top:0.22rem;
+        display:flex;
+        gap:0.5rem;
+        flex-wrap:wrap;
+        align-items:center;
+    }
+
+    .project-name-main .project-sub .dot {
+        width:6px;
+        height:6px;
+        border-radius:50%;
+        background:#22c55e;
+        box-shadow: 0 0 0 4px rgba(34,197,94,0.12);
+        display:inline-block;
+    }
+
+    .projects-table .form-control {
+        min-width: 120px;
+        padding: 0.55rem 0.75rem;
+        font-size: 0.92rem;
+    }
+    .action-group {
+        display:flex;
+        gap:0.5rem;
+        flex-wrap:wrap;
+    }
+    .btn-sm {
+        padding:0.42rem 0.9rem;
+        font-size:0.85rem;
+        border-radius: 4px;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+    }
+    .status-chip {
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        padding:0.28rem 0.72rem;
+        border-radius:999px;
+        font-size:0.82rem;
+        font-weight:600;
+    }
+    .status-chip.active {
+        color:#34d399;
+        background:rgba(6,78,59,0.3);
+        border:1px solid rgba(34,197,94,0.2);
+    }
+    .status-chip.inactive {
+        color:#fbbf24;
+        background:rgba(120,53,15,0.25);
+        border:1px solid rgba(251,191,36,0.2);
+    }
+    .status-chip.archived {
+        color:#94a3b8;
+        background:rgba(30,41,59,0.4);
+        border:1px solid rgba(148,163,184,0.15);
+    }
+    .project-row-archived {
+        opacity:0.7;
+    }
+    .selection-summary {
+        min-height: 48px;
+        padding: 0.85rem 1rem;
+        border: 1px solid #1e2d3d;
+        border-radius: 0.6rem;
+        background: #0f1a2a;
+        color: #cbd5e1;
+        line-height: 1.5;
+    }
+
+    #batchConfigModal .modal-content,
+    #addProjectModal .modal-content {
+        background: linear-gradient(180deg, rgba(15,23,42,0.98) 0%, rgba(10,15,26,0.99) 100%);
+        border: 1px solid rgba(30,41,59,0.5);
+        color: #e2e8f0;
+    }
+    #batchConfigModal .modal-header,
+    #addProjectModal .modal-header {
+        border-bottom: 1px solid rgba(30,41,59,0.5);
+    }
+    #batchConfigModal .selection-summary {
+        background: #0f172a;
+        border-color: rgba(30,41,59,0.5);
+        color: #e2e8f0;
+    }
+</style>
+
+<div class="projects-hero">
+    <div class="projects-hero-content">
+        <div>
+            <h2>项目管理工作台</h2>
+            <p>按拼音固定排序管理全部项目，统一查看项目名称、项目号、状态与归档状态，保持产线配置入口稳定可控。</p>
+            <div class="projects-hero-badges">
+                <span class="projects-hero-badge">Pinyin Sort</span>
+                <span class="projects-hero-badge">Lifecycle</span>
+                <span class="projects-hero-badge">Config Control</span>
+            </div>
+        </div>
+        <div class="projects-hero-side">
+            <div class="projects-hero-stat">
+                <div class="label">排序方式</div>
+                <div class="value">拼音固定排序</div>
+            </div>
+            <div class="projects-hero-stat">
+                <div class="label">当前项目数</div>
+                <div class="value">{{ projects|length }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card projects-workbench">
+    <div class="card-header projects-toolbar">
+        <div>
+            <h2>项目管理</h2>
+            <p style="margin-top:0.5rem;color:#94a3b8;">统一管理项目编码、状态和归档状态。归档项目不会出现在 APK 与普通项目列表里。</p>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+            <button onclick="openBatchConfigModal()" class="btn btn-secondary" data-permission="web:manage_projects">批量配置</button>
+            <button onclick="openModal('addProjectModal')" class="btn btn-primary" data-permission="web:manage_projects">新增项目</button>
+        </div>
+    </div>
+
+    <div class="projects-status-summary">
+        <div class="projects-status-metric">
+            <div class="label">全部项目</div>
+            <div class="value">{{ projects|length }}</div>
+        </div>
+        <div class="projects-status-metric">
+            <div class="label">启用中</div>
+            <div class="value">{{ projects|selectattr('projectStatus', 'equalto', 'active')|list|length }}</div>
+        </div>
+        <div class="projects-status-metric">
+            <div class="label">已停用</div>
+            <div class="value">{{ projects|selectattr('projectStatus', 'equalto', 'inactive')|list|length }}</div>
+        </div>
+        <div class="projects-status-metric">
+            <div class="label">已归档</div>
+            <div class="value">{{ projects|selectattr('isArchived')|list|length }}</div>
+        </div>
+    </div>
+
+    <div class="projects-status-panel">
+        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+            <span class="status-chip active">启用中</span>
+            <span class="status-chip inactive">已停用</span>
+            <span class="status-chip archived">已归档</span>
+        </div>
+        <div style="color:#94a3b8;font-size:0.95rem;">共 {{ projects|length }} 个项目</div>
+    </div>
+
+    <div class="projects-filter-bar">
+        <div class="form-group">
+            <label for="projectSearchInput">搜索项目</label>
+            <input id="projectSearchInput" type="text" class="form-control" placeholder="输入项目名称或项目号筛选">
+        </div>
+        <div class="form-group">
+            <label for="projectStatusFilter">状态筛选</label>
+            <select id="projectStatusFilter" class="form-control">
+                <option value="">全部状态</option>
+                <option value="active">仅启用</option>
+                <option value="inactive">仅停用</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="projectArchiveFilter">归档筛选</label>
+            <select id="projectArchiveFilter" class="form-control">
+                <option value="">全部归档状态</option>
+                <option value="0">仅正常</option>
+                <option value="1">仅归档</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="projectsContainer">
+        {% if projects %}
+        <div class="projects-table-wrap">
+        <table class="table projects-table">
+            <thead>
+                <tr>
+                    <th style="width:52px;text-align:center;">
+                        <input type="checkbox" id="selectAllProjects" onchange="toggleAllProjects(this)">
+                    </th>
+                    <th>项目名称</th>
+                    <th>项目号</th>
+                    <th>状态</th>
+                    <th>归档</th>
+                    <th>更新时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="projectsTable">
+                {% for project in projects %}
+                <tr
+                    data-project="{{ project.projectName }}"
+                    data-status="{{ project.projectStatus or 'active' }}"
+                    data-archived="{{ 1 if project.isArchived else 0 }}"
+                    class="{% if project.isArchived %}project-row-archived{% endif %}"
+                >
+                    <td style="text-align:center;">
+                        <input type="checkbox" class="project-select" value="{{ project.projectName }}">
+                    </td>
+                    <td>
+                        <div class="project-name-cell">
+                            <div class="project-avatar">📁</div>
+                            <div class="project-name-main">
+                                <div class="project-title">{{ project.projectName }}</div>
+                                <div class="project-sub">
+                                    <span class="dot"></span>
+                                    <span>{% if project.projectCode %}项目号 {{ project.projectCode }}{% else %}可直接进入配置页{% endif %}</span>
+                                </div>
+                                {% if project.isArchived and project.archivedAt %}
+                                <div style="font-size:0.82rem;color:#94a3b8;margin-top:0.25rem;">
+                                    归档时间：{{ project.archivedAt }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ project.projectCode if project.projectCode else '-' }}</td>
+                    <td>
+                        <select
+                            class="form-control status-select"
+                            onchange="updateProjectStatus('{{ project.projectName }}', this.value)"
+                            {% if project.isArchived %}disabled{% endif %}
+                            data-permission="web:manage_projects"
+                        >
+                            <option value="active" {% if (project.projectStatus or 'active') == 'active' %}selected{% endif %}>启用</option>
+                            <option value="inactive" {% if project.projectStatus == 'inactive' %}selected{% endif %}>停用</option>
+                        </select>
+                    </td>
+                    <td>
+                        <span class="status-chip {% if project.isArchived %}archived{% else %}active{% endif %}">
+                            {% if project.isArchived %}已归档{% else %}正常{% endif %}
+                        </span>
+                    </td>
+                    <td>{{ project.updatedAt if project.updatedAt else '-' }}</td>
+                    <td>
+                        <div class="action-group">
+                            <a href="{{ url_for('project_config', project_name=project.projectName) }}" class="btn btn-primary btn-sm" data-permission="web:manage_process_config">配置</a>
+                            <button
+                                type="button"
+                                class="btn btn-secondary btn-sm"
+                                onclick="toggleProjectArchive('{{ project.projectName }}', {{ 'false' if project.isArchived else 'true' }})"
+                                data-permission="web:manage_projects"
+                            >
+                                {% if project.isArchived %}取消归档{% else %}归档{% endif %}
+                            </button>
+                            {% if user.role == 'admin' %}
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteProject('{{ project.projectName }}')" data-permission="web:manage_projects">删除</button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% else %}
+        <div class="empty-state" id="emptyState">
+            <p>暂无项目，点击右上角新增项目开始配置。</p>
+            <button onclick="openModal('addProjectModal')" class="btn btn-primary" data-permission="web:manage_projects">新增第一个项目</button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div id="batchConfigModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>批量配置项目</h2>
+            <span class="close" onclick="closeModal('batchConfigModal')">&times;</span>
+        </div>
+        <form id="batchConfigForm" onsubmit="submitBatchConfig(event)">
+            <div class="form-group">
+                <label>已选择项目</label>
+                <div id="batchSelectedSummary" class="selection-summary">请选择项目</div>
+            </div>
+            <div class="form-group">
+                <label for="batchSourceProject">复制配置来源（可选）</label>
+                <select id="batchSourceProject" class="form-control">
+                    <option value="">-- 不复制配置，仅更新状态/归档 --</option>
+                    {% for project in copy_source_projects %}
+                    <option value="{{ project.projectName }}">{{ project.projectName }}{% if project.projectCode %} ({{ project.projectCode }}){% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="batchProjectStatus">批量设置状态</label>
+                <select id="batchProjectStatus" class="form-control">
+                    <option value="">-- 不修改状态 --</option>
+                    <option value="active">启用</option>
+                    <option value="inactive">停用</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="batchArchiveMode">批量归档</label>
+                <select id="batchArchiveMode" class="form-control">
+                    <option value="">-- 不修改归档状态 --</option>
+                    <option value="archive">归档所选项目</option>
+                    <option value="unarchive">取消归档</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+                <button type="submit" class="btn btn-primary">应用批量配置</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('batchConfigModal')">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="addProjectModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>新增项目</h2>
+            <span class="close" onclick="closeModal('addProjectModal')">&times;</span>
+        </div>
+        <form id="addProjectForm" onsubmit="addProject(event)">
+            <div class="form-group">
+                <label for="projectName">项目名称 <span style="color:#e53e3e;">*</span></label>
+                <input type="text" id="projectName" class="form-control" required placeholder="例如：柳工 3.5T 双15 叉车">
+            </div>
+            <div class="form-group">
+                <label for="projectCode">项目号</label>
+                <input type="text" id="projectCode" class="form-control" placeholder="例如：LG-FL-001">
+            </div>
+            <div class="form-group">
+                <label for="copyFrom">复制现有项目配置（可选）</label>
+                <select id="copyFrom" class="form-control">
+                    <option value="">-- 创建空白项目 --</option>
+                    {% for project in copy_source_projects %}
+                    <option value="{{ project.projectName }}">{{ project.projectName }}{% if project.projectCode %} ({{ project.projectCode }}){% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="display:flex;gap:1rem;">
+                <button type="submit" class="btn btn-primary">保存项目</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addProjectModal')">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function getSelectedProjects() {
+        return Array.from(document.querySelectorAll('.project-select:checked'))
+            .map(input => input.value)
+            .filter(Boolean);
+    }
+
+    function refreshBatchSelectionSummary() {
+        const selected = getSelectedProjects();
+        const target = document.getElementById('batchSelectedSummary');
+        if (!target) return;
+        if (!selected.length) {
+            target.textContent = '请选择至少一个项目';
+            return;
+        }
+        target.textContent = `${selected.length} 个项目：${selected.join('、')}`;
+    }
+
+    function toggleAllProjects(source) {
+        const checked = !!source.checked;
+        document.querySelectorAll('.project-select').forEach(input => {
+            input.checked = checked;
+        });
+        refreshBatchSelectionSummary();
+    }
+
+    function openBatchConfigModal() {
+        if (window.permissionController && !window.permissionController.checkPermissionForAction(
+            window.permissionController.PERMISSIONS.WEB_MANAGE_PROJECTS, '批量配置项目'
+        )) {
+            return;
+        }
+
+        const selected = getSelectedProjects();
+        if (!selected.length) {
+            showMessage('请先勾选至少一个项目', 'error');
+            return;
+        }
+
+        document.getElementById('batchConfigForm').reset();
+        refreshBatchSelectionSummary();
+        openModal('batchConfigModal');
+    }
+
+    async function submitBatchConfig(event) {
+        event.preventDefault();
+        const targetProjects = getSelectedProjects();
+        if (!targetProjects.length) {
+            showMessage('请先选择需要批量配置的项目', 'error');
+            return;
+        }
+
+        const payload = {
+            targetProjects,
+            sourceProject: document.getElementById('batchSourceProject').value.trim(),
+            projectStatus: document.getElementById('batchProjectStatus').value.trim(),
+            archiveMode: document.getElementById('batchArchiveMode').value.trim()
+        };
+
+        const result = await apiRequest('/api/projects/batch-config', {
+            method: 'PUT',
+            body: JSON.stringify(payload)
+        });
+
+        if (!result.success) {
+            showMessage(result.message || '批量配置失败', 'error');
+            return;
+        }
+
+        showMessage(result.message || `已更新 ${result.updated || 0} 个项目`, 'success');
+        closeModal('batchConfigModal');
+        location.reload();
+    }
+
+    async function addProject(event) {
+        event.preventDefault();
+        if (window.permissionController && !window.permissionController.checkPermissionForAction(
+            window.permissionController.PERMISSIONS.WEB_MANAGE_PROJECTS, '新增项目'
+        )) {
+            return;
+        }
+
+        const payload = {
+            projectName: document.getElementById('projectName').value.trim(),
+            projectCode: document.getElementById('projectCode').value.trim(),
+            copyFrom: document.getElementById('copyFrom').value.trim()
+        };
+
+        if (!payload.projectName) {
+            showMessage('项目名称不能为空', 'error');
+            return;
+        }
+
+        const result = await apiRequest('/api/projects', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+
+        if (!result.success) {
+            showMessage(result.message || '新增项目失败', 'error');
+            return;
+        }
+
+        showMessage(result.message || '新增项目成功', 'success');
+        closeModal('addProjectModal');
+        document.getElementById('addProjectForm').reset();
+        location.reload();
+    }
+
+    async function updateProjectStatus(projectName, status) {
+        if (window.permissionController && !window.permissionController.checkPermissionForAction(
+            window.permissionController.PERMISSIONS.WEB_MANAGE_PROJECTS, '更新项目状态'
+        )) {
+            location.reload();
+            return;
+        }
+
+        const result = await apiRequest(`/api/projects/${encodeURIComponent(projectName)}/lifecycle`, {
+            method: 'PUT',
+            body: JSON.stringify({ projectStatus: status })
+        });
+
+        if (!result.success) {
+            showMessage(result.message || '更新项目状态失败', 'error');
+            location.reload();
+            return;
+        }
+
+        showMessage('项目状态已更新', 'success');
+        location.reload();
+    }
+
+    async function toggleProjectArchive(projectName, nextArchived) {
+        if (window.permissionController && !window.permissionController.checkPermissionForAction(
+            window.permissionController.PERMISSIONS.WEB_MANAGE_PROJECTS, nextArchived ? '归档项目' : '取消归档'
+        )) {
+            return;
+        }
+
+        const actionText = nextArchived ? '归档' : '取消归档';
+        if (!confirmAction(`确定要${actionText}项目 “${projectName}” 吗？`)) {
+            return;
+        }
+
+        const result = await apiRequest(`/api/projects/${encodeURIComponent(projectName)}/lifecycle`, {
+            method: 'PUT',
+            body: JSON.stringify({ isArchived: nextArchived })
+        });
+
+        if (!result.success) {
+            showMessage(result.message || `${actionText}失败`, 'error');
+            return;
+        }
+
+        showMessage(`项目已${actionText}`, 'success');
+        location.reload();
+    }
+
+    async function deleteProject(projectName) {
+        if (window.permissionController && !window.permissionController.checkPermissionForAction(
+            window.permissionController.PERMISSIONS.WEB_MANAGE_PROJECTS, '删除项目'
+        )) {
+            return;
+        }
+
+        if (!confirmAction(`确定要删除项目“${projectName}”吗？此操作不可恢复。`)) {
+            return;
+        }
+
+        const result = await apiRequest(`/api/projects/${encodeURIComponent(projectName)}`, {
+            method: 'DELETE'
+        });
+
+        if (!result.success) {
+            showMessage(result.message || '删除失败', 'error');
+            return;
+        }
+
+        showMessage(result.message || '删除成功', 'success');
+        location.reload();
+    }
+
+    document.addEventListener('change', (event) => {
+        if (event.target.classList.contains('project-select')) {
+            const allInputs = Array.from(document.querySelectorAll('.project-select'));
+            const allChecked = allInputs.length > 0 && allInputs.every(input => input.checked);
+            const toggle = document.getElementById('selectAllProjects');
+            if (toggle) {
+                toggle.checked = allChecked;
+            }
+            refreshBatchSelectionSummary();
+        }
+    });
+
+    function applyProjectFilters() {
+        const query = (document.getElementById('projectSearchInput')?.value || '').trim().toLowerCase();
+        const status = document.getElementById('projectStatusFilter')?.value || '';
+        const archived = document.getElementById('projectArchiveFilter')?.value || '';
+        document.querySelectorAll('#projectsTable tr[data-project]').forEach((row) => {
+            const projectName = (row.dataset.project || '').toLowerCase();
+            const codeCell = row.children[2]?.innerText?.trim().toLowerCase() || '';
+            const rowStatus = row.dataset.status || '';
+            const rowArchived = row.dataset.archived || '';
+            const matchesQuery = !query || projectName.includes(query) || codeCell.includes(query);
+            const matchesStatus = !status || rowStatus === status;
+            const matchesArchived = archived === '' || rowArchived === archived;
+            row.style.display = matchesQuery && matchesStatus && matchesArchived ? '' : 'none';
+        });
+    }
+
+    document.getElementById('projectSearchInput')?.addEventListener('input', applyProjectFilters);
+    document.getElementById('projectStatusFilter')?.addEventListener('change', applyProjectFilters);
+    document.getElementById('projectArchiveFilter')?.addEventListener('change', applyProjectFilters);
+</script>
+{% endblock %}

@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@drawable/bg_warm_app_surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center">
+
+        <!-- Logo区域 -->
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginBottom="32dp"
+            android:src="@drawable/ic_qr_code_scanner"
+            android:background="@drawable/logo_background"
+            android:padding="24dp"
+            android:contentDescription="创崎MES系统" />
+
+        <!-- 标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🏭 创崎MES系统"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/primary_blue"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="请输入用户名和本地登录密码"
+            android:textSize="16sp"
+            android:textColor="@color/dark_gray"
+            android:layout_marginBottom="32dp" />
+
+        <!-- 登录表单 -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <!-- 用户名输入 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:startIconDrawable="@drawable/ic_person"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etUsername"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="用户名"
+                        android:inputType="text"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 密码输入 -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:startIconDrawable="@drawable/ic_lock"
+                    app:endIconMode="password_toggle"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="密码"
+                        android:inputType="textPassword"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- WebDAV不需要域名输入，隐藏该字段 -->
+
+                <!-- 群晖DSM认证选项 -->
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/cbEnableSynologyAuth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="使用群晖DSM认证 (旧版入口，默认停用)"
+                    android:textSize="14sp"
+                    android:checked="false"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- 群晖DSM地址输入 (初始隐藏) -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilSynologyUrl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone"
+                    android:hint="群晖DSM管理地址"
+                    app:startIconDrawable="@drawable/ic_link"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etSynologyUrl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="例如: https://172.16.30.10:5001"
+                        android:text="https://172.16.30.10:5001"
+                        android:inputType="textUri"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 群晖DSM帮助文本 (初始隐藏) -->
+                <TextView
+                    android:id="@+id/tvSynologyHelp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="注意: DSM管理端口通常是5001，WebDAV文件服务端口是5006"
+                    android:textSize="12sp"
+                    android:textColor="@color/dark_gray"
+                    android:visibility="gone"
+                    android:layout_marginBottom="16dp"
+                    android:padding="8dp"
+                    android:background="@drawable/info_background" />
+
+                <!-- 接口选择 -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="接口选择"
+                    android:textSize="14sp"
+                    android:textColor="@color/dark_gray"
+                    android:layout_marginBottom="8dp" />
+
+                <RadioGroup
+                    android:id="@+id/rgBackend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+
+                    <RadioButton
+                        android:id="@+id/rbWebdav"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="WebDAV"
+                        android:checked="true"
+                        android:layout_marginEnd="24dp" />
+
+                    <RadioButton
+                        android:id="@+id/rbSmb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SMB" />
+                </RadioGroup>
+
+                <!-- WebDAV服务器地址输入 (初始隐藏) -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilWebDavUrl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone"
+                    android:hint="WebDAV服务器地址（仅服务器，不含路径）"
+                    app:startIconDrawable="@drawable/ic_link"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etWebDavUrl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="例如: https://panovation.i234.me:5006"
+                        android:inputType="textUri"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- WebDAV帮助文本 (初始隐藏) -->
+                <TextView
+                    android:id="@+id/tvWebDavHelp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="仅输入服务器地址和端口，不要包含路径。例如: https://panovation.i234.me:5006\n系统会自动访问 /mes/QRMES 路径"
+                    android:textSize="12sp"
+                    android:textColor="@color/dark_gray"
+                    android:visibility="gone"
+                    android:layout_marginBottom="16dp"
+                    android:padding="8dp"
+                    android:background="@drawable/info_background" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/cbUseExternalLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="使用外网登录 (221.226.60.30:8891)"
+                    android:textSize="14sp" />
+
+                <!-- 记住密码选项 -->
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/cbRememberCredentials"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="记住登录信息"
+                    android:textSize="14sp"
+                    android:checked="true"
+                    android:layout_marginBottom="24dp" />
+
+                <!-- 登录按钮 -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="登录"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="8dp"
+                    style="@style/Widget.Material3.Button" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 进度条 -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
+            app:indicatorColor="@color/primary_blue" />
+
+        <!-- 状态信息 -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/dark_gray"
+            android:gravity="center"
+            android:visibility="gone" />
+
+        <!-- 帮助信息 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+                    android:text="提示：\n• 当前版本使用用户管理中的本地密码登录\n• 默认密码为 Ab123###\n• 首次登录必须先修改密码\n• 修改后的密码会同步保存到服务器用户数据库\n• 如账号被管理员重置，密码会恢复为默认值并再次要求首登改密"
+            android:textSize="12sp"
+            android:textColor="@color/dark_gray"
+            android:layout_marginTop="24dp"
+            android:padding="16dp"
+            android:background="@drawable/info_background" />
+
+        <TextView
+            android:id="@+id/tvVersionWatermark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:alpha="0.35"
+            android:gravity="end"
+            android:textColor="@color/version_watermark"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</ScrollView>

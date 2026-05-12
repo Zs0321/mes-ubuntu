@@ -1,0 +1,12 @@
+stages:
+  - verify
+
+verify-android-repo:
+  stage: verify
+  tags:
+    - linux
+  script:
+    - test -f settings.gradle
+    - test -f app/build.gradle
+    - test -f gradlew
+    - echo "Android split repository structure looks good"

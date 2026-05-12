@@ -1,0 +1,30 @@
+{
+  "project_id": "PCSaYHeT0B-001",
+  "name": "三一重卡230油冷电机",
+  "model": "油泵电机总成_PCXuGFT00B-1",
+  "vision_provider": "claude",
+  "smb_path": "/Volumes/MES/QRMES/picture/三一重卡230油冷电机_PCSaYHeT0B-001/油泵电机总成_PCXuGFT00B-1/",
+  "processes": [
+    {
+      "id": 1,
+      "name": "插磁钢",
+      "rules": {
+        "check_items": ["磁钢数量", "磁钢位置", "磁钢方向"],
+        "pass_criteria": "所有磁钢正确安装"
+      }
+    },
+    {
+      "id": 2,
+      "name": "磁钢点胶",
+      "rules": {
+        "check_items": ["点胶均匀性", "点胶位置"],
+        "pass_criteria": "点胶均匀无遗漏"
+      }
+    }
+  ],
+  "reference_images": {
+    "插磁钢": []
+  },
+  "created_at": "2026-02-14T16:00:00",
+  "updated_at": "2026-02-14T16:00:00"
+}

@@ -1,0 +1,610 @@
+﻿{% extends "base.html" %}
+
+{% block title %}工时汇总{% endblock %}
+
+{% block content %}
+<style>
+    .mes-work-hours-page {
+        max-width: 1440px;
+        margin: 0 auto;
+        display: grid;
+        gap: 1.25rem;
+    }
+
+    .mes-work-hours-page > .card,
+    .mes-work-hours-page .work-hours-panel {
+        background:
+            linear-gradient(180deg, rgba(15,23,42,0.94), rgba(8,15,28,0.96)) !important;
+        border: 1px solid rgba(56,189,248,0.2) !important;
+        box-shadow: 0 18px 54px rgba(0,0,0,0.34) !important;
+    }
+
+    .mes-work-hours-page h2,
+    .mes-work-hours-page h3,
+    .mes-work-hours-page label {
+        color: #e5f2ff !important;
+    }
+
+    .mes-work-hours-page p,
+    .mes-work-hours-page [style*="color:#718096"],
+    .mes-work-hours-page [style*="color:#4a5568"] {
+        color: #c7d7ea !important;
+    }
+
+    .mes-work-hours-page .work-hours-readonly-note {
+        background:
+            linear-gradient(135deg, rgba(6,78,59,0.92), rgba(15,118,110,0.76)) !important;
+        border-color: rgba(52,211,153,0.34) !important;
+    }
+
+    .mes-work-hours-page .work-hours-readonly-note > div {
+        color: #d1fae5 !important;
+    }
+
+    .mes-work-hours-page [style*="background:#fffbea"] {
+        background: rgba(120,53,15,0.28) !important;
+        border-color: rgba(251,191,36,0.38) !important;
+        color: #fde68a !important;
+    }
+
+    .mes-work-hours-page [style*="background:#f8fbff"],
+    .mes-work-hours-page [style*="background:#fbfdff"],
+    .mes-work-hours-page [style*="background:#f6faff"] {
+        background: rgba(15,23,42,0.78) !important;
+        border-color: rgba(56,189,248,0.18) !important;
+    }
+
+    .mes-work-hours-page [style*="color:#304867"],
+    .mes-work-hours-page [style*="color:#2b5db9"] {
+        color: #dbeafe !important;
+    }
+
+    .mes-work-hours-page [style*="background:#f6faff"][style*="color:#304867"] {
+        background: linear-gradient(180deg, rgba(8,47,73,0.72), rgba(15,23,42,0.86)) !important;
+        border-color: rgba(125,211,252,0.28) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05) !important;
+    }
+
+    .mes-work-hours-page [style*="overflow:auto"] {
+        scrollbar-color: rgba(125,211,252,0.52) rgba(15,23,42,0.82);
+    }
+
+    .mes-work-hours-page .form-control {
+        background: rgba(5,8,18,0.82) !important;
+        border: 1px solid rgba(148,163,184,0.42) !important;
+        color: #e5f2ff !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04) !important;
+    }
+
+    .mes-work-hours-page .form-control::placeholder {
+        color: #93a4ba !important;
+        opacity: 1;
+    }
+
+    .mes-work-hours-page .form-control:focus {
+        border-color: rgba(56,189,248,0.74) !important;
+        box-shadow: 0 0 0 3px rgba(56,189,248,0.16) !important;
+    }
+
+    .mes-work-hours-page .btn {
+        border-radius: 14px !important;
+        font-weight: 800 !important;
+        box-shadow: 0 10px 24px rgba(0,0,0,0.22) !important;
+    }
+
+    .mes-work-hours-page .btn-primary {
+        background: linear-gradient(180deg, #0ea5e9, #0284c7) !important;
+        border-color: rgba(125,211,252,0.44) !important;
+    }
+
+    .mes-work-hours-page .btn-secondary {
+        background: rgba(15,23,42,0.88) !important;
+        border-color: rgba(148,163,184,0.28) !important;
+        color: #dbeafe !important;
+    }
+
+    .mes-work-hours-page .btn-success {
+        background: linear-gradient(180deg, #22c55e, #10b981) !important;
+        border-color: rgba(134,239,172,0.44) !important;
+        color: #fff !important;
+    }
+
+    .mes-work-hours-page table th {
+        background: rgba(15,23,42,0.96) !important;
+        color: #93c5fd !important;
+        border-bottom-color: rgba(148,163,184,0.22) !important;
+    }
+
+    .mes-work-hours-page table td {
+        color: #dbeafe !important;
+        border-bottom-color: rgba(148,163,184,0.14) !important;
+    }
+
+    .mes-work-hours-page table tbody tr:hover td {
+        background: rgba(56,189,248,0.08) !important;
+    }
+
+    .mes-work-hours-page #workOrderOverview > div,
+    .mes-work-hours-page #serialLookupResult > div {
+        background: rgba(15,23,42,0.86) !important;
+        border-color: rgba(56,189,248,0.22) !important;
+    }
+
+    .mes-work-hours-page #workOrderOverview [style*="color:#1f2937"],
+    .mes-work-hours-page #serialLookupResult [style*="color:#1f2937"] {
+        color: #e5f2ff !important;
+    }
+
+    .mes-work-hours-page #serialDetailModal > div {
+        background: #08111f !important;
+        border-color: rgba(56,189,248,0.24) !important;
+    }
+
+    .mes-work-hours-page #serialDetailTitle,
+    .mes-work-hours-page #serialDetailSubtitle,
+    .mes-work-hours-page #serialDetailBody [style*="color:#1f2937"] {
+        color: #e5f2ff !important;
+    }
+
+    @media (max-width: 900px) {
+        .mes-work-hours-page [style*="grid-template-columns:auto 180px auto 180px auto auto auto"],
+        .mes-work-hours-page [style*="grid-template-columns:minmax(260px, 1fr) auto"] {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+
+<div class="mes-work-hours-page">
+<div class="card work-hours-readonly-note" style="margin-bottom:1.25rem; background:linear-gradient(135deg,#f2fff5 0%,#ecfff7 100%); border:1px solid #c9f0d3;">
+    <div style="padding:0.95rem 1.25rem; color:#11834b; font-weight:700; font-size:1rem;">
+        当前页面已启用金蝶只读补查：本地缓存未命中工单号时，会按序列号和产品型号补查金蝶并写入查询缓存。生产部门每完成 1 个序列号，额外增加 5 分钟工时；测试和仓库不增加。
+    </div>
+</div>
+
+<div class="card work-hours-panel">
+    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;">
+        <div>
+            <h2 style="margin:0;">工时汇总</h2>
+            <p style="margin:0.35rem 0 0; color:#718096;">按完成日期筛选并导出本地 MES 完成工时，不再依赖金蝶同步或报工。</p>
+        </div>
+    </div>
+
+    <div style="padding:1.25rem;">
+        <div style="margin-bottom:1rem; padding:0.9rem 1rem; border:1px solid #fde68a; border-radius:16px; background:#fffbea; color:#8a6116; line-height:1.7;">
+            保留工单号本地查询，并启用金蝶只读补查；下推、报工生成等写入类操作仍保持关闭。完成工时统计和导出仍然以本地 MES 图片记录为准。
+        </div>
+
+        <div class="card" style="display:block; border:1px solid #d7e4fb; box-shadow:none; background:#f8fbff; margin-bottom:1rem;">
+            <div class="card-header" style="border-bottom:1px solid #e5edf7;">
+                <div>
+                    <h3 style="margin:0; font-size:1.2rem; color:#1f2937;">查询串号</h3>
+                    <p style="margin:0.3rem 0 0; color:#718096; font-size:0.95rem;">只输入序列号即可，页面会展示命中的工单、推断产品型号和推断来源。</p>
+                </div>
+            </div>
+            <div style="padding:1rem;">
+                <div style="display:grid; grid-template-columns:minmax(260px, 1fr) auto; gap:0.8rem; align-items:center; margin-bottom:0.9rem;">
+                    <input id="serialLookupInput" class="form-control" placeholder="输入产品序列号，例如 TZ220004826040099" style="height:56px; font-size:1.05rem; border-radius:16px;">
+                    <button id="loadSerialLookupBtn" type="button" class="btn btn-primary" onclick="loadSerialLookupSummary()" style="height:56px; min-width:120px; font-size:1rem;">查询串号</button>
+                </div>
+                <div id="serialLookupMessage" style="margin-bottom:0.9rem; color:#718096;">输入串号后可查看命中的工单、推断产品型号和推断来源。</div>
+                <div id="serialLookupResult" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.8rem;"></div>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:minmax(260px, 1fr) auto; gap:0.8rem; align-items:center; margin-bottom:1rem;">
+            <input id="workOrderInput" class="form-control" placeholder="输入工单号后查询本地工时，例如 MO001042" style="height:56px; font-size:1.05rem; border-radius:16px;">
+            <button id="loadWorkOrderBtn" type="button" class="btn btn-primary" onclick="loadWorkOrderSummary()" style="height:56px; min-width:120px; font-size:1rem;">查询工单</button>
+        </div>
+
+        <div style="display:grid; grid-template-columns:auto 180px auto 180px auto auto auto; gap:0.75rem; align-items:center; margin-bottom:1.1rem; padding:0.9rem 1rem; border:1px solid #e3eaf5; border-radius:16px; background:#fbfdff;">
+            <label for="exportStartDate" style="font-weight:700; color:#4a5568;">完成开始日期</label>
+            <input id="exportStartDate" type="date" class="form-control" style="height:44px;">
+            <label for="exportEndDate" style="font-weight:700; color:#4a5568;">完成结束日期</label>
+            <input id="exportEndDate" type="date" class="form-control" style="height:44px;">
+            <button id="queryCompletedRangeBtn" type="button" class="btn btn-primary" onclick="queryCompletedWorkHours('custom')" style="height:44px;">查询时间段</button>
+            <button id="queryLastMonthBtn" type="button" class="btn btn-secondary" onclick="queryCompletedWorkHours('lastMonth')" style="height:44px;">最近一个月</button>
+            <button id="exportCompletedBtn" type="button" class="btn btn-success" onclick="exportCompletedWorkHours()" style="height:44px;">导出Excel</button>
+        </div>
+
+        <div id="workOrderMessage" style="margin-bottom:1.1rem; color:#718096;">输入工单号可查询本地工时；也可以直接按完成日期范围查询或导出 Excel。</div>
+
+        <div id="workOrderOverview" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:0.8rem; margin-bottom:1.2rem;"></div>
+
+        <div class="card" style="display:block; border:1px solid #1e293b; box-shadow:none; background:#fbfdff; margin-bottom:1.2rem;">
+            <div class="card-header" style="border-bottom:1px solid #edf2f7;">
+                <div>
+                    <h3 style="margin:0; font-size:1.35rem; color:#1f2937;">产品汇总</h3>
+                    <p style="margin:0.3rem 0 0; color:#718096; font-size:0.95rem;">优先展示本地工时库；本地查不到时会尝试从金蝶补查并写入序列号缓存。</p>
+                </div>
+            </div>
+            <div style="padding:1rem;">
+                <div style="overflow:auto; border:1px solid #e5edf7; border-radius:16px; background:#0f172a;">
+                    <table class="table" style="width:100%; min-width:1040px; border-collapse:separate; border-spacing:0;">
+                        <thead>
+                            <tr>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">工单号</th>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">产品编码</th>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">序列数</th>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">序列号</th>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">完工数量</th>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">工时计算</th>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">实际总工时(h)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productSummaryBody">
+                            <tr><td colspan="7" style="color:#718096; padding:1.25rem 1rem;">暂无数据</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="serialDetailModal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(15,23,42,0.45); align-items:center; justify-content:center; padding:1rem;">
+            <div style="width:min(860px, 94vw); max-height:82vh; overflow:auto; background:#fff; border-radius:18px; box-shadow:0 24px 80px rgba(15,23,42,0.28); border:1px solid #1e293b;">
+                <div style="display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; padding:1rem 1.2rem; border-bottom:1px solid #edf2f7;">
+                    <div>
+                        <h3 id="serialDetailTitle" style="margin:0; color:#1f2937;">序列号详情</h3>
+                        <div id="serialDetailSubtitle" style="margin-top:0.25rem; color:#718096; font-size:0.92rem;"></div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="closeSerialDetailModal()" style="min-width:80px;">关闭</button>
+                </div>
+                <div id="serialDetailBody" style="padding:1rem 1.2rem; display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.6rem;"></div>
+            </div>
+        </div>
+
+        <div class="card" style="border:1px solid #1e293b; box-shadow:none; background:#fbfdff;">
+            <div class="card-header" style="border-bottom:1px solid #edf2f7;">
+                <div>
+                    <h3 style="margin:0; font-size:1.55rem; color:#1f2937;">完成工时结果</h3>
+                    <p style="margin:0.3rem 0 0; color:#718096; font-size:0.95rem;">按完成日期筛选生产、测试、仓库都完成的序列号；质量部门不计入，且只对生产部门追加 5 分钟。</p>
+                </div>
+            </div>
+            <div style="padding:1rem;">
+                <div style="overflow:auto; border:1px solid #e5edf7; border-radius:16px; background:#0f172a;">
+                    <table class="table" style="width:100%; min-width:1280px; border-collapse:separate; border-spacing:0;">
+                        <thead>
+                            <tr>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">工单号(本地无则为空)</th>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">产品编码</th>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">序列号</th>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">工时</th>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">完成数量</th>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">责任部门</th>
+                                <th style="background:#edf2f8; color:#4a5568; font-size:0.92rem;">实际总工时</th>
+                            </tr>
+                        </thead>
+                        <tbody id="completedWorkHoursBody">
+                            <tr><td colspan="7" style="color:#718096; padding:1.25rem 1rem;">选择日期范围后点击查询。</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top:1rem; padding:1rem 1.1rem; border:1px solid #d7e4fb; border-radius:16px; background:#f6faff; color:#304867; line-height:1.75;">
+                    <div style="font-weight:700; color:#2b5db9; margin-bottom:0.35rem;">导出规则</div>
+                    <div>1. 只统计生产、测试、仓库责任部门，质量部门不计入。</div>
+                    <div>2. 一个责任部门下所有应有工序都有图片记录后，才计该部门工时；生产部门每个完成序列额外加 5 分钟。</div>
+                    <div>3. 一个序列号生产、测试、仓库责任部门全部完成后，才进入日期范围导出。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentOverview = null;
+    let currentWorkOrderNo = '';
+    let currentProductSummaries = [];
+    let currentCompletedRows = [];
+
+    function formatDateInput(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function formatLookupSource(source) {
+        const normalized = String(source || '').trim();
+        const mapping = {
+            cache: '缓存命中',
+            kingdee: '金蝶补查',
+            missing: '未命中',
+            mes_snapshot: 'MES快照推断',
+            request: '请求参数',
+        };
+        return mapping[normalized] || (normalized || '-');
+    }
+
+    function renderSerialLookupSummary(result) {
+        const container = document.getElementById('serialLookupResult');
+        const lookup = result?.lookup || {};
+        const cards = [
+            { label: '序列号', value: result?.serialNumber || '-' },
+            { label: '命中工单', value: lookup.work_order_no || '-' },
+            { label: '推断产品型号', value: result?.inferred_product_code || '-' },
+            { label: '推断来源', value: formatLookupSource(result?.inferred_product_context_source) },
+            { label: '查询来源', value: formatLookupSource(result?.lookup_source) },
+            { label: '推断项目', value: result?.inferred_project_name || '-' },
+            { label: '推断产品类型', value: result?.inferred_product_type || '-' },
+            { label: '完工数量', value: lookup.completed_qty ?? '-' },
+        ];
+        container.innerHTML = cards.map(card => `
+            <div style="background:#0f172a; border:1px solid #dde6f2; border-radius:16px; padding:0.9rem 1rem; min-height:96px; display:flex; flex-direction:column; justify-content:center;">
+                <div style="font-size:0.95rem; color:#718096; margin-bottom:0.35rem;">${escapeHtml(card.label)}</div>
+                <div style="font-size:1.05rem; font-weight:800; color:#1f2937; line-height:1.45; word-break:break-word;">
+                    ${escapeHtml(card.value)}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function loadSerialLookupSummary() {
+        const serialInput = document.getElementById('serialLookupInput');
+        const btn = document.getElementById('loadSerialLookupBtn');
+        const message = document.getElementById('serialLookupMessage');
+        const serial = serialInput.value.trim();
+        if (!serial) {
+            showMessage('请先输入串号', 'error');
+            return;
+        }
+
+        btn.disabled = true;
+        message.style.color = '#718096';
+        message.textContent = '正在查询串号工时与推断产品信息...';
+        try {
+            const result = await apiRequest(`/api/kingdee/work-hours/serial/${encodeURIComponent(serial)}`);
+            if (!result.success) {
+                throw new Error(result.message || '查询失败');
+            }
+            renderSerialLookupSummary(result);
+            message.style.color = result.lookup_found ? '#2f855a' : '#d69e2e';
+            message.textContent = result.lookup_found
+                ? `串号查询成功：已命中 ${result.lookup?.work_order_no || '-'}，推断产品型号 ${result.inferred_product_code || '-'}`
+                : `串号查询完成：暂未命中工单，但已推断产品型号 ${result.inferred_product_code || '-'} / 来源 ${formatLookupSource(result.inferred_product_context_source)}`;
+        } catch (error) {
+            document.getElementById('serialLookupResult').innerHTML = '';
+            message.style.color = '#e53e3e';
+            message.textContent = `串号查询失败：${error.message}`;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    function setLastMonthRange() {
+        const end = new Date();
+        const start = new Date();
+        start.setDate(start.getDate() - 30);
+        document.getElementById('exportStartDate').value = formatDateInput(start);
+        document.getElementById('exportEndDate').value = formatDateInput(end);
+    }
+
+    function formatDateTime(ms) {
+        if (!ms) return '-';
+        const date = new Date(Number(ms));
+        if (Number.isNaN(date.getTime())) return '-';
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${month}/${day} ${hours}:${minutes}`;
+    }
+
+    function formatHours(durationMs, digits = 2) {
+        if (durationMs === null || durationMs === undefined || durationMs === '') return '-';
+        const hours = Number(durationMs) / 3600000;
+        if (!Number.isFinite(hours)) return '-';
+        return hours.toFixed(digits);
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function renderOverviewCards(overview, productSummaries, serialSummaries, workOrderNo) {
+        const container = document.getElementById('workOrderOverview');
+        currentOverview = overview || null;
+        const cards = [
+            { label: '工单号', value: workOrderNo || '-' },
+            { label: '产品行', value: overview?.product_code_count ?? productSummaries.length ?? 0 },
+            { label: '序列数', value: overview?.tracked_serial_count ?? serialSummaries.length ?? 0 },
+            { label: '已完工序列', value: overview?.completed_serial_count ?? 0 },
+            { label: '实际总工时', value: `${formatHours(overview?.total_duration_ms, 2)} h` }
+        ];
+
+        container.innerHTML = cards.map(card => `
+            <div style="background:#0f172a; border:1px solid #dde6f2; border-radius:16px; padding:0.9rem 1rem; min-height:96px; display:flex; flex-direction:column; justify-content:center;">
+                <div style="font-size:0.95rem; color:#718096; margin-bottom:0.35rem;">${escapeHtml(card.label)}</div>
+                <div style="font-size:${card.html ? '1.1rem' : '1.05rem'}; font-weight:800; color:#1f2937; line-height:1.45;">
+                    ${card.html ? card.value : escapeHtml(card.value)}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderProductSummaries(rows) {
+        const body = document.getElementById('productSummaryBody');
+        currentProductSummaries = Array.isArray(rows) ? rows : [];
+        if (!currentProductSummaries.length) {
+            body.innerHTML = '<tr><td colspan="7" style="color:#718096; padding:1.25rem 1rem;">当前工单暂无产品汇总</td></tr>';
+            return;
+        }
+        body.innerHTML = currentProductSummaries.map((row, index) => `
+            <tr>
+                <td>${escapeHtml(row.work_order_no || currentWorkOrderNo || '-')}</td>
+                <td>${escapeHtml(row.product_code || '-')}</td>
+                <td>${escapeHtml(row.tracked_serial_count ?? 0)}</td>
+                <td>${renderSerialDetailButton(row, index)}</td>
+                <td>${escapeHtml(row.completed_qty ?? '-')}</td>
+                <td style="min-width:260px; white-space:normal; line-height:1.55;">${escapeHtml(row.department_work_hours_display || '-')}</td>
+                <td>${escapeHtml(
+                    row.reported_actual_work_hours !== null && row.reported_actual_work_hours !== undefined
+                        ? Number(row.reported_actual_work_hours).toFixed(2)
+                        : (row.department_total_formula_display || formatHours(row.total_duration_ms, 2))
+                )}</td>
+            </tr>
+        `).join('');
+    }
+
+    function renderSerialDetailButton(row, index) {
+        const serials = Array.isArray(row.kingdee_serial_numbers) ? row.kingdee_serial_numbers : [];
+        if (!serials.length) return '-';
+        return `<button type="button" class="btn btn-secondary" onclick="showSerialDetails(${index})" style="padding:0.35rem 0.75rem; border-radius:10px;">查看 ${serials.length} 个</button>`;
+    }
+
+    function showSerialDetails(index) {
+        const row = currentProductSummaries[index] || {};
+        const serials = Array.isArray(row.kingdee_serial_numbers) ? row.kingdee_serial_numbers : [];
+        const modal = document.getElementById('serialDetailModal');
+        document.getElementById('serialDetailTitle').textContent = '序列号详情';
+        document.getElementById('serialDetailSubtitle').textContent = `${row.product_code || '-'}，共 ${serials.length} 个`;
+        document.getElementById('serialDetailBody').innerHTML = serials.length
+            ? serials.map(serial => `<div style="padding:0.65rem 0.8rem; border:1px solid #1e293b; border-radius:12px; background:#111827; color:#1f2937; font-family:Consolas, monospace;">${escapeHtml(serial)}</div>`).join('')
+            : '<div style="color:#718096;">暂无序列号</div>';
+        modal.style.display = 'flex';
+    }
+
+    function closeSerialDetailModal() {
+        document.getElementById('serialDetailModal').style.display = 'none';
+    }
+
+    function renderCompletedWorkHours(rows) {
+        const body = document.getElementById('completedWorkHoursBody');
+        currentCompletedRows = Array.isArray(rows) ? rows : [];
+        if (!currentCompletedRows.length) {
+            body.innerHTML = '<tr><td colspan="7" style="color:#718096; padding:1.25rem 1rem;">当前时间范围内暂无完成工时数据</td></tr>';
+            return;
+        }
+        body.innerHTML = currentCompletedRows.map(row => `
+            <tr>
+                <td>${escapeHtml(row.work_order_no || '-')}</td>
+                <td>${escapeHtml(row.product_code || '-')}</td>
+                <td>${escapeHtml(row.serial_number || '-')}</td>
+                <td style="min-width:320px; white-space:normal; line-height:1.55;">${escapeHtml(row.work_hours_display || '-')}</td>
+                <td>${escapeHtml(row.completed_quantity ?? 0)}</td>
+                <td>${escapeHtml(row.responsible_departments || '智能制造部-生产，测试和实验室，项目推进部-仓库')}</td>
+                <td>${escapeHtml(row.total_hours_formula || formatHours(row.total_duration_ms, 2))}</td>
+            </tr>
+        `).join('');
+    }
+
+    async function queryCompletedWorkHours(mode) {
+        const btn = mode === 'lastMonth'
+            ? document.getElementById('queryLastMonthBtn')
+            : document.getElementById('queryCompletedRangeBtn');
+        const message = document.getElementById('workOrderMessage');
+        if (mode === 'lastMonth') {
+            setLastMonthRange();
+        }
+        const startDate = document.getElementById('exportStartDate').value;
+        const endDate = document.getElementById('exportEndDate').value;
+        if (!startDate || !endDate) {
+            showMessage('请先选择完成日期范围', 'error');
+            return;
+        }
+
+        btn.disabled = true;
+        message.style.color = '#718096';
+        message.textContent = mode === 'lastMonth' ? '正在查询最近一个月完成工时...' : '正在查询自定义时间段完成工时...';
+        try {
+            const params = new URLSearchParams({ startDate, endDate, refreshMes: '1' });
+            const result = await apiRequest(`/api/mes/work-hours/completed-summary?${params.toString()}`);
+            if (!result.success) {
+                throw new Error(result.message || '查询失败');
+            }
+            renderCompletedWorkHours(result.rows || []);
+            message.style.color = '#2f855a';
+            message.textContent = `完成工时查询成功：${result.start_date} 至 ${result.end_date}，共 ${result.row_count || 0} 条`;
+        } catch (error) {
+            renderCompletedWorkHours([]);
+            message.style.color = '#e53e3e';
+            message.textContent = `完成工时查询失败：${error.message}`;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    function exportCompletedWorkHours() {
+        const startDate = document.getElementById('exportStartDate').value;
+        const endDate = document.getElementById('exportEndDate').value;
+        if (!startDate || !endDate) {
+            showMessage('请先选择完成日期范围', 'error');
+            return;
+        }
+        const params = new URLSearchParams({ startDate, endDate, refreshMes: '1' });
+        window.location.href = `/api/mes/work-hours/completed-export?${params.toString()}`;
+    }
+
+    async function loadWorkOrderSummary() {
+        const workOrderInput = document.getElementById('workOrderInput');
+        const workOrderNo = workOrderInput.value.trim();
+        const btn = document.getElementById('loadWorkOrderBtn');
+        const message = document.getElementById('workOrderMessage');
+        if (!workOrderNo) {
+            showMessage('请先输入工单号', 'error');
+            return;
+        }
+
+        btn.disabled = true;
+        message.style.color = '#718096';
+        message.textContent = '正在优先查询本地工时记录，缺失时补查金蝶...';
+        currentWorkOrderNo = workOrderNo;
+        try {
+            const result = await apiRequest(`/api/mes/work-hours/work-order/${encodeURIComponent(workOrderNo)}?includeRecords=1&autoSync=1`);
+            if (!result.success) {
+                throw new Error(result.message || '查询失败');
+            }
+            renderOverviewCards(
+                result.overview,
+                result.product_summaries || [],
+                result.serial_summaries || [],
+                result.work_order_no || workOrderNo
+            );
+            renderProductSummaries(result.product_summaries || []);
+            const serialCount = (result.serial_summaries || []).length;
+            message.style.color = serialCount > 0 ? '#2f855a' : '#d69e2e';
+            if (serialCount > 0) {
+                const syncText = result.auto_sync_attempted
+                    ? `；${result.auto_sync_message || '已从金蝶补查'}`
+                    : '；命中本地数据';
+                message.textContent = `查询成功：${result.work_order_no || workOrderNo}，共 ${serialCount} 个序列号${syncText}`;
+            } else {
+                message.textContent = result.auto_sync_attempted && result.auto_sync_message
+                    ? result.auto_sync_message
+                    : `本地和金蝶里都还没有查到 ${result.work_order_no || workOrderNo} 的数据。`;
+            }
+        } catch (error) {
+            currentProductSummaries = [];
+            renderOverviewCards(null, [], [], '');
+            renderProductSummaries([]);
+            message.style.color = '#e53e3e';
+            message.textContent = `查询失败：${error.message}`;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setLastMonthRange();
+        const input = document.getElementById('workOrderInput');
+        const serialLookupInput = document.getElementById('serialLookupInput');
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                loadWorkOrderSummary();
+            }
+        });
+        serialLookupInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                loadSerialLookupSummary();
+            }
+        });
+    });
+</script>
+{% endblock %}

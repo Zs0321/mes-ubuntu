@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+	<!--
+	 FileProvider 路径配置
+	 - 之前只允许 Download/QRTestScanner/ 子目录
+	 - 实际 APK 下载到 getExternalFilesDir(DIRECTORY_DOWNLOADS) 根目录
+	 - 导致安装时出现 "Failed to find configured root that contains ..." 错误
+	
+	 现在放宽为整个 Download/ 目录，并兼容旧子目录
+	-->
+	<!-- 允许 external files 的 Download 根目录 -->
+	<external-files-path
+		name="downloads_root"
+		path="Download/" />
+	<!-- 兼容旧路径 Download/QRTestScanner/（如后续仍使用该子目录） -->
+	<external-files-path
+		name="qrtestscanner_downloads"
+		path="Download/QRTestScanner/" />
+	<!-- 缓存目录（日志 zip 分享） -->
+	<cache-path
+		name="log_share"
+		path="." />
+</paths>

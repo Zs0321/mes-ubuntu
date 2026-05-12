@@ -1,0 +1,24 @@
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+Flask-WTF==1.1.1
+WTForms==3.0.1
+openpyxl==3.1.2
+pandas==1.5.3; python_version < "3.12"
+pandas==2.2.3; python_version >= "3.12"
+python-docx==1.1.2
+python-dateutil==2.8.2
+Werkzeug==2.3.7
+numpy==1.23.5; python_version < "3.12"
+numpy==1.26.4; python_version >= "3.12"
+requests==2.31.0
+pysmb==1.2.9.1
+paramiko==4.0.0
+webdavclient3==3.14.6
+watchdog==3.0.0  # CSV 文件监控
+Pillow==10.2.0
+qrcode==7.4.2
+python-dotenv==1.0.0
+bcrypt==4.1.2
+flask-compress==1.15
+redis==5.0.1
+pypinyin==0.53.0

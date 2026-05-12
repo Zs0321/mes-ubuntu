@@ -1,0 +1,198 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp'
+}
+
+// Helper to read from gradle.properties or environment variables
+def propOrEnv = { name -> project.hasProperty(name) ? project.property(name) : System.getenv(name) }
+def appVersion = '2.0.7'
+def appVersionParts = appVersion.tokenize('.').collect { it as int }
+def computedVersionCode = appVersionParts[0] * 10000 + appVersionParts[1] * 100 + appVersionParts[2]
+
+android {
+    namespace 'com.testcenter.qrscanner'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.testcenter.qrscanner"
+        minSdk 24
+        targetSdk 34
+        versionCode computedVersionCode
+        versionName appVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // Release signing config
+    signingConfigs {
+        release {
+            def storePath = (propOrEnv('RELEASE_STORE_FILE') ?: 'PanovationQrtest.jks').toString()
+            storeFile rootProject.file(storePath)
+            storePassword (propOrEnv('RELEASE_STORE_PASSWORD') ?: 'Clt@123456')
+            keyAlias (propOrEnv('RELEASE_KEY_ALIAS') ?: 'panovationqrtest')
+            keyPassword (propOrEnv('RELEASE_KEY_PASSWORD') ?: 'Clt@123456')
+            // 鍚敤鎵€鏈夌鍚嶇増鏈互纭繚鏈€澶у吋瀹规€?
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
+    buildTypes {
+        debug {
+            versionNameSuffix '-debug'
+            signingConfig signingConfigs.release
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // Release 浣跨敤姝ｅ紡绛惧悕
+            signingConfig signingConfigs.release
+        }
+    }
+    
+    // Java 17 缂栬瘧閫夐」
+    compileOptions {
+        // 鍚敤 Core Library Desugaring
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true
+        buildConfig = true
+    }
+    
+    // 鑷姩閲嶅懡鍚?APK 鏂囦欢涓鸿鑼冩牸寮忥細Panovation MesApp v{version}_{buildCode}.apk
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (variant.buildType.name == 'release' || variant.buildType.name == 'debug') {
+                def versionName = variant.versionName
+                def versionCode = variant.versionCode.toString().padLeft(3, '0')
+                outputFileName = "Panovation MesApp v${versionName}_${versionCode}.apk"
+            }
+        }
+    }
+    
+    // AAPT 閰嶇疆 - 灏濊瘯瑙ｅ喅璧勬簮閾炬帴闂
+    androidResources {
+        noCompress 'tflite'
+        noCompress 'lite'
+    }
+    
+    // 閬垮厤 lint 鎶ラ敊闃绘柇 release 鏋勫缓锛坙int 浼氭墽琛屼絾涓嶈嚧浣挎瀯寤哄け璐ワ級
+    lint {
+        abortOnError = false
+        // 褰诲簳鍏抽棴 release 鏋勫缓鐨?lintVital 浠诲姟锛岄伩鍏嶄笅杞?lint 渚濊禆澶辫触鑰屼腑鏂瀯寤?
+        checkReleaseBuilds = false
+    }
+    // ndkVersion is not specified; let AGP select a suitable NDK or configure explicitly in gradle.properties if needed
+
+    packaging {
+        resources {
+            // Exclude duplicate metadata from httpclient/httpcore
+            excludes += [
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/LICENSE.md",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.md",
+                "META-INF/NOTICE.txt",
+                "META-INF/ASL2.0"
+            ]
+        }
+    }
+    buildToolsVersion '34.0.0'
+    // 鏆傛椂绂佺敤 ABI splits 浠ヨВ鍐虫瀯寤洪棶棰?
+    // splits {
+    //     abi {
+    //         enable = true
+    //         reset()
+    //         include 'arm64-v8a'
+    //         universalApk = false
+    //     }
+    // }
+}
+
+// 缁熶竴绾︽潫 Kotlin 渚濊禆鐗堟湰锛岄槻姝㈣В鏋愬埌 Kotlin 2.x 鍏冩暟鎹鑷寸紪璇戝け璐?
+configurations.configureEach {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'org.jetbrains.kotlin' &&
+                details.requested.name.startsWith('kotlin-')) {
+            details.useVersion '1.9.0'
+            details.because('Align Kotlin libraries with Kotlin Gradle plugin 1.9.0 to avoid metadata 2.x incompatibility')
+        }
+    }
+}
+
+dependencies {
+    // 浣跨敤 Kotlin BOM 灏?Kotlin 鐩稿叧渚濊禆瀵归綈鍒?1.9.0
+    implementation platform('org.jetbrains.kotlin:kotlin-bom:2.2.20')
+
+    // Core Library Desugaring 鐢ㄤ簬鍦ㄤ綆鐗堟湰 Android 涓婃敮鎸?Java 8+ API
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+    
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
+    
+    // ML Kit 鏉＄爜璇嗗埆锛堢敤浜庨珮娓呴潤鎬佸浘璇嗗埆锛?
+    implementation 'com.google.mlkit:barcode-scanning:17.3.0'
+    // 浜岀淮鐮佹壂鎻忓簱
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+    implementation 'com.google.zxing:core:3.5.3'
+    
+    // 鐩告満鏉冮檺 - 闄嶇骇鍒板吋瀹?AGP 8.2.2 鐨勭増鏈?
+    implementation 'androidx.camera:camera-camera2:1.3.4'
+    implementation 'androidx.camera:camera-lifecycle:1.3.4'
+    implementation 'androidx.camera:camera-view:1.3.4'
+    
+    // PhotoView - 鏀寔鐓х墖缂╂斁鍜屾嫋鍔?
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    
+    // 鏁版嵁搴?(Room with KSP)
+    implementation 'androidx.room:room-runtime:2.6.1'
+    implementation 'androidx.room:room-ktx:2.6.1'
+    ksp 'androidx.room:room-compiler:2.6.1'
+    
+    // 缃戠粶鏂囦欢璁块棶 - WebDAV (Android-compatible, OkHttp-based)
+    implementation 'com.github.thegrizzlylabs:sardine-android:v0.9'
+    // SMB (鍏变韩鏂囦欢澶硅闂?
+    implementation 'com.hierynomus:smbj:0.14.0'
+    
+    // 瀹夊叏瀛樺偍锛圡asterKey 闇€瑕?1.1.0-alpha06 鍙婁互涓婏級
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+    
+    // 鏃ユ湡鏃堕棿澶勭悊锛堜笌 Kotlin 1.9 鍏煎鐨勭増鏈級
+    implementation 'org.jetbrains.kotlinx:kotlinx-datetime:0.4.1'
+    
+    // JSON澶勭悊
+    implementation 'com.google.code.gson:gson:2.13.2'
+    
+    // Retrofit + OkHttp (REST API 瀹㈡埛绔?
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+    
+    // Glide 鍥剧墖鍔犺浇搴?
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    
+    // WorkManager for background tasks
+    implementation 'androidx.work:work-runtime-ktx:2.9.0'
+    
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+

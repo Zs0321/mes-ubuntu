@@ -1,0 +1,724 @@
+{% extends "base.html" %}
+
+{% block title %}上传SOP - MES系统{% endblock %}
+
+{% block head %}
+<style>
+/* SOP全屏页面样式 */
+.sop-page {
+    display: grid;
+    gap: 1.5rem;
+    color: var(--text-primary);
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+/* 覆盖.container的宽度限制 */
+.container .sop-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.upload-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.upload-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.upload-main {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+}
+
+.upload-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.upload-dropzone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    background: var(--surface);
+}
+
+.upload-dropzone:hover,
+.upload-dropzone.drag-over {
+    border-color: var(--primary);
+    background: rgba(56, 189, 248, 0.08);
+}
+
+.upload-dropzone-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.upload-dropzone-text {
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.upload-dropzone-hint {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.upload-dropzone-formats {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.format-badge {
+    padding: 0.25rem 0.75rem;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.file-info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    display: none;
+}
+
+.file-info-card.active {
+    display: block;
+}
+
+.file-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.file-info-title {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.file-info-remove {
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: color var(--transition-fast);
+}
+
+.file-info-remove:hover {
+    color: #ef4444;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    transition: all var(--transition-fast);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-input::placeholder {
+    color: var(--text-muted);
+}
+
+.form-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-input-info {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.form-input-error {
+    font-size: 0.75rem;
+    color: #ef4444;
+    margin-top: 0.25rem;
+}
+
+.info-card {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+}
+
+.info-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-card-content {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.info-card-content ul {
+    margin: 0.5rem 0;
+    padding-left: 1.25rem;
+}
+
+.info-card-content li {
+    margin-bottom: 0.25rem;
+}
+
+.info-card-content code {
+    background: var(--surface);
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--radius-sm);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #0a0a0a;
+}
+
+.btn-primary:hover {
+    background: var(--primary-light);
+}
+
+.btn-primary:disabled {
+    background: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+    border-color: var(--border-strong);
+}
+
+.success-message {
+    background: rgba(34, 197, 94, 0.16);
+    border: 1px solid rgba(34, 197, 94, 0.32);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.5rem;
+    color: #22c55e;
+    margin-bottom: 1.5rem;
+    display: none;
+}
+
+.success-message.active {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.error-message {
+    background: rgba(239, 68, 68, 0.16);
+    border: 1px solid rgba(239, 68, 68, 0.32);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.5rem;
+    color: #ef4444;
+    margin-bottom: 1.5rem;
+    display: none;
+}
+
+.error-message.active {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+@media (max-width: 1024px) {
+    .upload-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sop-page">
+<div class="upload-container">
+    <div class="page-header">
+        <h1 class="page-title">
+            <span>📤</span>
+            上传SOP文件
+        </h1>
+        <a href="{{ url_for('sop.sop_home') }}" class="btn btn-secondary">
+            ← 返回首页
+        </a>
+    </div>
+    
+    <div class="success-message" id="success-message">
+        <span>✅</span>
+        <span id="success-text">操作成功</span>
+    </div>
+    
+    <div class="error-message" id="error-message">
+        <span>❌</span>
+        <span id="error-text">操作失败</span>
+    </div>
+    
+    <div class="upload-grid">
+        <div class="upload-main">
+            <!-- 文件上传区域 -->
+            <div class="upload-dropzone" id="upload-dropzone">
+                <div class="upload-dropzone-icon">📁</div>
+                <div class="upload-dropzone-text">点击或拖拽文件到此处上传</div>
+                <div class="upload-dropzone-hint">支持 Word、Excel、PDF 格式</div>
+                <div class="upload-dropzone-formats">
+                    <span class="format-badge">.docx</span>
+                    <span class="format-badge">.xlsx</span>
+                    <span class="format-badge">.pdf</span>
+                    <span class="format-badge">.doc</span>
+                    <span class="format-badge">.xls</span>
+                </div>
+                <input type="file" id="file-input" style="display: none;" accept=".docx,.xlsx,.pdf,.doc,.xls">
+            </div>
+            
+            <!-- 文件信息卡片 -->
+            <div class="file-info-card" id="file-info-card">
+                <div class="file-info-header">
+                    <div class="file-info-title" id="file-name">文件名.docx</div>
+                    <div class="file-info-remove" onclick="removeFile()">✕ 移除</div>
+                </div>
+                
+                <form id="sop-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">文件编号 *</label>
+                            <input type="text" class="form-input" id="file-number" name="file_number" 
+                                   placeholder="如: CQ-WI-D230-A1" required>
+                            <div class="form-input-info">格式: 公司代码-文件类型-序号-版本</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">版本</label>
+                            <input type="text" class="form-input" id="version" name="version" 
+                                   placeholder="A0" value="A0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">产品编码</label>
+                            <input type="text" class="form-input" id="product-code" name="product_code" 
+                                   placeholder="如: 230, 350">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">产品名称</label>
+                            <input type="text" class="form-input" id="product-name" name="product_name" 
+                                   placeholder="产品名称">
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label class="form-label">创建者</label>
+                            <input type="text" class="form-input" id="creator" name="creator" 
+                                   placeholder="您的姓名">
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label class="form-label">描述</label>
+                            <textarea class="form-textarea" id="description" name="description" 
+                                      placeholder="简要描述SOP内容..."></textarea>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label class="form-label">关键词</label>
+                            <input type="text" class="form-input" id="keywords" name="keywords" 
+                                   placeholder="用逗号分隔，如: 装配,测试,质检">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- 操作按钮 -->
+            <div class="action-buttons" id="action-buttons" style="display: none;">
+                <button class="btn btn-primary" onclick="uploadSOP()" id="upload-btn">
+                    📤 上传SOP
+                </button>
+                <button class="btn btn-secondary" onclick="resetForm()">
+                    🔄 重置
+                </button>
+            </div>
+        </div>
+        
+        <!-- 侧边栏信息 -->
+        <div class="upload-sidebar">
+            <div class="info-card">
+                <div class="info-card-title">
+                    <span>📋</span>
+                    文件编号规则
+                </div>
+                <div class="info-card-content">
+                    <p><strong>标准格式:</strong> <code>CQ-WI-D000-A0</code></p>
+                    <ul>
+                        <li><code>CQ</code> - 公司代码</li>
+                        <li><code>WI</code> - 文件类型（WI/QP等）</li>
+                        <li><code>D000</code> - 序列号</li>
+                        <li><code>A0</code> - 版本号</li>
+                    </ul>
+                    <p style="margin-top: 1rem;"><strong>版本递增:</strong></p>
+                    <p>A0 → A1 → A2 ...</p>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-card-title">
+                    <span>🔄</span>
+                    审批流程
+                </div>
+                <div class="info-card-content">
+                    <ol style="padding-left: 1.25rem;">
+                        <li>创建者提交</li>
+                        <li>编号审核（邱静）</li>
+                        <li>部门会签</li>
+                        <li>质量审核</li>
+                        <li>生产审核</li>
+                        <li>最终批准</li>
+                    </ol>
+                    <p style="margin-top: 1rem; color: var(--text-muted);">
+                        批准后自动添加"受控文件"水印
+                    </p>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-card-title">
+                    <span>⚙️</span>
+                    自动提取
+                </div>
+                <div class="info-card-content">
+                    <p>系统会自动从文件名提取:</p>
+                    <ul>
+                        <li>文件编号</li>
+                        <li>版本号</li>
+                        <li>产品信息</li>
+                    </ul>
+                    <p style="margin-top: 1rem; color: var(--text-muted);">
+                        建议按照规范命名文件
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let selectedFile = null;
+
+// 初始化拖拽上传
+document.addEventListener('DOMContentLoaded', () => {
+    const dropzone = document.getElementById('upload-dropzone');
+    const fileInput = document.getElementById('file-input');
+    
+    // 点击上传
+    dropzone.addEventListener('click', () => fileInput.click());
+    
+    // 拖拽效果
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('drag-over');
+    });
+    
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('drag-over');
+    });
+    
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('drag-over');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFile(files[0]);
+        }
+    });
+    
+    // 文件选择
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleFile(e.target.files[0]);
+        }
+    });
+});
+
+// 处理文件
+function handleFile(file) {
+    const validTypes = ['.docx', '.xlsx', '.pdf', '.doc', '.xls'];
+    const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    
+    if (!validTypes.includes(ext)) {
+        showError('不支持的文件格式，请上传 Word、Excel 或 PDF 文件');
+        return;
+    }
+    
+    selectedFile = file;
+    
+    // 显示文件信息
+    document.getElementById('file-name').textContent = file.name;
+    document.getElementById('file-info-card').classList.add('active');
+    document.getElementById('action-buttons').style.display = 'flex';
+    
+    // 自动提取文件信息
+    extractFileInfo(file.name);
+}
+
+// 提取文件信息
+function extractFileInfo(fileName) {
+    // 从文件名提取编号
+    const patterns = [
+        /([A-Z]+-[A-Z]+-[A-Z]?\d{3}-[A-Z]\d+)/,
+        /([A-Z]{2}-[A-Z]{2,3}-\d{2,3}-[A-Z]\d+)/
+    ];
+    
+    let fileNumber = '';
+    for (const pattern of patterns) {
+        const match = fileName.match(pattern);
+        if (match) {
+            fileNumber = match[1];
+            break;
+        }
+    }
+    
+    if (fileNumber) {
+        document.getElementById('file-number').value = fileNumber;
+        
+        // 提取版本
+        const versionMatch = fileNumber.match(/-([A-Z]\d+)$/);
+        if (versionMatch) {
+            document.getElementById('version').value = versionMatch[1];
+        }
+    }
+    
+    // 提取产品编码
+    const productMatch = fileName.match(/(\d{3})/);
+    if (productMatch) {
+        document.getElementById('product-code').value = productMatch[1];
+        document.getElementById('product-name').value = `产品${productMatch[1]}`;
+    }
+}
+
+// 移除文件
+function removeFile() {
+    selectedFile = null;
+    document.getElementById('file-input').value = '';
+    document.getElementById('file-info-card').classList.remove('active');
+    document.getElementById('action-buttons').style.display = 'none';
+}
+
+// 上传SOP
+async function uploadSOP() {
+    if (!selectedFile) {
+        showError('请先选择文件');
+        return;
+    }
+    
+    const fileNumber = document.getElementById('file-number').value.trim();
+    if (!fileNumber) {
+        showError('请填写文件编号');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('file_number', fileNumber);
+    formData.append('version', document.getElementById('version').value);
+    formData.append('product_code', document.getElementById('product-code').value);
+    formData.append('product_name', document.getElementById('product-name').value);
+    formData.append('creator', document.getElementById('creator').value);
+    formData.append('description', document.getElementById('description').value);
+    formData.append('keywords', document.getElementById('keywords').value);
+    
+    const btn = document.getElementById('upload-btn');
+    btn.disabled = true;
+    btn.textContent = '上传中...';
+    
+    try {
+        const response = await fetch('/sop/api/upload', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess(`上传成功！文件编号: ${result.file_number}`);
+            
+            // 询问是否提交审批
+            if (confirm('上传成功！是否立即提交审批？')) {
+                submitForApproval(result.sop_id);
+            } else {
+                resetForm();
+            }
+        } else {
+            showError(result.error || '上传失败');
+        }
+    } catch (error) {
+        showError('上传失败: ' + error.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '📤 上传SOP';
+    }
+}
+
+// 提交审批
+async function submitForApproval(sopId) {
+    try {
+        const response = await fetch(`/sop/api/submit/${sopId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reviewer: document.getElementById('creator').value })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccess('已提交审批！');
+            setTimeout(() => {
+                window.location.href = '/sop/approval';
+            }, 1500);
+        } else {
+            showError(result.error || '提交失败');
+        }
+    } catch (error) {
+        showError('提交失败: ' + error.message);
+    }
+}
+
+// 重置表单
+function resetForm() {
+    removeFile();
+    document.getElementById('sop-form').reset();
+    hideMessages();
+}
+
+// 显示成功消息
+function showSuccess(text) {
+    hideMessages();
+    document.getElementById('success-text').textContent = text;
+    document.getElementById('success-message').classList.add('active');
+}
+
+// 显示错误消息
+function showError(text) {
+    hideMessages();
+    document.getElementById('error-text').textContent = text;
+    document.getElementById('error-message').classList.add('active');
+}
+
+// 隐藏消息
+function hideMessages() {
+    document.getElementById('success-message').classList.remove('active');
+    document.getElementById('error-message').classList.remove('active');
+}
+</script>
+{% endblock %}

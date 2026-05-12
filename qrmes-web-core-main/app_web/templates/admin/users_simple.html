@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理 - QRTestScanner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .user-card {
+            transition: transform 0.2s;
+        }
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .role-badge {
+            font-size: 0.8em;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        .last-login {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container-fluid">
+        <!-- 导航栏 -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    <i class="bi bi-qr-code-scan"></i> QRTestScanner
+                </a>
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="/">
+                        <i class="bi bi-house"></i> 首页
+                    </a>
+                    <a class="nav-link active" href="/admin/users">
+                        <i class="bi bi-people"></i> 用户管理
+                    </a>
+                    <a class="nav-link" href="/logout">
+                        <i class="bi bi-box-arrow-right"></i> 退出
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 页面标题 -->
+        <div class="row mb-4">
+            <div class="col">
+                <h2><i class="bi bi-people-fill"></i> 用户管理</h2>
+                <p class="text-muted">管理系统用户和权限设置</p>
+            </div>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people display-4"></i>
+                        <h3 class="mt-2">{{ stats.total_users }}</h3>
+                        <p class="mb-0">总用户数</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center">
+                        <i class="bi bi-shield-check display-4"></i>
+                        <h3 class="mt-2">{{ stats.admin_users }}</h3>
+                        <p class="mb-0">管理员</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body text-center">
+                        <i class="bi bi-person display-4"></i>
+                        <h3 class="mt-2">{{ stats.regular_users }}</h3>
+                        <p class="mb-0">普通用户</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body text-center">
+                        <i class="bi bi-activity display-4"></i>
+                        <h3 class="mt-2">{{ stats.recent_active_users }}</h3>
+                        <p class="mb-0">活跃用户</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 用户列表 -->
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-list-ul"></i> 用户列表</h5>
+                        <div>
+                            <button class="btn btn-outline-primary btn-sm" onclick="refreshUsers()">
+                                <i class="bi bi-arrow-clockwise"></i> 刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {% if users %}
+                        <div class="row">
+                            {% for user in users %}
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card user-card h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h6 class="card-title mb-0">
+                                                <i class="bi bi-person-circle"></i> {{ user.display_name }}
+                                            </h6>
+                                            <span class="badge role-badge {% if user.role == 'admin' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                                {% if user.role == 'admin' %}
+                                                    <i class="bi bi-shield-fill"></i> 管理员
+                                                {% else %}
+                                                    <i class="bi bi-person"></i> 普通用户
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="bi bi-at"></i> {{ user.username }}
+                                            </small>
+                                        </p>
+                                        
+                                        {% if user.email %}
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="bi bi-envelope"></i> {{ user.email }}
+                                            </small>
+                                        </p>
+                                        {% endif %}
+                                        
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="bi bi-key"></i> {{ user.permissions }} 个权限
+                                            </small>
+                                        </p>
+                                        
+                                        {% if user.last_login_at %}
+                                        <p class="card-text last-login">
+                                            <i class="bi bi-clock"></i> 
+                                            最后登录: {{ moment(user.last_login_at).format('YYYY-MM-DD HH:mm') }}
+                                        </p>
+                                        {% endif %}
+                                        
+                                        <div class="d-flex gap-2 mt-3">
+                                            {% if user.role == 'user' %}
+                                            <button class="btn btn-success action-btn" 
+                                                    onclick="promoteUser('{{ user.username }}', '{{ user.display_name }}')">
+                                                <i class="bi bi-arrow-up-circle"></i> 提升为管理员
+                                            </button>
+                                            {% else %}
+                                            <button class="btn btn-warning action-btn" 
+                                                    onclick="demoteUser('{{ user.username }}', '{{ user.display_name }}')">
+                                                <i class="bi bi-arrow-down-circle"></i> 降为普通用户
+                                            </button>
+                                            {% endif %}
+                                            
+                                            <button class="btn btn-info action-btn" 
+                                                    onclick="viewUserDetails('{{ user.username }}')">
+                                                <i class="bi bi-info-circle"></i> 详情
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-people display-1 text-muted"></i>
+                            <h4 class="text-muted mt-3">暂无用户</h4>
+                            <p class="text-muted">用户首次登录时会自动创建记录</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作说明 -->
+        <div class="row mt-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-info-circle"></i> 使用说明</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-1-circle-fill text-primary"></i> 用户创建</h6>
+                                <p class="small text-muted">用户使用群晖账户首次登录时，系统会自动创建本地用户记录，默认为普通用户权限。</p>
+                                
+                                <h6><i class="bi bi-2-circle-fill text-primary"></i> 权限提升</h6>
+                                <p class="small text-muted">管理员可以将普通用户提升为管理员，或将管理员降级为普通用户。</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-3-circle-fill text-primary"></i> 实时同步</h6>
+                                <p class="small text-muted">每次登录都会验证群晖账户有效性，确保用户状态实时同步。</p>
+                                
+                                <h6><i class="bi bi-4-circle-fill text-primary"></i> 审计日志</h6>
+                                <p class="small text-muted">所有用户操作和权限变更都会记录详细的审计日志。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认对话框 -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalTitle">确认操作</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="confirmModalBody">
+                    确定要执行此操作吗？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="confirmBtn">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户详情对话框 -->
+    <div class="modal fade" id="userDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">用户详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="userDetailsBody">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">加载中...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="actionToast" class="toast" role="alert">
+            <div class="toast-header">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <strong class="me-auto">操作成功</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                操作已完成
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script>
+        // 提升用户为管理员
+        function promoteUser(username, displayName) {
+            showConfirmModal(
+                '提升用户权限',
+                `确定要将用户 "${displayName}" 提升为管理员吗？`,
+                () => changeUserRole(username, 'admin', '提升为管理员')
+            );
+        }
+
+        // 降级用户为普通用户
+        function demoteUser(username, displayName) {
+            showConfirmModal(
+                '降级用户权限',
+                `确定要将管理员 "${displayName}" 降级为普通用户吗？`,
+                () => changeUserRole(username, 'user', '降级为普通用户')
+            );
+        }
+
+        // 显示确认对话框
+        function showConfirmModal(title, message, callback) {
+            document.getElementById('confirmModalTitle').textContent = title;
+            document.getElementById('confirmModalBody').textContent = message;
+            
+            const confirmBtn = document.getElementById('confirmBtn');
+            confirmBtn.onclick = () => {
+                callback();
+                bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
+            };
+            
+            new bootstrap.Modal(document.getElementById('confirmModal')).show();
+        }
+
+        // 更改用户角色
+        function changeUserRole(username, newRole, actionName) {
+            fetch('/api/admin/users/role', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    role: newRole
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(`用户 ${actionName} 成功`, 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast(`操作失败: ${data.message}`, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('操作失败，请稍后重试', 'error');
+            });
+        }
+
+        // 查看用户详情
+        function viewUserDetails(username) {
+            const modal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+            modal.show();
+            
+            fetch(`/api/admin/users/${username}/details`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayUserDetails(data.user);
+                } else {
+                    document.getElementById('userDetailsBody').innerHTML = 
+                        '<div class="alert alert-danger">加载用户详情失败</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('userDetailsBody').innerHTML = 
+                    '<div class="alert alert-danger">网络错误，请稍后重试</div>';
+            });
+        }
+
+        // 显示用户详情
+        function displayUserDetails(user) {
+            const detailsHtml = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>基本信息</h6>
+                        <table class="table table-sm">
+                            <tr><td>用户名</td><td>${user.username}</td></tr>
+                            <tr><td>显示名称</td><td>${user.display_name}</td></tr>
+                            <tr><td>邮箱</td><td>${user.email || '未设置'}</td></tr>
+                            <tr><td>角色</td><td>
+                                <span class="badge ${user.role === 'admin' ? 'bg-danger' : 'bg-secondary'}">
+                                    ${user.role === 'admin' ? '管理员' : '普通用户'}
+                                </span>
+                            </td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>活动信息</h6>
+                        <table class="table table-sm">
+                            <tr><td>创建时间</td><td>${moment(user.created_at).format('YYYY-MM-DD HH:mm:ss')}</td></tr>
+                            <tr><td>最后登录</td><td>${user.last_login_at ? moment(user.last_login_at).format('YYYY-MM-DD HH:mm:ss') : '从未登录'}</td></tr>
+                            <tr><td>权限数量</td><td>${user.permissions} 个</td></tr>
+                            <tr><td>登录次数</td><td>${user.login_count || 0} 次</td></tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <h6 class="mt-3">权限列表</h6>
+                <div class="row">
+                    ${user.permission_list ? user.permission_list.map(perm => 
+                        `<div class="col-md-6 mb-1">
+                            <small class="badge bg-light text-dark">${perm}</small>
+                        </div>`
+                    ).join('') : '<div class="col">暂无权限信息</div>'}
+                </div>
+            `;
+            
+            document.getElementById('userDetailsBody').innerHTML = detailsHtml;
+        }
+
+        // 刷新用户列表
+        function refreshUsers() {
+            location.reload();
+        }
+
+        // 显示Toast通知
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('actionToast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastHeader = toast.querySelector('.toast-header i');
+            
+            toastMessage.textContent = message;
+            
+            // 更新图标和样式
+            if (type === 'success') {
+                toastHeader.className = 'bi bi-check-circle-fill text-success me-2';
+            } else {
+                toastHeader.className = 'bi bi-exclamation-triangle-fill text-danger me-2';
+            }
+            
+            new bootstrap.Toast(toast).show();
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 可以在这里添加页面初始化代码
+            console.log('用户管理页面加载完成');
+        });
+    </script>
+</body>
+</html>

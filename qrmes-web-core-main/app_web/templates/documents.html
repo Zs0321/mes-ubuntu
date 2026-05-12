@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}文档管理{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>PDF 文档管理</h2>
+    </div>
+
+    <!-- 上传区 -->
+    <div style="margin-bottom: 2rem;">
+        <h3 style="margin-bottom: 0.75rem; color: #2d3748;">上传 PDF</h3>
+        <form id="uploadForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="uploadProject">项目名称 *</label>
+                    <select class="form-control" id="uploadProject" required>
+                        <option value="">请选择项目</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="uploadProductType">产品类型 *</label>
+                    <select class="form-control" id="uploadProductType" required>
+                        <option value="">请选择产品类型</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="uploadSerial">序列号 *</label>
+                    <input type="text" class="form-control" id="uploadSerial" list="uploadSerialList" required placeholder="输入或选择序列号">
+                </div>
+                <div class="form-group">
+                    <label for="uploadProcess">工序名称 *</label>
+                    <select class="form-control" id="uploadProcess" required>
+                        <option value="">请选择工序</option>
+                    </select>
+                </div>
+            </div>
+            <datalist id="uploadSerialList"></datalist>
+            <div class="form-group">
+                <label for="uploadFile">PDF 文件 *</label>
+                <input type="file" class="form-control" id="uploadFile" accept="application/pdf,.pdf" required>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">上传</button>
+                <button type="button" class="btn btn-secondary" id="uploadResetBtn">重置</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 筛选区 -->
+    <div style="margin-bottom: 1.5rem;">
+        <h3 style="margin-bottom: 0.75rem; color: #2d3748;">查询</h3>
+        <form id="filterForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 1rem; align-items: end;">
+                <div class="form-group" style="margin: 0;">
+                    <label for="filterProject">项目名称</label>
+                    <select class="form-control" id="filterProject">
+                        <option value="">全部项目</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label for="filterProductType">产品类型</label>
+                    <select class="form-control" id="filterProductType">
+                        <option value="">全部产品类型</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label for="filterSerial">序列号</label>
+                    <input type="text" class="form-control" id="filterSerial" list="filterSerialList" placeholder="可选">
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label for="filterProcess">工序名称</label>
+                    <select class="form-control" id="filterProcess">
+                        <option value="">全部工序</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="height: 44px;">查询</button>
+            </div>
+        </form>
+        <datalist id="filterSerialList"></datalist>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stats-grid" style="margin-bottom: 1.5rem;">
+        <div class="stat-card">
+            <h3>总文档数</h3>
+            <div class="value" id="statTotal">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>总大小</h3>
+            <div class="value" id="statSize">0 MB</div>
+        </div>
+    </div>
+
+    <!-- 报告上传状态 -->
+    <div id="reportStatusSection" style="margin-bottom: 1.5rem; display: none;">
+        <h3 style="margin-bottom: 0.75rem; color: #2d3748;">报告上传状态</h3>
+        <div class="stats-grid" style="margin-bottom: 0.75rem;">
+            <div class="stat-card">
+                <h3>序列号总数</h3>
+                <div class="value" id="statusTotal">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>已上传报告</h3>
+                <div class="value status-ok-text" id="statusUploaded">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>未上传报告</h3>
+                <div class="value status-missing-text" id="statusMissing">0</div>
+            </div>
+        </div>
+        <div id="reportStatusHint" class="alert alert-info">请选择项目和产品类型后点击“查询”查看状态</div>
+        <table class="table" id="reportStatusTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>序列号</th>
+                    <th>状态</th>
+                    <th>报告数</th>
+                    <th>最新上传时间</th>
+                </tr>
+            </thead>
+            <tbody id="reportStatusBody"></tbody>
+        </table>
+    </div>
+
+    <!-- 文档列表 -->
+    <div>
+        <h3 style="margin-bottom: 0.75rem; color: #2d3748;">文档列表</h3>
+        <table class="table" id="documentsTable">
+            <thead>
+                <tr>
+                    <th>文件名</th>
+                    <th>项目</th>
+                    <th>产品类型</th>
+                    <th>序列号</th>
+                    <th>工序</th>
+                    <th>大小</th>
+                    <th>修改时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="documentsBody"></tbody>
+        </table>
+        <div id="emptyHint" class="alert alert-info" style="display:none;">暂无数据</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .status-ok {
+        background: #dcfce7;
+        color: #166534;
+    }
+    .status-missing {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    .status-ok-text {
+        color: #166534;
+    }
+    .status-missing-text {
+        color: #991b1b;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/document-management.js', v='20260216-3') }}"></script>
+{% endblock %}

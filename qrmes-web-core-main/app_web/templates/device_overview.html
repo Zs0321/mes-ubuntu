@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% block title %}设备总览{% endblock %}
+
+{% block extra_css %}
+<style>
+  body { background: #020617; }
+  .device-overview-page { max-width: 1480px; margin: 0 auto; padding: 28px 22px 48px; display: grid; gap: 18px; color: #e5edf8; }
+  .device-hero, .device-panel { border: 1px solid rgba(56,189,248,.16); border-radius: 18px; background: linear-gradient(180deg, rgba(15,23,42,.96) 0%, rgba(2,6,23,.96) 100%); box-shadow: 0 22px 46px rgba(2,6,23,.3); }
+  .device-hero { padding: 22px 24px; }
+  .device-hero-top { display:flex; justify-content:space-between; gap:16px; align-items:flex-end; }
+  .device-hero h1 { margin: 0; font-size: 32px; line-height: 1.08; color: #f8fafc; }
+  .device-hero a { color: #7dd3fc; font-weight: 800; text-decoration: none; }
+  .device-hero p, .device-hero .device-tips { color: #94a3b8; line-height: 1.7; }
+  .device-summary-grid { display:grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap:14px; }
+  .device-summary-card { min-height: 148px; border: 1px solid rgba(56,189,248,.16); border-radius: 18px; background: linear-gradient(180deg, rgba(15,23,42,.96) 0%, rgba(2,6,23,.96) 100%); box-shadow: 0 22px 46px rgba(2,6,23,.3); padding: 22px; display:grid; align-content:space-between; }
+  .device-summary-card.is-clickable { cursor:pointer; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+  .device-summary-card.is-clickable:hover { transform:translateY(-2px); border-color:#38bdf8; box-shadow:0 24px 48px rgba(56,189,248,.16); }
+  .device-summary-card h3 { margin:0; font-size:18px; font-weight:900; color:#e2e8f0; }
+  .device-summary-value { font-size:58px; line-height:1; font-weight:900; color:#38bdf8; }
+  .device-summary-value.monthly { color:#fb923c; }
+  .device-summary-value.quarterly { color:#fbbf24; }
+  .device-summary-value.yearly, .device-summary-value.expired { color:#f87171; }
+  .device-grid-2 { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,.92fr); gap:16px; }
+  .device-side-stack { display:grid; gap:16px; }
+  .device-panel-head { padding:18px 20px; border-bottom:1px solid rgba(148,163,184,.16); background: rgba(15,23,42,.88); }
+  .device-panel-head h3 { margin:0; font-size:21px; color:#f8fafc; }
+  .device-panel-head p, .device-panel-head small { margin:.45rem 0 0; color:#94a3b8; line-height:1.6; }
+  .device-panel-body { padding:18px 20px 20px; }
+  .device-upload-row, .device-search-row { display:grid; gap:10px; align-items:center; }
+  .device-upload-row { grid-template-columns:minmax(0,1fr) auto; }
+  .device-search-row { grid-template-columns:minmax(0,1fr) auto auto; }
+  .device-overview-page input[type="file"], .device-overview-page input[type="text"], .device-overview-page input[type="search"], .device-overview-page input[type="number"], .device-overview-page textarea, .device-overview-page select { width:100%; min-height:42px; padding:10px 12px; border:1px solid rgba(148,163,184,.24); border-radius:12px; background:#020617; color:#e5edf8; }
+  .device-overview-page button, .device-secondary-link { display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:0 16px; border-radius:12px; border:1px solid rgba(56,189,248,.22); background:#0f172a; color:#dbeafe; font-weight:800; text-decoration:none; cursor:pointer; }
+  .device-upload-row button, .device-search-row .search-button, .device-action-button { background:linear-gradient(135deg,#0284c7 0%,#06b6d4 100%); color:#fff; border-color:#0284c7; }
+  .device-search-row .clear-button { background:#111827; border-color:#1e293b; color:#94a3b8; }
+  .device-secondary-link { min-width: 220px; }
+  .device-status-chip { display:inline-flex; padding:6px 10px; border-radius:999px; background:rgba(16,185,129,.16); color:#5eead4; font-size:13px; font-weight:900; }
+  .device-tips { margin-top:12px; min-height:20px; color:#94a3b8; font-size:14px; }
+  .device-table-wrap { overflow:auto; }
+  .device-table { width:100%; min-width:1100px; border-collapse:collapse; font-size:14px; }
+  .device-table th, .device-table td { padding:12px 10px; border-bottom:1px solid rgba(148,163,184,.16); text-align:left; vertical-align:top; background:transparent; color:#e5edf8; }
+  .device-table th { position:sticky; top:0; background:rgba(15,23,42,.88); color:#cbd5e1; font-size:13px; font-weight:800; white-space:nowrap; }
+  .device-empty, .device-table-empty { padding:18px; text-align:center; color:#94a3b8; border:1px dashed rgba(148,163,184,.24); border-radius:12px; background:rgba(15,23,42,.46); }
+  .device-inline-note, .device-message { margin-top:12px; padding:12px 14px; border-radius:12px; background:rgba(15,23,42,.72); border:1px solid rgba(56,189,248,.14); color:#94a3b8; line-height:1.7; }
+  .device-message.is-error { color:#fecaca; border-color:rgba(248,113,113,.35); background:rgba(127,29,29,.30); }
+  .device-message.is-success { color:#bbf7d0; border-color:rgba(16,185,129,.30); background:rgba(6,78,59,.34); }
+  @media (max-width: 1080px) { .device-summary-grid, .device-grid-2 { grid-template-columns:1fr; } .device-hero-top, .device-upload-row, .device-search-row { grid-template-columns:1fr; display:grid; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="device-overview-page">
+  <section class="device-hero">
+    <div class="device-hero-top">
+      <div>
+        <a href="{{ url_for('index') }}" style="display:inline-block;margin-bottom:0.8rem;font-weight:700;">返回首页</a>
+        <h1>设备总览</h1>
+      </div>
+    </div>
+  </section>
+
+  <section class="device-summary-grid">
+    <div class="device-summary-card is-clickable">
+      <h3>设备总数</h3>
+      <div class="device-summary-value" id="summaryDeviceTotal">0</div>
+    </div>
+    <div class="device-summary-card is-clickable" data-detail-filter="7days">
+      <h3>7天</h3>
+      <div class="device-summary-value monthly" id="summary7DayMaintenance">0</div>
+    </div>
+    <div class="device-summary-card is-clickable" data-detail-filter="30days">
+      <h3>30天</h3>
+      <div class="device-summary-value monthly" id="summary30DayMaintenance">0</div>
+    </div>
+    <div class="device-summary-card is-clickable" data-detail-filter="expired">
+      <h3>已过期</h3>
+      <div class="device-summary-value expired" id="summaryExpired">0</div>
+    </div>
+  </section>
+
+  <section class="device-grid-2">
+    <div class="device-panel">
+      <div class="device-panel-head">
+        <h3>设备台账</h3>
+      </div>
+      <div class="device-panel-body">
+        <div class="device-upload-row">
+          <input id="deviceOverviewFileInput" type="file" accept=".xlsx,.xlsm">
+          <button type="button" id="deviceOverviewUploadButton">上传设备台账</button>
+        </div>
+        <div class="device-search-row" style="margin-top: 0.85rem;">
+          <input id="deviceOverviewSearchInput" type="text" placeholder="输入资产编号进行查询">
+          <button type="button" class="search-button" id="deviceOverviewSearchButton">查询台账</button>
+          <button type="button" class="clear-button" id="deviceOverviewSearchClearButton">清空查询</button>
+        </div>
+        <div class="device-tips" id="deviceOverviewMessage"></div>
+      </div>
+    </div>
+
+    <div class="device-side-stack">
+      <div class="device-panel">
+        <div class="device-panel-head">
+          <h3>验收与保养</h3>
+        </div>
+        <div class="device-panel-body">
+          <div class="device-upload-row" style="grid-template-columns: minmax(0, 1fr);">
+            <a class="device-secondary-link" href="{{ url_for('device_overview_records_page') }}">进入验收与保养</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="device-panel">
+    <div class="device-panel-head">
+      <h3>设备台账列表</h3>
+    </div>
+    <div class="device-panel-body">
+      <div class="device-table-wrap">
+        <table class="device-table" id="deviceOverviewTable" hidden>
+          <thead>
+            <tr>
+              <th>设备名称</th>
+              <th>设备型号</th>
+              <th>资产编号</th>
+              <th>数量</th>
+              <th>生产厂家</th>
+              <th>生产日期</th>
+              <th>购置日期</th>
+              <th>使用状态</th>
+              <th>使用场所</th>
+              <th>月保养</th>
+              <th>下次月保养</th>
+              <th>备注</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="deviceOverviewTableBody"></tbody>
+        </table>
+        <div class="device-empty" id="deviceOverviewEmpty">
+          <strong>还没有设备台账数据</strong>
+          上传一份设备 Excel 后，这里会自动生成设备总览和保养统计。
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var devices = [];
+  var assetNumberKeyword = '';
+
+  function filterDevices(rows) {
+    return (rows || []).filter(function (item) {
+      var assetNumber = String((item && item.assetNumber) || '').trim().toLowerCase();
+      if (assetNumberKeyword && assetNumber.indexOf(assetNumberKeyword) === -1) {
+        return false;
+      }
+      return true;
+    });
+  }
+
+  function setMessage(text, isError) {
+    var el = document.getElementById('deviceOverviewMessage');
+    if (!el) return;
+    el.textContent = text;
+    el.style.color = isError ? '#b42318' : '#55657b';
+  }
+
+  function renderSummary(summary) {
+    var data = summary || {};
+    document.getElementById('summaryDeviceTotal').textContent = String(data.deviceTotal || 0);
+    document.getElementById('summary7DayMaintenance').textContent = String(data.maintenance7Days || 0);
+    document.getElementById('summary30DayMaintenance').textContent = String(data.maintenance30Days || 0);
+    document.getElementById('summaryExpired').textContent = String(data.expired || 0);
+  }
+
+  function renderTable() {
+    var table = document.getElementById('deviceOverviewTable');
+    var body = document.getElementById('deviceOverviewTableBody');
+    var empty = document.getElementById('deviceOverviewEmpty');
+    var rows = filterDevices(devices);
+
+    body.innerHTML = '';
+    if (!rows.length) {
+      var emptyRow = document.createElement('tr');
+      var emptyCell = document.createElement('td');
+      emptyCell.colSpan = 13;
+      emptyCell.style.textAlign = 'center';
+      emptyCell.style.color = '#64748b';
+      emptyCell.style.padding = '2rem 1rem';
+      emptyCell.textContent = '当前分类下暂无设备记录';
+      emptyRow.appendChild(emptyCell);
+      body.appendChild(emptyRow);
+      table.hidden = false;
+      empty.hidden = true;
+      return;
+    }
+
+    rows.forEach(function (item) {
+      var tr = document.createElement('tr');
+      [
+        'deviceName',
+        'deviceModel',
+        'assetNumber',
+        'quantity',
+        'manufacturer',
+        'productionDate',
+        'purchaseDate',
+        'usageStatus',
+        'usageLocation',
+        'monthlyMaintenance',
+        'nextMonthlyMaintenance',
+        'remark'
+      ].forEach(function (key) {
+        var td = document.createElement('td');
+        td.textContent = String((item && item[key]) || '');
+        tr.appendChild(td);
+      });
+      var actionTd = document.createElement('td');
+      var maintenanceButton = document.createElement('button');
+      maintenanceButton.type = 'button';
+      maintenanceButton.className = 'device-action-button';
+      maintenanceButton.textContent = '上传保养记录';
+      maintenanceButton.addEventListener('click', function () {
+        openMaintenanceUploadPage(String((item && item.assetNumber) || ''));
+      });
+      if (!String((item && item.assetNumber) || '').trim()) {
+        maintenanceButton.disabled = true;
+      }
+      actionTd.appendChild(maintenanceButton);
+      tr.appendChild(actionTd);
+      body.appendChild(tr);
+    });
+
+    table.hidden = false;
+    empty.hidden = true;
+  }
+
+  function renderPayload(payload) {
+    devices = Array.isArray(payload.devices) ? payload.devices : [];
+    renderSummary(payload.summary || {});
+    renderTable();
+  }
+
+  async function loadDeviceOverview() {
+    try {
+      var response = await fetch('/api/device-overview', { credentials: 'same-origin' });
+      var result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error((result && result.message) || '加载设备总览失败');
+      }
+      renderPayload(result);
+    } catch (error) {
+      setMessage('加载设备总览失败：' + (error && error.message ? error.message : error), true);
+    }
+  }
+
+  async function uploadDeviceOverview() {
+    var input = document.getElementById('deviceOverviewFileInput');
+    var button = document.getElementById('deviceOverviewUploadButton');
+    if (!input || !input.files || !input.files.length) {
+      setMessage('请先选择设备台账 Excel 文件', true);
+      return;
+    }
+
+    var formData = new FormData();
+    formData.append('file', input.files[0]);
+    button.disabled = true;
+    button.textContent = '上传中...';
+    try {
+      var response = await fetch('/api/device-overview/import-excel', {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin'
+      });
+      var result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error((result && result.message) || '上传失败');
+      }
+      renderPayload(result);
+      setMessage(result.message || '设备台账导入成功', false);
+      input.value = '';
+    } catch (error) {
+      setMessage('设备台账导入失败：' + (error && error.message ? error.message : error), true);
+    } finally {
+      button.disabled = false;
+      button.textContent = '上传设备台账';
+    }
+  }
+
+  function applyAssetNumberSearch() {
+    var input = document.getElementById('deviceOverviewSearchInput');
+    assetNumberKeyword = String(input && input.value || '').trim().toLowerCase();
+    renderTable();
+  }
+
+  function clearAssetNumberSearch() {
+    var input = document.getElementById('deviceOverviewSearchInput');
+    if (input) {
+      input.value = '';
+    }
+    assetNumberKeyword = '';
+    renderTable();
+  }
+
+  function openMaintenanceUploadPage(assetNumber) {
+    var nextUrl = '{{ url_for("device_overview_records_page") }}';
+    window.location.href = nextUrl;
+  }
+
+  function bindSummaryCards() {
+    Array.prototype.slice.call(document.querySelectorAll('.device-summary-card[data-detail-filter]')).forEach(function (card) {
+      card.addEventListener('click', function () {
+        var filterKey = card.getAttribute('data-detail-filter') || '';
+        if (!filterKey) return;
+        window.location.href = '{{ url_for("device_overview_detail_page", filter_key="FILTER") }}'.replace('FILTER', encodeURIComponent(filterKey));
+      });
+    });
+  }
+
+  function boot() {
+    bindSummaryCards();
+    var uploadButton = document.getElementById('deviceOverviewUploadButton');
+    if (uploadButton) {
+      uploadButton.addEventListener('click', uploadDeviceOverview);
+    }
+    var searchButton = document.getElementById('deviceOverviewSearchButton');
+    if (searchButton) {
+      searchButton.addEventListener('click', applyAssetNumberSearch);
+    }
+    var clearSearchButton = document.getElementById('deviceOverviewSearchClearButton');
+    if (clearSearchButton) {
+      clearSearchButton.addEventListener('click', clearAssetNumberSearch);
+    }
+    var searchInput = document.getElementById('deviceOverviewSearchInput');
+    if (searchInput) {
+      searchInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          applyAssetNumberSearch();
+        }
+      });
+    }
+    loadDeviceOverview();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+{% endblock %}

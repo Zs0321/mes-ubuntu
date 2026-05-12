@@ -1,0 +1,13 @@
+[Unit]
+Description=qrmes-web-core
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/qrmes-web-core
+ExecStart=%h/qrmes-web-core/.venv/bin/python -m app_web.mesapp
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

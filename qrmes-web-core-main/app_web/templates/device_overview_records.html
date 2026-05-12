@@ -1,0 +1,513 @@
+{% extends "base.html" %}
+
+{% block title %}设备验收文档与保养记录{% endblock %}
+
+{% block extra_css %}
+<style>
+  body { background:#020617; }
+  .device-records-page { max-width:1480px; margin:0 auto; padding:28px 22px 48px; display:grid; gap:18px; color:#e5edf8; }
+  .device-records-hero, .device-records-panel { border:1px solid rgba(56,189,248,.16); border-radius:18px; background:linear-gradient(180deg, rgba(15,23,42,.96) 0%, rgba(2,6,23,.96) 100%); box-shadow:0 22px 46px rgba(2,6,23,.3); }
+  .device-records-hero { padding:22px 24px; }
+  .device-records-hero h1 { margin:0; font-size:32px; color:#f8fafc; }
+  .device-records-hero p, .device-records-head p, .device-records-message, .device-path-note { color:#94a3b8; line-height:1.7; }
+  .device-records-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; }
+  .device-records-head { padding:18px 20px; border-bottom:1px solid rgba(148,163,184,.16); background:rgba(15,23,42,.88); }
+  .device-records-head h3 { margin:0; font-size:21px; color:#f8fafc; }
+  .device-records-body { padding:18px 20px 20px; display:grid; gap:14px; }
+  .device-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .device-form-grid.single { grid-template-columns:1fr; }
+  .device-records-page label { display:grid; gap:.45rem; font-weight:700; color:#cbd5e1; }
+  .device-records-page input, .device-records-page select { min-height:42px; border-radius:12px; border:1px solid rgba(148,163,184,.24); background:#020617; color:#e5edf8; padding:10px 12px; }
+  .device-records-page input[type="file"] { padding:8px 10px; }
+  .device-records-actions, .device-preview-actions { display:flex; flex-wrap:wrap; gap:10px; }
+  .device-records-actions button, .device-records-actions a, .device-history-search-button, .device-preview-actions button { min-height:42px; border-radius:12px; border:1px solid rgba(56,189,248,.22); background:#0f172a; color:#dbeafe; padding:0 16px; text-decoration:none; font-weight:800; cursor:pointer; }
+  .device-records-actions .primary, .device-preview-actions .primary { background:linear-gradient(135deg,#0284c7 0%,#06b6d4 100%); color:#fff; border-color:#0284c7; }
+  .device-records-actions .secondary, .device-preview-actions .secondary, .device-history-search-button { background:#111827; border-color:#1e293b; color:#94a3b8; }
+  .device-history-search-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:end; }
+  .device-records-message, .device-path-note { min-height:24px; padding:12px 14px; border-radius:12px; background:rgba(15,23,42,.72); border:1px solid rgba(56,189,248,.14); }
+  .device-records-message.is-error { color:#fecaca; border-color:rgba(248,113,113,.35); background:rgba(127,29,29,.30); }
+  .device-records-message.is-success { color:#bbf7d0; border-color:rgba(16,185,129,.30); background:rgba(6,78,59,.34); }
+  .device-template-preview, .device-history-item { border:1px solid rgba(56,189,248,.14); border-radius:14px; background:rgba(15,23,42,.72); }
+  .device-template-preview { overflow:auto; }
+  .device-template-preview table { border-collapse:collapse; background:#020617; }
+  .device-excel-preview-table td { color:#e5edf8; }
+  .device-preview-actions { position:sticky; bottom:0; z-index:3; padding-top:.3rem; background:linear-gradient(180deg, rgba(2,6,23,0) 0%, rgba(2,6,23,.92) 28%); }
+  .device-history-list { display:grid; gap:.75rem; }
+  .device-history-item { padding:.85rem 1rem; }
+  .device-history-item strong { color:#f8fafc; word-break:break-all; }
+  @media (max-width:1080px) { .device-records-grid, .device-form-grid, .device-template-inline-fields { grid-template-columns:1fr; } .device-history-search-row { grid-template-columns:1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="device-records-page">
+  <section class="device-records-hero">
+    <h1>新设备验收文档与保养记录</h1>
+    <p>在这里上传新设备验收文档，或按资产编号上传保养记录。保养模板会直接读取
+      <code>{{ maintenance_template_dir }}</code> 下的模板文件，并尽量按 Excel 打开时的版式显示和填写。</p>
+  </section>
+
+  <section class="device-records-grid">
+    <div class="device-records-panel">
+      <div class="device-records-head">
+        <h3>新设备验收文档上传</h3>
+        <p>支持上传 `pdf / doc / docx / xls / xlsx / xlsm`，文件会保存到验收文档目录。</p>
+      </div>
+      <div class="device-records-body">
+        <div class="device-path-note">保存路径：{{ inspection_report_dir }}</div>
+        <form id="deviceInspectionUploadForm" class="device-form-grid single">
+          <label>
+            选择验收文档
+            <input id="deviceInspectionFileInput" name="file" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.xlsm">
+          </label>
+          <div class="device-records-actions">
+            <button type="submit" class="primary" id="deviceInspectionUploadButton">上传验收文档</button>
+            <a class="secondary" href="{{ url_for('device_overview_page') }}">返回设备总览</a>
+          </div>
+        </form>
+        <div class="device-records-message" id="deviceInspectionMessage">上传成功后会返回保存文件名和存放路径。</div>
+      </div>
+    </div>
+
+    <div class="device-records-panel">
+      <div class="device-records-head">
+        <h3>保养记录</h3>
+        <p>先选择模板文件，再直接在页面里完成 `OK / NG` 判定和异常标注。`完成` 用于页面暂存，`提交` 会生成新的 Excel 文件。</p>
+      </div>
+      <div class="device-records-body">
+        <div class="device-path-note">保存路径：{{ maintenance_record_dir }}</div>
+        <form id="deviceMaintenanceForm" class="device-form-grid">
+          <label>
+            资产编号
+            <input id="deviceMaintenanceAssetInput" name="asset_number" type="text" value="" placeholder="例如 SC-EQ-0023">
+          </label>
+          <label>
+            保养模板文件
+            <select id="deviceMaintenanceTemplateSelect" name="template_name">
+              <option value="">请先加载模板</option>
+            </select>
+          </label>
+          <div class="device-records-actions">
+            <button type="button" class="secondary" id="deviceMaintenanceLoadTemplateButton">加载模板</button>
+          </div>
+        </form>
+        <div class="device-records-message" id="deviceMaintenanceMessage">加载后可以直接在下方模板中勾选 `OK/NG`，并填写异常标注。</div>
+        <div class="device-records-head" style="padding:0;border:none;background:none;">
+          <h3 style="font-size:1rem;">历史保养记录查询</h3>
+          <p style="margin-top:0.35rem;">按资产编号查询已经保存的 Excel 保养记录。</p>
+        </div>
+        <div class="device-history-search-row">
+          <label>
+            查询资产编号
+            <input id="deviceMaintenanceHistoryAssetInput" type="text" placeholder="例如 SC-EQ-0023">
+          </label>
+          <button type="button" class="device-history-search-button" id="deviceMaintenanceHistorySearchButton">查询历史保养记录</button>
+        </div>
+        <div class="device-records-message" id="deviceMaintenanceHistoryMessage">输入资产编号后可查询历史保养记录。</div>
+        <div class="device-history-list" id="deviceMaintenanceHistoryList"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="device-records-panel">
+    <div class="device-records-head">
+      <h3>保养模板填写</h3>
+      <p>模板来源目录：<code id="deviceTemplatePathText">{{ maintenance_template_dir }}</code>。选择模板文件后会在这里加载接近 Excel 样式的填写界面。</p>
+    </div>
+    <div class="device-records-body">
+      <div class="device-records-message" id="deviceTemplateMessage">正在等待选择模板文件。</div>
+      <div class="device-template-preview" id="deviceTemplatePreviewWrap" hidden>
+        <div id="deviceTemplatePreviewContent"></div>
+      </div>
+      <div class="device-preview-actions">
+        <button type="button" class="secondary" id="deviceTemplateCompleteButton">完成</button>
+        <button type="button" class="primary" id="deviceTemplateSubmitButton">提交</button>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var templatesLoaded = false;
+  var templateReady = false;
+  var DRAFT_KEY_PREFIX = 'device-maintenance-draft::';
+
+  function setMessage(id, text, type) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text || '';
+    el.className = 'device-records-message' + (type ? ' is-' + type : '');
+  }
+
+  function currentDraftKey() {
+    var asset = String(document.getElementById('deviceMaintenanceAssetInput') && document.getElementById('deviceMaintenanceAssetInput').value || '').trim() || 'no-asset';
+    var template = String(document.getElementById('deviceMaintenanceTemplateSelect') && document.getElementById('deviceMaintenanceTemplateSelect').value || '').trim() || 'no-template';
+    return DRAFT_KEY_PREFIX + asset + '::' + template;
+  }
+
+  function saveDraftToLocal() {
+    var template = String(document.getElementById('deviceMaintenanceTemplateSelect') && document.getElementById('deviceMaintenanceTemplateSelect').value || '').trim();
+    if (!template) {
+      throw new Error('请先选择保养模板文件。');
+    }
+    var payload = {
+      assetNumber: String(document.getElementById('deviceMaintenanceAssetInput') && document.getElementById('deviceMaintenanceAssetInput').value || '').trim(),
+      templateName: template,
+      results: collectTemplateResults(),
+      editableFields: collectEditableFields(),
+      savedAt: new Date().toISOString()
+    };
+    window.localStorage.setItem(currentDraftKey(), JSON.stringify(payload));
+    return payload;
+  }
+
+  function restoreDraftForCurrentTemplate() {
+    var raw = window.localStorage.getItem(currentDraftKey());
+    if (!raw) return false;
+    try {
+      var payload = JSON.parse(raw);
+      Array.prototype.forEach.call(document.querySelectorAll('.device-result-checkbox'), function (input) {
+        input.checked = false;
+      });
+      Array.prototype.forEach.call(payload.results || [], function (row) {
+        if (row.okCell && row.status === 'ok') {
+          var okInput = document.querySelector('.device-result-checkbox[data-checkbox-cell="' + row.okCell + '"]');
+          if (okInput) okInput.checked = true;
+        }
+        if (row.ngCell && row.status === 'ng') {
+          var ngInput = document.querySelector('.device-result-checkbox[data-checkbox-cell="' + row.ngCell + '"]');
+          if (ngInput) ngInput.checked = true;
+        }
+        if (row.noteCell) {
+          var noteInput = document.querySelector('.device-result-note-input[data-note-cell="' + row.noteCell + '"]');
+          if (noteInput) noteInput.value = String(row.note || '');
+        }
+      });
+      Array.prototype.forEach.call(payload.editableFields || [], function (field) {
+        if (!field.cell) return;
+        var textInput = document.querySelector('.device-template-text-input[data-editable-cell="' + field.cell + '"]');
+        if (textInput) {
+          textInput.value = String(field.value || '');
+        }
+      });
+      templateReady = true;
+      setMessage('deviceTemplateMessage', '已恢复这份模板的暂存填写内容。', 'success');
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function renderHistoryList(items) {
+    var wrap = document.getElementById('deviceMaintenanceHistoryList');
+    if (!wrap) return;
+    if (!items.length) {
+      wrap.innerHTML = '';
+      return;
+    }
+    wrap.innerHTML = items.map(function (item) {
+      return (
+        '<div class="device-history-item">' +
+        '<strong>' + String(item.filename || '') + '</strong>' +
+        '<span>保存路径：' + String(item.path || '') + '</span>' +
+        '<span>更新时间：' + String(item.modifiedAt || '') + '</span>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  async function searchHistory() {
+    var input = document.getElementById('deviceMaintenanceHistoryAssetInput');
+    var assetNumber = String(input && input.value || '').trim();
+    if (!assetNumber) {
+      setMessage('deviceMaintenanceHistoryMessage', '请先输入资产编号。', 'error');
+      renderHistoryList([]);
+      return;
+    }
+    try {
+      var response = await fetch('/api/device-overview/maintenance-record-history?asset_number=' + encodeURIComponent(assetNumber), {
+        credentials: 'same-origin'
+      });
+      var result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error((result && result.message) || '查询失败');
+      }
+      renderHistoryList(result.history || []);
+      setMessage('deviceMaintenanceHistoryMessage', (result.history || []).length ? '已查询到历史保养记录。' : '没有查询到这个资产编号的历史保养记录。', 'success');
+    } catch (error) {
+      renderHistoryList([]);
+      setMessage('deviceMaintenanceHistoryMessage', '查询历史保养记录失败：' + (error && error.message ? error.message : error), 'error');
+    }
+  }
+
+  function bindTemplateInputs() {
+    Array.prototype.forEach.call(document.querySelectorAll('.device-result-checkbox'), function (input) {
+      input.addEventListener('change', function () {
+        if (this.checked) {
+          Array.prototype.forEach.call(document.querySelectorAll('.device-result-checkbox[data-result-row="' + this.dataset.resultRow + '"]'), function (other) {
+            if (other !== input) other.checked = false;
+          });
+        }
+        templateReady = false;
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.device-result-note-input'), function (input) {
+      input.addEventListener('input', function () {
+        templateReady = false;
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.device-template-text-input'), function (input) {
+      input.addEventListener('input', function () {
+        templateReady = false;
+      });
+    });
+  }
+
+  function collectEditableFields() {
+    return Array.prototype.map.call(document.querySelectorAll('.device-template-text-input[data-editable-cell]'), function (input) {
+      return {
+        label: String(input.dataset.editableLabel || '').trim(),
+        cell: String(input.dataset.editableCell || '').trim(),
+        sourceCell: String(input.dataset.sourceCell || '').trim(),
+        fieldKey: String(input.dataset.editableKey || '').trim(),
+        value: String(input.value || '').trim()
+      };
+    }).filter(function (item) {
+      return item.cell;
+    });
+  }
+
+  function collectTemplateResults() {
+    var rows = {};
+    Array.prototype.forEach.call(document.querySelectorAll('.device-result-checkbox'), function (input) {
+      var rowKey = String(input.dataset.resultRow || '');
+      if (!rowKey) return;
+      rows[rowKey] = rows[rowKey] || { row: rowKey };
+      if (input.dataset.resultKind === 'ok') {
+        rows[rowKey].okCell = input.dataset.checkboxCell;
+        if (input.checked) rows[rowKey].status = 'ok';
+      } else if (input.dataset.resultKind === 'ng') {
+        rows[rowKey].ngCell = input.dataset.checkboxCell;
+        if (input.checked) rows[rowKey].status = 'ng';
+      }
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.device-result-note-input'), function (input) {
+      var rowKey = String(input.dataset.resultRow || '');
+      if (!rowKey) return;
+      rows[rowKey] = rows[rowKey] || { row: rowKey };
+      rows[rowKey].noteCell = input.dataset.noteCell;
+      rows[rowKey].note = String(input.value || '').trim();
+    });
+    return Object.keys(rows).sort(function (a, b) { return Number(a) - Number(b); }).map(function (key) { return rows[key]; });
+  }
+
+  function validateTemplateCompletion() {
+    var results = collectTemplateResults();
+    if (!results.length) {
+      return { ok: false, message: '请先加载保养模板。', results: results };
+    }
+    return { ok: true, message: '当前填写内容已记录，可以直接提交。', results: results };
+  }
+
+  async function loadTemplateFiles() {
+    try {
+      var response = await fetch('/api/device-overview/maintenance-template-sheets', { credentials: 'same-origin' });
+      var result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error((result && result.message) || '加载模板失败');
+      }
+      var pathEl = document.getElementById('deviceTemplatePathText');
+      if (pathEl && result.templateDirectory) {
+        pathEl.textContent = result.templateDirectory;
+      }
+      var select = document.getElementById('deviceMaintenanceTemplateSelect');
+      select.innerHTML = '<option value="">请选择模板文件</option>';
+      (result.templates || []).forEach(function (template) {
+        var option = document.createElement('option');
+        option.value = template.name;
+        option.textContent = template.name;
+        select.appendChild(option);
+      });
+      templatesLoaded = true;
+      setMessage('deviceTemplateMessage', '模板文件已加载，请选择需要的模板进行预览。', 'success');
+    } catch (error) {
+      var select = document.getElementById('deviceMaintenanceTemplateSelect');
+      if (select) {
+        select.innerHTML = '<option value="">模板加载失败</option>';
+      }
+      setMessage('deviceTemplateMessage', '加载模板文件失败：' + (error && error.message ? error.message : error), 'error');
+    }
+  }
+
+  async function loadTemplatePreview() {
+    var select = document.getElementById('deviceMaintenanceTemplateSelect');
+    var templateName = String(select && select.value || '').trim();
+    if (!templateName) {
+      setMessage('deviceTemplateMessage', '请先选择一个保养模板文件。', 'error');
+      return;
+    }
+
+    try {
+      var response = await fetch('/api/device-overview/maintenance-template-preview?template_name=' + encodeURIComponent(templateName), {
+        credentials: 'same-origin'
+      });
+      var result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error((result && result.message) || '加载模板预览失败');
+      }
+
+      var previewContent = document.getElementById('deviceTemplatePreviewContent');
+      var wrap = document.getElementById('deviceTemplatePreviewWrap');
+      var rows = Array.isArray(result.rows) ? result.rows : [];
+      if (!rows.length || !result.html) {
+        previewContent.innerHTML = '';
+        wrap.hidden = true;
+        setMessage('deviceTemplateMessage', '这个模板目前没有可预览的数据。', 'error');
+        return;
+      }
+      previewContent.innerHTML = result.html;
+      wrap.hidden = false;
+      bindTemplateInputs();
+      templateReady = false;
+      restoreDraftForCurrentTemplate();
+      var pathEl = document.getElementById('deviceTemplatePathText');
+      if (pathEl && result.templatePath) {
+        pathEl.textContent = result.templatePath;
+      }
+      setMessage('deviceTemplateMessage', '已加载模板文件：' + result.templateName + '，工作表：' + result.sheetName + (result.truncated ? '（预览已截断）' : ''), 'success');
+    } catch (error) {
+      setMessage('deviceTemplateMessage', '加载模板预览失败：' + (error && error.message ? error.message : error), 'error');
+    }
+  }
+
+  async function uploadInspectionDocument(event) {
+    event.preventDefault();
+    var input = document.getElementById('deviceInspectionFileInput');
+    var button = document.getElementById('deviceInspectionUploadButton');
+    if (!input || !input.files || !input.files.length) {
+      setMessage('deviceInspectionMessage', '请先选择验收文档文件。', 'error');
+      return;
+    }
+
+    var formData = new FormData();
+    formData.append('file', input.files[0]);
+    button.disabled = true;
+    button.textContent = '上传中...';
+    try {
+      var response = await fetch('/api/device-overview/inspection-report-upload', {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin'
+      });
+      var result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error((result && result.message) || '上传失败');
+      }
+      input.value = '';
+      setMessage('deviceInspectionMessage', '上传成功：' + result.storedFilename + '，保存到 ' + result.storedPath, 'success');
+    } catch (error) {
+      setMessage('deviceInspectionMessage', '上传验收文档失败：' + (error && error.message ? error.message : error), 'error');
+    } finally {
+      button.disabled = false;
+      button.textContent = '上传验收文档';
+    }
+  }
+
+  function completeTemplate() {
+    var validation = validateTemplateCompletion();
+    if (!validation.ok) {
+      templateReady = false;
+      setMessage('deviceTemplateMessage', validation.message, 'error');
+      return;
+    }
+    try {
+      var draft = saveDraftToLocal();
+      templateReady = true;
+      setMessage('deviceTemplateMessage', '已暂存当前填写内容：' + (draft.savedAt || ''), 'success');
+    } catch (error) {
+      templateReady = false;
+      setMessage('deviceTemplateMessage', '暂存失败：' + (error && error.message ? error.message : error), 'error');
+    }
+  }
+
+  async function submitTemplate() {
+    var assetInput = document.getElementById('deviceMaintenanceAssetInput');
+    var templateSelect = document.getElementById('deviceMaintenanceTemplateSelect');
+    var button = document.getElementById('deviceTemplateSubmitButton');
+
+    if (!String(assetInput && assetInput.value || '').trim()) {
+      setMessage('deviceMaintenanceMessage', '请先填写资产编号。', 'error');
+      return;
+    }
+    if (!String(templateSelect && templateSelect.value || '').trim()) {
+      setMessage('deviceMaintenanceMessage', '请先选择保养模板文件。', 'error');
+      return;
+    }
+    var results = collectTemplateResults();
+    if (!results.length) {
+      templateReady = false;
+      setMessage('deviceTemplateMessage', '请先加载保养模板。', 'error');
+      return;
+    }
+    button.disabled = true;
+    button.textContent = '提交中...';
+    try {
+      var response = await fetch('/api/device-overview/maintenance-template-submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          asset_number: assetInput.value,
+          record_date: '',
+          template_name: templateSelect.value,
+          results: results,
+          editable_fields: collectEditableFields()
+        }),
+        credentials: 'same-origin'
+      });
+      var result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error((result && result.message) || '提交失败');
+      }
+      templateReady = true;
+      try { window.localStorage.removeItem(currentDraftKey()); } catch (error) {}
+      setMessage('deviceMaintenanceMessage', '提交成功：' + result.storedFilename + '，保存到 ' + result.storedPath, 'success');
+      setMessage('deviceTemplateMessage', '模板填写已提交并保存。', 'success');
+    } catch (error) {
+      setMessage('deviceMaintenanceMessage', '提交保养记录失败：' + (error && error.message ? error.message : error), 'error');
+    } finally {
+      button.disabled = false;
+      button.textContent = '提交';
+    }
+  }
+
+  function boot() {
+    loadTemplateFiles();
+    document.getElementById('deviceInspectionUploadForm').addEventListener('submit', uploadInspectionDocument);
+    document.getElementById('deviceMaintenanceLoadTemplateButton').addEventListener('click', function () {
+      if (!templatesLoaded) {
+        loadTemplateFiles().then(loadTemplatePreview);
+        return;
+      }
+      loadTemplatePreview();
+    });
+    document.getElementById('deviceTemplateCompleteButton').addEventListener('click', completeTemplate);
+    document.getElementById('deviceTemplateSubmitButton').addEventListener('click', submitTemplate);
+    document.getElementById('deviceMaintenanceHistorySearchButton').addEventListener('click', searchHistory);
+    document.getElementById('deviceMaintenanceTemplateSelect').addEventListener('change', function () {
+      if (this.value) {
+        loadTemplatePreview();
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,1430 @@
+{% extends "base.html" %}
+
+{% block title %}测试报告管理{% endblock %}
+
+{% block extra_css %}
+<style>
+/* 统计卡片 */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #0f172a 100%);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 2px solid #1e293b;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.stat-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.stat-card.pass {
+    border-color: #48bb78;
+}
+
+.stat-card.fail {
+    border-color: #f56565;
+}
+
+.stat-number {
+    font-size: 2em;
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 0.3rem;
+}
+
+.stat-card.pass .stat-number {
+    color: #48bb78;
+}
+
+.stat-card.fail .stat-number {
+    color: #f56565;
+}
+
+.stat-label {
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+/* 过滤器 */
+.filter-section {
+    background: #f7fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+    color: #4a5568;
+    font-size: 0.85rem;
+}
+
+.filter-group select,
+.filter-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+/* 报告表格 */
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.report-table th,
+.report-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #1e293b;
+}
+
+.report-table th {
+    background: #f7fafc;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.report-table tr:hover {
+    background: #f7fafc;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-pass {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.badge-fail {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+/* 分页 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #1e293b;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination button.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+/* 图表容器 */
+.chart-container {
+    background: white;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.chart-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+/* 标签页 */
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #1e293b;
+    padding-bottom: 0;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #718096;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    color: #667eea;
+}
+
+.tab-btn.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+    font-weight: 600;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* 详情模态框 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background: white;
+    margin: 5% auto;
+    padding: 0;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 8px;
+    overflow: hidden;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 1rem 1.5rem;
+    background: #f7fafc;
+    border-bottom: 1px solid #1e293b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #718096;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.info-item {
+    padding: 0.5rem;
+    background: #f7fafc;
+    border-radius: 4px;
+}
+
+.info-item label {
+    display: block;
+    font-size: 0.75rem;
+    color: #718096;
+    margin-bottom: 0.25rem;
+}
+
+.info-item span {
+    font-weight: 500;
+    color: #2d3748;
+}
+
+.values-table {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.values-table th,
+.values-table td {
+    padding: 0.5rem;
+    border: 1px solid #1e293b;
+    text-align: center;
+}
+
+.values-table th {
+    background: #f7fafc;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #718096;
+}
+
+/* 2026-04-27: dark industrial readability pass for test report workspace */
+.test-report-page {
+    background:
+        linear-gradient(180deg, rgba(15,23,42,0.86), rgba(5,8,18,0.94));
+    border-color: rgba(56,189,248,0.18);
+    box-shadow: 0 18px 54px rgba(0,0,0,0.36);
+}
+
+.test-report-page .card-header {
+    border-bottom-color: rgba(56,189,248,0.16);
+}
+
+.test-report-subtitle {
+    margin: 0.5rem 0 0 0;
+    color: #b6c7da;
+}
+
+.test-report-page .stat-card {
+    background:
+        linear-gradient(180deg, rgba(15,23,42,0.94), rgba(8,15,28,0.96));
+    border: 1px solid rgba(56,189,248,0.2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 12px 28px rgba(0,0,0,0.24);
+}
+
+.test-report-page .stat-card:hover {
+    border-color: rgba(125,211,252,0.42);
+    box-shadow: 0 18px 36px rgba(0,0,0,0.34), 0 0 0 1px rgba(56,189,248,0.12);
+}
+
+.test-report-page .stat-card.pass {
+    border-color: rgba(34,197,94,0.36);
+}
+
+.test-report-page .stat-card.fail {
+    border-color: rgba(248,113,113,0.38);
+}
+
+.test-report-page .stat-number {
+    color: #7dd3fc;
+}
+
+.test-report-page .stat-card.pass .stat-number {
+    color: #34d399;
+}
+
+.test-report-page .stat-card.fail .stat-number {
+    color: #f87171;
+}
+
+.test-report-page .stat-label,
+.test-report-page .loading {
+    color: #a9bad0;
+}
+
+.test-report-page .filter-section,
+.test-report-page .chart-container {
+    background: rgba(8,15,28,0.72);
+    border: 1px solid rgba(56,189,248,0.16);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.test-report-page .filter-group label,
+.test-report-page .chart-title {
+    color: #dbeafe;
+}
+
+.test-report-page .filter-group select,
+.test-report-page .filter-group input {
+    background: rgba(15,23,42,0.92);
+    border-color: rgba(148,163,184,0.28);
+    color: #e5f2ff;
+}
+
+.test-report-page .filter-group select:focus,
+.test-report-page .filter-group input:focus {
+    outline: none;
+    border-color: rgba(56,189,248,0.7);
+    box-shadow: 0 0 0 3px rgba(56,189,248,0.14);
+}
+
+.test-report-page .filter-group input::placeholder {
+    color: #64748b;
+}
+
+.test-report-page .tabs {
+    border-bottom-color: rgba(56,189,248,0.18);
+}
+
+.test-report-page .tab-btn {
+    color: #9eb1c6;
+}
+
+.test-report-page .tab-btn:hover,
+.test-report-page .tab-btn.active {
+    color: #7dd3fc;
+}
+
+.test-report-page .tab-btn.active {
+    border-bottom-color: #38bdf8;
+}
+
+#reportsContainer {
+    overflow-x: auto;
+    border: 1px solid rgba(56,189,248,0.14);
+    border-radius: 10px;
+    background: rgba(8,15,28,0.55);
+}
+
+.test-report-page .report-table {
+    min-width: 860px;
+}
+
+.test-report-page .report-table th,
+.test-report-page .report-table td {
+    border-bottom-color: rgba(148,163,184,0.14);
+    color: #dbeafe;
+}
+
+.test-report-page .report-table th {
+    background: rgba(15,23,42,0.96);
+    color: #93c5fd;
+}
+
+.test-report-page .report-table tbody tr {
+    background: rgba(8,15,28,0.3);
+}
+
+.test-report-page .report-table tbody tr:hover {
+    background: rgba(56,189,248,0.08);
+}
+
+.test-report-page .badge-pass {
+    background: rgba(34,197,94,0.16);
+    color: #86efac;
+    border: 1px solid rgba(34,197,94,0.32);
+}
+
+.test-report-page .badge-fail {
+    background: rgba(248,113,113,0.16);
+    color: #fecaca;
+    border: 1px solid rgba(248,113,113,0.32);
+}
+
+.test-report-page .pagination button {
+    background: rgba(15,23,42,0.9);
+    border-color: rgba(148,163,184,0.22);
+    color: #dbeafe;
+}
+
+.test-report-page .pagination button:hover:not(:disabled),
+.test-report-page .pagination button.active {
+    background: linear-gradient(180deg, #0ea5e9, #0284c7);
+    border-color: rgba(125,211,252,0.55);
+    color: #fff;
+}
+
+.test-report-page .btn-outline-primary {
+    background: rgba(14,165,233,0.16);
+    border-color: rgba(56,189,248,0.55);
+    color: #dbeafe;
+}
+
+.test-report-page .btn-outline-primary:hover,
+.test-report-page .btn-outline-primary:focus {
+    background: linear-gradient(180deg, #0ea5e9, #0284c7);
+    border-color: rgba(125,211,252,0.72);
+    color: #fff;
+}
+
+.test-report-modal {
+    background: rgba(3,7,18,0.72);
+    backdrop-filter: blur(10px);
+}
+
+.test-report-modal .modal-content {
+    background: #08111f;
+    border: 1px solid rgba(56,189,248,0.22);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.55);
+}
+
+.test-report-modal .modal-header {
+    background: rgba(15,23,42,0.96);
+    border-bottom-color: rgba(56,189,248,0.18);
+}
+
+.test-report-modal .modal-header h3,
+.test-report-modal .modal-body h4 {
+    color: #e5f2ff;
+}
+
+.test-report-modal .modal-close {
+    color: #bfdbfe;
+}
+
+.test-report-modal .info-item {
+    background: rgba(15,23,42,0.82);
+    border: 1px solid rgba(148,163,184,0.16);
+}
+
+.test-report-modal .info-item label {
+    color: #93c5fd;
+}
+
+.test-report-modal .info-item span,
+.test-report-modal .values-table td {
+    color: #e5f2ff;
+}
+
+.test-report-modal .values-table th,
+.test-report-modal .values-table td {
+    border-color: rgba(148,163,184,0.18);
+}
+
+.test-report-modal .values-table th {
+    background: rgba(15,23,42,0.96);
+    color: #93c5fd;
+}
+
+@media (max-width: 720px) {
+    .test-report-modal .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .test-report-modal .modal-content {
+        margin: 1rem auto;
+        width: calc(100% - 1rem);
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card test-report-page">
+    <div class="card-header">
+        <h2>📊 测试报告管理</h2>
+        <p class="test-report-subtitle">管理反电势测试报告，支持数据分析和出厂报告生成</p>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+            <div class="stat-number" id="statTotal">-</div>
+            <div class="stat-label">总测试数</div>
+        </div>
+        <div class="stat-card pass">
+            <div class="stat-number" id="statPassed">-</div>
+            <div class="stat-label">通过</div>
+        </div>
+        <div class="stat-card fail">
+            <div class="stat-number" id="statFailed">-</div>
+            <div class="stat-label">失败</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="statPassRate">-</div>
+            <div class="stat-label">合格率</div>
+        </div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="scanReports()">
+            🔄 扫描导入报告
+        </button>
+        <button class="btn btn-secondary" onclick="refreshData()">
+            🔃 刷新数据
+        </button>
+    </div>
+
+    <!-- 标签页 -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('reports')">📋 报告列表</button>
+        <button class="tab-btn" onclick="switchTab('statistics')">📈 统计分析</button>
+        <button class="tab-btn" onclick="switchTab('cpk')">📉 CPK 分析</button>
+    </div>
+
+    <!-- 报告列表标签页 -->
+    <div id="tab-reports" class="tab-content active">
+        <!-- 过滤器 -->
+        <div class="filter-section">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label>项目</label>
+                    <select id="filterProject" onchange="loadReports()">
+                        <option value="">全部项目</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>报告类型</label>
+                    <select id="filterReportType" onchange="loadProjects(); refreshData();">
+                        <option value="">全部类型</option>
+                        <option value="BEMF">反电势</option>
+                        <option value="HIL">HIL</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>测试结果</label>
+                    <select id="filterResult" onchange="loadReports()">
+                        <option value="">全部</option>
+                        <option value="Pass">通过</option>
+                        <option value="Fail">失败</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>开始日期</label>
+                    <input type="date" id="filterDateFrom" onchange="loadReports()">
+                </div>
+                <div class="filter-group">
+                    <label>结束日期</label>
+                    <input type="date" id="filterDateTo" onchange="loadReports()">
+                </div>
+                <div class="filter-group">
+                    <label>序列号搜索</label>
+                    <input type="text" id="filterSerial" placeholder="输入序列号" onkeyup="debounceSearch()">
+                </div>
+            </div>
+        </div>
+
+        <!-- 报告表格 -->
+        <div id="reportsContainer">
+            <div class="loading">加载中...</div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <!-- 统计分析标签页 -->
+    <div id="tab-statistics" class="tab-content">
+        <div class="filter-section">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label>项目</label>
+                    <select id="trendProject" onchange="loadTrendData()">
+                        <option value="">全部项目</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>报告类型</label>
+                    <select id="trendReportType" onchange="loadProjects(); loadTrendData();">
+                        <option value="">全部类型</option>
+                        <option value="BEMF">反电势</option>
+                        <option value="HIL">HIL</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>时间范围</label>
+                    <select id="trendDays" onchange="loadTrendData()">
+                        <option value="7">最近 7 天</option>
+                        <option value="30">最近 30 天</option>
+                        <option value="90">最近 90 天</option>
+                        <option value="180" selected>最近 180 天</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">📈 测试数量趋势</div>
+            <canvas id="trendChart" height="300"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">🎯 合格率趋势</div>
+            <canvas id="passRateChart" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- CPK 分析标签页 -->
+    <div id="tab-cpk" class="tab-content">
+        <div class="filter-section">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label>项目</label>
+                    <select id="cpkProject" onchange="loadValueNames()">
+                        <option value="">全部项目</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>报告类型</label>
+                    <select id="cpkReportType" onchange="loadProjects(); loadValueNames();">
+                        <option value="">全部类型</option>
+                        <option value="BEMF">反电势</option>
+                        <option value="HIL">HIL</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>测试项</label>
+                    <select id="cpkValueName" onchange="loadCpkData()">
+                        <option value="">选择测试项</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="cpkResult" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="cpkValue">-</div>
+                    <div class="stat-label">CPK</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="cpValue">-</div>
+                    <div class="stat-label">CP</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="cpkMean">-</div>
+                    <div class="stat-label">均值</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="cpkStd">-</div>
+                    <div class="stat-label">标准差</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">📊 测试值分布</div>
+                <canvas id="cpkChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 详情模态框 -->
+<div class="modal test-report-modal" id="detailModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>📄 测试报告详情</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <div class="loading">加载中...</div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// 全局变量
+let currentPage = 1;
+let totalPages = 1;
+let searchTimeout = null;
+let trendChart = null;
+let passRateChart = null;
+let cpkChart = null;
+
+const darkChartOptions = {
+    color: '#c7d7ea',
+    borderColor: 'rgba(148,163,184,0.18)',
+    gridColor: 'rgba(148,163,184,0.12)'
+};
+
+if (window.Chart) {
+    Chart.defaults.color = darkChartOptions.color;
+    Chart.defaults.borderColor = darkChartOptions.borderColor;
+    Chart.defaults.font.family = '"Inter", "Segoe UI", "Microsoft YaHei", sans-serif';
+}
+
+// 页面加载
+document.addEventListener('DOMContentLoaded', function() {
+    loadProjects();
+    loadStatistics();
+    loadReports();
+});
+
+// 加载项目列表
+async function loadProjects() {
+    try {
+        const mappings = [
+            { projectSelectId: 'filterProject', reportTypeSelectId: 'filterReportType' },
+            { projectSelectId: 'trendProject', reportTypeSelectId: 'trendReportType' },
+            { projectSelectId: 'cpkProject', reportTypeSelectId: 'cpkReportType' }
+        ];
+
+        for (const mapping of mappings) {
+            const projectSelect = document.getElementById(mapping.projectSelectId);
+            const reportTypeSelect = document.getElementById(mapping.reportTypeSelectId);
+            if (!projectSelect || !reportTypeSelect) continue;
+
+            const prevValue = projectSelect.value;
+            const params = new URLSearchParams();
+            if (reportTypeSelect.value) {
+                params.append('report_type', reportTypeSelect.value);
+            }
+
+            const response = await fetch(`/api/test-reports/projects?${params}`);
+            const data = await response.json();
+            const projects = data.success ? (data.projects || []) : [];
+
+            projectSelect.innerHTML = '<option value="">全部项目</option>';
+            projects.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p;
+                option.textContent = p;
+                projectSelect.appendChild(option);
+            });
+
+            if (prevValue && projects.includes(prevValue)) {
+                projectSelect.value = prevValue;
+            }
+        }
+    } catch (error) {
+        console.error('加载项目列表失败:', error);
+    }
+}
+
+// 加载统计信息
+async function loadStatistics() {
+    try {
+        const reportType = document.getElementById('filterReportType')?.value;
+        const params = new URLSearchParams();
+        if (reportType) params.append('report_type', reportType);
+        const response = await fetch(`/api/test-reports/statistics?${params}`);
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(data.error || data.message || '统计接口返回失败');
+        }
+
+        // 兼容旧接口字段，避免 statistics 对象缺失导致前端报错
+        const stats = data.statistics || {
+            total: data.total_reports || 0,
+            passed: data.passed || 0,
+            failed: data.failed || 0,
+            pass_rate: data.pass_rate || 0
+        };
+        document.getElementById('statTotal').textContent = stats.total || 0;
+        document.getElementById('statPassed').textContent = stats.passed || 0;
+        document.getElementById('statFailed').textContent = stats.failed || 0;
+        document.getElementById('statPassRate').textContent = (stats.pass_rate || 0) + '%';
+    } catch (error) {
+        console.error('加载统计信息失败:', error);
+    }
+}
+
+// 加载报告列表
+async function loadReports(page = 1) {
+    currentPage = page;
+    
+    const project = document.getElementById('filterProject').value;
+    const reportType = document.getElementById('filterReportType').value;
+    const result = document.getElementById('filterResult').value;
+    const dateFrom = document.getElementById('filterDateFrom').value;
+    const dateTo = document.getElementById('filterDateTo').value;
+    const serial = document.getElementById('filterSerial').value.trim();
+    
+    const params = new URLSearchParams({
+        page: page,
+        per_page: 20
+    });
+    
+    if (project) params.append('project', project);
+    if (reportType) params.append('report_type', reportType);
+    if (result) params.append('result', result);
+    if (dateFrom) params.append('date_from', dateFrom);
+    if (dateTo) params.append('date_to', dateTo);
+    if (serial) params.append('serial', serial);
+    
+    try {
+        document.getElementById('reportsContainer').innerHTML = '<div class="loading">加载中...</div>';
+        
+        const response = await fetch(`/api/test-reports?${params}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            renderReports(data.reports);
+            totalPages = data.total_pages;
+            renderPagination();
+        } else {
+            document.getElementById('reportsContainer').innerHTML = 
+                `<div class="loading">加载失败: ${data.error}</div>`;
+        }
+    } catch (error) {
+        console.error('加载报告列表失败:', error);
+        document.getElementById('reportsContainer').innerHTML = 
+            `<div class="loading">加载失败: ${error.message}</div>`;
+    }
+}
+
+// 渲染报告表格
+function renderReports(reports) {
+    if (!reports || reports.length === 0) {
+        document.getElementById('reportsContainer').innerHTML = 
+            '<div class="loading">暂无测试报告数据，请点击"扫描导入报告"按钮导入数据</div>';
+        return;
+    }
+    
+    let html = `
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>序列号</th>
+                    <th>报告类型</th>
+                    <th>项目</th>
+                    <th>测试模块</th>
+                    <th>测试结果</th>
+                    <th>测试时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    reports.forEach(report => {
+        const resultBadge = report.test_result === 'Pass' 
+            ? '<span class="badge badge-pass">通过</span>'
+            : '<span class="badge badge-fail">失败</span>';
+        const reportType = (report.report_type || 'BEMF').toUpperCase();
+        const reportTypeBadge = reportType === 'HIL'
+            ? '<span class="badge" style="background:rgba(14,165,233,0.18);color:#bae6fd;border:1px solid rgba(14,165,233,0.36);">HIL</span>'
+            : '<span class="badge" style="background:rgba(148,163,184,0.16);color:#e2e8f0;border:1px solid rgba(148,163,184,0.28);">反电势</span>';
+        
+        html += `
+            <tr>
+                <td>${report.serial_number || '-'}</td>
+                <td>${reportTypeBadge}</td>
+                <td>${report.project_name || '-'}</td>
+                <td>${report.test_module || '-'}</td>
+                <td>${resultBadge}</td>
+                <td>${formatDateTime(report.test_time)}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="showDetail(${report.id})">
+                        详情
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    document.getElementById('reportsContainer').innerHTML = html;
+}
+
+// 渲染分页
+function renderPagination() {
+    const container = document.getElementById('pagination');
+    let html = '';
+    
+    html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="loadReports(${currentPage - 1})">上一页</button>`;
+    
+    for (let i = 1; i <= totalPages && i <= 10; i++) {
+        html += `<button class="${i === currentPage ? 'active' : ''}" onclick="loadReports(${i})">${i}</button>`;
+    }
+    
+    html += `<button ${currentPage >= totalPages ? 'disabled' : ''} onclick="loadReports(${currentPage + 1})">下一页</button>`;
+    
+    container.innerHTML = html;
+}
+
+// 搜索防抖
+function debounceSearch() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        loadReports();
+    }, 500);
+}
+
+// 显示详情
+async function showDetail(reportId) {
+    document.getElementById('detailModal').style.display = 'block';
+    document.getElementById('modalBody').innerHTML = '<div class="loading">加载中...</div>';
+    
+    try {
+        const response = await fetch(`/api/test-reports/${reportId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            renderDetail(data.report);
+        } else {
+            document.getElementById('modalBody').innerHTML = `<div class="loading">加载失败: ${data.error}</div>`;
+        }
+    } catch (error) {
+        document.getElementById('modalBody').innerHTML = `<div class="loading">加载失败: ${error.message}</div>`;
+    }
+}
+
+// 渲染详情
+function renderDetail(report) {
+    let html = `
+        <div class="info-grid">
+            <div class="info-item">
+                <label>序列号</label>
+                <span>${report.serial_number || '-'}</span>
+            </div>
+            <div class="info-item">
+                <label>项目</label>
+                <span>${report.project_name || '-'}</span>
+            </div>
+            <div class="info-item">
+                <label>报告类型</label>
+                <span>${(report.report_type || 'BEMF').toUpperCase() === 'HIL' ? 'HIL' : '反电势'}</span>
+            </div>
+            <div class="info-item">
+                <label>测试模块</label>
+                <span>${report.test_module || '-'}</span>
+            </div>
+            <div class="info-item">
+                <label>测试结果</label>
+                <span class="badge ${report.test_result === 'Pass' ? 'badge-pass' : 'badge-fail'}">
+                    ${report.test_result === 'Pass' ? '通过' : '失败'}
+                </span>
+            </div>
+            <div class="info-item">
+                <label>测试时间</label>
+                <span>${formatDateTime(report.test_time)}</span>
+            </div>
+            <div class="info-item">
+                <label>文件名</label>
+                <span>${report.file_name || '-'}</span>
+            </div>
+        </div>
+    `;
+    
+    // 测试值表格
+    if (report.test_values && report.test_values.length > 0) {
+        html += `
+            <h4 style="margin-top: 1.5rem;">测试值</h4>
+            <table class="values-table">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>实测值</th>
+                        <th>最小值</th>
+                        <th>最大值</th>
+                        <th>结果</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        report.test_values.forEach(v => {
+            const resultBadge = v.is_pass 
+                ? '<span class="badge badge-pass">合格</span>'
+                : '<span class="badge badge-fail">不合格</span>';
+            
+            html += `
+                <tr>
+                    <td>${v.value_name || '-'}</td>
+                    <td>${v.value !== null ? v.value : '-'}</td>
+                    <td>${v.min_value !== null ? v.min_value : '-'}</td>
+                    <td>${v.max_value !== null ? v.max_value : '-'}</td>
+                    <td>${resultBadge}</td>
+                </tr>
+            `;
+        });
+        
+        html += '</tbody></table>';
+    }
+    
+    document.getElementById('modalBody').innerHTML = html;
+}
+
+// 关闭模态框
+function closeModal() {
+    document.getElementById('detailModal').style.display = 'none';
+}
+
+// 扫描导入报告
+async function scanReports() {
+    if (!confirm('确定要扫描并导入测试报告吗？这可能需要一些时间。')) {
+        return;
+    }
+
+    const scanBtn = document.querySelector('[onclick="scanReports()"]');
+    if (scanBtn) {
+        scanBtn.disabled = true;
+        scanBtn.dataset.originalText = scanBtn.textContent;
+        scanBtn.textContent = '⏳ 扫描中...';
+    }
+    
+    try {
+        const response = await fetch('/api/test-reports/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: '{}'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            const stats = data.stats;
+            let summary = `扫描完成！\n扫描: ${stats.scanned} 个文件\n导入: ${stats.imported} 个\n失败: ${stats.failed} 个`;
+            const skipped = stats.skipped_invalid_docx || 0;
+            if (skipped > 0) {
+                summary += `\n跳过无效docx: ${skipped} 个`;
+                const sampleNames = (stats.skipped_invalid_docx_samples || [])
+                    .slice(0, 3)
+                    .map(path => path.split('/').pop())
+                    .filter(Boolean);
+                if (sampleNames.length > 0) {
+                    summary += `\n示例文件: ${sampleNames.join('、')}`;
+                }
+            }
+            alert(summary);
+            refreshData();
+        } else {
+            alert('扫描失败: ' + data.error);
+        }
+    } catch (error) {
+        alert('扫描失败: ' + error.message);
+    } finally {
+        if (scanBtn) {
+            scanBtn.disabled = false;
+            scanBtn.textContent = scanBtn.dataset.originalText || '🔄 扫描导入报告';
+        }
+    }
+}
+
+// 刷新数据
+function refreshData() {
+    loadStatistics();
+    loadReports();
+}
+
+// 切换标签页
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+    document.getElementById(`tab-${tabName}`).classList.add('active');
+    
+    if (tabName === 'statistics') {
+        loadTrendData();
+    } else if (tabName === 'cpk') {
+        loadValueNames();
+    }
+}
+
+// 加载趋势数据
+async function loadTrendData() {
+    const project = document.getElementById('trendProject').value;
+    const reportType = document.getElementById('trendReportType').value;
+    const days = document.getElementById('trendDays').value;
+    
+    try {
+        const params = new URLSearchParams({ days });
+        if (project) params.append('project', project);
+        if (reportType) params.append('report_type', reportType);
+        
+        const response = await fetch(`/api/test-reports/trend?${params}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            renderTrendCharts(data.trend);
+        }
+    } catch (error) {
+        console.error('加载趋势数据失败:', error);
+    }
+}
+
+// 渲染趋势图表
+function renderTrendCharts(trendData) {
+    const labels = trendData.map(d => d.date);
+    const totals = trendData.map(d => d.total);
+    const passed = trendData.map(d => d.passed);
+    const failed = trendData.map(d => d.failed);
+    const passRates = trendData.map(d => d.pass_rate);
+    
+    // 销毁旧图表
+    if (trendChart) trendChart.destroy();
+    if (passRateChart) passRateChart.destroy();
+    
+    // 测试数量趋势
+    const ctx1 = document.getElementById('trendChart').getContext('2d');
+    trendChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: '通过',
+                    data: passed,
+                    backgroundColor: 'rgba(72, 187, 120, 0.7)',
+                    borderColor: 'rgb(72, 187, 120)',
+                    borderWidth: 1
+                },
+                {
+                    label: '失败',
+                    data: failed,
+                    backgroundColor: 'rgba(245, 101, 101, 0.7)',
+                    borderColor: 'rgb(245, 101, 101)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true,
+                    ticks: { color: darkChartOptions.color },
+                    grid: { color: darkChartOptions.gridColor }
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    ticks: { color: darkChartOptions.color },
+                    grid: { color: darkChartOptions.gridColor }
+                }
+            }
+        }
+    });
+    
+    // 合格率趋势
+    const ctx2 = document.getElementById('passRateChart').getContext('2d');
+    passRateChart = new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '合格率 (%)',
+                data: passRates,
+                borderColor: 'rgb(102, 126, 234)',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    ticks: { color: darkChartOptions.color },
+                    grid: { color: darkChartOptions.gridColor }
+                },
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: { color: darkChartOptions.color },
+                    grid: { color: darkChartOptions.gridColor }
+                }
+            }
+        }
+    });
+}
+
+// 加载测试项名称
+async function loadValueNames() {
+    const project = document.getElementById('cpkProject').value;
+    const reportType = document.getElementById('cpkReportType').value;
+    
+    try {
+        const params = new URLSearchParams();
+        if (project) params.append('project', project);
+        if (reportType) params.append('report_type', reportType);
+        
+        const response = await fetch(`/api/test-reports/value-names?${params}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            const select = document.getElementById('cpkValueName');
+            select.innerHTML = '<option value="">选择测试项</option>';
+            
+            data.value_names.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+
+            // 自动选中首个测试项并触发加载，避免初次进入 CPK 页为空白
+            if (data.value_names.length > 0) {
+                select.value = data.value_names[0];
+                loadCpkData();
+            } else {
+                document.getElementById('cpkResult').style.display = 'none';
+            }
+        }
+    } catch (error) {
+        console.error('加载测试项名称失败:', error);
+    }
+}
+
+// 加载 CPK 数据
+async function loadCpkData() {
+    const project = document.getElementById('cpkProject').value;
+    const reportType = document.getElementById('cpkReportType').value;
+    const valueName = document.getElementById('cpkValueName').value;
+    
+    if (!valueName) {
+        document.getElementById('cpkResult').style.display = 'none';
+        return;
+    }
+    
+    try {
+        const params = new URLSearchParams({ value_name: valueName });
+        if (project) params.append('project', project);
+        if (reportType) params.append('report_type', reportType);
+        
+        const response = await fetch(`/api/test-reports/cpk?${params}`);
+        const data = await response.json();
+        
+        if (data.success && data.cpk_data) {
+            renderCpkResult(data.cpk_data);
+        } else {
+            document.getElementById('cpkResult').style.display = 'none';
+        }
+    } catch (error) {
+        console.error('加载 CPK 数据失败:', error);
+    }
+}
+
+// 渲染 CPK 结果
+function renderCpkResult(cpkData) {
+    document.getElementById('cpkResult').style.display = 'block';
+    
+    document.getElementById('cpkValue').textContent = cpkData.cpk ?? '-';
+    document.getElementById('cpValue').textContent = cpkData.cp ?? '-';
+    document.getElementById('cpkMean').textContent = cpkData.mean ?? '-';
+    document.getElementById('cpkStd').textContent = cpkData.std ?? '-';
+    
+    // 绘制直方图
+    if (cpkChart) cpkChart.destroy();
+    
+    const values = cpkData.values || [];
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const binCount = 20;
+    const binWidth = (max - min) / binCount;
+    
+    const bins = new Array(binCount).fill(0);
+    const binLabels = [];
+    
+    for (let i = 0; i < binCount; i++) {
+        const binStart = min + i * binWidth;
+        binLabels.push(binStart.toFixed(2));
+    }
+    
+    values.forEach(v => {
+        const binIndex = Math.min(Math.floor((v - min) / binWidth), binCount - 1);
+        if (binIndex >= 0) bins[binIndex]++;
+    });
+    
+    const ctx = document.getElementById('cpkChart').getContext('2d');
+    cpkChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: binLabels,
+            datasets: [{
+                label: '频次',
+                data: bins,
+                backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                borderColor: 'rgb(102, 126, 234)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    ticks: { color: darkChartOptions.color },
+                    grid: { color: darkChartOptions.gridColor }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: darkChartOptions.color },
+                    grid: { color: darkChartOptions.gridColor }
+                }
+            },
+            plugins: {
+                annotation: {
+                    annotations: {
+                        lsl: cpkData.lsl ? {
+                            type: 'line',
+                            xMin: cpkData.lsl,
+                            xMax: cpkData.lsl,
+                            borderColor: 'red',
+                            borderWidth: 2,
+                            label: { content: 'LSL', enabled: true }
+                        } : undefined,
+                        usl: cpkData.usl ? {
+                            type: 'line',
+                            xMin: cpkData.usl,
+                            xMax: cpkData.usl,
+                            borderColor: 'red',
+                            borderWidth: 2,
+                            label: { content: 'USL', enabled: true }
+                        } : undefined
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 格式化日期时间
+function formatDateTime(dateStr) {
+    if (!dateStr) return '-';
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    return date.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// 点击模态框外部关闭
+window.onclick = function(event) {
+    const modal = document.getElementById('detailModal');
+    if (event.target === modal) {
+        closeModal();
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,16 @@
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.idea/
+.vscode/
+build/
+.gradle/
+*.pyc
+*.pyo
+*.apk
+.DS_Store
+qrmes_shared_core/webdav_config.json
+.venv/
+runtime*.log
+runtime*.pid
+._*

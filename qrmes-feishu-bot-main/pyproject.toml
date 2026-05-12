@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qrmes-feishu-bot"
+version = "0.1.0"
+description = "Feishu diagnostic bot for MES split repos"
+requires-python = ">=3.9"
+dependencies = [
+  "Flask==2.3.3",
+  "lark-oapi>=1.4.16"
+]
+
+[tool.setuptools]
+packages = ["feishu_mes_bot", "feishu_mes_bot.handlers", "feishu_mes_bot.services"]

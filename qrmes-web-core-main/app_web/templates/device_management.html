@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}设备管理{% endblock %}
+
+{% block extra_css %}
+<style>
+  body { background:#020617; }
+  .device-management-page { max-width:1180px; margin:0 auto; padding:28px 22px 48px; display:grid; gap:18px; color:#e5edf8; }
+  .device-management-hero, .device-management-panel { border:1px solid rgba(56,189,248,.16); border-radius:18px; background:linear-gradient(180deg, rgba(15,23,42,.96) 0%, rgba(2,6,23,.96) 100%); box-shadow:0 22px 46px rgba(2,6,23,.3); }
+  .device-management-hero { padding:22px 24px; }
+  .device-management-hero h1 { margin:0; font-size:32px; color:#f8fafc; }
+  .device-management-hero p, .device-management-head p, .device-management-message { color:#94a3b8; line-height:1.7; }
+  .device-management-head { padding:18px 20px; border-bottom:1px solid rgba(148,163,184,.16); background:rgba(15,23,42,.88); }
+  .device-management-head h3 { margin:0; font-size:21px; color:#f8fafc; }
+  .device-management-body { padding:18px 20px 20px; display:grid; gap:14px; }
+  .device-management-actions { display:flex; flex-wrap:wrap; gap:10px; }
+  .device-management-input { width:100%; min-height:46px; border-radius:12px; border:1px solid rgba(148,163,184,.24); background:#020617; color:#e5edf8; padding:10px 12px; font-size:1rem; }
+  .device-management-button { min-height:42px; border-radius:12px; padding:0 16px; font-weight:800; cursor:pointer; border:1px solid rgba(56,189,248,.22); background:#0f172a; color:#dbeafe; }
+  .device-management-button.primary { background:linear-gradient(135deg,#0284c7 0%,#06b6d4 100%); color:#fff; border-color:#0284c7; }
+  .device-management-button.secondary, .device-management-button.ghost { background:#111827; border-color:#1e293b; color:#94a3b8; }
+  .device-management-message { min-height:24px; padding:12px 14px; border-radius:12px; background:rgba(15,23,42,.72); border:1px solid rgba(56,189,248,.14); }
+  .device-management-message.is-error { color:#fecaca; border-color:rgba(248,113,113,.35); background:rgba(127,29,29,.30); }
+  .device-management-message.is-success { color:#bbf7d0; border-color:rgba(16,185,129,.30); background:rgba(6,78,59,.34); }
+  .device-management-video { width:100%; max-height:320px; border-radius:18px; background:#0f172a; object-fit:cover; border:1px solid rgba(56,189,248,.14); }
+  .device-management-result-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; }
+  .device-management-result-card { border:1px solid rgba(56,189,248,.14); border-radius:14px; background:rgba(15,23,42,.72); padding:12px 14px; display:grid; gap:6px; }
+  .device-management-result-card label { font-size:.86rem; font-weight:800; color:#7dd3fc; }
+  .device-management-result-card div { color:#e5edf8; line-height:1.7; word-break:break-word; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="device-management-page">
+  <section class="device-management-hero">
+    <h1>设备管理</h1>
+    <p>支持手机扫码或手动粘贴设备二维码内容，例如 <code>LC-LM20##RT3820-03##2026-05-30</code>。系统会按第二段资产编号反查设备台账，并显示该设备的全部字段。</p>
+  </section>
+
+  <section class="device-management-panel">
+    <div class="device-management-head">
+      <h3>扫码与查询</h3>
+      <p>优先使用手机摄像头扫码；如果当前浏览器不支持扫码识别，也可以手动输入二维码内容。</p>
+    </div>
+    <div class="device-management-body">
+      <video id="deviceManagementVideo" class="device-management-video" playsinline muted hidden></video>
+      <input id="deviceManagementQrInput" class="device-management-input" type="text" placeholder="请扫描或输入二维码内容，例如 LC-LM20##RT3820-03##2026-05-30">
+      <div class="device-management-actions">
+        <button type="button" class="device-management-button secondary" id="deviceManagementStartScanButton">开始扫码</button>
+        <button type="button" class="device-management-button ghost" id="deviceManagementStopScanButton">停止扫码</button>
+        <button type="button" class="device-management-button primary" id="deviceManagementLookupButton">查询设备</button>
+      </div>
+      <div class="device-management-message" id="deviceManagementMessage">等待扫码或输入二维码内容。</div>
+    </div>
+  </section>
+
+  <section class="device-management-panel">
+    <div class="device-management-head">
+      <h3>设备信息</h3>
+      <p>根据二维码中的资产编号反查设备台账数据库，展示该设备的完整信息。</p>
+    </div>
+    <div class="device-management-body">
+      <div class="device-management-result-grid" id="deviceManagementResultGrid"></div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var videoEl = document.getElementById('deviceManagementVideo');
+  var inputEl = document.getElementById('deviceManagementQrInput');
+  var messageEl = document.getElementById('deviceManagementMessage');
+  var resultGridEl = document.getElementById('deviceManagementResultGrid');
+  var lookupButton = document.getElementById('deviceManagementLookupButton');
+  var startButton = document.getElementById('deviceManagementStartScanButton');
+  var stopButton = document.getElementById('deviceManagementStopScanButton');
+  var scanStream = null;
+  var scanTimer = null;
+  var detector = null;
+
+  function setMessage(text, type) {
+    messageEl.textContent = text || '';
+    messageEl.className = 'device-management-message' + (type ? ' is-' + type : '');
+  }
+
+  function renderDevice(fields, qrValue) {
+    resultGridEl.innerHTML = '';
+    if (!fields || !fields.length) {
+      return;
+    }
+    if (qrValue) {
+      var qrCard = document.createElement('div');
+      qrCard.className = 'device-management-result-card';
+      qrCard.innerHTML = '<label>二维码内容</label><div>' + escapeHtml(qrValue) + '</div>';
+      resultGridEl.appendChild(qrCard);
+    }
+    fields.forEach(function (field) {
+      var card = document.createElement('div');
+      card.className = 'device-management-result-card';
+      card.innerHTML = '<label>' + escapeHtml(field.label || field.key || '') + '</label><div>' + escapeHtml(field.value || '') + '</div>';
+      resultGridEl.appendChild(card);
+    });
+  }
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  async function lookupDevice() {
+    var qrValue = String(inputEl.value || '').trim();
+    if (!qrValue) {
+      setMessage('请先扫描或输入二维码内容。', 'error');
+      renderDevice([], '');
+      return;
+    }
+    lookupButton.disabled = true;
+    lookupButton.textContent = '查询中...';
+    try {
+      var response = await fetch('/api/device-management/lookup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ qr_value: qrValue })
+      });
+      var result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error((result && result.message) || '查询失败');
+      }
+      renderDevice(result.fields || [], result.qrValue || qrValue);
+      setMessage('已根据资产编号 ' + (result.assetNumber || '') + ' 查询到设备信息。', 'success');
+    } catch (error) {
+      renderDevice([], '');
+      setMessage('设备查询失败：' + (error && error.message ? error.message : error), 'error');
+    } finally {
+      lookupButton.disabled = false;
+      lookupButton.textContent = '查询设备';
+    }
+  }
+
+  async function stopScan() {
+    if (scanTimer) {
+      clearInterval(scanTimer);
+      scanTimer = null;
+    }
+    if (scanStream) {
+      scanStream.getTracks().forEach(function (track) { track.stop(); });
+      scanStream = null;
+    }
+    videoEl.hidden = true;
+    videoEl.srcObject = null;
+  }
+
+  async function startScan() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setMessage('当前浏览器不支持摄像头扫码，请手动输入二维码内容。', 'error');
+      return;
+    }
+    if (!window.BarcodeDetector) {
+      setMessage('当前浏览器不支持原生二维码识别，请手动输入二维码内容。', 'error');
+      return;
+    }
+    try {
+      detector = detector || new window.BarcodeDetector({ formats: ['qr_code'] });
+      scanStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' } },
+        audio: false
+      });
+      videoEl.srcObject = scanStream;
+      videoEl.hidden = false;
+      await videoEl.play();
+      setMessage('摄像头已开启，请将二维码对准画面。', 'success');
+      if (scanTimer) clearInterval(scanTimer);
+      scanTimer = setInterval(async function () {
+        try {
+          var codes = await detector.detect(videoEl);
+          if (!codes || !codes.length) return;
+          var value = String(codes[0].rawValue || '').trim();
+          if (!value) return;
+          inputEl.value = value;
+          await stopScan();
+          setMessage('扫码成功，正在查询设备信息。', 'success');
+          lookupDevice();
+        } catch (error) {
+          // ignore transient detect errors
+        }
+      }, 650);
+    } catch (error) {
+      await stopScan();
+      setMessage('启动扫码失败：' + (error && error.message ? error.message : error), 'error');
+    }
+  }
+
+  lookupButton.addEventListener('click', lookupDevice);
+  startButton.addEventListener('click', startScan);
+  stopButton.addEventListener('click', stopScan);
+  inputEl.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      lookupDevice();
+    }
+  });
+})();
+</script>
+{% endblock %}

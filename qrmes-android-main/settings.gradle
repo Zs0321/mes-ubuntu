@@ -1,0 +1,33 @@
+pluginManagement {
+    repositories {
+        // Aliyun mirrors (尝试优先使用)
+        maven { url = uri('https://maven.aliyun.com/repository/gradle-plugin') }
+        maven { url = uri('https://maven.aliyun.com/repository/google') }
+        maven { url = uri('https://maven.aliyun.com/repository/public') }
+        
+        // Official repositories (作为备用或特定库的来源)
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        
+        // Other custom repositories
+        maven { url = uri('https://jitpack.io') }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS) // 保持您原有的设置
+    repositories {
+        // Aliyun mirrors (尝试优先使用)
+        maven { url = uri('https://maven.aliyun.com/repository/google') }
+        maven { url = uri('https://maven.aliyun.com/repository/public') }
+        
+        // Official repositories (作为备用或特定库的来源)
+        google()
+        mavenCentral()
+        
+        // Other custom repositories
+        maven { url = uri('https://jitpack.io') } // 例如：sardine-android
+    }
+}
+rootProject.name = "QRTestScanner"
+include ':app'

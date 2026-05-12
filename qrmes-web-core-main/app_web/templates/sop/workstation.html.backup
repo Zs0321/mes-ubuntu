@@ -1,0 +1,577 @@
+{% extends "base.html" %}
+
+{% block title %}工位SOP显示 - MES系统{% endblock %}
+
+{% block head %}
+<style>
+/* SOP全屏页面样式 */
+.sop-page {
+    display: grid;
+    gap: 1.5rem;
+    color: var(--text-primary);
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+/* 覆盖.container的宽度限制 */
+.container .sop-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.workstation-container {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+.workstation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: var(--surface-elevated);
+    border-bottom: 1px solid var(--border);
+}
+
+.workstation-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.workstation-time {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.scan-input-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.scan-input-wrapper {
+    width: 100%;
+    max-width: 800px;
+}
+
+.scan-input-label {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.scan-input {
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    font-size: 1.5rem;
+    background: var(--surface-elevated);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    color: var(--text-primary);
+    text-align: center;
+    transition: all var(--transition-base);
+}
+
+.scan-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: var(--shadow-glow);
+}
+
+.scan-input::placeholder {
+    color: var(--text-muted);
+}
+
+.demo-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.demo-btn {
+    padding: 0.75rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0.875rem;
+}
+
+.demo-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.sop-display {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+}
+
+.sop-display.active {
+    display: flex;
+}
+
+.sop-info-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--surface-elevated);
+    border-bottom: 1px solid var(--border);
+}
+
+.sop-info-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sop-file-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.sop-title-text {
+    font-size: 1.125rem;
+    color: var(--text-primary);
+}
+
+.sop-meta {
+    display: flex;
+    gap: 2rem;
+}
+
+.sop-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.sop-meta-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.sop-meta-value {
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.sop-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.sop-preview-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    position: relative;
+}
+
+.sop-preview-frame {
+    flex: 1;
+    border: none;
+    background: white;
+}
+
+.sop-preview-placeholder {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+}
+
+.sop-preview-placeholder-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.5;
+}
+
+.sop-preview-placeholder-text {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.process-segments {
+    padding: 1rem 2rem;
+    background: var(--surface-elevated);
+    border-top: 1px solid var(--border);
+}
+
+.process-segments-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.process-segments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+}
+
+.process-segment-card {
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.process-segment-card:hover {
+    border-color: var(--primary);
+}
+
+.process-segment-card.active {
+    border-color: var(--primary);
+    background: rgba(56, 189, 248, 0.08);
+}
+
+.process-segment-code {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
+}
+
+.process-segment-name {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+}
+
+.btn-action-primary {
+    background: var(--primary);
+    color: #0a0a0a;
+}
+
+.btn-action-primary:hover {
+    background: var(--primary-light);
+}
+
+.btn-action-secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn-action-secondary:hover {
+    border-color: var(--border-strong);
+}
+
+.btn-large {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(5, 8, 18, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.error-message {
+    padding: 1rem 2rem;
+    background: rgba(239, 68, 68, 0.16);
+    border: 1px solid rgba(239, 68, 68, 0.32);
+    border-radius: var(--radius-md);
+    color: #ef4444;
+    text-align: center;
+    margin: 1rem 2rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sop-page">
+<div class="workstation-container">
+    <!-- 扫码输入区域 -->
+    <div class="scan-input-container" id="scan-area">
+        <div class="scan-input-wrapper">
+            <div class="scan-input-label">
+                📱 扫描产品或工序二维码
+            </div>
+            <input 
+                type="text" 
+                class="scan-input" 
+                id="scan-input" 
+                placeholder="将扫码枪对准此处扫描..."
+                autocomplete="off"
+            >
+            
+            <div class="demo-buttons">
+                <button class="demo-btn" onclick="demoScan('230')">演示: 产品230</button>
+                <button class="demo-btn" onclick="demoScan('OP10')">演示: 工序OP10</button>
+                <button class="demo-btn" onclick="demoScan('CQ-WI-D230-A1')">演示: 文件编号</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SOP显示区域 -->
+    <div class="sop-display" id="sop-display">
+        <div class="sop-info-bar">
+            <div class="sop-info-main">
+                <div class="sop-file-number" id="sop-file-number">--</div>
+                <div class="sop-title-text" id="sop-title">--</div>
+            </div>
+            <div class="sop-meta">
+                <div class="sop-meta-item">
+                    <div class="sop-meta-label">产品</div>
+                    <div class="sop-meta-value" id="sop-product">--</div>
+                </div>
+                <div class="sop-meta-item">
+                    <div class="sop-meta-label">版本</div>
+                    <div class="sop-meta-value" id="sop-version">--</div>
+                </div>
+                <div class="sop-meta-item">
+                    <div class="sop-meta-label">创建者</div>
+                    <div class="sop-meta-value" id="sop-creator">--</div>
+                </div>
+            </div>
+            <div class="sop-actions">
+                <button class="btn-action btn-action-primary btn-large" onclick="openFullscreenPreview()">
+                    👁️ 全屏预览
+                </button>
+                <button class="btn-action btn-action-secondary btn-large" onclick="downloadSOP()">
+                    📥 下载
+                </button>
+                <button class="btn-action btn-action-secondary btn-large" onclick="backToScan()">
+                    🔙 返回
+                </button>
+            </div>
+        </div>
+        
+        <div class="sop-preview-container">
+            <div class="sop-preview-placeholder">
+                <div class="sop-preview-placeholder-icon">📄</div>
+                <div class="sop-preview-placeholder-text">文档预览区域</div>
+                <div style="color: var(--text-muted); font-size: 0.875rem;">
+                    点击"全屏预览"在浏览器新窗口打开文档
+                </div>
+            </div>
+        </div>
+        
+        <!-- 工序片段 -->
+        <div class="process-segments" id="process-segments" style="display: none;">
+            <div class="process-segments-title">🔧 工序列表</div>
+            <div class="process-segments-grid" id="segments-grid">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 加载遮罩 -->
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentSOP = null;
+
+// 更新时间显示
+function updateTime() {
+    const now = new Date();
+    const timeStr = now.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+    const timeEl = document.querySelector('.workstation-time');
+    if (timeEl) {
+        timeEl.textContent = timeStr;
+    }
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+    updateTime();
+    setInterval(updateTime, 1000);
+    
+    // 自动聚焦到扫码输入框
+    const scanInput = document.getElementById('scan-input');
+    scanInput.focus();
+    
+    // 监听输入
+    scanInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const value = scanInput.value.trim();
+            if (value) {
+                querySOP(value);
+            }
+        }
+    });
+});
+
+// 演示扫描
+function demoScan(code) {
+    document.getElementById('scan-input').value = code;
+    querySOP(code);
+}
+
+// 查询SOP
+async function querySOP(qrData) {
+    showLoading(true);
+    
+    try {
+        const response = await fetch(`/sop/api/query?qr_data=${encodeURIComponent(qrData)}`);
+        const result = await response.json();
+        
+        if (result.success && result.found) {
+            currentSOP = result.data;
+            displaySOP(result.data);
+        } else {
+            alert(result.message || '未找到对应的SOP');
+        }
+    } catch (error) {
+        console.error('查询失败:', error);
+        alert('查询失败，请重试');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// 显示SOP
+function displaySOP(sop) {
+    document.getElementById('scan-area').style.display = 'none';
+    document.getElementById('sop-display').classList.add('active');
+    
+    document.getElementById('sop-file-number').textContent = sop.file_number || '--';
+    document.getElementById('sop-title').textContent = sop.title || '--';
+    document.getElementById('sop-product').textContent = sop.product_name || '--';
+    document.getElementById('sop-version').textContent = sop.version || '--';
+    document.getElementById('sop-creator').textContent = sop.creator || '--';
+    
+    // 显示工序片段
+    if (sop.process_segments && sop.process_segments.length > 0) {
+        const segmentsEl = document.getElementById('process-segments');
+        const gridEl = document.getElementById('segments-grid');
+        
+        gridEl.innerHTML = sop.process_segments.map(seg => `
+            <div class="process-segment-card" onclick="selectProcess('${seg.process_code}')">
+                <div class="process-segment-code">${seg.process_code}</div>
+                <div class="process-segment-name">${seg.process_name}</div>
+            </div>
+        `).join('');
+        
+        segmentsEl.style.display = 'block';
+    }
+}
+
+// 选择工序
+function selectProcess(processCode) {
+    // 高亮选中的工序
+    document.querySelectorAll('.process-segment-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+    
+    // 这里可以根据工序跳转到具体页面
+    alert(`已选择工序: ${processCode}`);
+}
+
+// 全屏预览
+function openFullscreenPreview() {
+    if (currentSOP) {
+        window.open(`/sop/preview/${currentSOP.id}?fullscreen=true`, '_blank', 'fullscreen=yes');
+    }
+}
+
+// 下载SOP
+function downloadSOP() {
+    if (currentSOP) {
+        window.location.href = `/sop/api/download/${currentSOP.id}`;
+    }
+}
+
+// 返回扫码
+function backToScan() {
+    document.getElementById('scan-area').style.display = 'flex';
+    document.getElementById('sop-display').classList.remove('active');
+    document.getElementById('scan-input').value = '';
+    document.getElementById('scan-input').focus();
+    currentSOP = null;
+}
+
+// 显示/隐藏加载
+function showLoading(show) {
+    const overlay = document.getElementById('loading-overlay');
+    if (show) {
+        overlay.classList.add('active');
+    } else {
+        overlay.classList.remove('active');
+    }
+}
+</script>
+{% endblock %}

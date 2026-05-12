@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qrmes-kingdee-integration"
+version = "0.1.0"
+description = "Shared Kingdee integration toolkit for QRMES split repositories"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "requests>=2.31,<3",
+  "Flask>=2.3,<3"
+]
+
+[tool.setuptools]
+packages = [
+  "qrmes_kingdee_integration",
+  "qrmes_kingdee_integration.auth",
+  "qrmes_kingdee_integration.client",
+  "qrmes_kingdee_integration.forms",
+  "qrmes_kingdee_integration.sync",
+  "qrmes_kingdee_integration.storage",
+  "qrmes_kingdee_integration.api",
+  "qrmes_kingdee_integration.traceability",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

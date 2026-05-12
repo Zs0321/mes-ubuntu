@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}权限管理 - MESAPP 管理平台{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>🔐 权限管理</h2>
+        <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.9rem;">管理用户权限和角色配置</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem; padding: 2rem;">
+        <!-- 管理员权限 -->
+        <div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.5rem;">
+            <h3 style="margin-bottom: 0.5rem; color: #333;">管理员权限</h3>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 1.5rem;">管理员拥有所有系统权限</p>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h4 style="font-size: 1rem; margin-bottom: 0.8rem; color: #555;">Web后台权限</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <span style="background: #e3f2fd; color: #1976d2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">查看记录</span>
+                    <span style="background: #e3f2fd; color: #1976d2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">修改记录</span>
+                    <span style="background: #e3f2fd; color: #1976d2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">删除记录</span>
+                    <span style="background: #e3f2fd; color: #1976d2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">用户管理</span>
+                    <span style="background: #e3f2fd; color: #1976d2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">项目管理</span>
+                    <span style="background: #e3f2fd; color: #1976d2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">工序配置</span>
+                    <span style="background: #e3f2fd; color: #1976d2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">查看日志</span>
+                    <span style="background: #e3f2fd; color: #1976d2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">系统设置</span>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h4 style="font-size: 1rem; margin-bottom: 0.8rem; color: #555;">移动端权限</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <span style="background: #f3e5f5; color: #7b1fa2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">物料记录</span>
+                    <span style="background: #f3e5f5; color: #7b1fa2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">修改物料</span>
+                    <span style="background: #f3e5f5; color: #7b1fa2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">工序记录</span>
+                    <span style="background: #f3e5f5; color: #7b1fa2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">相机访问</span>
+                </div>
+            </div>
+            
+            <div>
+                <h4 style="font-size: 1rem; margin-bottom: 0.8rem; color: #555;">API权限</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <span style="background: #e8f5e9; color: #388e3c; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">读取记录</span>
+                    <span style="background: #e8f5e9; color: #388e3c; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">写入记录</span>
+                    <span style="background: #e8f5e9; color: #388e3c; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">删除记录</span>
+                    <span style="background: #e8f5e9; color: #388e3c; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">读取项目</span>
+                    <span style="background: #e8f5e9; color: #388e3c; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">写入项目</span>
+                    <span style="background: #e8f5e9; color: #388e3c; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">读取用户</span>
+                    <span style="background: #e8f5e9; color: #388e3c; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">写入用户</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 普通用户权限 -->
+        <div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.5rem;">
+            <h3 style="margin-bottom: 0.5rem; color: #333;">普通用户权限</h3>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 1.5rem;">普通用户拥有基本操作权限</p>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h4 style="font-size: 1rem; margin-bottom: 0.8rem; color: #555;">Web后台权限</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <span style="background: #e3f2fd; color: #1976d2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">查看记录</span>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h4 style="font-size: 1rem; margin-bottom: 0.8rem; color: #555;">移动端权限</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <span style="background: #f3e5f5; color: #7b1fa2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">物料记录</span>
+                    <span style="background: #f3e5f5; color: #7b1fa2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">工序记录</span>
+                    <span style="background: #f3e5f5; color: #7b1fa2; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">相机访问</span>
+                </div>
+            </div>
+            
+            <div>
+                <h4 style="font-size: 1rem; margin-bottom: 0.8rem; color: #555;">API权限</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <span style="background: #e8f5e9; color: #388e3c; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">读取记录</span>
+                    <span style="background: #e8f5e9; color: #388e3c; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem;">读取项目</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding: 0 2rem 2rem 2rem;">
+        <div style="background: #e3f2fd; border-left: 4px solid #1976d2; padding: 1rem; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong>💡 说明：</strong>权限系统基于角色进行管理。用户的权限由其角色决定。如需修改用户权限，请在用户管理页面更改用户角色。
+            </div>
+            <a href="/admin/users" class="btn btn-primary" style="white-space: nowrap;">
+                <i class="bi bi-people"></i> 管理用户
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- 添加 Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+
+{% endblock %}

@@ -1,0 +1,589 @@
+{% extends "base.html" %}
+
+{% block title %}质量工作台 - 测试报告{% endblock %}
+
+{% block content %}
+<style>
+    .vr-shell { display: grid; gap: 1.5rem; }
+    .vr-hero { background: linear-gradient(135deg, rgba(102, 126, 234, 0.16), rgba(118, 75, 162, 0.12)); border: 1px solid rgba(102, 126, 234, 0.14); border-radius: 18px; padding: 1.75rem; display: flex; justify-content: space-between; gap: 1.5rem; align-items: flex-start; }
+    .vr-hero h2 { margin: 0 0 0.75rem; font-size: 1.8rem; color: #2d3748; }
+    .vr-hero p { margin: 0; max-width: 760px; color: #4a5568; line-height: 1.7; }
+    .vr-hero-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .vr-card { background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(10,15,26,0.98) 100%); border-radius: 18px; border: 1px solid rgba(30,41,59,0.5); box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4); padding: 1.5rem; }
+    .vr-card-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
+    .vr-card-head h3 { margin: 0; font-size: 1.15rem; color: #2d3748; }
+    .vr-card-head span { color: #718096; font-size: 0.88rem; }
+    .vr-toolbar { display: flex; flex-wrap: wrap; gap: 1rem; align-items: end; margin-bottom: 1.2rem; }
+    .vr-toolbar .vr-form-block { flex: 1 1 320px; }
+    .vr-form-block { margin-bottom: 1rem; }
+    .vr-form-block label { display: block; margin-bottom: 0.45rem; font-weight: 600; color: #4a5568; }
+    .vr-browser { display: grid; gap: 1.5rem; }
+    .vr-report-list { display: grid; gap: 0.85rem; max-height: 640px; overflow: auto; padding-right: 0.35rem; }
+    .vr-report-item { border: 1px solid #1e293b; border-radius: 16px; padding: 1rem; background: #fff; cursor: pointer; transition: all 0.2s ease; }
+    .vr-report-item:hover, .vr-report-item.is-active { border-color: #8da2fb; box-shadow: 0 12px 26px rgba(102, 126, 234, 0.12); transform: translateY(-1px); }
+    .vr-report-top { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.45rem; }
+    .vr-report-title { font-size: 1rem; font-weight: 700; color: #2d3748; }
+    .vr-badge { display: inline-flex; align-items: center; padding: 0.2rem 0.55rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600; background: #e6fffa; color: #0f766e; }
+    .vr-badge.fault { background: #fee2e2; color: #b91c1c; }
+    .vr-report-meta { display: flex; flex-wrap: wrap; gap: 0.55rem 0.9rem; color: #718096; font-size: 0.88rem; margin-bottom: 0.5rem; }
+    .vr-report-summary { color: #4a5568; font-size: 0.9rem; line-height: 1.6; }
+    .vr-template-host { display: grid; gap: 1rem; }
+    .vr-template-tabs { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .vr-template-tab { border: 1px solid #dbe4ff; background: #f8faff; color: #4c51bf; padding: 0.6rem 1rem; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    .vr-template-tab.is-active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border-color: transparent; box-shadow: 0 8px 18px rgba(102, 126, 234, 0.2); }
+    .vr-template-sheet { display: none; }
+    .vr-template-sheet.is-active { display: block; }
+    .vr-excel-wrap { overflow: auto; border: 1px solid #dbe4ff; border-radius: 16px; background: #fff; }
+    .vr-excel-table { width: max-content; min-width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .vr-excel-table td { min-width: 110px; padding: 0.55rem 0.65rem; border: 1px solid #334155; color: #1f2937; font-size: 0.9rem; vertical-align: middle; white-space: pre-wrap; }
+    .vr-preview-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .vr-preview-pane { min-width: 0; }
+    .vr-preview-pane-note { color: #718096; font-size: 0.88rem; margin-top: 0.25rem; line-height: 1.6; }
+    .vr-preview-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .vr-export-list { display: grid; gap: 0.85rem; }
+    .vr-export-record { border: 1px solid #1e293b; border-radius: 16px; padding: 0.95rem 1rem; background: #111827; cursor: pointer; transition: all 0.2s ease; }
+    .vr-export-record:hover, .vr-export-record.is-active { border-color: #8da2fb; background: #fff; box-shadow: 0 10px 22px rgba(102, 126, 234, 0.1); }
+    .vr-export-record-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.45rem; }
+    .vr-export-record-title { font-weight: 700; color: #2d3748; }
+    .vr-export-record-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 0.8rem; color: #718096; font-size: 0.86rem; }
+    .vr-export-record-summary { margin-top: 0.45rem; color: #4a5568; font-size: 0.9rem; line-height: 1.55; }
+    .vr-empty { text-align: center; color: #718096; padding: 2rem 1rem; }
+    /* 2026-04-27 readability pass for dark MES shell */
+    .vr-hero { background: linear-gradient(135deg, rgba(15,23,42,0.96), rgba(30,41,59,0.84)); border-color: rgba(56,189,248,0.22); box-shadow: 0 18px 54px rgba(0,0,0,0.34); }
+    .vr-hero h2 { color: #e5f2ff; }
+    .vr-hero p { color: #c7d7ea; }
+    .vr-card { border-color: rgba(56,189,248,0.18); }
+    .vr-card-head h3 { color: #dbeafe; }
+    .vr-card-head span,
+    .vr-preview-pane-note,
+    .vr-empty { color: #c7d7ea; }
+    .vr-form-block label { color: #dbeafe; }
+    .vr-report-item {
+        background: rgba(15,23,42,0.82);
+        border-color: rgba(148,163,184,0.22);
+    }
+    .vr-report-item:hover,
+    .vr-report-item.is-active {
+        background: rgba(30,41,59,0.9);
+        border-color: rgba(125,211,252,0.52);
+    }
+    .vr-report-title,
+    .vr-export-record-title { color: #e5f2ff; }
+    .vr-report-meta,
+    .vr-export-record-meta { color: #c7d7ea; }
+    .vr-report-summary,
+    .vr-export-record-summary { color: #dbeafe; }
+    .vr-export-record {
+        background: rgba(15,23,42,0.82);
+        border-color: rgba(148,163,184,0.22);
+    }
+    .vr-export-record:hover,
+    .vr-export-record.is-active {
+        background: rgba(30,41,59,0.9);
+        border-color: rgba(125,211,252,0.52);
+    }
+    .vr-template-tab { background: rgba(219,234,254,0.98); color: #1d4ed8; border-color: rgba(147,197,253,0.5); }
+    @media (max-width: 1100px) { .vr-hero, .vr-preview-split { grid-template-columns: 1fr; flex-direction: column; } }
+</style>
+
+<div class="vr-shell">
+    <section class="vr-hero">
+        <div>
+            <h2>质量工作台</h2>
+            <p>这里专门用于按产品序列号查询已保存的测试报告，包括普通保存和故障上报记录。测试填表已经拆分到独立的测试工作台页面。</p>
+        </div>
+        <div class="vr-hero-actions">
+            <a href="{{ url_for('visual_reports_page') }}" class="btn btn-secondary">返回测试报告</a>
+            <a href="{{ url_for('visual_reports_test_page') }}" class="btn btn-primary">前往测试工作台</a>
+        </div>
+    </section>
+
+    <div class="vr-card">
+        <div class="vr-card-head">
+            <div>
+                <h3>序列号查询</h3>
+                <span>通过产品序列号查询已保存的测试报告，并按记录导出原始表格</span>
+            </div>
+        </div>
+
+        <div class="vr-toolbar">
+            <div class="vr-form-block" style="margin-bottom: 0;">
+                <label for="vr-quality-serial">产品序列号</label>
+                <input id="vr-quality-serial" class="form-control" type="text" placeholder="输入完整或部分产品序列号，如 SN202604090001">
+            </div>
+            <button type="button" class="btn btn-primary" id="vr-quality-search">查询已保存报告</button>
+            <button type="button" class="btn btn-secondary" id="vr-quality-reset">重置</button>
+        </div>
+
+        <div class="vr-browser">
+            <div class="vr-report-list" id="vr-report-list">
+                <div class="vr-empty">输入产品序列号后开始查询。</div>
+            </div>
+
+            <div class="vr-preview-split">
+                <div class="vr-card vr-preview-pane" style="padding: 1.1rem;">
+                    <div class="vr-card-head">
+                        <div>
+                            <h3>异常上传记录</h3>
+                            <span>按记录列出故障上报报告，选中后可直接导出原始 Excel</span>
+                            <div class="vr-preview-pane-note" id="vr-fault-preview-note">当前还没有选中异常上传报告。</div>
+                        </div>
+                        <div class="vr-preview-actions">
+                            <button type="button" class="btn btn-secondary btn-sm" id="vr-fault-export-button" disabled>导出测试文档</button>
+                        </div>
+                    </div>
+                    <div class="vr-template-host">
+                        <div class="vr-empty" id="vr-fault-template-empty">等待查询异常上传报告。</div>
+                        <div class="vr-template-tabs" id="vr-fault-template-tabs"></div>
+                        <div id="vr-fault-template-sheets"></div>
+                    </div>
+                </div>
+
+                <div class="vr-card vr-preview-pane" style="padding: 1.1rem;">
+                    <div class="vr-card-head">
+                        <div>
+                            <h3>正常上传记录</h3>
+                            <span>按记录列出正常保存报告，选中后可直接导出原始 Excel</span>
+                            <div class="vr-preview-pane-note" id="vr-normal-preview-note">当前还没有选中正常上传报告。</div>
+                        </div>
+                        <div class="vr-preview-actions">
+                            <button type="button" class="btn btn-secondary btn-sm" id="vr-normal-export-button" disabled>导出测试文档</button>
+                        </div>
+                    </div>
+                    <div class="vr-template-host">
+                        <div class="vr-empty" id="vr-normal-template-empty">等待查询正常上传报告。</div>
+                        <div class="vr-template-tabs" id="vr-normal-template-tabs"></div>
+                        <div id="vr-normal-template-sheets"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(() => {
+    const qualitySerialInput = document.getElementById('vr-quality-serial');
+    const qualitySearchButton = document.getElementById('vr-quality-search');
+    const qualityResetButton = document.getElementById('vr-quality-reset');
+    const reportList = document.getElementById('vr-report-list');
+    const faultPreviewNote = document.getElementById('vr-fault-preview-note');
+    const faultTemplateEmpty = document.getElementById('vr-fault-template-empty');
+    const faultTemplateTabs = document.getElementById('vr-fault-template-tabs');
+    const faultTemplateSheets = document.getElementById('vr-fault-template-sheets');
+    const faultExportButton = document.getElementById('vr-fault-export-button');
+    const normalPreviewNote = document.getElementById('vr-normal-preview-note');
+    const normalTemplateEmpty = document.getElementById('vr-normal-template-empty');
+    const normalTemplateTabs = document.getElementById('vr-normal-template-tabs');
+    const normalTemplateSheets = document.getElementById('vr-normal-template-sheets');
+    const normalExportButton = document.getElementById('vr-normal-export-button');
+
+    let activeNormalReportId = null;
+    let activeFaultReportId = null;
+    let currentSavedReports = [];
+    const reportDetailCache = new Map();
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function camelToKebab(name) {
+        return String(name).replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);
+    }
+
+    function styleObjectToText(style) {
+        return Object.entries(style || {})
+            .map(([key, value]) => `${camelToKebab(key)}:${value}`)
+            .join(';');
+    }
+
+    function clearWorkbookHost(options) {
+        const { emptyEl, tabsEl, sheetsEl, message } = options;
+        if (emptyEl) {
+            emptyEl.style.display = 'block';
+            emptyEl.textContent = message;
+        }
+        if (tabsEl) tabsEl.innerHTML = '';
+        if (sheetsEl) sheetsEl.innerHTML = '';
+    }
+
+    function attachWorkbookTabEvents(tabsEl, sheetsEl) {
+        if (!tabsEl || !sheetsEl) return;
+        tabsEl.querySelectorAll('[data-sheet-index]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const targetIndex = button.dataset.sheetIndex;
+                tabsEl.querySelectorAll('[data-sheet-index]').forEach((tab) => {
+                    tab.classList.toggle('is-active', tab.dataset.sheetIndex === targetIndex);
+                });
+                sheetsEl.querySelectorAll('[data-sheet-index]').forEach((sheet) => {
+                    sheet.classList.toggle('is-active', sheet.dataset.sheetIndex === targetIndex);
+                });
+            });
+        });
+    }
+
+    function renderWorkbookHost(result, options = {}) {
+        const { emptyEl, tabsEl, sheetsEl } = options;
+        if (!emptyEl || !tabsEl || !sheetsEl) return;
+
+        emptyEl.style.display = 'none';
+        tabsEl.innerHTML = (result.sheets || []).map((sheet, index) => (
+            `<button type="button" class="vr-template-tab ${index === 0 ? 'is-active' : ''}" data-sheet-index="${index}">${escapeHtml(sheet.name)}</button>`
+        )).join('');
+
+        sheetsEl.innerHTML = (result.sheets || []).map((sheet, index) => {
+            const rowsHtml = (sheet.rows || []).map((row) => {
+                const cellsHtml = row
+                    .filter((cell) => !cell.hidden)
+                    .map((cell) => {
+                        const attrs = [];
+                        if (cell.rowspan && cell.rowspan > 1) attrs.push(`rowspan="${cell.rowspan}"`);
+                        if (cell.colspan && cell.colspan > 1) attrs.push(`colspan="${cell.colspan}"`);
+                        attrs.push(`data-coord="${escapeHtml(cell.coord)}"`);
+                        const styleText = styleObjectToText(cell.style);
+                        return `<td ${attrs.join(' ')} style="${styleText}">${escapeHtml(cell.value)}</td>`;
+                    })
+                    .join('');
+                return `<tr>${cellsHtml}</tr>`;
+            }).join('');
+
+            return `
+                <section class="vr-template-sheet ${index === 0 ? 'is-active' : ''}" data-sheet-index="${index}">
+                    <div class="vr-excel-wrap">
+                        <table class="vr-excel-table">
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>
+                </section>
+            `;
+        }).join('');
+
+        attachWorkbookTabEvents(tabsEl, sheetsEl);
+    }
+
+    function getReportStatus(report) {
+        return report && report.report_status === 'fault' ? 'fault' : 'manual';
+    }
+
+    function getReportsByStatus(status) {
+        return currentSavedReports.filter((report) => getReportStatus(report) === status);
+    }
+
+    function getActiveReportIdByStatus(status) {
+        return status === 'fault' ? activeFaultReportId : activeNormalReportId;
+    }
+
+    function setActiveReportIdByStatus(status, reportId) {
+        if (status === 'fault') {
+            activeFaultReportId = reportId || null;
+        } else {
+            activeNormalReportId = reportId || null;
+        }
+    }
+
+    function findReportById(reportId) {
+        return currentSavedReports.find((report) => report.report_id === reportId) || null;
+    }
+
+    function clearPreviewPane(status, message, noteMessage) {
+        const isFault = status === 'fault';
+        const noteEl = isFault ? faultPreviewNote : normalPreviewNote;
+        const emptyEl = isFault ? faultTemplateEmpty : normalTemplateEmpty;
+        const tabsEl = isFault ? faultTemplateTabs : normalTemplateTabs;
+        const sheetsEl = isFault ? faultTemplateSheets : normalTemplateSheets;
+        const exportButton = isFault ? faultExportButton : normalExportButton;
+        if (noteEl) noteEl.textContent = noteMessage;
+        if (exportButton) {
+            exportButton.disabled = true;
+            delete exportButton.dataset.downloadUrl;
+        }
+        clearWorkbookHost({
+            emptyEl,
+            tabsEl,
+            sheetsEl,
+            message
+        });
+    }
+
+    function clearSavedReportPreview(message = '请输入产品序列号进行查询。') {
+        clearPreviewPane('fault', message, '当前还没有选中异常上传报告。');
+        clearPreviewPane('manual', message, '当前还没有选中正常上传报告。');
+    }
+
+    function renderSavedReportDetail(result, status) {
+        const isFault = status === 'fault';
+        const noteEl = isFault ? faultPreviewNote : normalPreviewNote;
+        const emptyEl = isFault ? faultTemplateEmpty : normalTemplateEmpty;
+        const tabsEl = isFault ? faultTemplateTabs : normalTemplateTabs;
+        const sheetsEl = isFault ? faultTemplateSheets : normalTemplateSheets;
+        const exportButton = isFault ? faultExportButton : normalExportButton;
+        if (noteEl) {
+            noteEl.textContent = `${result.report_title || result.product_serial || '已保存报告'} · ${result.saved_at || '-'} · ${result.saved_by_display_name || result.saved_by || '-'}`;
+        }
+        if (exportButton) {
+            exportButton.disabled = false;
+            exportButton.dataset.downloadUrl = `/api/visual-reports/reports/${encodeURIComponent(result.report_id || '')}/download`;
+        }
+        renderWorkbookHost(result, {
+            emptyEl,
+            tabsEl,
+            sheetsEl
+        });
+    }
+
+    async function loadSavedReportDetail(reportId, status) {
+        if (!reportId) {
+            clearPreviewPane(
+                status,
+                status === 'fault' ? '当前没有异常上传报告。' : '当前没有正常上传报告。',
+                status === 'fault' ? '当前还没有选中异常上传报告。' : '当前还没有选中正常上传报告。'
+            );
+            return;
+        }
+        try {
+            let result = reportDetailCache.get(reportId);
+            if (!result) {
+                const response = await fetch(`/api/visual-reports/reports/${encodeURIComponent(reportId)}`);
+                result = await response.json();
+                if (!response.ok || !result.success) {
+                    clearPreviewPane(
+                        status,
+                        result.message || '报告详情加载失败。',
+                        status === 'fault' ? '异常上传报告加载失败。' : '正常上传报告加载失败。'
+                    );
+                    return;
+                }
+                reportDetailCache.set(reportId, result);
+            }
+            if (!result || !result.success) {
+                clearPreviewPane(
+                    status,
+                    '报告详情加载失败。',
+                    status === 'fault' ? '异常上传报告加载失败。' : '正常上传报告加载失败。'
+                );
+                return;
+            }
+            renderSavedReportDetail(result, status);
+        } catch (error) {
+            clearPreviewPane(
+                status,
+                `报告详情加载失败：${error.message || error}`,
+                status === 'fault' ? '异常上传报告加载失败。' : '正常上传报告加载失败。'
+            );
+        }
+    }
+
+    function renderExportPane(status) {
+        const isFault = status === 'fault';
+        const noteEl = isFault ? faultPreviewNote : normalPreviewNote;
+        const emptyEl = isFault ? faultTemplateEmpty : normalTemplateEmpty;
+        const tabsEl = isFault ? faultTemplateTabs : normalTemplateTabs;
+        const sheetsEl = isFault ? faultTemplateSheets : normalTemplateSheets;
+        const exportButton = isFault ? faultExportButton : normalExportButton;
+        const reports = getReportsByStatus(status);
+        const activeReportId = getActiveReportIdByStatus(status);
+        const activeReport = findReportById(activeReportId);
+
+        if (tabsEl) tabsEl.innerHTML = '';
+        if (exportButton) {
+            if (activeReport) {
+                exportButton.disabled = false;
+                exportButton.dataset.downloadUrl = `/api/visual-reports/reports/${encodeURIComponent(activeReport.report_id || '')}/download`;
+            } else {
+                exportButton.disabled = true;
+                delete exportButton.dataset.downloadUrl;
+            }
+        }
+
+        if (!reports.length) {
+            clearPreviewPane(
+                status,
+                status === 'fault' ? '当前没有异常上传报告。' : '当前没有正常上传报告。',
+                status === 'fault' ? '当前还没有选中异常上传报告。' : '当前还没有选中正常上传报告。'
+            );
+            return;
+        }
+
+        if (emptyEl) emptyEl.style.display = 'none';
+        if (noteEl) {
+            noteEl.textContent = activeReport
+                ? `${activeReport.report_title || activeReport.product_serial || '已保存报告'} · ${activeReport.saved_at || '-'} · ${activeReport.saved_by_display_name || activeReport.saved_by || '-'}`
+                : '请选择一条记录后导出测试文档。';
+        }
+
+        if (!sheetsEl) return;
+        sheetsEl.innerHTML = `
+            <div class="vr-export-list">
+                ${reports.map((report) => {
+                    const reportStatus = getReportStatus(report);
+                    const badgeClass = reportStatus === 'fault' ? 'vr-badge fault' : 'vr-badge';
+                    const badgeLabel = report.report_status_label || (reportStatus === 'fault' ? '故障上报' : '已保存');
+                    const activeClass = report.report_id === activeReportId ? 'is-active' : '';
+                    return `
+                        <article class="vr-export-record ${activeClass}" data-export-report-id="${escapeHtml(report.report_id)}" data-export-status="${escapeHtml(status)}">
+                            <div class="vr-export-record-head">
+                                <div class="vr-export-record-title">${escapeHtml(report.report_title || report.file_name || report.product_serial || '已保存报告')}</div>
+                                <span class="${badgeClass}">${escapeHtml(badgeLabel)}</span>
+                            </div>
+                            <div class="vr-export-record-meta">
+                                <span>${escapeHtml(report.product_serial || '-')}</span>
+                                <span>${escapeHtml(report.product_model || '-')}</span>
+                                <span>${escapeHtml(report.saved_at || '-')}</span>
+                                <span>${escapeHtml(report.saved_by_display_name || report.saved_by || '-')}</span>
+                            </div>
+                            <div class="vr-export-record-summary">${escapeHtml(report.product_name || report.template_name || '已保存测试表格')}</div>
+                        </article>
+                    `;
+                }).join('')}
+            </div>
+        `;
+
+        sheetsEl.querySelectorAll('[data-export-report-id]').forEach((item) => {
+            item.addEventListener('click', () => {
+                const reportId = item.dataset.exportReportId;
+                setActiveReportIdByStatus(status, reportId);
+                renderSavedReportList();
+                renderExportPane(status);
+            });
+        });
+    }
+
+    async function loadSavedReportDetail(reportId, status) {
+        renderExportPane(status);
+    }
+
+    function renderSavedReportList() {
+        if (!currentSavedReports.length) {
+            reportList.innerHTML = '<div class="vr-empty">当前序列号没有查询到已保存报告。</div>';
+            clearSavedReportPreview('当前序列号没有查询到已保存报告。');
+            return;
+        }
+
+        const normalReports = getReportsByStatus('manual');
+        const faultReports = getReportsByStatus('fault');
+
+        if (!normalReports.some((report) => report.report_id === activeNormalReportId)) {
+            activeNormalReportId = normalReports[0]?.report_id || null;
+        }
+        if (!faultReports.some((report) => report.report_id === activeFaultReportId)) {
+            activeFaultReportId = faultReports[0]?.report_id || null;
+        }
+
+        reportList.innerHTML = currentSavedReports.map((report) => {
+            const reportStatus = getReportStatus(report);
+            const activeClass = report.report_id === getActiveReportIdByStatus(reportStatus) ? 'is-active' : '';
+            const badgeClass = reportStatus === 'fault' ? 'vr-badge fault' : 'vr-badge';
+            const badgeLabel = report.report_status_label || (reportStatus === 'fault' ? '故障上报' : '已保存');
+            return `
+                <article class="vr-report-item ${activeClass}" data-report-id="${escapeHtml(report.report_id)}" data-report-status="${escapeHtml(reportStatus)}">
+                    <div class="vr-report-top">
+                        <div class="vr-report-title">${escapeHtml(report.report_title || report.file_name || report.product_serial || '已保存报告')}</div>
+                        <span class="${badgeClass}">${escapeHtml(badgeLabel)}</span>
+                    </div>
+                    <div class="vr-report-meta">
+                        <span>${escapeHtml(report.product_serial || '-')}</span>
+                        <span>${escapeHtml(report.product_model || '-')}</span>
+                        <span>${escapeHtml(report.saved_at || '-')}</span>
+                    </div>
+                    <div class="vr-report-summary">${escapeHtml(report.product_name || report.template_name || '已保存测试表格')}</div>
+                </article>
+            `;
+        }).join('');
+
+        reportList.querySelectorAll('[data-report-id]').forEach((item) => {
+            item.addEventListener('click', async () => {
+                const reportId = item.dataset.reportId;
+                const reportStatus = item.dataset.reportStatus === 'fault' ? 'fault' : 'manual';
+                setActiveReportIdByStatus(reportStatus, reportId);
+                renderSavedReportList();
+                await loadSavedReportDetail(reportId, reportStatus);
+            });
+        });
+    }
+
+    async function searchSavedReports(serialValue) {
+        const productSerial = String(serialValue ?? qualitySerialInput?.value ?? '').trim();
+        if (!productSerial) {
+            reportDetailCache.clear();
+            currentSavedReports = [];
+            activeNormalReportId = null;
+            activeFaultReportId = null;
+            reportList.innerHTML = '<div class="vr-empty">请输入产品序列号后再查询。</div>';
+            clearSavedReportPreview('请输入产品序列号后再查询。');
+            return;
+        }
+
+        reportList.innerHTML = '<div class="vr-empty">正在查询已保存报告...</div>';
+        clearSavedReportPreview('正在查询已保存报告...');
+
+        try {
+            const response = await fetch(`/api/visual-reports/reports?product_serial=${encodeURIComponent(productSerial)}`);
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                reportDetailCache.clear();
+                currentSavedReports = [];
+                activeNormalReportId = null;
+                activeFaultReportId = null;
+                reportList.innerHTML = `<div class="vr-empty">${escapeHtml(result.message || '查询失败')}</div>`;
+                clearSavedReportPreview(result.message || '查询失败');
+                return;
+            }
+
+            reportDetailCache.clear();
+            currentSavedReports = Array.isArray(result.reports) ? result.reports : [];
+            renderSavedReportList();
+            await Promise.all([
+                loadSavedReportDetail(activeFaultReportId, 'fault'),
+                loadSavedReportDetail(activeNormalReportId, 'manual')
+            ]);
+        } catch (error) {
+            reportDetailCache.clear();
+            currentSavedReports = [];
+            activeNormalReportId = null;
+            activeFaultReportId = null;
+            reportList.innerHTML = `<div class="vr-empty">${escapeHtml(error.message || error)}</div>`;
+            clearSavedReportPreview(`查询失败：${error.message || error}`);
+        }
+    }
+
+    if (qualitySearchButton) qualitySearchButton.addEventListener('click', () => searchSavedReports());
+
+    [faultExportButton, normalExportButton].forEach((button) => {
+        if (!button) return;
+        button.addEventListener('click', () => {
+            const downloadUrl = button.dataset.downloadUrl || '';
+            if (!downloadUrl) return;
+            window.location.href = downloadUrl;
+        });
+    });
+
+    if (qualityResetButton) {
+        qualityResetButton.addEventListener('click', () => {
+            if (qualitySerialInput) qualitySerialInput.value = '';
+            reportDetailCache.clear();
+            currentSavedReports = [];
+            activeNormalReportId = null;
+            activeFaultReportId = null;
+            reportList.innerHTML = '<div class="vr-empty">输入产品序列号后开始查询。</div>';
+            clearSavedReportPreview();
+        });
+    }
+
+    if (qualitySerialInput) {
+        qualitySerialInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                searchSavedReports();
+            }
+        });
+    }
+
+    clearSavedReportPreview();
+})();
+</script>
+{% endblock %}

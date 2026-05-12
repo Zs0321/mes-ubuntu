@@ -1,0 +1,629 @@
+{% extends "base.html" %}
+
+{% block title %}回收站 - MES系统{% endblock %}
+
+{% block head %}
+<style>
+/* SOP全屏页面样式 */
+.sop-page {
+    display: grid;
+    gap: 1.5rem;
+    color: var(--text-primary);
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+/* 覆盖.container的宽度限制 */
+.container .sop-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.recycle-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.info-banner {
+    background: rgba(56, 189, 248, 0.08);
+    border: 1px solid rgba(56, 189, 248, 0.24);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.info-banner-icon {
+    font-size: 1.5rem;
+}
+
+.info-banner-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.search-filter-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.search-input-wrapper {
+    flex: 1;
+    min-width: 250px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.filter-selects {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.filter-select {
+    padding: 0.75rem 1rem;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    min-width: 150px;
+}
+
+.recycle-table-container {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.recycle-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.recycle-table th {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.recycle-table td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.recycle-table tr:last-child td {
+    border-bottom: none;
+}
+
+.recycle-table tr:hover td {
+    background: var(--surface);
+}
+
+.file-number-cell {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.product-cell {
+    color: var(--text-secondary);
+}
+
+.time-cell {
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+}
+
+.action-btn.primary {
+    background: var(--primary);
+    color: #0a0a0a;
+}
+
+.action-btn.secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.action-btn.danger {
+    background: rgba(239, 68, 68, 0.16);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.32);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.batch-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+}
+
+.batch-info {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.batch-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #0a0a0a;
+}
+
+.btn-secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn-danger {
+    background: rgba(239, 68, 68, 0.16);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.32);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.page-btn {
+    padding: 0.5rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.page-btn:hover {
+    border-color: var(--primary);
+}
+
+.page-btn.active {
+    background: var(--primary);
+    color: #0a0a0a;
+    border-color: var(--primary);
+}
+
+.page-info {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sop-page">
+<div class="recycle-container">
+    <div class="page-header">
+        <h1 class="page-title">
+            <span>🗑️</span>
+            SOP回收站
+        </h1>
+        <a href="{{ url_for('sop.sop_home') }}" class="btn btn-secondary">
+            ← 返回首页
+        </a>
+    </div>
+    
+    <div class="info-banner">
+        <div class="info-banner-icon">ℹ️</div>
+        <div class="info-banner-text">
+            回收站中的文件将保存 <strong>15年</strong>，只有管理员可以查看和恢复。文件恢复后将变为"已归档"状态。
+        </div>
+    </div>
+    
+    <!-- 搜索过滤 -->
+    <div class="search-filter-bar">
+        <div class="search-input-wrapper">
+            <input type="text" class="search-input" id="search-input" 
+                   placeholder="搜索文件编号、标题、产品...">
+        </div>
+        <div class="filter-selects">
+            <select class="filter-select" id="time-filter">
+                <option value="">全部时间</option>
+                <option value="1">1年内</option>
+                <option value="3">3年内</option>
+                <option value="5">5年内</option>
+                <option value="10">10年内</option>
+            </select>
+            <select class="filter-select" id="product-filter">
+                <option value="">全部产品</option>
+                <!-- 动态加载 -->
+            </select>
+        </div>
+        <button class="btn btn-primary" onclick="searchRecycled()">
+            🔍 查询
+        </button>
+    </div>
+    
+    <!-- 回收站列表 -->
+    <div class="recycle-table-container">
+        <table class="recycle-table">
+            <thead>
+                <tr>
+                    <th style="width: 40px;">
+                        <input type="checkbox" id="select-all" onchange="toggleSelectAll()">
+                    </th>
+                    <th>文件编号</th>
+                    <th>标题</th>
+                    <th>产品</th>
+                    <th>版本</th>
+                    <th>回收时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="recycle-tbody">
+                <!-- 动态生成 -->
+            </tbody>
+        </table>
+        
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <div class="empty-state-icon">🗑️</div>
+            <div>回收站为空</div>
+        </div>
+        
+        <!-- 批量操作 -->
+        <div class="batch-actions">
+            <div class="batch-info">
+                已选择 <span id="selected-count">0</span> 个文件
+            </div>
+            <div class="batch-buttons">
+                <button class="btn btn-primary" onclick="batchRestore()">
+                    🔄 批量恢复
+                </button>
+                <button class="btn btn-danger" onclick="batchDelete()">
+                    🗑️ 永久删除
+                </button>
+            </div>
+        </div>
+        
+        <!-- 分页 -->
+        <div class="pagination">
+            <button class="page-btn" onclick="prevPage()">← 上一页</button>
+            <span class="page-info">第 <span id="current-page">1</span> 页 / 共 <span id="total-pages">1</span> 页</span>
+            <button class="page-btn" onclick="nextPage()">下一页 →</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let recycledList = [];
+let selectedIds = [];
+let currentPage = 1;
+let pageSize = 20;
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+    loadRecycledList();
+    
+    // 监听搜索输入
+    document.getElementById('search-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchRecycled();
+    });
+});
+
+// 加载回收站列表
+async function loadRecycledList() {
+    try {
+        const response = await fetch('/sop/api/recycle/list');
+        const result = await response.json();
+        
+        if (result.success) {
+            recycledList = result.data;
+            displayRecycledList();
+        }
+    } catch (error) {
+        console.error('加载失败:', error);
+    }
+}
+
+// 显示回收站列表
+function displayRecycledList() {
+    const tbody = document.getElementById('recycle-tbody');
+    const emptyEl = document.getElementById('empty-state');
+    
+    if (recycledList.length === 0) {
+        tbody.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+    }
+    
+    emptyEl.style.display = 'none';
+    
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    const pageData = recycledList.slice(start, end);
+    
+    tbody.innerHTML = pageData.map(item => `
+        <tr>
+            <td>
+                <input type="checkbox" class="item-checkbox" value="${item.id}" 
+                       onchange="toggleSelect(${item.id})">
+            </td>
+            <td class="file-number-cell">${item.file_number || '--'}</td>
+            <td>${item.title || '--'}</td>
+            <td class="product-cell">${item.product_name || '--'}</td>
+            <td>${item.version || '--'}</td>
+            <td class="time-cell">${formatDateTime(item.recycle_time)}</td>
+            <td class="actions-cell">
+                <button class="action-btn secondary" onclick="previewSOP(${item.id})">
+                    👁️ 预览
+                </button>
+                <button class="action-btn primary" onclick="restoreSOP(${item.id})">
+                    🔄 恢复
+                </button>
+                <button class="action-btn danger" onclick="deletePermanently(${item.id})">
+                    🗑️ 删除
+                </button>
+            </td>
+        </tr>
+    `).join('');
+    
+    updatePagination();
+}
+
+// 搜索
+async function searchRecycled() {
+    const keyword = document.getElementById('search-input').value.trim();
+    
+    if (!keyword) {
+        loadRecycledList();
+        return;
+    }
+    
+    const filtered = recycledList.filter(item => 
+        (item.file_number && item.file_number.includes(keyword)) ||
+        (item.title && item.title.includes(keyword)) ||
+        (item.product_name && item.product_name.includes(keyword))
+    );
+    
+    recycledList = filtered;
+    currentPage = 1;
+    displayRecycledList();
+}
+
+// 全选/取消全选
+function toggleSelectAll() {
+    const checked = document.getElementById('select-all').checked;
+    document.querySelectorAll('.item-checkbox').forEach(cb => {
+        cb.checked = checked;
+    });
+    
+    if (checked) {
+        selectedIds = recycledList.map(item => item.id);
+    } else {
+        selectedIds = [];
+    }
+    
+    updateSelectedCount();
+}
+
+// 切换选择
+function toggleSelect(id) {
+    const index = selectedIds.indexOf(id);
+    if (index > -1) {
+        selectedIds.splice(index, 1);
+    } else {
+        selectedIds.push(id);
+    }
+    updateSelectedCount();
+}
+
+// 更新选中数量
+function updateSelectedCount() {
+    document.getElementById('selected-count').textContent = selectedIds.length;
+}
+
+// 预览SOP
+function previewSOP(id) {
+    window.open(`/sop/preview/${id}`, '_blank');
+}
+
+// 恢复SOP
+async function restoreSOP(id) {
+    if (!confirm('确定要恢复此SOP吗？')) return;
+    
+    try {
+        const response = await fetch(`/sop/api/restore/${id}`, {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert(result.message);
+            loadRecycledList();
+        } else {
+            alert(result.error || '恢复失败');
+        }
+    } catch (error) {
+        console.error('恢复失败:', error);
+        alert('恢复失败，请重试');
+    }
+}
+
+// 批量恢复
+async function batchRestore() {
+    if (selectedIds.length === 0) {
+        alert('请先选择要恢复的文件');
+        return;
+    }
+    
+    if (!confirm(`确定要恢复选中的 ${selectedIds.length} 个文件吗？`)) return;
+    
+    let successCount = 0;
+    for (const id of selectedIds) {
+        try {
+            const response = await fetch(`/sop/api/restore/${id}`, {
+                method: 'POST'
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                successCount++;
+            }
+        } catch (error) {
+            console.error('恢复失败:', id);
+        }
+    }
+    
+    alert(`成功恢复 ${successCount} 个文件`);
+    selectedIds = [];
+    loadRecycledList();
+}
+
+// 永久删除
+async function deletePermanently(id) {
+    if (!confirm('⚠️ 警告：此操作将永久删除文件，无法恢复！\n\n确定要继续吗？')) return;
+    
+    // TODO: 实现永久删除API
+    alert('永久删除功能开发中...');
+}
+
+// 批量删除
+async function batchDelete() {
+    if (selectedIds.length === 0) {
+        alert('请先选择要删除的文件');
+        return;
+    }
+    
+    if (!confirm(`⚠️ 警告：此操作将永久删除 ${selectedIds.length} 个文件，无法恢复！\n\n确定要继续吗？`)) return;
+    
+    // TODO: 实现批量删除API
+    alert('批量删除功能开发中...');
+}
+
+// 分页
+function updatePagination() {
+    const totalPages = Math.ceil(recycledList.length / pageSize);
+    document.getElementById('current-page').textContent = currentPage;
+    document.getElementById('total-pages').textContent = totalPages || 1;
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        displayRecycledList();
+    }
+}
+
+function nextPage() {
+    const totalPages = Math.ceil(recycledList.length / pageSize);
+    if (currentPage < totalPages) {
+        currentPage++;
+        displayRecycledList();
+    }
+}
+
+// 辅助函数
+function formatDateTime(dateStr) {
+    if (!dateStr) return '--';
+    return new Date(dateStr).toLocaleString('zh-CN');
+}
+</script>
+{% endblock %}

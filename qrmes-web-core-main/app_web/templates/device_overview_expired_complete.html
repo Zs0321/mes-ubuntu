@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}过期保养提交{% endblock %}
+
+{% block extra_css %}
+<style>
+  body { background:#020617; }
+  .device-expired-form-page { max-width:1180px; margin:0 auto; padding:28px 22px 48px; display:grid; gap:18px; color:#e5edf8; }
+  .device-expired-form-hero, .device-expired-form-panel { border:1px solid rgba(56,189,248,.16); border-radius:18px; background:linear-gradient(180deg, rgba(15,23,42,.96) 0%, rgba(2,6,23,.96) 100%); box-shadow:0 22px 46px rgba(2,6,23,.3); }
+  .device-expired-form-hero { padding:22px 24px; }
+  .device-expired-form-hero a { display:inline-block; margin-bottom:.8rem; color:#7dd3fc; font-weight:800; text-decoration:none; }
+  .device-expired-form-hero h1 { margin:0; color:#f8fafc; font-size:32px; }
+  .device-expired-form-hero p, .device-expired-form-message { color:#94a3b8; line-height:1.7; }
+  .device-expired-form-panel { padding:20px; }
+  .device-expired-form-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:1.2rem; }
+  .device-expired-form-item { padding:12px 14px; border-radius:14px; background:rgba(15,23,42,.72); border:1px solid rgba(56,189,248,.14); }
+  .device-expired-form-item strong { display:block; margin-bottom:.35rem; color:#7dd3fc; font-size:.9rem; }
+  .device-expired-form-item span { color:#e5edf8; word-break:break-all; }
+  .device-expired-form-label { display:block; margin-bottom:.55rem; font-weight:800; color:#cbd5e1; }
+  .device-expired-form-textarea { width:100%; min-height:180px; padding:12px 14px; border-radius:14px; border:1px solid rgba(148,163,184,.24); background:#020617; color:#e5edf8; resize:vertical; font:inherit; line-height:1.65; box-sizing:border-box; }
+  .device-expired-form-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:1rem; }
+  .device-expired-form-button { min-width:132px; min-height:42px; border-radius:12px; font-weight:800; cursor:pointer; border:1px solid rgba(56,189,248,.22); background:#0f172a; color:#dbeafe; }
+  .device-expired-form-button.secondary { background:#111827; border-color:#1e293b; color:#94a3b8; }
+  .device-expired-form-button.primary { background:linear-gradient(135deg,#0284c7 0%,#06b6d4 100%); color:#fff; border-color:#0284c7; }
+  .device-expired-form-button:disabled { opacity:.65; cursor:not-allowed; }
+  .device-expired-form-message { margin-top:1rem; padding:12px 14px; border-radius:12px; background:rgba(15,23,42,.72); border:1px solid rgba(56,189,248,.14); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="device-expired-form-page">
+  <section class="device-expired-form-hero">
+    <a href="{{ url_for('device_overview_detail_page', filter_key='expired') }}">返回已过期详情</a>
+    <h1>提交过期保养原因</h1>
+    <p>填写本次设备过期后仍完成保养的原因，提交后该设备会从已过期详情列表中移除。</p>
+  </section>
+
+  <section class="device-expired-form-panel">
+    <div class="device-expired-form-grid">
+      <div class="device-expired-form-item"><strong>资产编号</strong><span>{{ asset_number }}</span></div>
+      <div class="device-expired-form-item"><strong>设备名称</strong><span>{{ device_record.deviceName or '-' }}</span></div>
+      <div class="device-expired-form-item"><strong>设备型号</strong><span>{{ device_record.deviceModel or '-' }}</span></div>
+      <div class="device-expired-form-item"><strong>下次月保养</strong><span>{{ device_record.nextMonthlyMaintenance or '-' }}</span></div>
+    </div>
+
+    <label class="device-expired-form-label" for="expiredReasonInput">过期保养原因</label>
+    <textarea id="expiredReasonInput" class="device-expired-form-textarea" placeholder="请填写本次过期保养的原因"></textarea>
+
+    <div class="device-expired-form-actions">
+      <button type="button" class="device-expired-form-button secondary" id="expiredReasonBackButton">取消</button>
+      <button type="button" class="device-expired-form-button primary" id="expiredReasonSubmitButton">提交</button>
+    </div>
+    <div class="device-expired-form-message" id="expiredReasonMessage">请填写过期保养原因后提交。</div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var assetNumber = {{ asset_number|tojson }};
+  var submitButton = document.getElementById('expiredReasonSubmitButton');
+  var backButton = document.getElementById('expiredReasonBackButton');
+  var reasonInput = document.getElementById('expiredReasonInput');
+  var messageBox = document.getElementById('expiredReasonMessage');
+  var backUrl = {{ url_for('device_overview_detail_page', filter_key='expired')|tojson }};
+
+  backButton.addEventListener('click', function () {
+    window.location.href = backUrl;
+  });
+
+  submitButton.addEventListener('click', async function () {
+    var reason = String(reasonInput.value || '').trim();
+    if (!reason) {
+      messageBox.textContent = '请先填写过期保养原因。';
+      reasonInput.focus();
+      return;
+    }
+    submitButton.disabled = true;
+    submitButton.textContent = '提交中...';
+    try {
+      var response = await fetch('/api/device-overview/detail/expired/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          asset_number: assetNumber,
+          reason: reason
+        })
+      });
+      var result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error((result && result.message) || '提交失败');
+      }
+      messageBox.textContent = result.message || '提交成功';
+      window.location.href = (result && result.redirect) || backUrl;
+    } catch (error) {
+      messageBox.textContent = '提交失败：' + (error && error.message ? error.message : error);
+      submitButton.disabled = false;
+      submitButton.textContent = '提交';
+    }
+  });
+})();
+</script>
+{% endblock %}

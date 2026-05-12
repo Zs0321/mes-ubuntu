@@ -1,0 +1,13 @@
+[Unit]
+Description=qrmes-finance-service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/qrmes-finance-service
+ExecStart=%h/qrmes-finance-service/.venv/bin/python -m app_web.run_finance_demo
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

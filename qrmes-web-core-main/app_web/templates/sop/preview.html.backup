@@ -1,0 +1,705 @@
+{% extends "base.html" %}
+
+{% block title %}SOP预览 - MES系统{% endblock %}
+
+{% block head %}
+<style>
+/* SOP全屏页面样式 */
+.sop-page {
+    display: grid;
+    gap: 1.5rem;
+    color: var(--text-primary);
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+/* 覆盖.container的宽度限制 */
+.container .sop-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.preview-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 80px);
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--surface-elevated);
+    border-bottom: 1px solid var(--border);
+}
+
+.preview-title-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.preview-file-number {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.preview-title {
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.preview-meta {
+    display: flex;
+    gap: 2rem;
+}
+
+.preview-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.preview-meta-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.preview-meta-value {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.preview-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.preview-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+}
+
+.preview-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background: var(--surface-elevated);
+    border-bottom: 1px solid var(--border);
+}
+
+.toolbar-left {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toolbar-btn {
+    padding: 0.5rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.toolbar-btn:hover {
+    border-color: var(--primary);
+}
+
+.toolbar-btn.active {
+    background: var(--primary);
+    color: #0a0a0a;
+    border-color: var(--primary);
+}
+
+.zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.zoom-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.zoom-value {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    min-width: 50px;
+    text-align: center;
+}
+
+.preview-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    overflow: auto;
+}
+
+.preview-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: white;
+    border-radius: var(--radius-md);
+}
+
+.preview-placeholder {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.preview-placeholder-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.5;
+}
+
+.preview-placeholder-text {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.preview-sidebar {
+    width: 320px;
+    background: var(--surface-elevated);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sidebar-section {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.sidebar-section-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.info-label {
+    color: var(--text-muted);
+}
+
+.info-value {
+    color: var(--text-primary);
+}
+
+.process-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.process-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.process-item:hover {
+    border-color: var(--primary);
+}
+
+.process-item.active {
+    border-color: var(--primary);
+    background: rgba(56, 189, 248, 0.08);
+}
+
+.process-code {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.process-name {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.process-pages {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.approval-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.flow-step-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+}
+
+.flow-step-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    color: var(--text-muted);
+}
+
+.flow-step-item.completed .flow-step-icon {
+    background: rgba(34, 197, 94, 0.16);
+    border-color: #22c55e;
+    color: #22c55e;
+}
+
+.flow-step-item.current .flow-step-icon {
+    background: rgba(56, 189, 248, 0.16);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.flow-step-info {
+    flex: 1;
+}
+
+.flow-step-label {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.flow-step-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #0a0a0a;
+}
+
+.btn-primary:hover {
+    background: var(--primary-light);
+}
+
+.btn-secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+    border-color: var(--border-strong);
+}
+
+.fullscreen-mode .preview-header,
+.fullscreen-mode .preview-sidebar,
+.fullscreen-mode .preview-toolbar {
+    display: none;
+}
+
+.fullscreen-mode .preview-container {
+    height: 100vh;
+}
+
+.fullscreen-mode .preview-main {
+    border-radius: 0;
+}
+
+@media (max-width: 1024px) {
+    .preview-sidebar {
+        display: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sop-page">
+<div class="preview-container" id="preview-container">
+    <div class="preview-header">
+        <div class="preview-title-section">
+            <div class="preview-file-number" id="file-number">--</div>
+            <div class="preview-title" id="sop-title">--</div>
+        </div>
+        <div class="preview-meta">
+            <div class="preview-meta-item">
+                <div class="preview-meta-label">产品</div>
+                <div class="preview-meta-value" id="product-name">--</div>
+            </div>
+            <div class="preview-meta-item">
+                <div class="preview-meta-label">版本</div>
+                <div class="preview-meta-value" id="version">--</div>
+            </div>
+            <div class="preview-meta-item">
+                <div class="preview-meta-label">状态</div>
+                <div class="preview-meta-value" id="status">--</div>
+            </div>
+            <div class="preview-meta-item">
+                <div class="preview-meta-label">创建者</div>
+                <div class="preview-meta-value" id="creator">--</div>
+            </div>
+        </div>
+        <div class="preview-actions">
+            <button class="btn btn-primary" onclick="openFullscreen()">
+                👁️ 全屏预览
+            </button>
+            <button class="btn btn-secondary" onclick="downloadFile()">
+                📥 下载
+            </button>
+            <button class="btn btn-secondary" onclick="printFile()">
+                🖨️ 打印
+            </button>
+            <a href="{{ url_for('sop.sop_home') }}" class="btn btn-secondary">
+                ← 返回
+            </a>
+        </div>
+    </div>
+    
+    <div class="preview-body">
+        <div class="preview-main">
+            <div class="preview-toolbar">
+                <div class="toolbar-left">
+                    <button class="toolbar-btn active" onclick="switchView('document')">
+                        📄 文档
+                    </button>
+                    <button class="toolbar-btn" onclick="switchView('outline')">
+                        📑 大纲
+                    </button>
+                    <button class="toolbar-btn" onclick="switchView('thumbnails')">
+                        🖼️ 缩略图
+                    </button>
+                </div>
+                <div class="zoom-controls">
+                    <button class="zoom-btn" onclick="zoomOut()">−</button>
+                    <span class="zoom-value" id="zoom-value">100%</span>
+                    <button class="zoom-btn" onclick="zoomIn()">+</button>
+                    <button class="toolbar-btn" onclick="fitToWidth()">适应宽度</button>
+                </div>
+            </div>
+            
+            <div class="preview-content" id="preview-content">
+                <div class="preview-placeholder">
+                    <div class="preview-placeholder-icon">📄</div>
+                    <div class="preview-placeholder-text">文档预览区域</div>
+                    <div style="color: var(--text-muted); font-size: 0.875rem;">
+                        点击"全屏预览"在浏览器新窗口打开文档
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preview-sidebar">
+            <div class="sidebar-header">
+                <span>📋</span>
+                文档信息
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">基本信息</div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">文件类型</span>
+                        <span class="info-value" id="file-type">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">文件大小</span>
+                        <span class="info-value" id="file-size">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">创建时间</span>
+                        <span class="info-value" id="create-time">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">更新时间</span>
+                        <span class="info-value" id="update-time">--</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">🔧 工序片段</div>
+                <div class="process-list" id="process-list">
+                    <div style="color: var(--text-muted); font-size: 0.875rem; padding: 0.5rem;">
+                        暂无工序信息
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">审批流程</div>
+                <div class="approval-flow" id="approval-flow">
+                    <div style="color: var(--text-muted); font-size: 0.875rem; padding: 0.5rem;">
+                        暂无审批信息
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const sopId = {{ sop_id }};
+let sopData = null;
+let currentZoom = 100;
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+    loadSOPDetail();
+    
+    // 检查是否全屏模式
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('fullscreen') === 'true') {
+        document.getElementById('preview-container').classList.add('fullscreen-mode');
+    }
+});
+
+// 加载SOP详情
+async function loadSOPDetail() {
+    try {
+        const response = await fetch(`/sop/api/detail/${sopId}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            sopData = result.data;
+            displaySOPDetail(sopData);
+        } else {
+            alert('加载失败: ' + result.error);
+        }
+    } catch (error) {
+        console.error('加载失败:', error);
+        alert('加载失败，请重试');
+    }
+}
+
+// 显示SOP详情
+function displaySOPDetail(data) {
+    document.getElementById('file-number').textContent = data.file_number || '--';
+    document.getElementById('sop-title').textContent = data.title || '--';
+    document.getElementById('product-name').textContent = data.product_name || '--';
+    document.getElementById('version').textContent = data.version || '--';
+    document.getElementById('status').textContent = getStatusText(data.status);
+    document.getElementById('creator').textContent = data.creator || '--';
+    
+    document.getElementById('file-type').textContent = data.file_type?.toUpperCase() || '--';
+    document.getElementById('file-size').textContent = formatFileSize(data.file_size);
+    document.getElementById('create-time').textContent = formatDateTime(data.create_time);
+    
+    // 显示工序片段
+    if (data.process_segments && data.process_segments.length > 0) {
+        const processListEl = document.getElementById('process-list');
+        processListEl.innerHTML = data.process_segments.map(seg => `
+            <div class="process-item" onclick="selectProcess(${seg.page_start}, ${seg.page_end})">
+                <div>
+                    <div class="process-code">${seg.process_code}</div>
+                    <div class="process-name">${seg.process_name}</div>
+                </div>
+                <div class="process-pages">${seg.page_start}-${seg.page_end}</div>
+            </div>
+        `).join('');
+    }
+    
+    // 显示审批流程
+    if (data.approval_history && data.approval_history.length > 0) {
+        const flowEl = document.getElementById('approval-flow');
+        flowEl.innerHTML = data.approval_history.map(h => `
+            <div class="flow-step-item ${h.action === 'approve' ? 'completed' : ''}">
+                <div class="flow-step-icon">${h.action === 'approve' ? '✓' : '○'}</div>
+                <div class="flow-step-info">
+                    <div class="flow-step-label">${getStepText(h.step)} - ${h.reviewer}</div>
+                    <div class="flow-step-time">${formatDateTime(h.review_time)}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+// 切换视图
+function switchView(view) {
+    document.querySelectorAll('.toolbar-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+    
+    // TODO: 实现不同视图
+}
+
+// 缩放
+function zoomIn() {
+    if (currentZoom < 200) {
+        currentZoom += 25;
+        updateZoom();
+    }
+}
+
+function zoomOut() {
+    if (currentZoom > 25) {
+        currentZoom -= 25;
+        updateZoom();
+    }
+}
+
+function updateZoom() {
+    document.getElementById('zoom-value').textContent = currentZoom + '%';
+    // TODO: 应用缩放到预览
+}
+
+function fitToWidth() {
+    currentZoom = 100;
+    updateZoom();
+    // TODO: 适应宽度
+}
+
+// 选择工序
+function selectProcess(startPage, endPage) {
+    document.querySelectorAll('.process-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+    
+    // TODO: 跳转到对应页面
+    alert(`跳转到第 ${startPage}-${endPage} 页`);
+}
+
+// 全屏预览
+function openFullscreen() {
+    const fileUrl = `/sop/api/download/${sopId}`;
+    window.open(fileUrl, '_blank');
+}
+
+// 下载文件
+function downloadFile() {
+    window.location.href = `/sop/api/download/${sopId}`;
+}
+
+// 打印文件
+function printFile() {
+    const fileUrl = `/sop/api/download/${sopId}`;
+    const printWindow = window.open(fileUrl, '_blank');
+    printWindow.onload = function() {
+        printWindow.print();
+    };
+}
+
+// 辅助函数
+function getStatusText(status) {
+    const statusMap = {
+        'draft': '草稿',
+        'pending_review': '待审核',
+        'approved': '已批准',
+        'rejected': '已拒绝',
+        'recycled': '已回收'
+    };
+    return statusMap[status] || status;
+}
+
+function getStepText(step) {
+    const stepMap = {
+        'creator_submit': '创建者提交',
+        'number_review': '编号审核',
+        'department_review': '部门会签',
+        'quality_review': '质量审核',
+        'production_review': '生产审核',
+        'final_approval': '最终批准',
+        'completed': '已完成'
+    };
+    return stepMap[step] || step;
+}
+
+function formatFileSize(bytes) {
+    if (!bytes) return '--';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function formatDateTime(dateStr) {
+    if (!dateStr) return '--';
+    return new Date(dateStr).toLocaleString('zh-CN');
+}
+</script>
+{% endblock %}

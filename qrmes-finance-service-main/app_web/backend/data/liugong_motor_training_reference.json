@@ -1,0 +1,6734 @@
+[
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44201234",
+      "name": "定子组件",
+      "name_spec": "定子组件||od180mm，l90mm浸漆定子组件"
+    },
+    "code": "T44201234",
+    "name": "定子组件",
+    "spec": "OD180mm，L90mm浸漆定子组件",
+    "material": "漆包线（铜）",
+    "weight_kg": 2.07,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44211051.a0",
+      "name": "定子铁芯",
+      "name_spec": "定子铁芯||od180mm，l90mm，v+1"
+    },
+    "code": "T44211051.A0",
+    "name": "定子铁芯",
+    "spec": "OD180mm，L90mm，V+1",
+    "material": "35W300",
+    "weight_kg": 7.37,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44101053.a0",
+      "name": "机壳",
+      "name_spec": "机壳||拉伸机壳od180mm，l168mm"
+    },
+    "code": "T44101053.A0",
+    "name": "机壳",
+    "spec": "拉伸机壳OD180mm，L168mm",
+    "material": "6063-T5",
+    "weight_kg": 3.3,
+    "process": "拉伸",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45120071.a1",
+      "name": "转子铁芯",
+      "name_spec": "转子铁芯||od180mm，l30mm，v+1"
+    },
+    "code": "T45120071.A1",
+    "name": "转子铁芯",
+    "spec": "OD180mm，L30mm，V+1",
+    "material": "35W300",
+    "weight_kg": 1.57,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45111251",
+      "name": "电机轴",
+      "name_spec": "电机轴||l266.5mm，20crmntih"
+    },
+    "code": "T45111251",
+    "name": "电机轴",
+    "spec": "L266.5mm，20CrMnTiH",
+    "material": "20CrMnTiH",
+    "weight_kg": 2.38,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45130071.a0",
+      "name": "永磁体",
+      "name_spec": "永磁体||tz180xbs17-200-0007"
+    },
+    "code": "T45130071.A0",
+    "name": "永磁体",
+    "spec": "TZ180XBS17-200-0007",
+    "material": "钕铁硼40UH",
+    "weight_kg": 0.011,
+    "process": "烧结",
+    "current_unit_price": 0.0,
+    "qty": 72.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45140051.a1",
+      "name": "转子挡板",
+      "name_spec": "转子挡板||内外径45×117mm"
+    },
+    "code": "T45140051.A1",
+    "name": "转子挡板",
+    "spec": "内外径45×117mm",
+    "material": "A356",
+    "weight_kg": 0.144,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45150801.a1",
+      "name": "转子轴套",
+      "name_spec": "转子轴套||内外径45*57mm"
+    },
+    "code": "T45150801.A1",
+    "name": "转子轴套",
+    "spec": "内外径45*57mm",
+    "material": "45钢",
+    "weight_kg": 0.075,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45170061.a2",
+      "name": "轴承压盖",
+      "name_spec": "轴承压盖||内外径42×95mm"
+    },
+    "code": "T45170061.A2",
+    "name": "轴承压盖",
+    "spec": "内外径42×95mm",
+    "material": "45钢",
+    "weight_kg": 0.21,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19100011.a1",
+      "name": "轴承",
+      "name_spec": "轴承||bs6206-2z/c3"
+    },
+    "code": "T19100011.A1",
+    "name": "轴承",
+    "spec": "BS6206-2Z/C3",
+    "material": "",
+    "weight_kg": 0.197,
+    "process": "标准件",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19100013.a1",
+      "name": "轴承",
+      "name_spec": "轴承||bs6208-2z/c3"
+    },
+    "code": "T19100013.A1",
+    "name": "轴承",
+    "spec": "BS6208-2Z/C3",
+    "material": "",
+    "weight_kg": 0.36,
+    "process": "标准件",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46111197",
+      "name": "前端盖",
+      "name_spec": "前端盖||od180mm前端盖(双12/15行驶)"
+    },
+    "code": "T46111197",
+    "name": "前端盖",
+    "spec": "OD180mm前端盖（双12/15行驶）",
+    "material": "A356-T6",
+    "weight_kg": 1.55,
+    "process": "低压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46121183",
+      "name": "后端盖",
+      "name_spec": "后端盖||od180电机后端盖"
+    },
+    "code": "T46121183",
+    "name": "后端盖",
+    "spec": "OD180电机后端盖",
+    "material": "ADC12",
+    "weight_kg": 1.72,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46150992.a0",
+      "name": "接线盒",
+      "name_spec": "接线盒||123×70×56mm"
+    },
+    "code": "T46150992.A0",
+    "name": "接线盒",
+    "spec": "123×70×56mm",
+    "material": "ADC12",
+    "weight_kg": 0.581,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160993.a0",
+      "name": "上盖板",
+      "name_spec": "上盖板||不锈钢304/3mm"
+    },
+    "code": "T46160993.A0",
+    "name": "上盖板",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 1.38,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160992.a0",
+      "name": "后盖板",
+      "name_spec": "后盖板||旋变后盖板"
+    },
+    "code": "T46160992.A0",
+    "name": "后盖板",
+    "spec": "旋变后盖板",
+    "material": "不锈钢304",
+    "weight_kg": 0.267,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46171071.a0",
+      "name": "三相盖板",
+      "name_spec": "三相盖板||不锈钢304/3mm"
+    },
+    "code": "T46171071.A0",
+    "name": "三相盖板",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 0.228,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46200991.a0",
+      "name": "接线板",
+      "name_spec": "接线板||106×24.5×23.5mm"
+    },
+    "code": "T46200991.A0",
+    "name": "接线板",
+    "spec": "106×24.5×23.5mm",
+    "material": "PPS+GF30%",
+    "weight_kg": 0.03,
+    "process": "注塑",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46170021.a1",
+      "name": "旋变定子压板",
+      "name_spec": "旋变定子压板||厚度2mm"
+    },
+    "code": "T46170021.A1",
+    "name": "旋变定子压板",
+    "spec": "厚度2 mm",
+    "material": "Q235",
+    "weight_kg": 0.016,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030302.a1",
+      "name": "特大垫圈c级",
+      "name_spec": "特大垫圈c级||gb/t5287-2002(5/镀白锌)"
+    },
+    "code": "T19030302.A1",
+    "name": "特大垫圈C级",
+    "spec": "GB/T 5287-2002（5/镀白锌）",
+    "material": "碳钢",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27080721.a1",
+      "name": "油封",
+      "name_spec": "油封||tc40x62x7/fkm"
+    },
+    "code": "T27080721.A1",
+    "name": "油封",
+    "spec": "TC40X62X7/FKM",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19170003.a1",
+      "name": "波形弹簧",
+      "name_spec": "波形弹簧||jb/t7590-2005(d80/发蓝)"
+    },
+    "code": "T19170003.A1",
+    "name": "波形弹簧",
+    "spec": "JB/T 7590-2005（D80/发蓝）",
+    "material": "65Mn",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020153.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m3x14/12.9级/达克罗)"
+    },
+    "code": "T19020153.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T70.1-2008(M3X14/12.9级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020102.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m4x12/8.8级/达克罗)"
+    },
+    "code": "T19020102.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M4X12/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020103.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x12/8.8级/达克罗)"
+    },
+    "code": "T19020103.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x12/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 19.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020104.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x16/8.8级/达克罗)"
+    },
+    "code": "T19020104.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020707.a0",
+      "name": "内六角平圆头螺钉",
+      "name_spec": "内六角平圆头螺钉||gb/t70.2-2008(m6x12/10.9级/达克罗)"
+    },
+    "code": "T19020707.A0",
+    "name": "内六角平圆头螺钉",
+    "spec": "GB/T 70.2-2008（M6x12/10.9级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020133.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x30/8.8级/达克罗)"
+    },
+    "code": "T19020133.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x30/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020137.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m6x16/8.8级/达克罗)"
+    },
+    "code": "T19020137.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M6x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020147.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x16/8.8级/达克罗)"
+    },
+    "code": "T19020147.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020110.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x25/8.8级/达克罗)"
+    },
+    "code": "T19020110.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x25/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 10.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020704.a0",
+      "name": "内六角平圆头螺钉",
+      "name_spec": "内六角平圆头螺钉||gb/t70.2—2000(m8x258.8级)达克罗"
+    },
+    "code": "T19020704.A0",
+    "name": "内六角平圆头螺钉",
+    "spec": "GB/T 70.2—2000 （M8x25 8.8级）达克罗",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w19020059.a1",
+      "name": "外六角十字组合螺钉",
+      "name_spec": "外六角十字组合螺钉||gb9074.13m8x20"
+    },
+    "code": "W19020059.A1",
+    "name": "外六角十字组合螺钉",
+    "spec": "GB9074.13 M8X20",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030101.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(4/达克罗)"
+    },
+    "code": "T19030101.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（4/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030102.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(5/达克罗)"
+    },
+    "code": "T19030102.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（5/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 23.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030103.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(6/达克罗)"
+    },
+    "code": "T19030103.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（6/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030104.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(8/达克罗)"
+    },
+    "code": "T19030104.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（8/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 13.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19180001.a1",
+      "name": "普通平键",
+      "name_spec": "普通平键||gb/t1096-2003(a2x2x8)"
+    },
+    "code": "T19180001.A1",
+    "name": "普通平键",
+    "spec": "GB/T 1096-2003（A2X2X8）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w27090005.a1",
+      "name": "透气阀",
+      "name_spec": "透气阀||wvm12x1.5"
+    },
+    "code": "W27090005.A1",
+    "name": "透气阀",
+    "spec": "WVM12X1.5",
+    "material": "不锈钢",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w15300012.a0",
+      "name": "格兰头",
+      "name_spec": "格兰头||hx-np.m25-16"
+    },
+    "code": "W15300012.A0",
+    "name": "格兰头",
+    "spec": "HX-NP.M25-16",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t49030831.a1",
+      "name": "铭牌",
+      "name_spec": "铭牌||柳工专属铭牌"
+    },
+    "code": "T49030831.A1",
+    "name": "铭牌",
+    "spec": "柳工专属铭牌",
+    "material": "铝板",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27080030.a0",
+      "name": "o型圈",
+      "name_spec": "o型圈||φ104.4*φ1.78，丁腈橡胶"
+    },
+    "code": "T27080030.A0",
+    "name": "O型圈",
+    "spec": "φ104.4*φ1.78，丁腈橡胶",
+    "material": "NBR70",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46180991.a0",
+      "name": "上盖板密封圈",
+      "name_spec": "上盖板密封圈||112×32×3.4"
+    },
+    "code": "T46180991.A0",
+    "name": "上盖板密封圈",
+    "spec": "112×32×3.4",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46180992.a0",
+      "name": "后盖板密封圈",
+      "name_spec": "后盖板密封圈||线径φ1.7密封圈"
+    },
+    "code": "T46180992.A0",
+    "name": "后盖板密封圈",
+    "spec": "线径φ1.7密封圈",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t47210801.a1",
+      "name": "旋转变压器",
+      "name_spec": "旋转变压器||j52xu9734-l49"
+    },
+    "code": "T47210801.A1",
+    "name": "旋转变压器",
+    "spec": "J52XU9734-L49",
+    "material": "",
+    "weight_kg": 0.04,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46170061.a1",
+      "name": "吊耳",
+      "name_spec": "吊耳||304不锈钢"
+    },
+    "code": "T46170061.A1",
+    "name": "吊耳",
+    "spec": "304不锈钢",
+    "material": "304不锈钢",
+    "weight_kg": 0.046,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160994.a0",
+      "name": "插件保护罩",
+      "name_spec": "插件保护罩||52×33×36.5"
+    },
+    "code": "T46160994.A0",
+    "name": "插件保护罩",
+    "spec": "52×33×36.5",
+    "material": "Q235-A",
+    "weight_kg": 0.042,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22210016.a0",
+      "name": "连接器",
+      "name_spec": "连接器||at04-12pa-pm02"
+    },
+    "code": "W22210016.A0",
+    "name": "连接器",
+    "spec": "AT04-12PA-PM02",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22210017.a0",
+      "name": "端子",
+      "name_spec": "端子||at60-16-0622"
+    },
+    "code": "W22210017.A0",
+    "name": "端子",
+    "spec": "AT60-16-0622",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 9.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22230011.a0",
+      "name": "堵头",
+      "name_spec": "堵头||at13-204-2005"
+    },
+    "code": "W22230011.A0",
+    "name": "堵头",
+    "spec": "AT13-204-2005",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22230012.a0",
+      "name": "锁扣",
+      "name_spec": "锁扣||aw12p"
+    },
+    "code": "W22230012.A0",
+    "name": "锁扣",
+    "spec": "AW12P",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t47240002.a0",
+      "name": "屏蔽网",
+      "name_spec": "屏蔽网||8mm镀银铜编制套管"
+    },
+    "code": "T47240002.A0",
+    "name": "屏蔽网",
+    "spec": "8mm镀银铜编制套管",
+    "material": "镀银铜",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.2
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090002.a0",
+      "name": "轧带",
+      "name_spec": "轧带||150×2.5mmpa66"
+    },
+    "code": "W26090002.A0",
+    "name": "轧带",
+    "spec": "150×2.5mm PA66",
+    "material": "PA66",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090001.a0",
+      "name": "轧带",
+      "name_spec": "轧带||150x4mmpa66带座"
+    },
+    "code": "W26090001.A0",
+    "name": "轧带",
+    "spec": "150x4mm PA66 带座",
+    "material": "PA66",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27100002.a0",
+      "name": "密封胶",
+      "name_spec": "密封胶||locteti5910,310ml/瓶,黑色"
+    },
+    "code": "T27100002.A0",
+    "name": "密封胶",
+    "spec": "Locteti 5910,310ml/瓶,黑色",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 12.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45180881.a0",
+      "name": "磁钢胶",
+      "name_spec": "磁钢胶||darbond，ep-12015，400ml/瓶，乳白色"
+    },
+    "code": "T45180881.A0",
+    "name": "磁钢胶",
+    "spec": "Darbond，EP-12015，400ml/瓶，乳白色",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 60.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w27020001.a0",
+      "name": "螺纹胶",
+      "name_spec": "螺纹胶||乐泰243"
+    },
+    "code": "W27020001.A0",
+    "name": "螺纹胶",
+    "spec": "乐泰243",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22070077",
+      "name": "线束总成",
+      "name_spec": "线束总成||线径35mm²，线长700mm，710mm，800mm"
+    },
+    "code": "W22070077",
+    "name": "线束总成",
+    "spec": "线径35mm²，线长700mm，710mm，800mm",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w23020065",
+      "name": "热缩套管",
+      "name_spec": "热缩套管||φ8单壁热缩管"
+    },
+    "code": "W23020065",
+    "name": "热缩套管",
+    "spec": "Φ8单壁热缩管",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.1
+  },
+  {
+    "product": "柳工3.5T双12行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA7-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26020001",
+      "name": "木箱",
+      "name_spec": "木箱||800*550*420中间有隔板，+3cm的泡棉"
+    },
+    "code": "W26020001",
+    "name": "木箱",
+    "spec": "800*550*420 中间有隔板，+3CM的泡棉",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.5
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44201233",
+      "name": "定子组件",
+      "name_spec": "定子组件||od180mm，l70mm浸漆定子"
+    },
+    "code": "T44201233",
+    "name": "定子组件",
+    "spec": "OD180mm，L70mm浸漆定子",
+    "material": "漆包线（铜）",
+    "weight_kg": 2.1,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44211061.a0",
+      "name": "定子铁芯",
+      "name_spec": "定子铁芯||od180mm，l70mm，v+1"
+    },
+    "code": "T44211061.A0",
+    "name": "定子铁芯",
+    "spec": "OD180mm，L70mm，V+1",
+    "material": "35W300",
+    "weight_kg": 5.7,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44101053.a0",
+      "name": "机壳",
+      "name_spec": "机壳||拉伸机壳od180mm，l168mm"
+    },
+    "code": "T44101053.A0",
+    "name": "机壳",
+    "spec": "拉伸机壳OD180mm，L168mm",
+    "material": "6063-T5",
+    "weight_kg": 3.3,
+    "process": "拉伸",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45120801.a1",
+      "name": "转子铁芯",
+      "name_spec": "转子铁芯||od118.4mm，35w300，l35mm"
+    },
+    "code": "T45120801.A1",
+    "name": "转子铁芯",
+    "spec": "OD118.4mm，35W300，L35mm",
+    "material": "35W300",
+    "weight_kg": 1.57,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45111235",
+      "name": "电机轴",
+      "name_spec": "电机轴||l210.5mm，20crmntih"
+    },
+    "code": "T45111235",
+    "name": "电机轴",
+    "spec": "L210.5mm，20CrMnTiH",
+    "material": "20CrMnTiH",
+    "weight_kg": 2.1,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45130801.a0",
+      "name": "永磁体",
+      "name_spec": "永磁体||tz180xqs13-144-0080"
+    },
+    "code": "T45130801.A0",
+    "name": "永磁体",
+    "spec": "TZ180XQS13-144-0080",
+    "material": "钕铁硼48UH",
+    "weight_kg": 0.012,
+    "process": "烧结",
+    "current_unit_price": 0.0,
+    "qty": 48.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45140051.a1",
+      "name": "转子挡板",
+      "name_spec": "转子挡板||内外径45×117mm"
+    },
+    "code": "T45140051.A1",
+    "name": "转子挡板",
+    "spec": "内外径45×117mm",
+    "material": "A356",
+    "weight_kg": 0.144,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45150801.a1",
+      "name": "转子轴套",
+      "name_spec": "转子轴套||内外径45*57mm"
+    },
+    "code": "T45150801.A1",
+    "name": "转子轴套",
+    "spec": "内外径45*57mm",
+    "material": "45钢",
+    "weight_kg": 0.075,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45170061.a2",
+      "name": "轴承压盖",
+      "name_spec": "轴承压盖||内外径42×95mm"
+    },
+    "code": "T45170061.A2",
+    "name": "轴承压盖",
+    "spec": "内外径42×95mm",
+    "material": "45钢",
+    "weight_kg": 0.21,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19100011.a1",
+      "name": "轴承",
+      "name_spec": "轴承||bs6206-2z/c3"
+    },
+    "code": "T19100011.A1",
+    "name": "轴承",
+    "spec": "BS6206-2Z/C3",
+    "material": "",
+    "weight_kg": 0.197,
+    "process": "标准件",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19100012.a1",
+      "name": "轴承",
+      "name_spec": "轴承||bs6207-2z/c3"
+    },
+    "code": "T19100012.A1",
+    "name": "轴承",
+    "spec": "BS6207-2Z/C3",
+    "material": "",
+    "weight_kg": 0.25,
+    "process": "标准件",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46111196",
+      "name": "前端盖",
+      "name_spec": "前端盖||od180mm前端盖(双12/15油泵)"
+    },
+    "code": "T46111196",
+    "name": "前端盖",
+    "spec": "OD180mm前端盖（双12/15油泵）",
+    "material": "A356-T6",
+    "weight_kg": 1.82,
+    "process": "低压模具",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46121183",
+      "name": "后端盖",
+      "name_spec": "后端盖||od180电机后端盖"
+    },
+    "code": "T46121183",
+    "name": "后端盖",
+    "spec": "OD180电机后端盖",
+    "material": "ADC12",
+    "weight_kg": 1.72,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46150992.a0",
+      "name": "接线盒",
+      "name_spec": "接线盒||123×70×56mm"
+    },
+    "code": "T46150992.A0",
+    "name": "接线盒",
+    "spec": "123×70×56mm",
+    "material": "ADC12",
+    "weight_kg": 0.581,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160993.a0",
+      "name": "上盖板",
+      "name_spec": "上盖板||不锈钢304/3mm"
+    },
+    "code": "T46160993.A0",
+    "name": "上盖板",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 1.38,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160992.a0",
+      "name": "后盖板",
+      "name_spec": "后盖板||旋变后盖板"
+    },
+    "code": "T46160992.A0",
+    "name": "后盖板",
+    "spec": "旋变后盖板",
+    "material": "不锈钢304",
+    "weight_kg": 0.267,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46171071.a0",
+      "name": "三相盖板",
+      "name_spec": "三相盖板||不锈钢304/3mm"
+    },
+    "code": "T46171071.A0",
+    "name": "三相盖板",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 0.228,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46200991.a0",
+      "name": "接线板",
+      "name_spec": "接线板||106×24.5×23.5mm"
+    },
+    "code": "T46200991.A0",
+    "name": "接线板",
+    "spec": "106×24.5×23.5mm",
+    "material": "PPS+GF30%",
+    "weight_kg": 0.03,
+    "process": "注塑",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46131182",
+      "name": "安装底板",
+      "name_spec": "安装底板||216×136×17mm"
+    },
+    "code": "T46131182",
+    "name": "安装底板",
+    "spec": "216×136×17mm",
+    "material": "Q235-A",
+    "weight_kg": 1.57,
+    "process": "弯折",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46170021.a1",
+      "name": "旋变定子压板",
+      "name_spec": "旋变定子压板||厚度2mm"
+    },
+    "code": "T46170021.A1",
+    "name": "旋变定子压板",
+    "spec": "厚度2 mm",
+    "material": "Q235",
+    "weight_kg": 0.016,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030302.a1",
+      "name": "特大垫圈c级",
+      "name_spec": "特大垫圈c级||gb/t5287-2002(5/镀白锌)"
+    },
+    "code": "T19030302.A1",
+    "name": "特大垫圈C级",
+    "spec": "GB/T 5287-2002（5/镀白锌）",
+    "material": "碳钢",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27080731.a1",
+      "name": "油封",
+      "name_spec": "油封||tc35x62x7/fkm"
+    },
+    "code": "T27080731.A1",
+    "name": "油封",
+    "spec": "TC35X62X7/FKM",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19170002.a1",
+      "name": "波形弹簧",
+      "name_spec": "波形弹簧||jb/t7590-2005(d72/发蓝)"
+    },
+    "code": "T19170002.A1",
+    "name": "波形弹簧",
+    "spec": "JB/T 7590-2005（D72/发蓝）",
+    "material": "65Mn",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020153.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m3x14/12.9级/达克罗)"
+    },
+    "code": "T19020153.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T70.1-2008(M3X14/12.9级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020102.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m4x12/8.8级/达克罗)"
+    },
+    "code": "T19020102.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M4X12/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020103.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x12/8.8级/达克罗)"
+    },
+    "code": "T19020103.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x12/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 19.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020104.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x16/8.8级/达克罗)"
+    },
+    "code": "T19020104.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020707.a0",
+      "name": "内六角平圆头螺钉",
+      "name_spec": "内六角平圆头螺钉||gb/t70.2-2008(m6x12/10.9级/达克罗)"
+    },
+    "code": "T19020707.A0",
+    "name": "内六角平圆头螺钉",
+    "spec": "GB/T 70.2-2008（M6x12/10.9级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020133.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x30/8.8级/达克罗)"
+    },
+    "code": "T19020133.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x30/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020137.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m6x16/8.8级/达克罗)"
+    },
+    "code": "T19020137.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M6x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020147.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x16/8.8级/达克罗)"
+    },
+    "code": "T19020147.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020110.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x25/8.8级/达克罗)"
+    },
+    "code": "T19020110.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x25/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 11.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020111.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x30/8.8级/达克罗)"
+    },
+    "code": "T19020111.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x30/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w19020059.a1",
+      "name": "外六角十字组合螺钉",
+      "name_spec": "外六角十字组合螺钉||gb9074.13m8x20"
+    },
+    "code": "W19020059.A1",
+    "name": "外六角十字组合螺钉",
+    "spec": "GB9074.13 M8X20",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020302.a1",
+      "name": "六角法兰面螺栓",
+      "name_spec": "六角法兰面螺栓||gb/t5787-2000(m8x16/8.8级/达克罗/带齿)"
+    },
+    "code": "T19020302.A1",
+    "name": "六角法兰面螺栓",
+    "spec": "GB/T 5787-2000（M8X16/8.8级/达克罗/带齿）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030101.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(4/达克罗)"
+    },
+    "code": "T19030101.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（4/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030102.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(5/达克罗)"
+    },
+    "code": "T19030102.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（5/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 23.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030103.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(6/达克罗)"
+    },
+    "code": "T19030103.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（6/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030104.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(8/达克罗)"
+    },
+    "code": "T19030104.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（8/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 13.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19180001.a1",
+      "name": "普通平键",
+      "name_spec": "普通平键||gb/t1096-2003(a2x2x8)"
+    },
+    "code": "T19180001.A1",
+    "name": "普通平键",
+    "spec": "GB/T 1096-2003（A2X2X8）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w27090005.a1",
+      "name": "透气阀",
+      "name_spec": "透气阀||wvm12x1.5"
+    },
+    "code": "W27090005.A1",
+    "name": "透气阀",
+    "spec": "WVM12X1.5",
+    "material": "不锈钢",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w15300012.a0",
+      "name": "格兰头",
+      "name_spec": "格兰头||hx-np.m25-16"
+    },
+    "code": "W15300012.A0",
+    "name": "格兰头",
+    "spec": "HX-NP.M25-16",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t49030831.a1",
+      "name": "铭牌",
+      "name_spec": "铭牌||柳工专属铭牌"
+    },
+    "code": "T49030831.A1",
+    "name": "铭牌",
+    "spec": "柳工专属铭牌",
+    "material": "铝板",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27080030.a0",
+      "name": "o型圈",
+      "name_spec": "o型圈||φ104.4*φ1.78，丁腈橡胶"
+    },
+    "code": "T27080030.A0",
+    "name": "O型圈",
+    "spec": "φ104.4*φ1.78，丁腈橡胶",
+    "material": "NBR70",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46180991.a0",
+      "name": "上盖板密封圈",
+      "name_spec": "上盖板密封圈||112×32×3.4"
+    },
+    "code": "T46180991.A0",
+    "name": "上盖板密封圈",
+    "spec": "112×32×3.4",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46180992.a0",
+      "name": "后盖板密封圈",
+      "name_spec": "后盖板密封圈||线径φ1.7密封圈"
+    },
+    "code": "T46180992.A0",
+    "name": "后盖板密封圈",
+    "spec": "线径φ1.7密封圈",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t47210801.a1",
+      "name": "旋转变压器",
+      "name_spec": "旋转变压器||j52xu9734-l49"
+    },
+    "code": "T47210801.A1",
+    "name": "旋转变压器",
+    "spec": "J52XU9734-L49",
+    "material": "",
+    "weight_kg": 0.04,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46170061.a1",
+      "name": "吊耳",
+      "name_spec": "吊耳||304不锈钢"
+    },
+    "code": "T46170061.A1",
+    "name": "吊耳",
+    "spec": "304不锈钢",
+    "material": "304不锈钢",
+    "weight_kg": 0.046,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160994.a0",
+      "name": "插件保护罩",
+      "name_spec": "插件保护罩||52×33×36.5"
+    },
+    "code": "T46160994.A0",
+    "name": "插件保护罩",
+    "spec": "52×33×36.5",
+    "material": "Q235-A",
+    "weight_kg": 0.042,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22210016.a0",
+      "name": "连接器",
+      "name_spec": "连接器||at04-12pa-pm02"
+    },
+    "code": "W22210016.A0",
+    "name": "连接器",
+    "spec": "AT04-12PA-PM02",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22210017.a0",
+      "name": "端子",
+      "name_spec": "端子||at60-16-0622"
+    },
+    "code": "W22210017.A0",
+    "name": "端子",
+    "spec": "AT60-16-0622",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 9.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22230011.a0",
+      "name": "堵头",
+      "name_spec": "堵头||at13-204-2005"
+    },
+    "code": "W22230011.A0",
+    "name": "堵头",
+    "spec": "AT13-204-2005",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22230012.a0",
+      "name": "锁扣",
+      "name_spec": "锁扣||aw12p"
+    },
+    "code": "W22230012.A0",
+    "name": "锁扣",
+    "spec": "AW12P",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t47240002.a0",
+      "name": "屏蔽网",
+      "name_spec": "屏蔽网||8mm镀银铜编制套管"
+    },
+    "code": "T47240002.A0",
+    "name": "屏蔽网",
+    "spec": "8mm镀银铜编制套管",
+    "material": "镀银铜",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.2
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090002.a0",
+      "name": "轧带",
+      "name_spec": "轧带||150×2.5mmpa66"
+    },
+    "code": "W26090002.A0",
+    "name": "轧带",
+    "spec": "150×2.5mm PA66",
+    "material": "PA66",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090001.a0",
+      "name": "轧带",
+      "name_spec": "轧带||150x4mmpa66带座"
+    },
+    "code": "W26090001.A0",
+    "name": "轧带",
+    "spec": "150x4mm PA66 带座",
+    "material": "PA66",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27100002.a0",
+      "name": "密封胶",
+      "name_spec": "密封胶||locteti5910,310ml/瓶,黑色"
+    },
+    "code": "T27100002.A0",
+    "name": "密封胶",
+    "spec": "Locteti 5910,310ml/瓶,黑色",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 12.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45180881.a0",
+      "name": "磁钢胶",
+      "name_spec": "磁钢胶||darbond，ep-12015，400ml/瓶，乳白色"
+    },
+    "code": "T45180881.A0",
+    "name": "磁钢胶",
+    "spec": "Darbond，EP-12015，400ml/瓶，乳白色",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 60.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w27020001.a0",
+      "name": "螺纹胶",
+      "name_spec": "螺纹胶||乐泰243"
+    },
+    "code": "W27020001.A0",
+    "name": "螺纹胶",
+    "spec": "乐泰243",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22070076",
+      "name": "线束总成",
+      "name_spec": "线束总成||线径35mm²，线长900mm，610mm，650mm"
+    },
+    "code": "W22070076",
+    "name": "线束总成",
+    "spec": "线径35mm²，线长900mm，610mm，650mm",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w23020065",
+      "name": "热缩套管",
+      "name_spec": "热缩套管||φ8单壁热缩管"
+    },
+    "code": "W23020065",
+    "name": "热缩套管",
+    "spec": "Φ8单壁热缩管",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.1
+  },
+  {
+    "product": "柳工3.5t双12油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26020001",
+      "name": "木箱",
+      "name_spec": "木箱||800*550*420中间有隔板，+3cm的泡棉"
+    },
+    "code": "W26020001",
+    "name": "木箱",
+    "spec": "800*550*420 中间有隔板，+3CM的泡棉",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.5
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44201072.a0",
+      "name": "定子组件",
+      "name_spec": "定子组件||od180mm，l120mm浸漆定子组件"
+    },
+    "code": "T44201072.A0",
+    "name": "定子组件",
+    "spec": "OD180mm，L120mm浸漆定子组件",
+    "material": "漆包线（铜）",
+    "weight_kg": 2.07,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44210071.a1",
+      "name": "定子铁芯",
+      "name_spec": "定子铁芯||od180mm，35w300，l120mm"
+    },
+    "code": "T44210071.A1",
+    "name": "定子铁芯",
+    "spec": "OD180mm，35W300，L120mm",
+    "material": "35W300",
+    "weight_kg": 9.83,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44101072.a0",
+      "name": "机壳",
+      "name_spec": "机壳||拉伸机壳od180mm，l198mm"
+    },
+    "code": "T44101072.A0",
+    "name": "机壳",
+    "spec": "拉伸机壳OD180mm，L198mm",
+    "material": "6063-T5",
+    "weight_kg": 3.86,
+    "process": "拉伸",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45120071.a1",
+      "name": "转子铁芯",
+      "name_spec": "转子铁芯||od180mm，l30mm，v+1"
+    },
+    "code": "T45120071.A1",
+    "name": "转子铁芯",
+    "spec": "OD180mm，L30mm，V+1",
+    "material": "35W300",
+    "weight_kg": 1.57,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45111252",
+      "name": "电机轴",
+      "name_spec": "电机轴||l294.5mm，20crmntih"
+    },
+    "code": "T45111252",
+    "name": "电机轴",
+    "spec": "L294.5mm，20CrMnTiH",
+    "material": "20CrMnTiH",
+    "weight_kg": 2.74,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45130071.a0",
+      "name": "永磁体",
+      "name_spec": "永磁体||tz180xbs17-200-0007"
+    },
+    "code": "T45130071.A0",
+    "name": "永磁体",
+    "spec": "TZ180XBS17-200-0007",
+    "material": "钕铁硼40UH",
+    "weight_kg": 0.011,
+    "process": "烧结",
+    "current_unit_price": 0.0,
+    "qty": 96.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45140051.a1",
+      "name": "转子挡板",
+      "name_spec": "转子挡板||内外径45×117mm"
+    },
+    "code": "T45140051.A1",
+    "name": "转子挡板",
+    "spec": "内外径45×117mm",
+    "material": "A356",
+    "weight_kg": 0.144,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45150801.a1",
+      "name": "转子轴套",
+      "name_spec": "转子轴套||内外径45*57mm"
+    },
+    "code": "T45150801.A1",
+    "name": "转子轴套",
+    "spec": "内外径45*57mm",
+    "material": "45钢",
+    "weight_kg": 0.075,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45170061.a2",
+      "name": "轴承压盖",
+      "name_spec": "轴承压盖||内外径42×95mm"
+    },
+    "code": "T45170061.A2",
+    "name": "轴承压盖",
+    "spec": "内外径42×95mm",
+    "material": "45钢",
+    "weight_kg": 0.21,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19100011.a1",
+      "name": "轴承",
+      "name_spec": "轴承||bs6206-2z/c3"
+    },
+    "code": "T19100011.A1",
+    "name": "轴承",
+    "spec": "BS6206-2Z/C3",
+    "material": "",
+    "weight_kg": 0.197,
+    "process": "标准件",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19100013.a1",
+      "name": "轴承",
+      "name_spec": "轴承||bs6208-2z/c3"
+    },
+    "code": "T19100013.A1",
+    "name": "轴承",
+    "spec": "BS6208-2Z/C3",
+    "material": "",
+    "weight_kg": 0.36,
+    "process": "标准件",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46111197",
+      "name": "前端盖",
+      "name_spec": "前端盖||od180mm前端盖(双12/15行驶)"
+    },
+    "code": "T46111197",
+    "name": "前端盖",
+    "spec": "OD180mm前端盖（双12/15行驶）",
+    "material": "A356-T6",
+    "weight_kg": 1.55,
+    "process": "低压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46121183",
+      "name": "后端盖",
+      "name_spec": "后端盖||od180电机后端盖"
+    },
+    "code": "T46121183",
+    "name": "后端盖",
+    "spec": "OD180电机后端盖",
+    "material": "ADC12",
+    "weight_kg": 1.72,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46150992.a0",
+      "name": "接线盒",
+      "name_spec": "接线盒||123×70×56mm"
+    },
+    "code": "T46150992.A0",
+    "name": "接线盒",
+    "spec": "123×70×56mm",
+    "material": "ADC12",
+    "weight_kg": 0.581,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160993.a0",
+      "name": "上盖板",
+      "name_spec": "上盖板||不锈钢304/3mm"
+    },
+    "code": "T46160993.A0",
+    "name": "上盖板",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 1.38,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160992.a0",
+      "name": "后盖板",
+      "name_spec": "后盖板||旋变后盖板"
+    },
+    "code": "T46160992.A0",
+    "name": "后盖板",
+    "spec": "旋变后盖板",
+    "material": "不锈钢304",
+    "weight_kg": 0.267,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46171071.a0",
+      "name": "三相盖板",
+      "name_spec": "三相盖板||不锈钢304/3mm"
+    },
+    "code": "T46171071.A0",
+    "name": "三相盖板",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 0.228,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46200991.a0",
+      "name": "接线板",
+      "name_spec": "接线板||106×24.5×23.5mm"
+    },
+    "code": "T46200991.A0",
+    "name": "接线板",
+    "spec": "106×24.5×23.5mm",
+    "material": "PPS+GF30%",
+    "weight_kg": 0.03,
+    "process": "注塑",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46170021.a1",
+      "name": "旋变定子压板",
+      "name_spec": "旋变定子压板||厚度2mm"
+    },
+    "code": "T46170021.A1",
+    "name": "旋变定子压板",
+    "spec": "厚度2 mm",
+    "material": "Q235",
+    "weight_kg": 0.016,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030302.a1",
+      "name": "特大垫圈c级",
+      "name_spec": "特大垫圈c级||gb/t5287-2002(5/镀白锌)"
+    },
+    "code": "T19030302.A1",
+    "name": "特大垫圈C级",
+    "spec": "GB/T 5287-2002（5/镀白锌）",
+    "material": "碳钢",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27080721.a1",
+      "name": "油封",
+      "name_spec": "油封||tc40x62x7/fkm"
+    },
+    "code": "T27080721.A1",
+    "name": "油封",
+    "spec": "TC40X62X7/FKM",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19170003.a1",
+      "name": "波形弹簧",
+      "name_spec": "波形弹簧||jb/t7590-2005(d80/发蓝)"
+    },
+    "code": "T19170003.A1",
+    "name": "波形弹簧",
+    "spec": "JB/T 7590-2005（D80/发蓝）",
+    "material": "65Mn",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020153.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m3x14/12.9级/达克罗)"
+    },
+    "code": "T19020153.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T70.1-2008(M3X14/12.9级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020102.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m4x12/8.8级/达克罗)"
+    },
+    "code": "T19020102.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M4X12/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020103.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x12/8.8级/达克罗)"
+    },
+    "code": "T19020103.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x12/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 19.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020104.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x16/8.8级/达克罗)"
+    },
+    "code": "T19020104.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020707.a0",
+      "name": "内六角平圆头螺钉",
+      "name_spec": "内六角平圆头螺钉||gb/t70.2-2008(m6x12/10.9级/达克罗)"
+    },
+    "code": "T19020707.A0",
+    "name": "内六角平圆头螺钉",
+    "spec": "GB/T 70.2-2008（M6x12/10.9级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020133.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x30/8.8级/达克罗)"
+    },
+    "code": "T19020133.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x30/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020137.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m6x16/8.8级/达克罗)"
+    },
+    "code": "T19020137.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M6x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020147.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x16/8.8级/达克罗)"
+    },
+    "code": "T19020147.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020110.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x25/8.8级/达克罗)"
+    },
+    "code": "T19020110.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x25/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 10.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020704.a0",
+      "name": "内六角平圆头螺钉",
+      "name_spec": "内六角平圆头螺钉||gb/t70.2—2000(m8x258.8级)达克罗"
+    },
+    "code": "T19020704.A0",
+    "name": "内六角平圆头螺钉",
+    "spec": "GB/T 70.2—2000 （M8x25 8.8级）达克罗",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w19020059.a1",
+      "name": "外六角十字组合螺钉",
+      "name_spec": "外六角十字组合螺钉||gb9074.13m8x20"
+    },
+    "code": "W19020059.A1",
+    "name": "外六角十字组合螺钉",
+    "spec": "GB9074.13 M8X20",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030101.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(4/达克罗)"
+    },
+    "code": "T19030101.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（4/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030102.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(5/达克罗)"
+    },
+    "code": "T19030102.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（5/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 23.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030103.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(6/达克罗)"
+    },
+    "code": "T19030103.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（6/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030104.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(8/达克罗)"
+    },
+    "code": "T19030104.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（8/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 11.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19180001.a1",
+      "name": "普通平键",
+      "name_spec": "普通平键||gb/t1096-2003(a2x2x8)"
+    },
+    "code": "T19180001.A1",
+    "name": "普通平键",
+    "spec": "GB/T 1096-2003（A2X2X8）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w27090005.a1",
+      "name": "透气阀",
+      "name_spec": "透气阀||wvm12x1.5"
+    },
+    "code": "W27090005.A1",
+    "name": "透气阀",
+    "spec": "WVM12X1.5",
+    "material": "不锈钢",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w15300012.a0",
+      "name": "格兰头",
+      "name_spec": "格兰头||hx-np.m25-16"
+    },
+    "code": "W15300012.A0",
+    "name": "格兰头",
+    "spec": "HX-NP.M25-16",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t49030831.a1",
+      "name": "铭牌",
+      "name_spec": "铭牌||柳工专属铭牌"
+    },
+    "code": "T49030831.A1",
+    "name": "铭牌",
+    "spec": "柳工专属铭牌",
+    "material": "铝板",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27080030.a0",
+      "name": "o型圈",
+      "name_spec": "o型圈||φ104.4*φ1.78，丁腈橡胶"
+    },
+    "code": "T27080030.A0",
+    "name": "O型圈",
+    "spec": "φ104.4*φ1.78，丁腈橡胶",
+    "material": "NBR70",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46180991.a0",
+      "name": "上盖板密封圈",
+      "name_spec": "上盖板密封圈||112×32×3.4"
+    },
+    "code": "T46180991.A0",
+    "name": "上盖板密封圈",
+    "spec": "112×32×3.4",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46180992.a0",
+      "name": "后盖板密封圈",
+      "name_spec": "后盖板密封圈||线径φ1.7密封圈"
+    },
+    "code": "T46180992.A0",
+    "name": "后盖板密封圈",
+    "spec": "线径φ1.7密封圈",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t47210801.a1",
+      "name": "旋转变压器",
+      "name_spec": "旋转变压器||j52xu9734-l49"
+    },
+    "code": "T47210801.A1",
+    "name": "旋转变压器",
+    "spec": "J52XU9734-L49",
+    "material": "",
+    "weight_kg": 0.04,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46170061.a1",
+      "name": "吊耳",
+      "name_spec": "吊耳||304不锈钢"
+    },
+    "code": "T46170061.A1",
+    "name": "吊耳",
+    "spec": "304不锈钢",
+    "material": "304不锈钢",
+    "weight_kg": 0.046,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160994.a0",
+      "name": "插件保护罩",
+      "name_spec": "插件保护罩||52×33×36.5"
+    },
+    "code": "T46160994.A0",
+    "name": "插件保护罩",
+    "spec": "52×33×36.5",
+    "material": "Q235-A",
+    "weight_kg": 0.042,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22210016.a0",
+      "name": "连接器",
+      "name_spec": "连接器||at04-12pa-pm02"
+    },
+    "code": "W22210016.A0",
+    "name": "连接器",
+    "spec": "AT04-12PA-PM02",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 9.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22210017.a0",
+      "name": "端子",
+      "name_spec": "端子||at60-16-0622"
+    },
+    "code": "W22210017.A0",
+    "name": "端子",
+    "spec": "AT60-16-0622",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22230011.a0",
+      "name": "堵头",
+      "name_spec": "堵头||at13-204-2005"
+    },
+    "code": "W22230011.A0",
+    "name": "堵头",
+    "spec": "AT13-204-2005",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22230012.a0",
+      "name": "锁扣",
+      "name_spec": "锁扣||aw12p"
+    },
+    "code": "W22230012.A0",
+    "name": "锁扣",
+    "spec": "AW12P",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46181051",
+      "name": "柔性盖",
+      "name_spec": "柔性盖||01021-0260-050-黑色(φ26×50)"
+    },
+    "code": "T46181051",
+    "name": "柔性盖",
+    "spec": "01021-0260-050-黑色（φ26×50）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.15
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t47240002.a0",
+      "name": "屏蔽网",
+      "name_spec": "屏蔽网||8mm镀银铜编制套管"
+    },
+    "code": "T47240002.A0",
+    "name": "屏蔽网",
+    "spec": "8mm镀银铜编制套管",
+    "material": "镀银铜",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090002.a0",
+      "name": "轧带",
+      "name_spec": "轧带||150×2.5mmpa66"
+    },
+    "code": "W26090002.A0",
+    "name": "轧带",
+    "spec": "150×2.5mm PA66",
+    "material": "PA66",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090001.a0",
+      "name": "轧带",
+      "name_spec": "轧带||150x4mmpa66带座"
+    },
+    "code": "W26090001.A0",
+    "name": "轧带",
+    "spec": "150x4mm PA66 带座",
+    "material": "PA66",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.1
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w23020065",
+      "name": "热缩套管",
+      "name_spec": "热缩套管||φ8单壁热缩管"
+    },
+    "code": "W23020065",
+    "name": "热缩套管",
+    "spec": "Φ8单壁热缩管",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 20.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27100002.a0",
+      "name": "密封胶",
+      "name_spec": "密封胶||locteti5910,310ml/瓶,黑色"
+    },
+    "code": "T27100002.A0",
+    "name": "密封胶",
+    "spec": "Locteti 5910,310ml/瓶,黑色",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 60.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45180881.a0",
+      "name": "磁钢胶",
+      "name_spec": "磁钢胶||darbond，ep-12015，400ml/瓶，乳白色"
+    },
+    "code": "T45180881.A0",
+    "name": "磁钢胶",
+    "spec": "Darbond，EP-12015，400ml/瓶，乳白色",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w27020001.a0",
+      "name": "螺纹胶",
+      "name_spec": "螺纹胶||乐泰243"
+    },
+    "code": "W27020001.A0",
+    "name": "螺纹胶",
+    "spec": "乐泰243",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22070077",
+      "name": "线束总成",
+      "name_spec": "线束总成||线径35mm²，线长700mm，710mm，800mm"
+    },
+    "code": "W22070077",
+    "name": "线束总成",
+    "spec": "线径35mm²，线长700mm，710mm，800mm",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 10.0
+  },
+  {
+    "product": "柳工3.5T双15行走电机总成",
+    "product_code": "Genesis-Motor-TZ180-XDA9-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26020001",
+      "name": "木箱",
+      "name_spec": "木箱||800*550*420中间有隔板，+3cm的泡棉"
+    },
+    "code": "W26020001",
+    "name": "木箱",
+    "spec": "800*550*420 中间有隔板，+3CM的泡棉",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.5
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44201233",
+      "name": "定子组件",
+      "name_spec": "定子组件||od180mm，l70mm浸漆定子"
+    },
+    "code": "T44201233",
+    "name": "定子组件",
+    "spec": "OD180mm，L70mm浸漆定子",
+    "material": "漆包线（铜）",
+    "weight_kg": 2.1,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44211061.a0",
+      "name": "定子铁芯",
+      "name_spec": "定子铁芯||od180mm，l70mm，v+1"
+    },
+    "code": "T44211061.A0",
+    "name": "定子铁芯",
+    "spec": "OD180mm，L70mm，V+1",
+    "material": "35W300",
+    "weight_kg": 5.7,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44101053.a0",
+      "name": "机壳",
+      "name_spec": "机壳||拉伸机壳od180mm，l168mm"
+    },
+    "code": "T44101053.A0",
+    "name": "机壳",
+    "spec": "拉伸机壳OD180mm，L168mm",
+    "material": "6063-T5",
+    "weight_kg": 3.3,
+    "process": "拉伸",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45120801.a1",
+      "name": "转子铁芯",
+      "name_spec": "转子铁芯||od118.4mm，35w300，l35mm"
+    },
+    "code": "T45120801.A1",
+    "name": "转子铁芯",
+    "spec": "OD118.4mm，35W300，L35mm",
+    "material": "35W300",
+    "weight_kg": 1.57,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45111235",
+      "name": "电机轴",
+      "name_spec": "电机轴||l210.5mm，20crmntih"
+    },
+    "code": "T45111235",
+    "name": "电机轴",
+    "spec": "L210.5mm，20CrMnTiH",
+    "material": "20CrMnTiH",
+    "weight_kg": 2.1,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45130801.a0",
+      "name": "永磁体",
+      "name_spec": "永磁体||tz180xqs13-144-0080"
+    },
+    "code": "T45130801.A0",
+    "name": "永磁体",
+    "spec": "TZ180XQS13-144-0080",
+    "material": "钕铁硼48UH",
+    "weight_kg": 0.012,
+    "process": "烧结",
+    "current_unit_price": 0.0,
+    "qty": 48.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45140051.a1",
+      "name": "转子挡板",
+      "name_spec": "转子挡板||内外径45×117mm"
+    },
+    "code": "T45140051.A1",
+    "name": "转子挡板",
+    "spec": "内外径45×117mm",
+    "material": "A356",
+    "weight_kg": 0.144,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45150801.a1",
+      "name": "转子轴套",
+      "name_spec": "转子轴套||内外径45*57mm"
+    },
+    "code": "T45150801.A1",
+    "name": "转子轴套",
+    "spec": "内外径45*57mm",
+    "material": "45钢",
+    "weight_kg": 0.075,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45170061.a2",
+      "name": "轴承压盖",
+      "name_spec": "轴承压盖||内外径42×95mm"
+    },
+    "code": "T45170061.A2",
+    "name": "轴承压盖",
+    "spec": "内外径42×95mm",
+    "material": "45钢",
+    "weight_kg": 0.21,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19100011.a1",
+      "name": "轴承",
+      "name_spec": "轴承||bs6206-2z/c3"
+    },
+    "code": "T19100011.A1",
+    "name": "轴承",
+    "spec": "BS6206-2Z/C3",
+    "material": "",
+    "weight_kg": 0.197,
+    "process": "标准件",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19100012.a1",
+      "name": "轴承",
+      "name_spec": "轴承||bs6207-2z/c3"
+    },
+    "code": "T19100012.A1",
+    "name": "轴承",
+    "spec": "BS6207-2Z/C3",
+    "material": "",
+    "weight_kg": 0.25,
+    "process": "标准件",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46111196",
+      "name": "前端盖",
+      "name_spec": "前端盖||od180mm前端盖(双12/15油泵)"
+    },
+    "code": "T46111196",
+    "name": "前端盖",
+    "spec": "OD180mm前端盖（双12/15油泵）",
+    "material": "A356-T6",
+    "weight_kg": 1.82,
+    "process": "低压模具",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46121183",
+      "name": "后端盖",
+      "name_spec": "后端盖||od180电机后端盖"
+    },
+    "code": "T46121183",
+    "name": "后端盖",
+    "spec": "OD180电机后端盖",
+    "material": "ADC12",
+    "weight_kg": 1.72,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46150992.a0",
+      "name": "接线盒",
+      "name_spec": "接线盒||123×70×56mm"
+    },
+    "code": "T46150992.A0",
+    "name": "接线盒",
+    "spec": "123×70×56mm",
+    "material": "ADC12",
+    "weight_kg": 0.581,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160993.a0",
+      "name": "上盖板",
+      "name_spec": "上盖板||不锈钢304/3mm"
+    },
+    "code": "T46160993.A0",
+    "name": "上盖板",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 1.38,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160992.a0",
+      "name": "后盖板",
+      "name_spec": "后盖板||旋变后盖板"
+    },
+    "code": "T46160992.A0",
+    "name": "后盖板",
+    "spec": "旋变后盖板",
+    "material": "不锈钢304",
+    "weight_kg": 0.267,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46171071.a0",
+      "name": "三相盖板",
+      "name_spec": "三相盖板||不锈钢304/3mm"
+    },
+    "code": "T46171071.A0",
+    "name": "三相盖板",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 0.228,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46200991.a0",
+      "name": "接线板",
+      "name_spec": "接线板||106×24.5×23.5mm"
+    },
+    "code": "T46200991.A0",
+    "name": "接线板",
+    "spec": "106×24.5×23.5mm",
+    "material": "PPS+GF30%",
+    "weight_kg": 0.03,
+    "process": "注塑",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46131182",
+      "name": "安装底板",
+      "name_spec": "安装底板||216×136×17mm"
+    },
+    "code": "T46131182",
+    "name": "安装底板",
+    "spec": "216×136×17mm",
+    "material": "Q235-A",
+    "weight_kg": 1.57,
+    "process": "弯折",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46170021.a1",
+      "name": "旋变定子压板",
+      "name_spec": "旋变定子压板||厚度2mm"
+    },
+    "code": "T46170021.A1",
+    "name": "旋变定子压板",
+    "spec": "厚度2 mm",
+    "material": "Q235",
+    "weight_kg": 0.016,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030302.a1",
+      "name": "特大垫圈c级",
+      "name_spec": "特大垫圈c级||gb/t5287-2002(5/镀白锌)"
+    },
+    "code": "T19030302.A1",
+    "name": "特大垫圈C级",
+    "spec": "GB/T 5287-2002（5/镀白锌）",
+    "material": "碳钢",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27080731.a1",
+      "name": "油封",
+      "name_spec": "油封||tc35x62x7/fkm"
+    },
+    "code": "T27080731.A1",
+    "name": "油封",
+    "spec": "TC35X62X7/FKM",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19170002.a1",
+      "name": "波形弹簧",
+      "name_spec": "波形弹簧||jb/t7590-2005(d72/发蓝)"
+    },
+    "code": "T19170002.A1",
+    "name": "波形弹簧",
+    "spec": "JB/T 7590-2005（D72/发蓝）",
+    "material": "65Mn",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020153.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m3x14/12.9级/达克罗)"
+    },
+    "code": "T19020153.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T70.1-2008(M3X14/12.9级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020102.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m4x12/8.8级/达克罗)"
+    },
+    "code": "T19020102.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M4X12/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020103.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x12/8.8级/达克罗)"
+    },
+    "code": "T19020103.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x12/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 19.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020104.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x16/8.8级/达克罗)"
+    },
+    "code": "T19020104.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020707.a0",
+      "name": "内六角平圆头螺钉",
+      "name_spec": "内六角平圆头螺钉||gb/t70.2-2008(m6x12/10.9级/达克罗)"
+    },
+    "code": "T19020707.A0",
+    "name": "内六角平圆头螺钉",
+    "spec": "GB/T 70.2-2008（M6x12/10.9级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020133.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x30/8.8级/达克罗)"
+    },
+    "code": "T19020133.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x30/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020137.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m6x16/8.8级/达克罗)"
+    },
+    "code": "T19020137.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M6x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020147.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x16/8.8级/达克罗)"
+    },
+    "code": "T19020147.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020110.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x25/8.8级/达克罗)"
+    },
+    "code": "T19020110.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x25/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 11.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020111.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x30/8.8级/达克罗)"
+    },
+    "code": "T19020111.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x30/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w19020059.a1",
+      "name": "外六角十字组合螺钉",
+      "name_spec": "外六角十字组合螺钉||gb9074.13m8x20"
+    },
+    "code": "W19020059.A1",
+    "name": "外六角十字组合螺钉",
+    "spec": "GB9074.13 M8X20",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020302.a1",
+      "name": "六角法兰面螺栓",
+      "name_spec": "六角法兰面螺栓||gb/t5787-2000(m8x16/8.8级/达克罗/带齿)"
+    },
+    "code": "T19020302.A1",
+    "name": "六角法兰面螺栓",
+    "spec": "GB/T 5787-2000（M8X16/8.8级/达克罗/带齿）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030101.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(4/达克罗)"
+    },
+    "code": "T19030101.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（4/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030102.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(5/达克罗)"
+    },
+    "code": "T19030102.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（5/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 23.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030103.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(6/达克罗)"
+    },
+    "code": "T19030103.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（6/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030104.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(8/达克罗)"
+    },
+    "code": "T19030104.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（8/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 13.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19180001.a1",
+      "name": "普通平键",
+      "name_spec": "普通平键||gb/t1096-2003(a2x2x8)"
+    },
+    "code": "T19180001.A1",
+    "name": "普通平键",
+    "spec": "GB/T 1096-2003（A2X2X8）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w27090005.a1",
+      "name": "透气阀",
+      "name_spec": "透气阀||wvm12x1.5"
+    },
+    "code": "W27090005.A1",
+    "name": "透气阀",
+    "spec": "WVM12X1.5",
+    "material": "不锈钢",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w15300012.a0",
+      "name": "格兰头",
+      "name_spec": "格兰头||hx-np.m25-16"
+    },
+    "code": "W15300012.A0",
+    "name": "格兰头",
+    "spec": "HX-NP.M25-16",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t49030831.a1",
+      "name": "铭牌",
+      "name_spec": "铭牌||柳工专属铭牌"
+    },
+    "code": "T49030831.A1",
+    "name": "铭牌",
+    "spec": "柳工专属铭牌",
+    "material": "铝板",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27080030.a0",
+      "name": "o型圈",
+      "name_spec": "o型圈||φ104.4*φ1.78，丁腈橡胶"
+    },
+    "code": "T27080030.A0",
+    "name": "O型圈",
+    "spec": "φ104.4*φ1.78，丁腈橡胶",
+    "material": "NBR70",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46180991.a0",
+      "name": "上盖板密封圈",
+      "name_spec": "上盖板密封圈||112×32×3.4"
+    },
+    "code": "T46180991.A0",
+    "name": "上盖板密封圈",
+    "spec": "112×32×3.4",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46180992.a0",
+      "name": "后盖板密封圈",
+      "name_spec": "后盖板密封圈||线径φ1.7密封圈"
+    },
+    "code": "T46180992.A0",
+    "name": "后盖板密封圈",
+    "spec": "线径φ1.7密封圈",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t47210801.a1",
+      "name": "旋转变压器",
+      "name_spec": "旋转变压器||j52xu9734-l49"
+    },
+    "code": "T47210801.A1",
+    "name": "旋转变压器",
+    "spec": "J52XU9734-L49",
+    "material": "",
+    "weight_kg": 0.04,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46170061.a1",
+      "name": "吊耳",
+      "name_spec": "吊耳||304不锈钢"
+    },
+    "code": "T46170061.A1",
+    "name": "吊耳",
+    "spec": "304不锈钢",
+    "material": "304不锈钢",
+    "weight_kg": 0.046,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160994.a0",
+      "name": "插件保护罩",
+      "name_spec": "插件保护罩||52×33×36.5"
+    },
+    "code": "T46160994.A0",
+    "name": "插件保护罩",
+    "spec": "52×33×36.5",
+    "material": "Q235-A",
+    "weight_kg": 0.042,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22210016.a0",
+      "name": "连接器",
+      "name_spec": "连接器||at04-12pa-pm02"
+    },
+    "code": "W22210016.A0",
+    "name": "连接器",
+    "spec": "AT04-12PA-PM02",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22210017.a0",
+      "name": "端子",
+      "name_spec": "端子||at60-16-0622"
+    },
+    "code": "W22210017.A0",
+    "name": "端子",
+    "spec": "AT60-16-0622",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 9.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22230011.a0",
+      "name": "堵头",
+      "name_spec": "堵头||at13-204-2005"
+    },
+    "code": "W22230011.A0",
+    "name": "堵头",
+    "spec": "AT13-204-2005",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22230012.a0",
+      "name": "锁扣",
+      "name_spec": "锁扣||aw12p"
+    },
+    "code": "W22230012.A0",
+    "name": "锁扣",
+    "spec": "AW12P",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t47240002.a0",
+      "name": "屏蔽网",
+      "name_spec": "屏蔽网||8mm镀银铜编制套管"
+    },
+    "code": "T47240002.A0",
+    "name": "屏蔽网",
+    "spec": "8mm镀银铜编制套管",
+    "material": "镀银铜",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.15
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22080067",
+      "name": "线束总成",
+      "name_spec": "线束总成||线径0.35mm2，线长500mm"
+    },
+    "code": "W22080067",
+    "name": "线束总成",
+    "spec": "线径0.35mm2，线长500mm",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w24010060",
+      "name": "风扇",
+      "name_spec": "风扇||型号：dd80dbvh-012-5h1"
+    },
+    "code": "W24010060",
+    "name": "风扇",
+    "spec": "型号：DD80DBVH-012-5H1",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090008.a0",
+      "name": "不锈钢法兰防滑螺母",
+      "name_spec": "不锈钢法兰防滑螺母||m4法兰防滑有齿"
+    },
+    "code": "W26090008.A0",
+    "name": "不锈钢法兰防滑螺母",
+    "spec": "M4 法兰防滑有齿",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46171191",
+      "name": "风扇支架",
+      "name_spec": "风扇支架||不锈钢304/3mm"
+    },
+    "code": "T46171191",
+    "name": "风扇支架",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w19020105",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m4x35/不锈钢)"
+    },
+    "code": "W19020105",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T70.1-2008(M4X35/不锈钢）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090002.a0",
+      "name": "轧带",
+      "name_spec": "轧带||150×2.5mmpa66"
+    },
+    "code": "W26090002.A0",
+    "name": "轧带",
+    "spec": "150×2.5mm PA66",
+    "material": "PA66",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090001.a0",
+      "name": "轧带",
+      "name_spec": "轧带||150x4mmpa66带座"
+    },
+    "code": "W26090001.A0",
+    "name": "轧带",
+    "spec": "150x4mm PA66 带座",
+    "material": "PA66",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27100002.a0",
+      "name": "密封胶",
+      "name_spec": "密封胶||locteti5910,310ml/瓶,黑色"
+    },
+    "code": "T27100002.A0",
+    "name": "密封胶",
+    "spec": "Locteti 5910,310ml/瓶,黑色",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 12.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45180881.a0",
+      "name": "磁钢胶",
+      "name_spec": "磁钢胶||darbond，ep-12015，400ml/瓶，乳白色"
+    },
+    "code": "T45180881.A0",
+    "name": "磁钢胶",
+    "spec": "Darbond，EP-12015，400ml/瓶，乳白色",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 60.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w27020001.a0",
+      "name": "螺纹胶",
+      "name_spec": "螺纹胶||乐泰243"
+    },
+    "code": "W27020001.A0",
+    "name": "螺纹胶",
+    "spec": "乐泰243",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22070076",
+      "name": "线束总成",
+      "name_spec": "线束总成||线径35mm²，线长900mm，610mm，650mm"
+    },
+    "code": "W22070076",
+    "name": "线束总成",
+    "spec": "线径35mm²，线长900mm，610mm，650mm",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w24030051",
+      "name": "风扇防护网",
+      "name_spec": "风扇防护网||适配柳工双15油泵风扇，风扇规格80*80*25"
+    },
+    "code": "W24030051",
+    "name": "风扇防护网",
+    "spec": "适配柳工双15油泵风扇，风扇规格80*80*25",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w23020065",
+      "name": "热缩套管",
+      "name_spec": "热缩套管||φ8单壁热缩管"
+    },
+    "code": "W23020065",
+    "name": "热缩套管",
+    "spec": "Φ8单壁热缩管",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.1
+  },
+  {
+    "product": "柳工3.5T双15油泵电机总成",
+    "product_code": "Genesis-Motor-TZ180-XPA16-80-03-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26020001",
+      "name": "木箱",
+      "name_spec": "木箱||800*550*420中间有隔板，+3cm的泡棉"
+    },
+    "code": "W26020001",
+    "name": "木箱",
+    "spec": "800*550*420 中间有隔板，+3CM的泡棉",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.5
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44201229",
+      "name": "定子组件",
+      "name_spec": "定子组件||od200扁线定子组件"
+    },
+    "code": "T44201229",
+    "name": "定子组件",
+    "spec": "OD200扁线定子组件",
+    "material": "漆包线（铜）",
+    "weight_kg": 4.95,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44210721.a0",
+      "name": "定子铁芯",
+      "name_spec": "定子铁芯||od200mm，b30ahv1500，l130mm，双v"
+    },
+    "code": "T44210721.A0",
+    "name": "定子铁芯",
+    "spec": "OD200mm，B30AHV1500，L130mm，双V",
+    "material": "B30AHV1500",
+    "weight_kg": 12.3,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44101233",
+      "name": "机壳",
+      "name_spec": "机壳||拉伸机壳od200mm，l220mm"
+    },
+    "code": "T44101233",
+    "name": "机壳",
+    "spec": "拉伸机壳OD200mm，L220mm",
+    "material": "6063-T5",
+    "weight_kg": 5.8,
+    "process": "拉伸",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45120721.a1",
+      "name": "转子铁芯",
+      "name_spec": "转子铁芯||od200mm，b30ahv1500，l21.67mm，双v"
+    },
+    "code": "T45120721.A1",
+    "name": "转子铁芯",
+    "spec": "OD200mm，B30AHV1500，L21.67mm，双V",
+    "material": "B30AHV1500",
+    "weight_kg": 1.46,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 6.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45131122.a0",
+      "name": "永磁体",
+      "name_spec": "永磁体||4.5×18×21.67mm"
+    },
+    "code": "T45131122.A0",
+    "name": "永磁体",
+    "spec": "4.5×18×21.67mm",
+    "material": "钕铁硼48UH",
+    "weight_kg": 0.0152,
+    "process": "烧结",
+    "current_unit_price": 0.0,
+    "qty": 96.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45131123.a0",
+      "name": "永磁体",
+      "name_spec": "永磁体||3.5×9.7×21.67mm"
+    },
+    "code": "T45131123.A0",
+    "name": "永磁体",
+    "spec": "3.5×9.7×21.67mm",
+    "material": "钕铁硼48UH",
+    "weight_kg": 0.0066,
+    "process": "烧结",
+    "current_unit_price": 0.0,
+    "qty": 96.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45111239",
+      "name": "电机轴",
+      "name_spec": "电机轴||l334mm，20crmnti"
+    },
+    "code": "T45111239",
+    "name": "电机轴",
+    "spec": "L334mm，20CrMnTi",
+    "material": "20CrMnTiH",
+    "weight_kg": 3.0,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45140721.a1",
+      "name": "转子挡板",
+      "name_spec": "转子挡板||内外径45×136mm"
+    },
+    "code": "T45140721.A1",
+    "name": "转子挡板",
+    "spec": "内外径45×136mm",
+    "material": "6061",
+    "weight_kg": 0.232,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45150801.a1",
+      "name": "转子轴套",
+      "name_spec": "转子轴套||内外径45*57mm"
+    },
+    "code": "T45150801.A1",
+    "name": "转子轴套",
+    "spec": "内外径45*57mm",
+    "material": "45钢",
+    "weight_kg": 0.075,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45170061.a2",
+      "name": "轴承压盖",
+      "name_spec": "轴承压盖||内外径42×95mm"
+    },
+    "code": "T45170061.A2",
+    "name": "轴承压盖",
+    "spec": "内外径42×95mm",
+    "material": "45钢",
+    "weight_kg": 0.21,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46111198",
+      "name": "前端盖",
+      "name_spec": "前端盖||od200mm前端盖(双20行驶)"
+    },
+    "code": "T46111198",
+    "name": "前端盖",
+    "spec": "OD200mm前端盖（双20行驶）",
+    "material": "A356-T6",
+    "weight_kg": 1.72,
+    "process": "低压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46121191",
+      "name": "后端盖",
+      "name_spec": "后端盖||od200mm后端盖"
+    },
+    "code": "T46121191",
+    "name": "后端盖",
+    "spec": "OD200mm后端盖",
+    "material": "6061-T6",
+    "weight_kg": 1.98,
+    "process": "低压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46150992.a0",
+      "name": "接线盒",
+      "name_spec": "接线盒||123×70×56mm"
+    },
+    "code": "T46150992.A0",
+    "name": "接线盒",
+    "spec": "123×70×56mm",
+    "material": "ADC12",
+    "weight_kg": 0.581,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46171071.a0",
+      "name": "三相盖板",
+      "name_spec": "三相盖板||不锈钢304/3mm"
+    },
+    "code": "T46171071.A0",
+    "name": "三相盖板",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 0.228,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160992.a0",
+      "name": "后盖板",
+      "name_spec": "后盖板||旋变后盖板"
+    },
+    "code": "T46160992.A0",
+    "name": "后盖板",
+    "spec": "旋变后盖板",
+    "material": "不锈钢304",
+    "weight_kg": 0.267,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160993.a0",
+      "name": "上盖板",
+      "name_spec": "上盖板||不锈钢304/3mm"
+    },
+    "code": "T46160993.A0",
+    "name": "上盖板",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 1.38,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46200991.a0",
+      "name": "接线板",
+      "name_spec": "接线板||106×24.5×23.5mm"
+    },
+    "code": "T46200991.A0",
+    "name": "接线板",
+    "spec": "106×24.5×23.5mm",
+    "material": "PPS+GF30%",
+    "weight_kg": 0.03,
+    "process": "注塑",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46170021.a1",
+      "name": "旋变定子压板",
+      "name_spec": "旋变定子压板||厚度2mm"
+    },
+    "code": "T46170021.A1",
+    "name": "旋变定子压板",
+    "spec": "厚度2 mm",
+    "material": "Q235",
+    "weight_kg": 0.016,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030302.a1",
+      "name": "特大垫圈c级",
+      "name_spec": "特大垫圈c级||gb/t5287-2002(5/镀白锌)"
+    },
+    "code": "T19030302.A1",
+    "name": "特大垫圈C级",
+    "spec": "GB/T 5287-2002（5/镀白锌）",
+    "material": "碳钢",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t47210801.a1",
+      "name": "旋转变压器",
+      "name_spec": "旋转变压器||j52xu9734-l49"
+    },
+    "code": "T47210801.A1",
+    "name": "旋转变压器",
+    "spec": "J52XU9734-L49",
+    "material": "",
+    "weight_kg": 0.04,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19100011.a1",
+      "name": "轴承",
+      "name_spec": "轴承||bs6206-2z/c3"
+    },
+    "code": "T19100011.A1",
+    "name": "轴承",
+    "spec": "BS6206-2Z/C3",
+    "material": "",
+    "weight_kg": 0.197,
+    "process": "标准件",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19100013.a1",
+      "name": "轴承",
+      "name_spec": "轴承||bs6208-2z/c3"
+    },
+    "code": "T19100013.A1",
+    "name": "轴承",
+    "spec": "BS6208-2Z/C3",
+    "material": "",
+    "weight_kg": 0.36,
+    "process": "标准件",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27080721.a1",
+      "name": "油封",
+      "name_spec": "油封||tc40x62x7/fkm"
+    },
+    "code": "T27080721.A1",
+    "name": "油封",
+    "spec": "TC40X62X7/FKM",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19170003.a1",
+      "name": "波形弹簧",
+      "name_spec": "波形弹簧||jb/t7590-2005(d80/发蓝)"
+    },
+    "code": "T19170003.A1",
+    "name": "波形弹簧",
+    "spec": "JB/T 7590-2005（D80/发蓝）",
+    "material": "65Mn",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020153.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m3x14/12.9级/达克罗)"
+    },
+    "code": "T19020153.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T70.1-2008(M3X14/12.9级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020102.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m4x12/8.8级/达克罗)"
+    },
+    "code": "T19020102.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M4X12/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020103.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x12/8.8级/达克罗)"
+    },
+    "code": "T19020103.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x12/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 19.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020104.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x16/8.8级/达克罗)"
+    },
+    "code": "T19020104.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020707.a0",
+      "name": "内六角平圆头螺钉",
+      "name_spec": "内六角平圆头螺钉||gb/t70.2-2008(m6x12/10.9级/达克罗)"
+    },
+    "code": "T19020707.A0",
+    "name": "内六角平圆头螺钉",
+    "spec": "GB/T 70.2-2008（M6x12/10.9级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020146.a0",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x35/8.8级/达克罗)"
+    },
+    "code": "T19020146.A0",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T70.1-2008(M5x35/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020137.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m6x16/8.8级/达克罗)"
+    },
+    "code": "T19020137.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M6x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020147.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x16/8.8级/达克罗)"
+    },
+    "code": "T19020147.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020110.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x25/8.8级/达克罗)"
+    },
+    "code": "T19020110.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x25/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 14.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w19020059.a1",
+      "name": "外六角十字组合螺钉",
+      "name_spec": "外六角十字组合螺钉||gb9074.13m8x20"
+    },
+    "code": "W19020059.A1",
+    "name": "外六角十字组合螺钉",
+    "spec": "GB9074.13 M8X20",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020801.a1",
+      "name": "吊环螺钉",
+      "name_spec": "吊环螺钉||gb/t825-1988(m8/镀白锌)"
+    },
+    "code": "T19020801.A1",
+    "name": "吊环螺钉",
+    "spec": "GB/T 825-1988（M8/镀白锌）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030101.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(4/达克罗)"
+    },
+    "code": "T19030101.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（4/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030102.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(5/达克罗)"
+    },
+    "code": "T19030102.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（5/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 23.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030103.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(6/达克罗)"
+    },
+    "code": "T19030103.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（6/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 8.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030104.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(8/达克罗)"
+    },
+    "code": "T19030104.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（8/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 15.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19180001.a1",
+      "name": "普通平键",
+      "name_spec": "普通平键||gb/t1096-2003(a2x2x8)"
+    },
+    "code": "T19180001.A1",
+    "name": "普通平键",
+    "spec": "GB/T 1096-2003（A2X2X8）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w27090005.a1",
+      "name": "透气阀",
+      "name_spec": "透气阀||wvm12x1.5"
+    },
+    "code": "W27090005.A1",
+    "name": "透气阀",
+    "spec": "WVM12X1.5",
+    "material": "不锈钢",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46170061.a1",
+      "name": "吊耳",
+      "name_spec": "吊耳||304不锈钢"
+    },
+    "code": "T46170061.A1",
+    "name": "吊耳",
+    "spec": "304不锈钢",
+    "material": "不锈钢304",
+    "weight_kg": 0.046,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27080030.a0",
+      "name": "o型圈",
+      "name_spec": "o型圈||φ104.4*φ1.78，丁腈橡胶"
+    },
+    "code": "T27080030.A0",
+    "name": "O型圈",
+    "spec": "φ104.4*φ1.78，丁腈橡胶",
+    "material": "NBR70",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46180991.a0",
+      "name": "上盖板密封圈",
+      "name_spec": "上盖板密封圈||112×32×3.4"
+    },
+    "code": "T46180991.A0",
+    "name": "上盖板密封圈",
+    "spec": "112×32×3.4",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46180992.a0",
+      "name": "后盖板密封圈",
+      "name_spec": "后盖板密封圈||线径φ1.7密封圈"
+    },
+    "code": "T46180992.A0",
+    "name": "后盖板密封圈",
+    "spec": "线径φ1.7密封圈",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w15300012.a0",
+      "name": "格兰头",
+      "name_spec": "格兰头||hx-np.m25-16"
+    },
+    "code": "W15300012.A0",
+    "name": "格兰头",
+    "spec": "HX-NP.M25-16",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t49030831.a1",
+      "name": "铭牌",
+      "name_spec": "铭牌||柳工专属铭牌"
+    },
+    "code": "T49030831.A1",
+    "name": "铭牌",
+    "spec": "柳工专属铭牌",
+    "material": "铝板",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160994.a0",
+      "name": "插件保护罩",
+      "name_spec": "插件保护罩||52×33×36.5"
+    },
+    "code": "T46160994.A0",
+    "name": "插件保护罩",
+    "spec": "52×33×36.5",
+    "material": "Q235-A",
+    "weight_kg": 0.042,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22210016.a0",
+      "name": "连接器",
+      "name_spec": "连接器||at04-12pa-pm02"
+    },
+    "code": "W22210016.A0",
+    "name": "连接器",
+    "spec": "AT04-12PA-PM02",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22210017.a0",
+      "name": "端子",
+      "name_spec": "端子||at60-16-0622"
+    },
+    "code": "W22210017.A0",
+    "name": "端子",
+    "spec": "AT60-16-0622",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 9.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22230011.a0",
+      "name": "堵头",
+      "name_spec": "堵头||at13-204-2005"
+    },
+    "code": "W22230011.A0",
+    "name": "堵头",
+    "spec": "AT13-204-2005",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22230012.a0",
+      "name": "锁扣",
+      "name_spec": "锁扣||aw12p"
+    },
+    "code": "W22230012.A0",
+    "name": "锁扣",
+    "spec": "AW12P",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t47240002.a0",
+      "name": "屏蔽网",
+      "name_spec": "屏蔽网||8mm镀银铜编制套管"
+    },
+    "code": "T47240002.A0",
+    "name": "屏蔽网",
+    "spec": "8mm镀银铜编制套管",
+    "material": "镀银铜",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.15
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090002.a0",
+      "name": "轧带",
+      "name_spec": "轧带||150×2.5mmpa66"
+    },
+    "code": "W26090002.A0",
+    "name": "轧带",
+    "spec": "150×2.5mm PA66",
+    "material": "PA66",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090001.a0",
+      "name": "轧带",
+      "name_spec": "轧带||150x4mmpa66带座"
+    },
+    "code": "W26090001.A0",
+    "name": "轧带",
+    "spec": "150x4mm PA66 带座",
+    "material": "PA66",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27100002.a0",
+      "name": "密封胶",
+      "name_spec": "密封胶||locteti5910,310ml/瓶,黑色"
+    },
+    "code": "T27100002.A0",
+    "name": "密封胶",
+    "spec": "Locteti 5910,310ml/瓶,黑色",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 12.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45180881.a0",
+      "name": "磁钢胶",
+      "name_spec": "磁钢胶||darbond，ep-12015，400ml/瓶，乳白色"
+    },
+    "code": "T45180881.A0",
+    "name": "磁钢胶",
+    "spec": "Darbond，EP-12015，400ml/瓶，乳白色",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 60.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w27020001.a0",
+      "name": "螺纹胶",
+      "name_spec": "螺纹胶||乐泰243"
+    },
+    "code": "W27020001.A0",
+    "name": "螺纹胶",
+    "spec": "乐泰243",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w23020065",
+      "name": "热缩套管",
+      "name_spec": "热缩套管||φ8单壁热缩管"
+    },
+    "code": "W23020065",
+    "name": "热缩套管",
+    "spec": "Φ8单壁热缩管",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.1
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22070096",
+      "name": "线束总成",
+      "name_spec": "线束总成||线径35mm²，线长900mm，800mm，710mm"
+    },
+    "code": "W22070096",
+    "name": "线束总成",
+    "spec": "线径35mm²，线长900mm，800mm，710mm",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20行走电机总成",
+    "product_code": "Genesis-Motor-TZ200-XDA11-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26020001",
+      "name": "木箱",
+      "name_spec": "木箱||800*550*420中间有隔板，+3cm的泡棉"
+    },
+    "code": "W26020001",
+    "name": "木箱",
+    "spec": "800*550*420 中间有隔板，+3CM的泡棉",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.5
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44201236",
+      "name": "定子组件",
+      "name_spec": "定子组件||od200mm，l90mm浸漆定子"
+    },
+    "code": "T44201236",
+    "name": "定子组件",
+    "spec": "OD200mm，L90mm浸漆定子",
+    "material": "漆包线（铜）",
+    "weight_kg": 3.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44210731.a0",
+      "name": "定子铁芯",
+      "name_spec": "定子铁芯||od200mm，b30ahv1500，l90mm，双v"
+    },
+    "code": "T44210731.A0",
+    "name": "定子铁芯",
+    "spec": "OD200mm，B30AHV1500，L90mm，双V",
+    "material": "B30AHV1500",
+    "weight_kg": 9.0,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t44101234",
+      "name": "机壳",
+      "name_spec": "机壳||拉伸机壳od200mm，l183mm"
+    },
+    "code": "T44101234",
+    "name": "机壳",
+    "spec": "拉伸机壳OD200mm，L183mm",
+    "material": "6063-T5",
+    "weight_kg": 4.8,
+    "process": "拉伸",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45120731.a1",
+      "name": "转子铁芯",
+      "name_spec": "转子铁芯||od200mm，b30ahv1500，l15mm，双v"
+    },
+    "code": "T45120731.A1",
+    "name": "转子铁芯",
+    "spec": "OD200mm，B30AHV1500，L15mm，双V",
+    "material": "B30AHV1500",
+    "weight_kg": 1.1,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 6.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45130731.a1",
+      "name": "永磁体",
+      "name_spec": "永磁体||4.5×18×15mm，42uh"
+    },
+    "code": "T45130731.A1",
+    "name": "永磁体",
+    "spec": "4.5×18×15mm，42UH",
+    "material": "钕铁硼48UH",
+    "weight_kg": 0.0095,
+    "process": "烧结",
+    "current_unit_price": 0.0,
+    "qty": 96.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45130732.a1",
+      "name": "永磁体",
+      "name_spec": "永磁体||3.5×9.7×15mm，42uh"
+    },
+    "code": "T45130732.A1",
+    "name": "永磁体",
+    "spec": "3.5×9.7×15mm，42UH",
+    "material": "钕铁硼48UH",
+    "weight_kg": 0.004,
+    "process": "烧结",
+    "current_unit_price": 0.0,
+    "qty": 96.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45111236",
+      "name": "电机轴",
+      "name_spec": "电机轴||l225.5mm，20crmnti"
+    },
+    "code": "T45111236",
+    "name": "电机轴",
+    "spec": "L225.5mm，20CrMnTi",
+    "material": "20CrMnTiH",
+    "weight_kg": 2.25,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45140721.a1",
+      "name": "转子挡板",
+      "name_spec": "转子挡板||内外径45×136mm"
+    },
+    "code": "T45140721.A1",
+    "name": "转子挡板",
+    "spec": "内外径45×136mm",
+    "material": "6061",
+    "weight_kg": 0.232,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45150801.a1",
+      "name": "转子轴套",
+      "name_spec": "转子轴套||内外径45*57mm"
+    },
+    "code": "T45150801.A1",
+    "name": "转子轴套",
+    "spec": "内外径45*57mm",
+    "material": "45钢",
+    "weight_kg": 0.075,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45170061.a2",
+      "name": "轴承压盖",
+      "name_spec": "轴承压盖||内外径42×95mm"
+    },
+    "code": "T45170061.A2",
+    "name": "轴承压盖",
+    "spec": "内外径42×95mm",
+    "material": "45钢",
+    "weight_kg": 0.21,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46111199",
+      "name": "前端盖",
+      "name_spec": "前端盖||od200mm前端盖(双20油泵)"
+    },
+    "code": "T46111199",
+    "name": "前端盖",
+    "spec": "OD200mm前端盖（双20油泵）",
+    "material": "A356-T6",
+    "weight_kg": 1.42,
+    "process": "低压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46121191",
+      "name": "后端盖",
+      "name_spec": "后端盖||od200mm后端盖"
+    },
+    "code": "T46121191",
+    "name": "后端盖",
+    "spec": "OD200mm后端盖",
+    "material": "6061-T6",
+    "weight_kg": 1.98,
+    "process": "低压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46150992.a0",
+      "name": "接线盒",
+      "name_spec": "接线盒||123×70×56mm"
+    },
+    "code": "T46150992.A0",
+    "name": "接线盒",
+    "spec": "123×70×56mm",
+    "material": "ADC12",
+    "weight_kg": 0.581,
+    "process": "高压铸造",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46171071.a0",
+      "name": "三相盖板",
+      "name_spec": "三相盖板||不锈钢304/3mm"
+    },
+    "code": "T46171071.A0",
+    "name": "三相盖板",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 0.228,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160992.a0",
+      "name": "后盖板",
+      "name_spec": "后盖板||旋变后盖板"
+    },
+    "code": "T46160992.A0",
+    "name": "后盖板",
+    "spec": "旋变后盖板",
+    "material": "不锈钢304",
+    "weight_kg": 0.267,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160993.a0",
+      "name": "上盖板",
+      "name_spec": "上盖板||不锈钢304/3mm"
+    },
+    "code": "T46160993.A0",
+    "name": "上盖板",
+    "spec": "不锈钢304/3mm",
+    "material": "不锈钢304",
+    "weight_kg": 1.38,
+    "process": "机加工",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46200991.a0",
+      "name": "接线板",
+      "name_spec": "接线板||106×24.5×23.5mm"
+    },
+    "code": "T46200991.A0",
+    "name": "接线板",
+    "spec": "106×24.5×23.5mm",
+    "material": "PPS+GF30%",
+    "weight_kg": 0.03,
+    "process": "注塑",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46131182",
+      "name": "安装底板",
+      "name_spec": "安装底板||216×136×17mm"
+    },
+    "code": "T46131182",
+    "name": "安装底板",
+    "spec": "216×136×17mm",
+    "material": "Q235-A",
+    "weight_kg": 1.57,
+    "process": "弯折",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46170021.a1",
+      "name": "旋变定子压板",
+      "name_spec": "旋变定子压板||厚度2mm"
+    },
+    "code": "T46170021.A1",
+    "name": "旋变定子压板",
+    "spec": "厚度2 mm",
+    "material": "Q235-A",
+    "weight_kg": 0.016,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030302.a1",
+      "name": "特大垫圈c级",
+      "name_spec": "特大垫圈c级||gb/t5287-2002(5/镀白锌)"
+    },
+    "code": "T19030302.A1",
+    "name": "特大垫圈C级",
+    "spec": "GB/T 5287-2002（5/镀白锌）",
+    "material": "碳钢",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t47210801.a1",
+      "name": "旋转变压器",
+      "name_spec": "旋转变压器||j52xu9734-l49"
+    },
+    "code": "T47210801.A1",
+    "name": "旋转变压器",
+    "spec": "J52XU9734-L49",
+    "material": "",
+    "weight_kg": 0.04,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19100011.a1",
+      "name": "轴承",
+      "name_spec": "轴承||bs6206-2z/c3"
+    },
+    "code": "T19100011.A1",
+    "name": "轴承",
+    "spec": "BS6206-2Z/C3",
+    "material": "",
+    "weight_kg": 0.197,
+    "process": "标准件",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19100012.a1",
+      "name": "轴承",
+      "name_spec": "轴承||bs6207-2z/c3"
+    },
+    "code": "T19100012.A1",
+    "name": "轴承",
+    "spec": "BS6207-2Z/C3",
+    "material": "",
+    "weight_kg": 0.25,
+    "process": "标准件",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27080731.a1",
+      "name": "油封",
+      "name_spec": "油封||tc35x62x7/fkm"
+    },
+    "code": "T27080731.A1",
+    "name": "油封",
+    "spec": "TC35X62X7/FKM",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19170002.a1",
+      "name": "波形弹簧",
+      "name_spec": "波形弹簧||jb/t7590-2005(d72/发蓝)"
+    },
+    "code": "T19170002.A1",
+    "name": "波形弹簧",
+    "spec": "JB/T 7590-2005（D72/发蓝）",
+    "material": "65Mn",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020153.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m3x14/12.9级/达克罗)"
+    },
+    "code": "T19020153.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T70.1-2008(M3X14/12.9级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020102.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m4x12/8.8级/达克罗)"
+    },
+    "code": "T19020102.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M4X12/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020103.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x12/8.8级/达克罗)"
+    },
+    "code": "T19020103.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x12/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 19.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020104.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x16/8.8级/达克罗)"
+    },
+    "code": "T19020104.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M5x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020707.a0",
+      "name": "内六角平圆头螺钉",
+      "name_spec": "内六角平圆头螺钉||gb/t70.2-2008(m6x12/10.9级/达克罗)"
+    },
+    "code": "T19020707.A0",
+    "name": "内六角平圆头螺钉",
+    "spec": "GB/T 70.2-2008（M6x12/10.9级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020146.a0",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m5x35/8.8级/达克罗)"
+    },
+    "code": "T19020146.A0",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T70.1-2008(M5x35/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020137.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m6x16/8.8级/达克罗)"
+    },
+    "code": "T19020137.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M6x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020147.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x16/8.8级/达克罗)"
+    },
+    "code": "T19020147.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x16/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020110.a1",
+      "name": "内六角圆柱头螺钉",
+      "name_spec": "内六角圆柱头螺钉||gb/t70.1-2008(m8x25/8.8级/达克罗)"
+    },
+    "code": "T19020110.A1",
+    "name": "内六角圆柱头螺钉",
+    "spec": "GB/T 70.1-2008（M8x25/8.8级/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 14.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w19020059.a1",
+      "name": "外六角十字组合螺钉",
+      "name_spec": "外六角十字组合螺钉||gb9074.13m8x20"
+    },
+    "code": "W19020059.A1",
+    "name": "外六角十字组合螺钉",
+    "spec": "GB9074.13 M8X20",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020302.a1",
+      "name": "六角法兰面螺栓",
+      "name_spec": "六角法兰面螺栓||gb/t5787-2000(m8x16/8.8级/达克罗/带齿)"
+    },
+    "code": "T19020302.A1",
+    "name": "六角法兰面螺栓",
+    "spec": "GB/T 5787-2000（M8X16/8.8级/达克罗/带齿）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19020801.a1",
+      "name": "吊环螺钉",
+      "name_spec": "吊环螺钉||gb/t825-1988(m8/镀白锌)"
+    },
+    "code": "T19020801.A1",
+    "name": "吊环螺钉",
+    "spec": "GB/T 825-1988（M8/镀白锌）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030101.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(4/达克罗)"
+    },
+    "code": "T19030101.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（4/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 4.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030102.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(5/达克罗)"
+    },
+    "code": "T19030102.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（5/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 23.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030103.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(6/达克罗)"
+    },
+    "code": "T19030103.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（6/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 8.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19030104.a1",
+      "name": "弹簧垫圈",
+      "name_spec": "弹簧垫圈||gb/t93-1987(8/达克罗)"
+    },
+    "code": "T19030104.A1",
+    "name": "弹簧垫圈",
+    "spec": "GB/T 93-1987（8/达克罗）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 15.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t19180001.a1",
+      "name": "普通平键",
+      "name_spec": "普通平键||gb/t1096-2003(a2x2x8)"
+    },
+    "code": "T19180001.A1",
+    "name": "普通平键",
+    "spec": "GB/T 1096-2003（A2X2X8）",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w27090005.a1",
+      "name": "透气阀",
+      "name_spec": "透气阀||wvm12x1.5"
+    },
+    "code": "W27090005.A1",
+    "name": "透气阀",
+    "spec": "WVM12X1.5",
+    "material": "不锈钢",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46170061.a1",
+      "name": "吊耳",
+      "name_spec": "吊耳||304不锈钢"
+    },
+    "code": "T46170061.A1",
+    "name": "吊耳",
+    "spec": "304不锈钢",
+    "material": "304不锈钢",
+    "weight_kg": 0.046,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27080030.a0",
+      "name": "o型圈",
+      "name_spec": "o型圈||φ104.4*φ1.78，丁腈橡胶"
+    },
+    "code": "T27080030.A0",
+    "name": "O型圈",
+    "spec": "φ104.4*φ1.78，丁腈橡胶",
+    "material": "NBR70",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46180991.a0",
+      "name": "上盖板密封圈",
+      "name_spec": "上盖板密封圈||112×32×3.4"
+    },
+    "code": "T46180991.A0",
+    "name": "上盖板密封圈",
+    "spec": "112×32×3.4",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46180992.a0",
+      "name": "后盖板密封圈",
+      "name_spec": "后盖板密封圈||线径φ1.7密封圈"
+    },
+    "code": "T46180992.A0",
+    "name": "后盖板密封圈",
+    "spec": "线径φ1.7密封圈",
+    "material": "氟橡胶",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w15300012.a0",
+      "name": "格兰头",
+      "name_spec": "格兰头||hx-np.m25-16"
+    },
+    "code": "W15300012.A0",
+    "name": "格兰头",
+    "spec": "HX-NP.M25-16",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t49030831.a1",
+      "name": "铭牌",
+      "name_spec": "铭牌||柳工专属铭牌"
+    },
+    "code": "T49030831.A1",
+    "name": "铭牌",
+    "spec": "柳工专属铭牌",
+    "material": "铝板",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t46160994.a0",
+      "name": "插件保护罩",
+      "name_spec": "插件保护罩||52×33×36.5"
+    },
+    "code": "T46160994.A0",
+    "name": "插件保护罩",
+    "spec": "52×33×36.5",
+    "material": "Q235-A",
+    "weight_kg": 0.042,
+    "process": "冲压",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22210016.a0",
+      "name": "连接器",
+      "name_spec": "连接器||at04-12pa-pm02"
+    },
+    "code": "W22210016.A0",
+    "name": "连接器",
+    "spec": "AT04-12PA-PM02",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22210017.a0",
+      "name": "端子",
+      "name_spec": "端子||at60-16-0622"
+    },
+    "code": "W22210017.A0",
+    "name": "端子",
+    "spec": "AT60-16-0622",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 9.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22230011.a0",
+      "name": "堵头",
+      "name_spec": "堵头||at13-204-2005"
+    },
+    "code": "W22230011.A0",
+    "name": "堵头",
+    "spec": "AT13-204-2005",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22230012.a0",
+      "name": "锁扣",
+      "name_spec": "锁扣||aw12p"
+    },
+    "code": "W22230012.A0",
+    "name": "锁扣",
+    "spec": "AW12P",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t47240002.a0",
+      "name": "屏蔽网",
+      "name_spec": "屏蔽网||8mm镀银铜编制套管"
+    },
+    "code": "T47240002.A0",
+    "name": "屏蔽网",
+    "spec": "8mm镀银铜编制套管",
+    "material": "镀银铜",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.15
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090002.a0",
+      "name": "轧带",
+      "name_spec": "轧带||150×2.5mmpa66"
+    },
+    "code": "W26090002.A0",
+    "name": "轧带",
+    "spec": "150×2.5mm PA66",
+    "material": "PA66",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26090001.a0",
+      "name": "轧带",
+      "name_spec": "轧带||150x4mmpa66带座"
+    },
+    "code": "W26090001.A0",
+    "name": "轧带",
+    "spec": "150x4mm PA66 带座",
+    "material": "PA66",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 2.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t27100002.a0",
+      "name": "密封胶",
+      "name_spec": "密封胶||locteti5910,310ml/瓶,黑色"
+    },
+    "code": "T27100002.A0",
+    "name": "密封胶",
+    "spec": "Locteti 5910,310ml/瓶,黑色",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 12.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "t45180881.a0",
+      "name": "磁钢胶",
+      "name_spec": "磁钢胶||darbond，ep-12015，400ml/瓶，乳白色"
+    },
+    "code": "T45180881.A0",
+    "name": "磁钢胶",
+    "spec": "Darbond，EP-12015，400ml/瓶，乳白色",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 60.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w27020001.a0",
+      "name": "螺纹胶",
+      "name_spec": "螺纹胶||乐泰243"
+    },
+    "code": "W27020001.A0",
+    "name": "螺纹胶",
+    "spec": "乐泰243",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 3.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w22070095",
+      "name": "线束总成",
+      "name_spec": "线束总成||线径35mm²，线长700mm，650mm，610mm"
+    },
+    "code": "W22070095",
+    "name": "线束总成",
+    "spec": "线径35mm²，线长700mm，650mm，610mm",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 1.0
+  },
+  {
+    "product": "柳工3.5T双20油泵电机总成",
+    "product_code": "Genesis-Motor-TZ200-XPA24-80-01-A",
+    "sheet_name": "Sheet1",
+    "match_keys": {
+      "code": "w26020001",
+      "name": "木箱",
+      "name_spec": "木箱||800*550*420中间有隔板，+3cm的泡棉"
+    },
+    "code": "W26020001",
+    "name": "木箱",
+    "spec": "800*550*420 中间有隔板，+3CM的泡棉",
+    "material": "",
+    "weight_kg": 0.0,
+    "process": "",
+    "current_unit_price": 0.0,
+    "qty": 0.5
+  }
+]

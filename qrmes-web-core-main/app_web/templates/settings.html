@@ -1,0 +1,596 @@
+{% extends "base.html" %}
+
+{% block title %}系统设置{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>系统设置</h2>
+    </div>
+
+    <div class="card" style="margin-bottom: 1.5rem; border: 1px solid #1e2d3d;">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; background:#0f1a2a;">
+            <h3 style="margin:0;">全局 QC 模型配置</h3>
+        </div>
+        <div style="padding: 1rem;">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.75rem 1rem;">
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label for="qcVisionMode">识别模式（全局）</label>
+                    <select id="qcVisionMode" class="form-control">
+                        <option value="online">仅在线 API（Qwen）</option>
+                        <option value="local">仅本地模型</option>
+                        <option value="dual">双模型并行（对比）</option>
+                        <option value="dual_online">双在线分流（Flash主，Plus分担）</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;" id="qcDualPrimaryGroup">
+                    <label for="qcDualPrimary">双模型主结果来源</label>
+                    <select id="qcDualPrimary" class="form-control">
+                        <option value="online">在线 API 优先</option>
+                        <option value="local">本地模型优先</option>
+                        <option value="secondary_online">第二在线模型优先</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="onlineSettingsCard" style="margin-top:0.5rem; border:1px solid #1e2d3d; border-radius:4px; padding:0.75rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                    <strong>在线模型配置</strong>
+                    <button id="refreshOnlineModelsBtn" type="button" class="btn btn-secondary"
+                        style="padding: 0.35rem 0.9rem; font-size: 0.85rem;" onclick="refreshOnlineModels()">刷新在线模型</button>
+                </div>
+                <div class="form-group" style="margin-top:0.75rem; margin-bottom: 0.5rem;">
+                    <label for="qcOnlineModel">在线视觉模型</label>
+                    <select id="qcOnlineModel" class="form-control"></select>
+                </div>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.75rem 1rem; margin-top: 0.75rem;">
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                        <label for="qcOnlineApiKey">主在线 API Key</label>
+                        <input type="password" id="qcOnlineApiKey" class="form-control" autocomplete="off"
+                            placeholder="留空表示不修改；勾选右侧可清空">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.5rem; display:flex; align-items:flex-end;">
+                        <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; margin:0;">
+                            <input type="checkbox" id="qcOnlineApiKeyClear">
+                            <span>保存时清空主在线 API Key</span>
+                        </label>
+                    </div>
+                </div>
+                <div id="onlineModelMeta" style="color:#5a6f85; font-size:0.9rem;">加载中...</div>
+            </div>
+
+            <div id="secondaryOnlineSettingsCard" style="margin-top:0.75rem; border:1px solid #1e2d3d; border-radius:4px; padding:0.75rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                    <strong>第二在线模型配置</strong>
+                    <button id="refreshSecondaryOnlineModelsBtn" type="button" class="btn btn-secondary"
+                        style="padding: 0.35rem 0.9rem; font-size: 0.85rem;" onclick="refreshSecondaryOnlineModels()">刷新第二在线模型</button>
+                </div>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.75rem 1rem; margin-top: 0.75rem;">
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                        <label for="qcSecondaryOnlineModel">第二在线视觉模型</label>
+                        <select id="qcSecondaryOnlineModel" class="form-control"></select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                        <label for="qcSecondaryOnlineBaseUrl">第二在线服务地址</label>
+                        <input type="text" id="qcSecondaryOnlineBaseUrl" class="form-control" placeholder="例如：https://dashscope.aliyuncs.com/compatible-mode/v1">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                        <label for="qcSecondaryOnlineApiKey">第二在线 API Key</label>
+                        <input type="password" id="qcSecondaryOnlineApiKey" class="form-control" autocomplete="off"
+                            placeholder="建议填写与主在线模型不同的 Key">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.5rem; display:flex; align-items:flex-end;">
+                        <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; margin:0;">
+                            <input type="checkbox" id="qcSecondaryOnlineApiKeyClear">
+                            <span>保存时清空第二在线 API Key</span>
+                        </label>
+                    </div>
+                </div>
+                <div id="secondaryOnlineModelMeta" style="color:#5a6f85; font-size:0.9rem;">加载中...</div>
+            </div>
+
+            <div id="localSettingsCard" style="margin-top:0.75rem; border:1px solid #1e2d3d; border-radius:4px; padding:0.75rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                    <strong>本地模型配置</strong>
+                    <button id="refreshLocalModelsBtn" type="button" class="btn btn-secondary"
+                        style="padding: 0.35rem 0.9rem; font-size: 0.85rem;" onclick="refreshLocalModels()">刷新本地模型</button>
+                </div>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.75rem 1rem; margin-top: 0.75rem;">
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                        <label for="qcLocalModel">本地视觉模型</label>
+                        <input type="text" id="qcLocalModel" class="form-control" list="qcLocalModelList"
+                            placeholder="例如：qwen/qwen3-vl-30b">
+                        <datalist id="qcLocalModelList"></datalist>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                        <label for="qcLocalBaseUrl">本地服务地址</label>
+                        <input type="text" id="qcLocalBaseUrl" class="form-control" placeholder="例如：http://127.0.0.1:1234/v1">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                        <label for="qcLocalApiKey">本地 API Key（可选）</label>
+                        <input type="password" id="qcLocalApiKey" class="form-control" autocomplete="off"
+                            placeholder="留空表示不修改；勾选下方可清空">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.5rem; display:flex; align-items:flex-end;">
+                        <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; margin:0;">
+                            <input type="checkbox" id="qcLocalApiKeyClear">
+                            <span>保存时清空本地 API Key</span>
+                        </label>
+                    </div>
+                </div>
+                <div id="localModelMeta" style="color:#5a6f85; font-size:0.9rem;">加载中...</div>
+            </div>
+
+            <div style="margin-top: 1rem;">
+                <small style="color:#5a6f85; display:block; margin-bottom:0.5rem;">
+                    此配置全局生效，项目页只展示当前全局值，不再单独维护模型配置。
+                </small>
+                <button id="saveGlobalQcModelBtn" type="button" class="btn btn-primary" onclick="saveGlobalQcModel()">保存全局 QC 配置</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const COMMON_ONLINE_QWEN_MODELS = [
+        { id: 'qwen3-vl-flash', label: 'qwen3-vl-flash' },
+        { id: 'qwen3-vl-plus', label: 'qwen3-vl-plus' },
+        { id: 'qwen3-vl-max', label: 'qwen3-vl-max' },
+        { id: 'qwen3.5-plus', label: 'qwen3.5-plus' },
+        { id: 'qwen-vl-max-latest', label: 'qwen-vl-max-latest' },
+        { id: 'qwen-vl-max', label: 'qwen-vl-max' },
+        { id: 'qwen-vl-plus', label: 'qwen-vl-plus' },
+        { id: 'qwen-max-latest', label: 'qwen-max-latest' },
+        { id: 'qwen-plus-latest', label: 'qwen-plus-latest' },
+    ];
+
+    function normalizeModelOptions(rawModels) {
+        const rows = Array.isArray(rawModels) ? rawModels : [];
+        const seen = new Set();
+        const options = [];
+        for (const item of rows) {
+            let id = '';
+            let label = '';
+            if (typeof item === 'string') {
+                id = item.trim();
+                label = id;
+            } else if (item && typeof item === 'object') {
+                id = String(item.id || item.model || item.name || '').trim();
+                label = String(item.label || id).trim();
+            }
+            if (!id || seen.has(id)) continue;
+            seen.add(id);
+            options.push({ id, label: label || id });
+        }
+        return options;
+    }
+
+    function mergeModelOptions(...groups) {
+        const merged = [];
+        const seen = new Set();
+        for (const group of groups) {
+            for (const model of normalizeModelOptions(group)) {
+                if (seen.has(model.id)) continue;
+                seen.add(model.id);
+                merged.push(model);
+            }
+        }
+        return merged;
+    }
+
+    function ensureSelectValue(selectId, value) {
+        const select = document.getElementById(selectId);
+        if (!select || !value) return;
+        const exists = Array.from(select.options).some((option) => option.value === value);
+        if (exists) return;
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+    }
+
+    function renderModelOptions(targetId, models) {
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        const tagName = target.tagName.toLowerCase();
+        target.innerHTML = '';
+        for (const model of models) {
+            const option = document.createElement('option');
+            option.value = model.id;
+            if (tagName === 'select') {
+                option.textContent = model.label || model.id;
+            } else {
+                option.label = model.label || model.id;
+            }
+            target.appendChild(option);
+        }
+    }
+
+    function setModelMeta(metaId, text, type = 'info') {
+        const meta = document.getElementById(metaId);
+        if (!meta) return;
+        meta.textContent = text || '';
+        if (type === 'error') {
+            meta.style.color = '#e53e3e';
+        } else if (type === 'warning') {
+            meta.style.color = '#b7791f';
+        } else if (type === 'success') {
+            meta.style.color = '#2f855a';
+        } else {
+            meta.style.color = '#718096';
+        }
+    }
+
+    function buildModelMetaText(source, warning, apiKeyConfigured, modelCount = 0) {
+        const sourceMap = {
+            remote: '在线拉取',
+            fallback: '内置回退',
+        };
+        const sourceText = sourceMap[source] || '未知';
+        const apiKeyHint = apiKeyConfigured ? '' : '（未配置 API Key）';
+        const countHint = modelCount > 0 ? `；当前可选 ${modelCount} 个模型` : '';
+        if (warning) {
+            return `模型来源：${sourceText}${apiKeyHint}${countHint}；${warning}`;
+        }
+        return `模型来源：${sourceText}${apiKeyHint}${countHint}`;
+    }
+
+    function resolveModelMetaState(warning, models) {
+        const hasModels = Array.isArray(models) && models.length > 0;
+        if (warning && hasModels) {
+            return 'warning';
+        }
+        if (warning) {
+            return 'error';
+        }
+        return 'success';
+    }
+
+    function syncDualPrimaryOptions(mode, preferredValue = '') {
+        const select = document.getElementById('qcDualPrimary');
+        if (!select) return;
+        const optionsByMode = {
+            dual: [
+                { value: 'online', label: '在线 API 优先' },
+                { value: 'local', label: '本地模型优先' },
+            ],
+            dual_online: [
+                { value: 'online', label: 'Flash 主模型（Plus 分担）' },
+            ],
+        };
+        const options = optionsByMode[mode] || [];
+        const fallbackValue = options[0] ? options[0].value : 'online';
+        const targetValue = options.some((item) => item.value === preferredValue) ? preferredValue : fallbackValue;
+        select.innerHTML = '';
+        for (const item of options) {
+            const option = document.createElement('option');
+            option.value = item.value;
+            option.textContent = item.label;
+            select.appendChild(option);
+        }
+        select.value = targetValue;
+    }
+
+    function toggleModeFields() {
+        const mode = document.getElementById('qcVisionMode').value;
+        const onlineCard = document.getElementById('onlineSettingsCard');
+        const secondaryOnlineCard = document.getElementById('secondaryOnlineSettingsCard');
+        const localCard = document.getElementById('localSettingsCard');
+        const dualPrimaryGroup = document.getElementById('qcDualPrimaryGroup');
+        const currentPrimary = document.getElementById('qcDualPrimary').value;
+        onlineCard.style.display = (mode === 'online' || mode === 'dual' || mode === 'dual_online') ? '' : 'none';
+        secondaryOnlineCard.style.display = mode === 'dual_online' ? '' : 'none';
+        localCard.style.display = (mode === 'local' || mode === 'dual') ? '' : 'none';
+        dualPrimaryGroup.style.display = mode === 'dual' ? '' : 'none';
+        syncDualPrimaryOptions(mode, currentPrimary);
+    }
+
+    function applyGlobalSettings(data) {
+        const current = data || {};
+        const online = (current.online && typeof current.online === 'object') ? current.online : {};
+        const secondaryOnline = (current.secondary_online && typeof current.secondary_online === 'object') ? current.secondary_online : {};
+        const local = (current.local && typeof current.local === 'object') ? current.local : {};
+        const onlineModel = (online.model || current.vision_model || '').trim();
+        const secondaryOnlineModel = (secondaryOnline.model || current.secondary_online_model || 'qwen3.5-plus').trim();
+
+        document.getElementById('qcVisionMode').value = (current.vision_mode || 'online').trim() || 'online';
+        syncDualPrimaryOptions(document.getElementById('qcVisionMode').value, (current.dual_primary || 'online').trim() || 'online');
+        document.getElementById('qcOnlineApiKey').value = '';
+        document.getElementById('qcOnlineApiKeyClear').checked = false;
+        document.getElementById('qcSecondaryOnlineBaseUrl').value = (secondaryOnline.base_url || current.secondary_online_base_url || '').trim();
+        document.getElementById('qcSecondaryOnlineApiKey').value = '';
+        document.getElementById('qcSecondaryOnlineApiKeyClear').checked = false;
+        document.getElementById('qcLocalModel').value = (local.model || current.local_vision_model || '').trim();
+        document.getElementById('qcLocalBaseUrl').value = (local.base_url || current.local_vision_base_url || '').trim();
+        document.getElementById('qcLocalApiKey').value = '';
+        const localApiKeyClearCheckbox = document.getElementById('qcLocalApiKeyClear');
+        if (localApiKeyClearCheckbox) {
+            localApiKeyClearCheckbox.checked = false;
+        }
+
+        const onlineOptions = mergeModelOptions(
+            COMMON_ONLINE_QWEN_MODELS,
+            online.models || current.models || [],
+            onlineModel ? [{ id: onlineModel, label: onlineModel }] : []
+        );
+        const secondaryOnlineOptions = mergeModelOptions(
+            COMMON_ONLINE_QWEN_MODELS,
+            secondaryOnline.models || [],
+            secondaryOnlineModel ? [{ id: secondaryOnlineModel, label: secondaryOnlineModel }] : []
+        );
+        const localOptions = normalizeModelOptions(local.models || []);
+
+        renderModelOptions('qcOnlineModel', onlineOptions);
+        renderModelOptions('qcSecondaryOnlineModel', secondaryOnlineOptions);
+        renderModelOptions('qcLocalModelList', localOptions);
+        ensureSelectValue('qcOnlineModel', onlineModel);
+        ensureSelectValue('qcSecondaryOnlineModel', secondaryOnlineModel);
+        document.getElementById('qcOnlineModel').value = onlineModel || (onlineOptions[0] && onlineOptions[0].id) || '';
+        document.getElementById('qcSecondaryOnlineModel').value = secondaryOnlineModel || (secondaryOnlineOptions[0] && secondaryOnlineOptions[0].id) || 'qwen3.5-plus';
+
+        const onlineWarning = String(online.warning || current.warning || '').trim();
+        const onlineKeyConfigured = Object.prototype.hasOwnProperty.call(online, 'api_key_configured')
+            ? online.api_key_configured
+            : current.api_key_configured;
+        setModelMeta(
+            'onlineModelMeta',
+            buildModelMetaText(
+                online.source || current.source,
+                onlineWarning,
+                Boolean(onlineKeyConfigured),
+                onlineOptions.length
+            ),
+            resolveModelMetaState(onlineWarning, onlineOptions)
+        );
+
+        const secondaryOnlineWarning = String(secondaryOnline.warning || '').trim();
+        const secondaryOnlineKeyConfigured = Boolean(secondaryOnline.api_key_configured);
+        setModelMeta(
+            'secondaryOnlineModelMeta',
+            buildModelMetaText(
+                secondaryOnline.source,
+                secondaryOnlineWarning,
+                secondaryOnlineKeyConfigured,
+                secondaryOnlineOptions.length
+            ),
+            resolveModelMetaState(secondaryOnlineWarning, secondaryOnlineOptions)
+        );
+
+        const localWarning = String(local.warning || '').trim();
+        const localKeyConfigured = Boolean(local.api_key_configured);
+        setModelMeta(
+            'localModelMeta',
+            buildModelMetaText(local.source, localWarning, localKeyConfigured, localOptions.length),
+            resolveModelMetaState(localWarning, localOptions)
+        );
+
+        toggleModeFields();
+    }
+
+    async function loadGlobalQcSettings() {
+        try {
+            const result = await apiRequest('/api/settings/qc-global');
+            if (!result.success) {
+                throw new Error(result.message || '读取全局配置失败');
+            }
+            applyGlobalSettings(result.data || {});
+        } catch (error) {
+            setModelMeta('onlineModelMeta', `读取全局配置失败：${error.message}`, 'error');
+            setModelMeta('localModelMeta', `读取全局配置失败：${error.message}`, 'error');
+            showMessage(`读取全局配置失败：${error.message}`, 'error');
+        }
+    }
+
+    async function initializeGlobalQcSettings() {
+        await loadGlobalQcSettings();
+        await Promise.allSettled([
+            refreshOnlineModels(),
+            refreshSecondaryOnlineModels(),
+            refreshLocalModels(),
+        ]);
+    }
+
+    async function refreshModels(provider) {
+        const isOnlineProvider = provider === 'online' || provider === 'secondary_online';
+        const isSecondaryOnline = provider === 'secondary_online';
+        const refreshBtn = document.getElementById(
+            isSecondaryOnline ? 'refreshSecondaryOnlineModelsBtn' : (provider === 'online' ? 'refreshOnlineModelsBtn' : 'refreshLocalModelsBtn')
+        );
+        const modelInput = document.getElementById(
+            isSecondaryOnline ? 'qcSecondaryOnlineModel' : (provider === 'online' ? 'qcOnlineModel' : 'qcLocalModel')
+        );
+        const listId = isSecondaryOnline ? 'qcSecondaryOnlineModel' : (provider === 'online' ? 'qcOnlineModel' : 'qcLocalModelList');
+        const metaId = isSecondaryOnline ? 'secondaryOnlineModelMeta' : (provider === 'online' ? 'onlineModelMeta' : 'localModelMeta');
+        const currentValue = String(modelInput.value || '').trim();
+
+        refreshBtn.disabled = true;
+        setModelMeta(metaId, '正在抓取可用模型...', 'info');
+        try {
+            const result = await apiRequest(`/api/qc/models?provider=${encodeURIComponent(provider)}`);
+            if (!result.success || !result.data) {
+                throw new Error(result.message || '获取模型列表失败');
+            }
+
+            const options = isOnlineProvider
+                ? mergeModelOptions(
+                    COMMON_ONLINE_QWEN_MODELS,
+                    result.data.models || [],
+                    currentValue ? [{ id: currentValue, label: currentValue }] : []
+                )
+                : normalizeModelOptions(result.data.models || []);
+
+            renderModelOptions(listId, options);
+            if (isOnlineProvider) {
+                ensureSelectValue(isSecondaryOnline ? 'qcSecondaryOnlineModel' : 'qcOnlineModel', currentValue);
+            }
+
+            if (currentValue) {
+                modelInput.value = currentValue;
+            } else if (options.length > 0) {
+                modelInput.value = options[0].id;
+            } else if (result.data.default_model) {
+                modelInput.value = String(result.data.default_model);
+            }
+
+            const warning = String(result.data.warning || '').trim();
+            setModelMeta(
+                metaId,
+                buildModelMetaText(
+                    result.data.source,
+                    warning,
+                    Boolean(result.data.api_key_configured),
+                    options.length
+                ),
+                resolveModelMetaState(warning, options)
+            );
+        } catch (error) {
+            setModelMeta(metaId, `抓取模型失败：${error.message}`, 'error');
+        } finally {
+            refreshBtn.disabled = false;
+        }
+    }
+
+    function refreshOnlineModels() {
+        return refreshModels('online');
+    }
+
+    function refreshSecondaryOnlineModels() {
+        return refreshModels('secondary_online');
+    }
+
+    function refreshLocalModels() {
+        return refreshModels('local');
+    }
+
+    async function saveGlobalQcModel() {
+        const saveBtn = document.getElementById('saveGlobalQcModelBtn');
+        const mode = document.getElementById('qcVisionMode').value;
+        const onlineModel = document.getElementById('qcOnlineModel').value.trim();
+        const onlineApiKey = document.getElementById('qcOnlineApiKey').value.trim();
+        const clearOnlineApiKey = document.getElementById('qcOnlineApiKeyClear').checked;
+        const secondaryOnlineModel = document.getElementById('qcSecondaryOnlineModel').value.trim();
+        const secondaryOnlineBaseUrl = document.getElementById('qcSecondaryOnlineBaseUrl').value.trim();
+        const secondaryOnlineApiKey = document.getElementById('qcSecondaryOnlineApiKey').value.trim();
+        const clearSecondaryOnlineApiKey = document.getElementById('qcSecondaryOnlineApiKeyClear').checked;
+        const localModel = document.getElementById('qcLocalModel').value.trim();
+        const localBaseUrl = document.getElementById('qcLocalBaseUrl').value.trim();
+        const dualPrimary = mode === 'dual_online' ? 'online' : document.getElementById('qcDualPrimary').value;
+        const localApiKey = document.getElementById('qcLocalApiKey').value.trim();
+        const localApiKeyClearCheckbox = document.getElementById('qcLocalApiKeyClear');
+        const clearLocalApiKey = localApiKeyClearCheckbox ? localApiKeyClearCheckbox.checked : false;
+
+        if ((mode === 'online' || mode === 'dual' || mode === 'dual_online') && !onlineModel) {
+            showMessage('在线模式需要配置在线模型', 'error');
+            return;
+        }
+        if (mode === 'dual_online' && !secondaryOnlineModel) {
+            showMessage('双在线模式需要配置第二在线模型', 'error');
+            return;
+        }
+        if (mode === 'dual_online' && !secondaryOnlineBaseUrl) {
+            showMessage('双在线模式需要配置第二在线服务地址', 'error');
+            return;
+        }
+        if (mode === 'dual_online' && !secondaryOnlineApiKey && !clearSecondaryOnlineApiKey) {
+            showMessage('双在线模式需要配置第二在线 API Key', 'error');
+            return;
+        }
+        if ((mode === 'local' || mode === 'dual') && !localModel) {
+            showMessage('本地模式需要配置本地模型', 'error');
+            return;
+        }
+        if ((mode === 'local' || mode === 'dual') && !localBaseUrl) {
+            showMessage('本地模式需要配置本地服务地址', 'error');
+            return;
+        }
+
+        const payload = {
+            vision_mode: mode,
+            vision_model: onlineModel,
+            secondary_online_model: secondaryOnlineModel,
+            secondary_online_base_url: secondaryOnlineBaseUrl,
+            local_vision_model: localModel,
+            local_vision_base_url: localBaseUrl,
+            dual_primary: dualPrimary,
+        };
+        if (onlineApiKey) {
+            payload.online_api_key = onlineApiKey;
+        } else if (clearOnlineApiKey) {
+            payload.online_api_key = '';
+        }
+        if (secondaryOnlineApiKey) {
+            payload.secondary_online_api_key = secondaryOnlineApiKey;
+        } else if (clearSecondaryOnlineApiKey) {
+            payload.secondary_online_api_key = '';
+        }
+        if (localApiKey) {
+            payload.local_vision_api_key = localApiKey;
+        } else if (clearLocalApiKey) {
+            payload.local_vision_api_key = '';
+        }
+
+        saveBtn.disabled = true;
+        try {
+            const result = await apiRequest('/api/settings/qc-global', {
+                method: 'PUT',
+                body: JSON.stringify(payload),
+            });
+            if (!result.success) {
+                throw new Error(result.message || '保存失败');
+            }
+            showMessage(result.message || '全局 QC 配置保存成功', 'success');
+            await loadGlobalQcSettings();
+        } catch (error) {
+            showMessage(`保存失败：${error.message}`, 'error');
+        } finally {
+            saveBtn.disabled = false;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('qcVisionMode').addEventListener('change', toggleModeFields);
+        const onlineApiKeyClearCheckbox = document.getElementById('qcOnlineApiKeyClear');
+        if (onlineApiKeyClearCheckbox) {
+            onlineApiKeyClearCheckbox.addEventListener('change', (event) => {
+                if (event.target.checked) {
+                    document.getElementById('qcOnlineApiKey').value = '';
+                }
+            });
+        }
+        document.getElementById('qcOnlineApiKey').addEventListener('input', (event) => {
+            if (event.target.value.trim() && onlineApiKeyClearCheckbox) {
+                onlineApiKeyClearCheckbox.checked = false;
+            }
+        });
+        const secondaryOnlineApiKeyClearCheckbox = document.getElementById('qcSecondaryOnlineApiKeyClear');
+        if (secondaryOnlineApiKeyClearCheckbox) {
+            secondaryOnlineApiKeyClearCheckbox.addEventListener('change', (event) => {
+                if (event.target.checked) {
+                    document.getElementById('qcSecondaryOnlineApiKey').value = '';
+                }
+            });
+        }
+        document.getElementById('qcSecondaryOnlineApiKey').addEventListener('input', (event) => {
+            if (event.target.value.trim() && secondaryOnlineApiKeyClearCheckbox) {
+                secondaryOnlineApiKeyClearCheckbox.checked = false;
+            }
+        });
+        const localApiKeyClearCheckbox = document.getElementById('qcLocalApiKeyClear');
+        if (localApiKeyClearCheckbox) {
+            localApiKeyClearCheckbox.addEventListener('change', (event) => {
+                if (event.target.checked) {
+                    document.getElementById('qcLocalApiKey').value = '';
+                }
+            });
+        }
+        document.getElementById('qcLocalApiKey').addEventListener('input', (event) => {
+            if (event.target.value.trim() && localApiKeyClearCheckbox) {
+                localApiKeyClearCheckbox.checked = false;
+            }
+        });
+        initializeGlobalQcSettings();
+    });
+</script>
+{% endblock %}

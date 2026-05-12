@@ -1,0 +1,10 @@
+stages:
+  - verify
+
+verify-ai-quotation-lab:
+  stage: verify
+  tags:
+    - linux
+  script:
+    - test -f ai_quotation_system/requirements.txt
+    - python3 -m py_compile $(find ai_quotation_system -name '*.py')

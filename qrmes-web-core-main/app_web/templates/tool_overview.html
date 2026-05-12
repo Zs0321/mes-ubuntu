@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+{% block title %}{{ range_title }} - MES 工具总览{% endblock %}
+
+{% block extra_css %}
+<style>
+    body { background: #020617; }
+    .tool-wrap { max-width: 1480px; margin: 0 auto; padding: 28px 22px 48px; color: #e5edf8; }
+    .tool-top { display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; margin-bottom: 20px; }
+    .eyebrow { color: #38bdf8; font-size: 13px; font-weight: 900; margin-bottom: 8px; letter-spacing: .08em; }
+    .tool-title { margin: 0; font-size: 32px; color: #f8fafc; }
+    .tool-sub { margin: 9px 0 0; color: #94a3b8; line-height: 1.6; }
+    .tool-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+    .tool-nav a, .tool-btn { border: 1px solid rgba(56,189,248,.22); background: #0f172a; color: #dbeafe; border-radius: 12px; padding: 10px 14px; text-decoration: none; font-weight: 800; cursor: pointer; }
+    .tool-nav a:hover, .tool-btn:hover { border-color: #38bdf8; box-shadow: 0 12px 28px rgba(56,189,248,.16); }
+    .stats, .cats { display: grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap: 14px; margin-bottom: 18px; }
+    .cats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tool-card { display: block; border: 1px solid rgba(56,189,248,.16); border-radius: 18px; background: linear-gradient(180deg, rgba(15,23,42,.96) 0%, rgba(2,6,23,.96) 100%); padding: 22px; box-shadow: 0 22px 46px rgba(2,6,23,.3); text-decoration: none; color: inherit; }
+    .stat-label { font-size: 18px; font-weight: 900; margin-bottom: 28px; color: #e2e8f0; }
+    .stat-value { font-size: 58px; font-weight: 900; line-height: 1; color: #38bdf8; }
+    .orange { color: #fb923c; }
+    .amber { color: #fbbf24; }
+    .red { color: #f87171; }
+    .panel-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 18px; }
+    .panel-title { margin: 0; font-size: 21px; color: #f8fafc; }
+    .desc { margin: 7px 0 0; color: #94a3b8; font-size: 14px; line-height: 1.6; }
+    .pill { display: inline-flex; padding: 7px 10px; border-radius: 999px; background: rgba(16,185,129,.16); color: #5eead4; font-size: 13px; font-weight: 900; }
+    .fixture .pill, .badge.fixture { background: rgba(59,130,246,.16); color: #93c5fd; }
+    .form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .file, .search { min-height: 42px; border: 1px solid rgba(148,163,184,.24); border-radius: 12px; background: #020617; color: #e5edf8; padding: 9px 12px; font-size: 14px; }
+    .file { flex: 1 1 260px; }
+    .search { flex: 1 1 320px; }
+    .primary { border-color: #0284c7; background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%); color: #fff; }
+    .delete-tool-btn { border-color: rgba(248,113,113,.35); background: rgba(127,29,29,.3); color: #fecaca; }
+    .delete-tool-btn:hover { border-color: #ef4444; box-shadow: 0 8px 18px rgba(239,68,68,.18); }
+    .status { margin-top: 12px; min-height: 20px; color: #94a3b8; font-size: 14px; }
+    .status.error { color: #f87171; }
+    .mini { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .mini div { border: 1px solid rgba(56,189,248,.14); border-radius: 14px; background: rgba(15,23,42,.72); padding: 14px; color: #cbd5e1; }
+    .mini strong { display: block; font-size: 24px; margin-top: 4px; color: #38bdf8; }
+    .table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+    .table th, .table td { border-bottom: 1px solid rgba(148,163,184,.16); padding: 12px 10px; text-align: left; vertical-align: top; }
+    .table th { background: rgba(15,23,42,.88); color: #cbd5e1; font-size: 13px; }
+    .badge { display: inline-flex; padding: 4px 8px; border-radius: 999px; background: rgba(14,165,233,.16); color: #7dd3fc; font-size: 12px; font-weight: 900; }
+    .expired { color: #f87171; font-weight: 900; }
+    .muted { color: #64748b; }
+    .tool-extra { margin-top: 6px; color: #94a3b8; font-size: 12px; line-height: 1.6; max-width: 560px; }
+    .empty { padding: 18px; text-align: center; color: #94a3b8; border: 1px dashed rgba(148,163,184,.24); border-radius: 12px; background: rgba(15,23,42,.46); }
+    .search-panel { margin-top: 18px; }
+    @media (max-width: 980px) {
+        .tool-top { flex-direction: column; align-items: stretch; }
+        .stats, .cats, .mini { grid-template-columns: 1fr; }
+        .stat-value { font-size: 48px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tool-wrap" data-view="{{ view_range }}">
+    <div class="tool-top">
+        <div>
+            <div class="eyebrow">工具台账</div>
+            <h1 class="tool-title">{{ range_title }}</h1>
+            <p class="tool-sub">集中维护计量设备和工装夹具，到期、7 天内、30 天内送检状态一屏查看。</p>
+        </div>
+        <nav class="tool-nav">
+            <a href="{{ url_for('tool_overview.tool_overview_page') }}">总览</a>
+            <a href="{{ url_for('tool_overview.tool_overview_warning_page', range_name='all') }}">全部记录</a>
+            <a href="{{ url_for('tool_overview.tool_overview_warning_page', range_name='30d') }}">30 天内</a>
+            <a href="{{ url_for('tool_overview.tool_overview_warning_page', range_name='7d') }}">7 天内</a>
+            <a href="{{ url_for('tool_overview.tool_overview_warning_page', range_name='expired') }}">已过期</a>
+        </nav>
+    </div>
+
+    <section class="tool-card search-panel">
+        <div class="panel-head">
+            <div>
+                <h2 class="panel-title">搜索工具或工装</h2>
+                <p class="desc">支持按工具编码、工具名称、部门、厂家、使用状态等字段模糊查询。</p>
+            </div>
+        </div>
+        <form class="form" id="search-form">
+            <input class="search" id="search-q" type="search" placeholder="输入工具编码、工具名称或部门，例如 D12280055">
+            <button class="tool-btn primary" type="submit">搜索</button>
+        </form>
+        <div class="status" id="search-status"></div>
+        <div id="search-results"></div>
+    </section>
+
+    {% if view_range == 'overview' %}
+    <section class="stats">
+        <a class="tool-card" href="{{ url_for('tool_overview.tool_overview_warning_page', range_name='all') }}"><div class="stat-label">全部工具</div><div class="stat-value" id="s-total">0</div></a>
+        <a class="tool-card" href="{{ url_for('tool_overview.tool_overview_warning_page', range_name='30d') }}"><div class="stat-label">30 天内送检</div><div class="stat-value orange" id="s-30d">0</div></a>
+        <a class="tool-card" href="{{ url_for('tool_overview.tool_overview_warning_page', range_name='7d') }}"><div class="stat-label">7 天内送检</div><div class="stat-value amber" id="s-7d">0</div></a>
+        <a class="tool-card" href="{{ url_for('tool_overview.tool_overview_warning_page', range_name='expired') }}"><div class="stat-label">已过期</div><div class="stat-value red" id="s-expired">0</div></a>
+    </section>
+
+    <section class="cats">
+        <article class="tool-card">
+            <div class="panel-head">
+                <div>
+                    <h2 class="panel-title">计量设备</h2>
+                    <p class="desc">上传计量设备 Excel，自动识别设备编号、设备名称、检定有效期等字段。</p>
+                </div>
+                <span class="pill">计量设备</span>
+            </div>
+            <form class="form upload" data-cat="measuring_equipment">
+                <input class="file" type="file" accept=".xlsx,.xlsm" required>
+                <button class="tool-btn primary" type="submit">上传并导入</button>
+            </form>
+            <div class="status" data-status="measuring_equipment"></div>
+        </article>
+        <article class="tool-card fixture">
+            <div class="panel-head">
+                <div>
+                    <h2 class="panel-title">工装夹具</h2>
+                    <p class="desc">上传工装夹具 Excel，自动识别工装型号、设备或工序名称、使用部门等字段。</p>
+                </div>
+                <span class="pill">工装夹具</span>
+            </div>
+            <form class="form upload" data-cat="fixture">
+                <input class="file" type="file" accept=".xlsx,.xlsm" required>
+                <button class="tool-btn primary" type="submit">上传并导入</button>
+            </form>
+            <div class="status" data-status="fixture"></div>
+        </article>
+    </section>
+
+    <section class="tool-card">
+        <div class="panel-head">
+            <div>
+                <h2 class="panel-title">分类统计</h2>
+                <p class="desc">按工具分类查看当前台账数量。</p>
+            </div>
+        </div>
+        <div class="mini">
+            <div>计量设备<strong id="c-measuring_equipment">0</strong></div>
+            <div>工装夹具<strong id="c-fixture">0</strong></div>
+        </div>
+    </section>
+    {% else %}
+    <section>
+        <article class="tool-card">
+            <div class="panel-head">
+                <div>
+                    <h2 class="panel-title">计量设备</h2>
+                    <p class="desc">{{ '全部计量设备记录' if view_range == 'all' else '需要关注的计量设备送检记录' }}</p>
+                </div>
+                <span class="pill">计量设备</span>
+            </div>
+            <div id="list-measuring_equipment"></div>
+        </article>
+        <article class="tool-card fixture" style="margin-top:16px">
+            <div class="panel-head">
+                <div>
+                    <h2 class="panel-title">工装夹具</h2>
+                    <p class="desc">{{ '全部工装夹具记录' if view_range == 'all' else '需要关注的工装夹具送检记录' }}</p>
+                </div>
+                <span class="pill">工装夹具</span>
+            </div>
+            <div id="list-fixture"></div>
+        </article>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var root = document.querySelector('.tool-wrap');
+    if (!root) return;
+    var view = root.dataset.view;
+
+    function esc(value) {
+        return String(value == null ? '' : value).replace(/[&<'"]/g, function (char) {
+            return {'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[char];
+        });
+    }
+
+    function days(tool) {
+        if (tool.inspection_status === 'sent') return '已送检';
+        if (!tool.next_check_date) return '未填写有效期';
+        if (tool.days_left == null) return '未知';
+        if (tool.days_left < 0) return '已过期 ' + Math.abs(tool.days_left) + ' 天';
+        if (tool.days_left === 0) return '今天到期';
+        return '剩余 ' + tool.days_left + ' 天';
+    }
+
+    function extraLine(tool) {
+        var parts = [];
+        [
+            ['主要用途', tool.purpose],
+            ['数量', tool.quantity],
+            ['生产厂家', tool.manufacturer],
+            ['购置日期', tool.purchase_date],
+            ['使用状态', tool.use_status],
+            ['备注', tool.remark]
+        ].forEach(function (pair) {
+            if (pair[1]) parts.push(pair[0] + ': ' + esc(pair[1]));
+        });
+        return parts.length ? '<div class="tool-extra">' + parts.join(' / ') + '</div>' : '';
+    }
+
+    function renderTable(el, items, opts) {
+        opts = opts || {};
+        if (!items.length) {
+            el.innerHTML = '<div class="empty">暂无记录</div>';
+            return;
+        }
+        var rows = items.map(function (tool) {
+            var fixtureClass = tool.category === 'fixture' ? ' fixture' : '';
+            var expiredClass = tool.days_left < 0 ? ' expired' : '';
+            var action = '';
+            if (opts.deleteActions) {
+                action = '<td><button class="tool-btn delete-tool-btn" type="button" data-tool-id="' + esc(tool.id) + '" data-tool-code="' + esc(tool.tool_code) + '">删除</button></td>';
+            } else if (opts.actions) {
+                action = '<td><button class="tool-btn primary mark-sent-btn" type="button" data-tool-id="' + esc(tool.id) + '">标记送检</button></td>';
+            }
+            return '<tr><td><span class="badge' + fixtureClass + '">' + esc(tool.category_label) + '</span></td>' +
+                '<td>' + esc(tool.tool_code) + '</td>' +
+                '<td>' + esc(tool.tool_name) + extraLine(tool) + '</td>' +
+                '<td>' + esc(tool.department || '') + '</td>' +
+                '<td class="' + (!tool.next_check_date ? 'muted' : '') + '">' + esc(tool.next_check_date || '未填写') + '</td>' +
+                '<td class="' + expiredClass + '">' + esc(days(tool)) + '</td>' +
+                '<td>' + esc(tool.updated_at) + '</td>' + action + '</tr>';
+        }).join('');
+        var actionHead = (opts.actions || opts.deleteActions) ? '<th>操作</th>' : '';
+        el.innerHTML = '<table class="table"><thead><tr><th>分类</th><th>工具编码</th><th>工具名称</th><th>使用部门</th><th>校定有效期</th><th>状态</th><th>更新时间</th>' + actionHead + '</tr></thead><tbody>' + rows + '</tbody></table>';
+    }
+
+    async function loadJson(url, options) {
+        var response = await fetch(url, options);
+        var payload = await response.json().catch(function () { return {}; });
+        if (!response.ok || payload.success === false) throw new Error(payload.message || '请求失败');
+        return payload;
+    }
+
+    async function summary() {
+        if (view !== 'overview') return;
+        try {
+            var payload = await loadJson('/api/tool-overview/summary');
+            var data = payload.summary || {};
+            document.getElementById('s-total').textContent = data.total || 0;
+            document.getElementById('s-30d').textContent = (data.ranges && data.ranges['30d']) || 0;
+            document.getElementById('s-7d').textContent = (data.ranges && data.ranges['7d']) || 0;
+            document.getElementById('s-expired').textContent = (data.ranges && data.ranges.expired) || 0;
+            document.getElementById('c-measuring_equipment').textContent = (data.categories && data.categories.measuring_equipment) || 0;
+            document.getElementById('c-fixture').textContent = (data.categories && data.categories.fixture) || 0;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function lists() {
+        if (view === 'overview') return;
+        for (var i = 0; i < ['measuring_equipment', 'fixture'].length; i += 1) {
+            var category = ['measuring_equipment', 'fixture'][i];
+            var el = document.getElementById('list-' + category);
+            el.innerHTML = '<div class="empty">加载中...</div>';
+            try {
+                var payload = await loadJson('/api/tool-overview/tools?range=' + encodeURIComponent(view) + '&category=' + category + '&limit=1000');
+                renderTable(el, payload.tools || [], view === 'all' ? {deleteActions: true} : {actions: true});
+            } catch (error) {
+                el.innerHTML = '<div class="empty">' + esc(error.message) + '</div>';
+            }
+        }
+    }
+
+    document.querySelectorAll('.upload').forEach(function (form) {
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            var category = form.dataset.cat;
+            var status = document.querySelector('[data-status="' + category + '"]');
+            var input = form.querySelector('input');
+            if (!input.files.length) return;
+            var formData = new FormData();
+            formData.append('file', input.files[0]);
+            status.className = 'status';
+            status.textContent = '导入中...';
+            try {
+                var payload = await loadJson('/api/tool-overview/upload/' + category, {method: 'POST', body: formData});
+                var failed = (payload.failed_rows || []).slice(0, 3).map(function (row) {
+                    return '第 ' + row.row + ' 行: ' + row.message;
+                }).join('；');
+                status.textContent = failed ? payload.message + '；' + failed : payload.message;
+                form.reset();
+                summary();
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = error.message;
+            }
+        });
+    });
+
+    document.getElementById('search-form').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        var query = document.getElementById('search-q').value.trim();
+        var status = document.getElementById('search-status');
+        var results = document.getElementById('search-results');
+        if (!query) {
+            status.className = 'status error';
+            status.textContent = '请输入工具编码、名称或部门';
+            results.innerHTML = '';
+            return;
+        }
+        status.className = 'status';
+        status.textContent = '搜索中...';
+        try {
+            var payload = await loadJson('/api/tool-overview/search?q=' + encodeURIComponent(query));
+            status.textContent = '找到 ' + (payload.tools || []).length + ' 条记录';
+            renderTable(results, payload.tools || []);
+        } catch (error) {
+            status.className = 'status error';
+            status.textContent = error.message;
+            results.innerHTML = '';
+        }
+    });
+
+    document.addEventListener('click', async function (event) {
+        var btn = event.target.closest('.mark-sent-btn');
+        if (!btn) return;
+        var id = btn.getAttribute('data-tool-id');
+        if (!id) return;
+        btn.disabled = true;
+        btn.textContent = '处理中...';
+        try {
+            await loadJson('/api/tool-overview/tools/' + encodeURIComponent(id) + '/mark-sent', {method: 'POST'});
+            await lists();
+            summary();
+        } catch (error) {
+            btn.disabled = false;
+            btn.textContent = '标记送检';
+            alert(error.message || '操作失败');
+        }
+    });
+
+    document.addEventListener('click', async function (event) {
+        var btn = event.target.closest('.delete-tool-btn');
+        if (!btn) return;
+        var id = btn.getAttribute('data-tool-id');
+        var code = btn.getAttribute('data-tool-code') || '';
+        if (!id) return;
+        if (!window.confirm('确定删除 ' + code + ' 吗？删除后可通过重新导入 Excel 恢复。')) return;
+        btn.disabled = true;
+        btn.textContent = '删除中...';
+        try {
+            await loadJson('/api/tool-overview/tools/' + encodeURIComponent(id), {method: 'DELETE'});
+            await lists();
+            summary();
+        } catch (error) {
+            btn.disabled = false;
+            btn.textContent = '删除';
+            alert(error.message || '删除失败');
+        }
+    });
+
+    summary();
+    lists();
+})();
+</script>
+{% endblock %}

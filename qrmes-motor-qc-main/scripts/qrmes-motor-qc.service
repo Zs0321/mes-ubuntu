@@ -1,0 +1,13 @@
+[Unit]
+Description=qrmes-motor-qc
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/qrmes-motor-qc
+ExecStart=%h/qrmes-motor-qc/.venv/bin/python -m app_web.run_motor_qc
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

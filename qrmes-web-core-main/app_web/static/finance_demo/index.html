@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>电机报价工作台 Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg-glow glow-a"></div>
+    <div class="bg-glow glow-b"></div>
+    <main class="shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">AI FINANCE MODEL</p>
+          <h1>电机报价工作台</h1>
+          <p class="hero-sub">财务先看最终型号价格和整机重量，工程师在同一页面维护新增 BOM。已有型号后续从金蝶导入，新型号先走工程补录。</p>
+          <p id="meta" class="meta"></p>
+        </div>
+        <div class="hero-side">
+          <div class="mode-switch" role="tablist" aria-label="视图切换">
+            <button id="financeTab" class="mode-pill active" type="button">财务视图</button>
+            <button id="engineerTab" class="mode-pill" type="button">工程师视图</button>
+          </div>
+          <div class="hero-note">
+            <strong>当前原则</strong>
+            <span>当前页面只保留财务三类常用动作：仓库报价重新核算、单物料 BOM 价格试算、上传 Excel 并生成报价；BOM 明细与异常清单统一放在页面底部复核。</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="financeView" class="workspace active">
+        <section class="card finance-module-hub">
+          <div class="section-title">
+            <div>
+              <p class="section-kicker">WORKSPACE</p>
+              <h2>主页面功能入口</h2>
+            </div>
+          </div>
+          <div class="finance-module-grid">
+            <button class="finance-module-card active" type="button" data-finance-module-target="warehouse-recheck">
+              <span class="finance-module-index">01</span>
+              <strong>仓库报价重新核算</strong>
+              <span>查看总价、异常摘要、价差与双路线复核结果</span>
+            </button>
+            <button class="finance-module-card" type="button" data-finance-module-target="single-bom">
+              <span class="finance-module-index">02</span>
+              <strong>单物料 BOM 价格试算</strong>
+              <span>快速试算单个物料的传统报价、AI 报价与数量小计</span>
+            </button>
+            <button class="finance-module-card" type="button" data-finance-module-target="excel-quote">
+              <span class="finance-module-index">03</span>
+              <strong>上传 Excel 并生成报价</strong>
+              <span>上传整表后生成报价总表、AI 明细和差异复核清单</span>
+            </button>
+            <button class="finance-module-card" type="button" data-finance-module-target="band-config">
+              <span class="finance-module-index">04</span>
+              <strong>名称型物料价格区间配置</strong>
+              <span>统一维护名称/规格命中的价格区间规则，供报价流程复用</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="card finance-home-upload finance-module-section" data-finance-module="excel-quote">
+          <div class="section-title">
+            <div>
+              <p class="section-kicker">EXCEL QUOTE</p>
+              <h2>上传 Excel 并生成报价</h2>
+            </div>
+          </div>
+          <div class="import-card excel-quote-card">
+            <div class="excel-quote-hero">
+              <div class="excel-quote-hero-main">
+                <span class="excel-quote-orb">AI Quote Studio</span>
+                <h3>拖入 Excel 或直接粘贴表格，系统自动识别并发起批量报价</h3>
+                <p>上传区会自动判断你提供的是文件还是粘贴数据，并联动 skills 规则、AI 补位和量产三档复核，减少手工切换。</p>
+              </div>
+              <div class="excel-quote-hero-tags">
+                <span class="excel-quote-tag tag-blue">自动识别列头</span>
+                <span class="excel-quote-tag tag-gold">skills 优先</span>
+                <span class="excel-quote-tag tag-green">AI 智能补位</span>
+              </div>
+            </div>
+            <div class="excel-quote-stage">
+              <div class="excel-quote-input-shell">
+                <div class="form-grid model-grid excel-upload-head">
+                  <label class="field file-upload-field">
+                    Excel 文件
+                    <input id="excelQuoteFile" type="file" accept=".xlsx" />
+                  </label>
+                  <label class="field model-label-field">
+                    报价型号名称
+                    <input id="excelQuoteModelLabel" placeholder="可选，不填则使用文件名" />
+                  </label>
+                </div>
+                <div class="excel-paste-entry">
+                  <div class="excel-paste-head">
+                    <div>
+                      <strong>复制粘贴表格数据</strong>
+                      <span>支持直接从 Excel 复制带表头的数据区域，按制表符自动解析并走同一套报价流程。</span>
+                    </div>
+                    <div class="excel-paste-mini-hint">自动识别列头、数量、重量与工艺字段</div>
+                  </div>
+                  <label class="field full paste-text-field">
+                    粘贴区域
+                    <textarea id="excelQuotePasteText" rows="6" placeholder="请直接粘贴从 Excel 复制的表格数据，第一行保留表头，例如：物料编码、物料名称、材质、重量、工艺、数量等"></textarea>
+                  </label>
+                  <div class="excel-paste-actions">
+                    <span id="excelQuotePasteDetectSummary" class="excel-paste-detect-summary">等待识别</span>
+                  </div>
+                  <div id="excelQuotePastePreview" class="excel-paste-preview hidden">
+                    <div class="excel-paste-preview-head">
+                      <strong>识别结果</strong>
+                      <span id="excelQuotePastePreviewMeta">等待粘贴表格数据</span>
+                    </div>
+                    <div id="excelQuotePasteFieldMap" class="excel-paste-field-map"></div>
+                    <div class="excel-paste-table-wrap">
+                      <table class="excel-paste-table">
+                        <thead id="excelQuotePastePreviewHead"></thead>
+                        <tbody id="excelQuotePastePreviewBody"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="excel-quote-control-shell">
+                <div class="form-grid model-grid production-grid">
+                  <label class="field mode-field">
+                    报价模式
+                    <select id="excelQuoteProductionMode">
+                      <option value="sample">样品/小批</option>
+                      <option value="mass">量产</option>
+                    </select>
+                  </label>
+                  <label id="excelQuoteAnnualVolumeField" class="field annual-volume-field hidden">
+                    量产数量
+                    <input id="excelQuoteAnnualVolume" type="number" step="1" min="1" value="10000" placeholder="如 10000" />
+                    <div class="volume-tier-presets" data-target-input="excelQuoteAnnualVolume" aria-label="量产阶梯价格快捷数量">
+                      <button type="button" class="volume-tier-chip" data-volume="300">300</button>
+                      <button type="button" class="volume-tier-chip" data-volume="1000">1000</button>
+                      <button type="button" class="volume-tier-chip" data-volume="3000">3000</button>
+                      <button type="button" class="volume-tier-chip" data-volume="5000">5000</button>
+                      <button type="button" class="volume-tier-chip" data-volume="8000">8000</button>
+                      <button type="button" class="volume-tier-chip is-active" data-volume="10000">10000</button>
+                      <span class="volume-tier-manual-hint">当然也支持手动输入</span>
+                    </div>
+                    <div class="volume-tier-discount" data-target-input="excelQuoteAnnualVolume">10000套：增强量产折扣：材料约 2%-12%，工艺约 6%-22%</div>
+                  </label>
+                </div>
+                <p id="excelQuoteProductionModeHint" class="mode-hint sample">样品/小批：按当前参考价直接测算，不启用量产数量。</p>
+                <div id="excelQuoteProgressPanel" class="excel-progress-panel excel-flow-card">
+                  <div class="excel-progress-head excel-flow-top">
+                    <div class="excel-flow-status">
+                      <span class="excel-flow-caption">处理状态</span>
+                      <strong id="excelQuoteStatus">等待上传 Excel</strong>
+                    </div>
+                    <div class="excel-flow-progress">
+                      <strong id="excelQuoteProgressLabel">等待开始</strong>
+                      <span id="excelQuoteProgressPercent">0%</span>
+                    </div>
+                  </div>
+                  <div class="excel-progress-track" aria-hidden="true">
+                    <div id="excelQuoteProgressFill" class="excel-progress-fill" style="width: 0%"></div>
+                  </div>
+                  <p id="excelQuoteProgressHint" class="excel-progress-hint">上传后会先生成财务传统报价，再并行生成 AI 报价结果。</p>
+                </div>
+                <div class="import-line import-line-soft">
+                  <strong>金蝶价格参考</strong>
+                  <span id="excelQuoteKingdeeHint">若物料编码命中金蝶采购记录，会形成财务传统报价；系统同时生成 AI 独立报价、价格对比图和差异原因分析。</span>
+                </div>
+                <div class="actions excel-quote-actions">
+                  <button id="quoteExcelBtn" type="button">开始报价</button>
+                  <button id="useExcelScenarioBtn" class="ghost" type="button">打开最近一次结果</button>
+                </div>
+              </div>
+            </div>
+            <div id="excelQuoteExports" class="excel-export-panel hidden">
+              <div class="excel-export-head">
+                <strong>AI 报价汇总结果</strong>
+                <span id="excelQuoteExportsSummary">完成后会在这里汇总展示多个报价 Excel 结果。</span>
+              </div>
+              <div id="excelQuoteExportsList" class="excel-export-list"></div>
+              <div class="actions">
+                <button id="downloadExcelPackageBtn" class="ghost" type="button">下载 AI 报价汇总包</button>
+              </div>
+            </div>
+            <div class="finance-insight-stack finance-top-insights excel-top-insights">
+              <article class="card comparison-card">
+                <div class="section-title">
+                  <div>
+                    <p class="section-kicker">COMPARISON</p>
+                    <h2>价格对比图</h2>
+                  </div>
+                </div>
+                <div id="excelComparisonChart" class="comparison-chart"></div>
+              </article>
+
+              <article class="card analysis-card">
+                <div class="section-title">
+                  <div>
+                    <p class="section-kicker">ANALYSIS</p>
+                    <h2>价格不一致总计分析</h2>
+                  </div>
+                </div>
+                <div id="excelComparisonAnalysis" class="analysis-stack"></div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="card finance-module-section band-config-card" data-finance-module="band-config">
+          <div class="section-title">
+            <div>
+              <p class="section-kicker">AI / SKILLS RANGE CONFIG</p>
+              <h2>名称型物料价格区间配置</h2>
+            </div>
+            <div class="toolbar">
+              <button id="addNameSpecBandBtn" class="ghost" type="button">新增区间</button>
+              <button id="reloadNameSpecBandBtn" class="ghost" type="button">重新加载</button>
+              <button id="saveNameSpecBandBtn" type="button">保存区间</button>
+            </div>
+          </div>
+          <div class="import-line import-line-soft">
+            <strong>配置说明</strong>
+            <span>这里配置电机 / 电控配件名称型物料的 AI/skills 单件价格区间。报价时会先按名称 / 规格识别类别，再用这里的区间约束 AI 推断价格。</span>
+          </div>
+          <div class="import-line import-line-soft">
+            <strong>配置文件</strong>
+            <span id="nameSpecBandConfigPath">加载中...</span>
+          </div>
+          <div class="band-config-table-wrap">
+            <table class="band-config-table">
+              <thead>
+                <tr>
+                  <th>类别</th>
+                  <th>关键词</th>
+                  <th>下限(元/件)</th>
+                  <th>上限(元/件)</th>
+                  <th>依据</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="nameSpecBandTableBody"></tbody>
+            </table>
+          </div>
+          <div id="nameSpecBandConfigStatus" class="band-config-status">等待加载区间配置</div>
+        </section>
+
+        <section class="card finance-top finance-module-section active" data-finance-module="warehouse-recheck">
+          <div class="section-title">
+            <div>
+              <p class="section-kicker">WAREHOUSE RECALC</p>
+              <h2>仓库报价重新核算</h2>
+            </div>
+            <div class="toolbar">
+              <label class="field compact">报价型号
+                <select id="scenarioSelect"></select>
+              </label>
+              <label class="field compact">搜索金蝶型号
+                <input id="financeBomSearchKeyword" placeholder="输入型号名称或 BOM 编号" />
+              </label>
+              <label class="field compact">金蝶已有型号
+                <select id="financeBomHeaderSelect"></select>
+              </label>
+            <div class="finance-top-cta-stack">
+              <button id="financeSearchBomBtn" class="ghost" type="button">搜索型号</button>
+              <button id="loadFinanceBomBtn" type="button">开始报价测算</button>
+            </div>
+          </div>
+            <div class="import-line finance-bom-selection">
+              <strong>当前选中的金蝶型号</strong>
+              <span id="financeBomSelectionValue">未选中有效 BOM 编号</span>
+            </div>
+            <div class="import-line finance-bom-selection-hint">
+              <strong>加载提示</strong>
+              <span id="financeBomSelectionHint">请先从下拉框选择一个金蝶已有型号，再点击“开始报价测算”。</span>
+            </div>
+          </div>
+
+          <div class="summary-grid">
+            <div class="quote-lanes">
+              <article class="summary-hero route-panel finance-route">
+                <p>传统报价</p>
+                <h3 id="financeTotal">¥0.00</h3>
+                <div class="summary-row">
+                  <span id="financeModelName">-</span>
+                  <span id="financeStatus" class="status-chip">待加载</span>
+                </div>
+              </article>
+              <article class="summary-hero route-panel ai-route">
+                <p>AI报价</p>
+                <h3 id="aiTotal">¥0.00</h3>
+                <div class="summary-row">
+                  <span id="aiRouteSummaryLabel">独立 AI 路线估价</span>
+                  <span id="aiRouteStatusChip" class="status-chip">等待启动</span>
+                </div>
+                <div id="aiRouteProgressPanel" class="excel-progress-panel ai-progress-panel hidden">
+                  <div class="excel-progress-head">
+                    <strong id="aiRouteProgressLabel">等待并行生成</strong>
+                    <span id="aiRouteProgressPercent">0%</span>
+                  </div>
+                  <div class="excel-progress-meta">
+                    <span id="aiRouteProgressStageTag" class="excel-progress-stage">未启动</span>
+                    <span id="aiRouteProgressDetail" class="excel-progress-detail">开始报价测算后启动 AI 独立报价</span>
+                  </div>
+                  <div class="excel-progress-track" aria-hidden="true">
+                    <div id="aiRouteProgressFill" class="excel-progress-fill" style="width: 0%"></div>
+                  </div>
+                  <p id="aiRouteProgressHint" class="excel-progress-hint">AI 路线会结合 BOM 字段、规则报价结果和千问模型独立估价。</p>
+                </div>
+              </article>
+            </div>
+            <article class="summary-card spotlight-card">
+              <p>AI-财务价差</p>
+              <h3 id="routeGap">+¥0.00</h3>
+              <span>用于财务对比复核</span>
+            </article>
+            <article class="summary-card">
+              <p>整机总重量</p>
+              <h3 id="financeWeight">0.00 kg</h3>
+              <span>报价时可直接引用</span>
+            </article>
+            <article class="summary-card">
+              <p>BOM 子项数</p>
+              <h3 id="financeItemCount">0</h3>
+              <span>含新增草稿项</span>
+            </article>
+            <article class="summary-card warning-card">
+              <p>待复核项</p>
+              <h3 id="financePending">0</h3>
+              <span>含高价差与待补参数</span>
+            </article>
+          </div>
+
+          <div class="finance-actions">
+            <button id="toggleBreakdownBtn" class="ghost" type="button">查看价格组成</button>
+            <button id="exportQuoteExcelBtn" type="button">导出报价结果 Excel</button>
+            <div id="financeHeadline" class="headline"></div>
+          </div>
+          <div class="finance-insight-stack finance-top-insights">
+            <article class="card comparison-card">
+              <div class="section-title">
+                <div>
+                  <p class="section-kicker">COMPARISON</p>
+                  <h2>价格对比图</h2>
+                </div>
+              </div>
+              <div id="comparisonChart" class="comparison-chart"></div>
+            </article>
+
+            <article class="card analysis-card">
+              <div class="section-title">
+                <div>
+                  <p class="section-kicker">ANALYSIS</p>
+                  <h2>价格不一致原因</h2>
+                </div>
+              </div>
+              <div id="comparisonAnalysis" class="analysis-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="card single-bom-card finance-module-section" data-finance-module="single-bom">
+          <div class="section-title">
+            <div>
+              <p class="section-kicker">SINGLE BOM</p>
+              <h2>单物料 BOM 价格试算</h2>
+            </div>
+            <p class="single-bom-intro">快速估算单个物料的材料成本、工艺附加和数量小计，确认后可直接加入当前报价型号。</p>
+          </div>
+          <div class="single-bom-grid">
+            <label class="field">
+              物料编码
+              <input id="singleBomCode" placeholder="如 T44201229" />
+            </label>
+            <label class="field">
+              物料名称
+              <input id="singleBomName" placeholder="如 定子组件" />
+            </label>
+            <label class="field">
+              材质
+              <input id="singleBomMaterial" placeholder="如 铜 / 铝 / 磁材" />
+            </label>
+            <label class="field">
+              单件重量(kg)
+              <input id="singleBomWeight" type="number" step="0.0001" />
+            </label>
+            <label class="field">
+              数量
+              <input id="singleBomQty" type="number" step="1" value="1" />
+            </label>
+            <label class="field mode-field">
+              报价模式
+              <select id="singleBomProductionMode">
+                <option value="sample">样品/小批</option>
+                <option value="mass">量产</option>
+              </select>
+            </label>
+            <label id="singleBomAnnualVolumeField" class="field annual-volume-field hidden">
+              量产数量
+              <input id="singleBomAnnualVolume" type="number" step="1" min="1" value="10000" placeholder="如 10000" />
+              <div class="volume-tier-presets" data-target-input="singleBomAnnualVolume" aria-label="量产阶梯价格快捷数量">
+                <button type="button" class="volume-tier-chip" data-volume="300">300</button>
+                <button type="button" class="volume-tier-chip" data-volume="1000">1000</button>
+                <button type="button" class="volume-tier-chip" data-volume="3000">3000</button>
+                <button type="button" class="volume-tier-chip" data-volume="5000">5000</button>
+                <button type="button" class="volume-tier-chip" data-volume="8000">8000</button>
+                <button type="button" class="volume-tier-chip is-active" data-volume="10000">10000</button>
+                <span class="volume-tier-manual-hint">当然也支持手动输入</span>
+              </div>
+              <div class="volume-tier-discount" data-target-input="singleBomAnnualVolume">10000套：增强量产折扣：材料约 2%-12%，工艺约 6%-22%</div>
+            </label>
+            <div id="singleBomProductionModeHint" class="field full mode-hint sample">样品/小批：按当前材料、重量和工艺直接试算，不启用量产折扣。</div>
+            <label class="field">
+              工艺
+              <input id="singleBomProcess" placeholder="如 拉伸件 / 机加工" />
+            </label>
+            <label class="field">
+              损耗率
+              <span class="field-optional-badge">可不填</span>
+              <input id="singleBomLoss" type="number" step="0.001" placeholder="如 0.08，未填则按 0 处理" />
+            </label>
+            <label class="field">
+              节拍 CT(分钟/件)
+              <span class="field-optional-badge">可不填</span>
+              <input id="singleBomCt" type="number" step="0.01" placeholder="如 1.5，未填则不追加节拍成本" />
+            </label>
+            <label class="field">
+              费率(元/小时)
+              <span class="field-optional-badge">可不填</span>
+              <input id="singleBomRate" type="number" step="0.01" placeholder="如 120，需和节拍一起填写才生效" />
+            </label>
+            <label class="field full">
+              采购/外协附加(元/件)
+              <span class="field-optional-badge">可不填</span>
+              <input id="singleBomExtra" type="number" step="0.01" placeholder="如 2.5，未填则不追加附加成本" />
+            </label>
+            <div class="field full single-bom-optional-note">
+              <strong>可不填项处理规则</strong>
+              <span>损耗率会放大按重量计价的材料重量；节拍 CT 和费率会换算成单件工艺附加；采购/外协附加会按单件附加到报价里。若 Excel/BOM 已有数量，小计会按单价 × 数量自动计算。</span>
+            </div>
+          </div>
+          <div class="preview-card single-bom-preview">
+            <div>
+              <p class="preview-label">传统报价单价</p>
+              <strong id="singleBomUnitCost">¥0.00</strong>
+              <span id="singleBomFinanceUnitCost" class="preview-meta">¥0.00</span>
+              <span id="singleBomFinanceSource" class="preview-meta">等待计算</span>
+            </div>
+            <div>
+              <p class="preview-label">AI 报价单价</p>
+              <strong id="singleBomAiUnitCost">¥0.00</strong>
+              <span id="singleBomAiStatus" class="preview-meta">等待计算</span>
+            </div>
+            <div>
+              <p class="preview-label">材料参考价</p>
+              <strong id="singleBomRawPrice">暂无参考价</strong>
+            </div>
+            <div>
+              <p class="preview-label">传统数量小计</p>
+              <strong id="singleBomSubtotal">¥0.00</strong>
+              <span id="singleBomFinanceSubtotal" class="preview-meta">¥0.00</span>
+            </div>
+            <div>
+              <p class="preview-label">AI 数量小计</p>
+              <strong id="singleBomAiSubtotal">¥0.00</strong>
+            </div>
+            <div class="full-span">
+              <p class="preview-label">AI 说明</p>
+              <strong id="singleBomAiReason">点击“更新试算”后生成 AI 报价说明</strong>
+            </div>
+            <div class="full-span">
+              <p class="preview-label">试算处理说明</p>
+              <strong id="singleBomCalcNote">未填写可选项时，系统按基础 BOM 信息直接试算。</strong>
+            </div>
+          </div>
+          <div class="actions single-bom-actions">
+            <button id="singleBomCalcBtn" type="button">更新试算</button>
+            <button id="singleBomAddBtn" type="button">加入当前BOM</button>
+            <button id="singleBomExportBtn" class="ghost" type="button">导出当前BOM</button>
+            <button id="singleBomResetBtn" class="ghost" type="button">清空试算参数</button>
+          </div>
+        </section>
+
+        <section id="breakdownPanel" class="card breakdown-panel hidden finance-module-section active" data-finance-module="warehouse-recheck">
+          <div class="section-title">
+            <div>
+              <p class="section-kicker">OPTIONAL DETAIL</p>
+              <h2>价格组成</h2>
+            </div>
+          </div>
+          <div class="breakdown-grid">
+            <article class="break-item">
+              <p>材料成本</p>
+              <h3 id="breakMat">¥0.00</h3>
+            </article>
+            <article class="break-item">
+              <p>工艺附加</p>
+              <h3 id="breakProc">¥0.00</h3>
+            </article>
+            <article class="break-item">
+              <p>参考采购覆盖</p>
+              <h3 id="breakCoverage">0%</h3>
+            </article>
+          </div>
+        </section>
+
+        <section class="card finance-detail-card finance-bottom-detail">
+          <div class="section-title">
+            <div>
+              <p class="section-kicker">REFERENCE</p>
+              <h2>BOM明细与异常清单</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="finance-data-table">
+              <colgroup id="financeTableColgroup"></colgroup>
+              <thead id="financeTableHead"></thead>
+              <tbody id="financeTable"></tbody>
+            </table>
+          </div>
+        </section>
+
+      </section>
+
+      <section id="engineerView" class="workspace">
+        <section class="grid-two">
+          <article class="card">
+            <div class="section-title">
+              <div>
+                <p class="section-kicker">ENGINEERING</p>
+                <h2>已有型号导入</h2>
+              </div>
+            </div>
+            <div class="import-card">
+              <div class="import-line">
+                <strong>已有 BOM</strong>
+                <span>后续通过金蝶直接导入</span>
+              </div>
+              <div class="form-grid model-grid">
+                <label class="field">搜索金蝶型号
+                  <input id="bomSearchKeyword" placeholder="输入型号名称或 BOM 编号" />
+                </label>
+                <label class="field">选择金蝶型号
+                  <select id="bomHeaderSelect"></select>
+                </label>
+              </div>
+              <label class="field full">金蝶 BOM 编号
+                <input id="importBomNumber" placeholder="如 Leviticus-SaYFL-WD12-B_A01" />
+              </label>
+              <div class="import-line">
+                <strong>当前数据源</strong>
+                <span id="importSource">-</span>
+              </div>
+              <div class="import-line">
+                <strong>当前选中型号</strong>
+                <span id="selectedBomLabel">-</span>
+              </div>
+              <div class="import-line">
+                <strong>接口状态</strong>
+                <span id="importStatus">-</span>
+              </div>
+              <div class="actions">
+                <button id="searchBomBtn" class="ghost" type="button">搜索型号</button>
+                <button id="importBomBtn" type="button">导入已有 BOM（模拟）</button>
+                <button id="syncHintBtn" class="ghost" type="button">查看接入说明</button>
+              </div>
+            </div>
+
+            <div class="table-wrap compact-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>物料编码</th>
+                    <th>名称</th>
+                    <th>工艺</th>
+                    <th>数量</th>
+                    <th>来源</th>
+                  </tr>
+                </thead>
+                <tbody id="engineerTable"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="section-title">
+              <div>
+                <p class="section-kicker">NEW MODEL</p>
+                <h2>新增型号与 BOM 补录</h2>
+              </div>
+            </div>
+            <div class="import-card model-card">
+              <div class="import-line">
+                <strong>当前编辑型号</strong>
+                <span id="engineerModelLabel">双二十行驶电机总成</span>
+              </div>
+              <div class="form-grid model-grid">
+                <label class="field">新型号编码
+                  <input id="modelCode" placeholder="如 MTR-NEW-001" />
+                </label>
+                <label class="field">新型号名称
+                  <input id="modelName" placeholder="如 新能源驱动电机总成" />
+                </label>
+              </div>
+              <div class="actions">
+                <button id="createModelBtn" type="button">新建型号</button>
+                <button id="useFinanceModelBtn" class="ghost" type="button">继续编辑当前报价型号</button>
+              </div>
+            </div>
+            <div class="form-grid">
+              <label class="field">复用历史子项
+                <select id="presetSelect"></select>
+              </label>
+              <label class="field">物料编码
+                <input id="code" placeholder="如 T44201229" />
+              </label>
+              <label class="field">物料名称
+                <input id="name" placeholder="如 定子组件" />
+              </label>
+              <label class="field">材质
+                <input id="material" placeholder="如 铜 / 铝 / 磁材" />
+              </label>
+              <label class="field">单件重量(kg)
+                <input id="weight" type="number" step="0.0001" />
+              </label>
+              <label class="field">数量
+                <input id="qty" type="number" step="1" value="1" />
+              </label>
+              <label class="field">工艺
+                <input id="process" placeholder="如 拉伸件 / 机加工" />
+              </label>
+              <label class="field">损耗率
+                <input id="loss" type="number" step="0.001" value="0.08" />
+              </label>
+              <label class="field">节拍 CT(分钟/件)
+                <input id="ct" type="number" step="0.01" value="0" />
+              </label>
+              <label class="field">费率(元/小时)
+                <input id="rate" type="number" step="0.01" value="0" />
+              </label>
+              <label class="field full">采购/外协附加(元/件)
+                <input id="extra" type="number" step="0.01" value="0" />
+              </label>
+            </div>
+
+            <div class="preview-card">
+              <div>
+                <p class="preview-label">新增项试算</p>
+                <strong id="previewUnitCost">¥0.00</strong>
+              </div>
+              <div>
+                <p class="preview-label">自动原材价</p>
+                <strong id="previewRawPrice">-</strong>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button id="calcBtn" type="button">加入当前型号 BOM</button>
+              <button id="resetBtn" class="ghost" type="button">清空输入</button>
+            </div>
+          </article>
+        </section>
+
+        <section class="card">
+          <div class="section-title">
+            <div>
+              <p class="section-kicker">EXCEL QUOTE</p>
+              <h2>Excel 表格数据报价</h2>
+            </div>
+          </div>
+          <div class="import-card excel-quote-card">
+            <div class="import-line">
+              <strong>报价规则来源</strong>
+              <span>`mes_ubuntu/changjiang-bom-pricing`</span>
+            </div>
+            <div class="import-line">
+              <strong>AI 报价技能产出</strong>
+              <span>并行完成后会生成多份报价 Excel，包括总表、AI 明细、财务参考对照和差异复核清单，并自动汇总成一个下载包</span>
+            </div>
+            <div class="form-grid model-grid">
+              <label class="field">
+                Excel 文件
+                <input id="excelQuoteFile" type="file" accept=".xlsx" />
+              </label>
+              <label class="field">
+                报价型号名称
+                <input id="excelQuoteModelLabel" placeholder="可选，不填则使用文件名" />
+              </label>
+            </div>
+            <div class="import-line">
+              <strong>处理状态</strong>
+              <span id="excelQuoteStatus">等待上传 Excel</span>
+            </div>
+            <div id="excelQuoteProgressPanel" class="excel-progress-panel hidden">
+              <div class="excel-progress-head">
+                <strong id="excelQuoteProgressLabel">等待开始</strong>
+                <span id="excelQuoteProgressPercent">0%</span>
+              </div>
+              <div class="excel-progress-track" aria-hidden="true">
+                <div id="excelQuoteProgressFill" class="excel-progress-fill" style="width: 0%"></div>
+              </div>
+              <p id="excelQuoteProgressHint" class="excel-progress-hint">上传后会先生成财务传统报价，再并行生成 AI 报价结果</p>
+            </div>
+            <div class="import-line">
+              <strong>金蝶价格参考</strong>
+              <span id="excelQuoteKingdeeHint">若物料编码命中金蝶采购记录，会形成财务传统报价；系统同时生成 AI 独立报价、价格对比图和差异原因分析</span>
+            </div>
+            <div id="excelQuoteExports" class="excel-export-panel hidden">
+              <div class="excel-export-head">
+                <strong>AI 报价技能输出</strong>
+                <span id="excelQuoteExportsSummary">完成后会在这里汇总展示多个报价 Excel 结果。</span>
+              </div>
+              <div id="excelQuoteExportsList" class="excel-export-list"></div>
+              <div class="actions">
+                <button id="downloadExcelPackageBtn" class="ghost" type="button">下载 AI 报价汇总包</button>
+              </div>
+            </div>
+            <div class="actions">
+              <button id="quoteExcelBtn" type="button">开始报价</button>
+              <button id="useExcelScenarioBtn" class="ghost" type="button">打开最近一次结果</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card low-key-card">
+          <div class="section-title">
+            <div>
+              <p class="section-kicker">INTEGRATION</p>
+              <h2>金蝶接入说明</h2>
+            </div>
+          </div>
+          <div id="integrationSummary" class="integration-summary"></div>
+          <div id="kingdeeCards" class="mini-grid"></div>
+        </section>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>

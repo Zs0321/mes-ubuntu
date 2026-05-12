@@ -1,0 +1,16 @@
+[Unit]
+Description=QRMES Feishu Diagnostic Bot
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/qrmes-feishu-bot
+EnvironmentFile=/opt/qrmes-feishu-bot/.env
+ExecStart=/opt/qrmes-feishu-bot/.venv/bin/python -m feishu_mes_bot.bot_app
+Restart=always
+RestartSec=5
+StandardOutput=append:/opt/qrmes-feishu-bot/runtime.log
+StandardError=append:/opt/qrmes-feishu-bot/runtime.log
+
+[Install]
+WantedBy=multi-user.target

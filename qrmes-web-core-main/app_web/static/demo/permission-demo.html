@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>权限控制组件演示</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 4px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .btn-primary { background: #007bff; }
+        .btn-success { background: #28a745; }
+        .btn-danger { background: #dc3545; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-info { background: #17a2b8; }
+        
+        .permission-disabled {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+        }
+        
+        .role-selector {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 8px;
+        }
+        
+        .demo-section {
+            margin-bottom: 30px;
+        }
+        
+        .demo-section h3 {
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+        
+        .permission-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 权限控制组件演示</h1>
+        
+        <!-- 角色选择器 -->
+        <div class="role-selector">
+            <h3>选择用户角色进行测试：</h3>
+            <button class="btn btn-primary" onclick="switchRole('admin')">👑 管理员</button>
+            <button class="btn btn-info" onclick="switchRole('user')">👤 普通用户</button>
+            <button class="btn btn-warning" onclick="switchRole('guest')">🚫 未登录</button>
+            
+            <div id="currentRole" class="permission-info">
+                当前角色: 未设置
+            </div>
+        </div>
+        
+        <!-- 基本权限指令演示 -->
+        <div class="card demo-section">
+            <h3>基本权限指令演示</h3>
+            
+            <div>
+                <h4>data-admin-only 指令：</h4>
+                <button class="btn btn-danger" data-admin-only>🗑️ 删除数据（仅管理员可见）</button>
+                <button class="btn btn-warning" data-admin-only>⚙️ 系统设置（仅管理员可见）</button>
+            </div>
+            
+            <div>
+                <h4>data-user-only 指令：</h4>
+                <button class="btn btn-info" data-user-only>📝 用户操作（仅普通用户可见）</button>
+            </div>
+            
+            <div>
+                <h4>data-permission 指令：</h4>
+                <button class="btn btn-success" data-permission="web:view_records">📊 查看记录</button>
+                <button class="btn btn-primary" data-permission="web:modify_records">✏️ 修改记录</button>
+                <button class="btn btn-danger" data-permission="web:delete_records">🗑️ 删除记录</button>
+                <button class="btn btn-warning" data-permission="web:manage_users">👥 用户管理</button>
+            </div>
+            
+            <div>
+                <h4>data-role 指令：</h4>
+                <button class="btn btn-primary" data-role="admin">管理员专用按钮</button>
+                <button class="btn btn-info" data-role="user">普通用户专用按钮</button>
+            </div>
+        </div>
+        
+        <!-- 权限禁用演示 -->
+        <div class="card demo-section">
+            <h3>权限禁用演示</h3>
+            
+            <div>
+                <h4>data-permission-disable 指令（权限不足时禁用而非隐藏）：</h4>
+                <button class="btn btn-primary" data-permission-disable="web:manage_projects">📁 项目管理</button>
+                <button class="btn btn-success" data-permission-disable="web:system_settings">⚙️ 系统设置</button>
+            </div>
+            
+            <div>
+                <h4>data-permission-tooltip 指令（显示权限提示）：</h4>
+                <button class="btn btn-danger" data-permission-tooltip="web:delete_records|需要删除记录权限">🗑️ 删除操作</button>
+                <button class="btn btn-warning" data-permission-tooltip="web:manage_users|需要用户管理权限">👥 用户管理</button>
+            </div>
+        </div>
+        
+        <!-- 复合权限演示 -->
+        <div class="card demo-section">
+            <h3>复合权限演示</h3>
+            
+            <div>
+                <h4>data-permission-any 指令（满足任一权限即可）：</h4>
+                <button class="btn btn-info" data-permission-any="web:view_records,web:modify_records">📊 记录操作</button>
+            </div>
+            
+            <div>
+                <h4>data-permission-all 指令（需要所有权限）：</h4>
+                <button class="btn btn-danger" data-permission-all="web:delete_records,web:manage_users">🔥 高级操作</button>
+            </div>
+        </div>
+        
+        <!-- 动态权限测试 -->
+        <div class="card demo-section">
+            <h3>动态权限测试</h3>
+            
+            <div>
+                <button class="btn btn-primary" onclick="testPermissionCheck()">🔍 测试权限检查</button>
+                <button class="btn btn-success" onclick="refreshPermissions()">🔄 刷新权限</button>
+                <button class="btn btn-info" onclick="showCurrentPermissions()">📋 显示当前权限</button>
+            </div>
+            
+            <div id="permissionTestResult"></div>
+        </div>
+        
+        <!-- 表单权限演示 -->
+        <div class="card demo-section">
+            <h3>表单权限演示</h3>
+            
+            <form id="adminForm" onsubmit="return false;">
+                <h4>管理员表单（需要管理员权限）：</h4>
+                <input type="text" placeholder="项目名称" style="padding: 8px; margin: 4px;">
+                <button type="submit" class="btn btn-primary" data-admin-only>提交</button>
+            </form>
+            
+            <form id="userForm" onsubmit="return false;">
+                <h4>用户表单（普通用户可用）：</h4>
+                <input type="text" placeholder="记录内容" style="padding: 8px; margin: 4px;">
+                <button type="submit" class="btn btn-success" data-permission="web:view_records">提交</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 模拟权限控制器 -->
+    <script>
+        // 模拟权限控制器
+        class MockPermissionController {
+            constructor() {
+                this.currentUser = null;
+                this.permissions = new Set();
+                this.isAdmin = false;
+                
+                this.PERMISSIONS = {
+                    WEB_VIEW_RECORDS: 'web:view_records',
+                    WEB_MODIFY_RECORDS: 'web:modify_records',
+                    WEB_DELETE_RECORDS: 'web:delete_records',
+                    WEB_MANAGE_USERS: 'web:manage_users',
+                    WEB_MANAGE_PROJECTS: 'web:manage_projects',
+                    WEB_MANAGE_PROCESS_CONFIG: 'web:manage_process_config',
+                    WEB_VIEW_LOGS: 'web:view_logs',
+                    WEB_SYSTEM_SETTINGS: 'web:system_settings'
+                };
+            }
+            
+            async initialize() {
+                console.log('模拟权限控制器初始化');
+                return true;
+            }
+            
+            hasPermission(permission) {
+                return this.permissions.has(permission);
+            }
+            
+            isUserAdmin() {
+                return this.isAdmin;
+            }
+            
+            getCurrentUser() {
+                return this.currentUser;
+            }
+            
+            setRole(role) {
+                this.currentUser = { role: role };
+                this.isAdmin = role === 'admin';
+                this.permissions.clear();
+                
+                if (role === 'admin') {
+                    // 管理员拥有所有权限
+                    Object.values(this.PERMISSIONS).forEach(perm => {
+                        this.permissions.add(perm);
+                    });
+                } else if (role === 'user') {
+                    // 普通用户权限
+                    this.permissions.add(this.PERMISSIONS.WEB_VIEW_RECORDS);
+                    this.permissions.add(this.PERMISSIONS.WEB_MANAGE_PROJECTS);
+                }
+                
+                // 更新显示
+                document.getElementById('currentRole').textContent = 
+                    `当前角色: ${role} | 权限数量: ${this.permissions.size} | 管理员: ${this.isAdmin}`;
+            }
+            
+            checkPermissionForAction(permission, actionName) {
+                if (!this.hasPermission(permission)) {
+                    this.showPermissionDeniedMessage(actionName);
+                    return false;
+                }
+                return true;
+            }
+            
+            showPermissionDeniedMessage(actionName) {
+                const message = `权限不足，无法执行${actionName}。请联系管理员获取相应权限。`;
+                this.createTemporaryAlert(message, 'error');
+            }
+            
+            createTemporaryAlert(message, type) {
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type}`;
+                alert.textContent = message;
+                
+                document.body.appendChild(alert);
+                
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.remove();
+                    }
+                }, 3000);
+            }
+            
+            applyPermissionDirectives() {
+                // 处理 data-permission 属性
+                const permissionElements = document.querySelectorAll('[data-permission]');
+                permissionElements.forEach(element => {
+                    const requiredPermission = element.getAttribute('data-permission');
+                    if (!this.hasPermission(requiredPermission)) {
+                        this.hideElement(element);
+                    } else {
+                        this.showElement(element);
+                    }
+                });
+                
+                // 处理 data-admin-only 属性
+                const adminOnlyElements = document.querySelectorAll('[data-admin-only]');
+                adminOnlyElements.forEach(element => {
+                    if (!this.isUserAdmin()) {
+                        this.hideElement(element);
+                    } else {
+                        this.showElement(element);
+                    }
+                });
+                
+                // 处理 data-user-only 属性
+                const userOnlyElements = document.querySelectorAll('[data-user-only]');
+                userOnlyElements.forEach(element => {
+                    if (this.isUserAdmin()) {
+                        this.hideElement(element);
+                    } else {
+                        this.showElement(element);
+                    }
+                });
+                
+                // 处理 data-role 属性
+                const roleElements = document.querySelectorAll('[data-role]');
+                roleElements.forEach(element => {
+                    const requiredRole = element.getAttribute('data-role');
+                    const userRole = this.currentUser?.role;
+                    if (userRole !== requiredRole) {
+                        this.hideElement(element);
+                    } else {
+                        this.showElement(element);
+                    }
+                });
+                
+                // 处理 data-permission-disable 属性
+                const disableElements = document.querySelectorAll('[data-permission-disable]');
+                disableElements.forEach(element => {
+                    const requiredPermission = element.getAttribute('data-permission-disable');
+                    if (!this.hasPermission(requiredPermission)) {
+                        this.disableElement(element);
+                    } else {
+                        this.enableElement(element);
+                    }
+                });
+                
+                // 处理 data-permission-tooltip 属性
+                const tooltipElements = document.querySelectorAll('[data-permission-tooltip]');
+                tooltipElements.forEach(element => {
+                    const value = element.getAttribute('data-permission-tooltip');
+                    const [permission, message] = value.split('|').map(s => s.trim());
+                    
+                    if (!this.hasPermission(permission)) {
+                        this.addPermissionTooltip(element, message || '权限不足');
+                        this.disableElement(element);
+                    } else {
+                        this.removePermissionTooltip(element);
+                        this.enableElement(element);
+                    }
+                });
+                
+                // 处理复合权限指令
+                this.handleComplexPermissions();
+            }
+            
+            handleComplexPermissions() {
+                // data-permission-any
+                const anyElements = document.querySelectorAll('[data-permission-any]');
+                anyElements.forEach(element => {
+                    const permissions = element.getAttribute('data-permission-any').split(',').map(p => p.trim());
+                    const hasAnyPermission = permissions.some(permission => this.hasPermission(permission));
+                    
+                    if (!hasAnyPermission) {
+                        this.hideElement(element);
+                    } else {
+                        this.showElement(element);
+                    }
+                });
+                
+                // data-permission-all
+                const allElements = document.querySelectorAll('[data-permission-all]');
+                allElements.forEach(element => {
+                    const permissions = element.getAttribute('data-permission-all').split(',').map(p => p.trim());
+                    const hasAllPermissions = permissions.every(permission => this.hasPermission(permission));
+                    
+                    if (!hasAllPermissions) {
+                        this.hideElement(element);
+                    } else {
+                        this.showElement(element);
+                    }
+                });
+            }
+            
+            hideElement(element) {
+                element.style.display = 'none';
+                element.setAttribute('data-permission-hidden', 'true');
+            }
+            
+            showElement(element) {
+                element.style.display = '';
+                element.removeAttribute('data-permission-hidden');
+            }
+            
+            disableElement(element) {
+                if (element.tagName === 'BUTTON' || element.tagName === 'INPUT') {
+                    element.disabled = true;
+                }
+                element.classList.add('permission-disabled');
+            }
+            
+            enableElement(element) {
+                if (element.tagName === 'BUTTON' || element.tagName === 'INPUT') {
+                    element.disabled = false;
+                }
+                element.classList.remove('permission-disabled');
+            }
+            
+            addPermissionTooltip(element, message) {
+                element.setAttribute('title', message);
+            }
+            
+            removePermissionTooltip(element) {
+                element.removeAttribute('title');
+            }
+        }
+        
+        // 创建全局权限控制器实例
+        const permissionController = new MockPermissionController();
+        window.permissionController = permissionController;
+        
+        // 角色切换函数
+        function switchRole(role) {
+            permissionController.setRole(role);
+            permissionController.applyPermissionDirectives();
+            
+            // 显示切换成功消息
+            permissionController.createTemporaryAlert(`已切换到${role}角色`, 'success');
+        }
+        
+        // 测试权限检查
+        function testPermissionCheck() {
+            const result = permissionController.checkPermissionForAction(
+                permissionController.PERMISSIONS.WEB_DELETE_RECORDS,
+                '删除记录'
+            );
+            
+            const resultDiv = document.getElementById('permissionTestResult');
+            resultDiv.innerHTML = `
+                <div class="alert alert-info">
+                    权限检查结果: ${result ? '✅ 通过' : '❌ 拒绝'}<br>
+                    检查权限: web:delete_records<br>
+                    当前角色: ${permissionController.getCurrentUser()?.role || '未设置'}
+                </div>
+            `;
+        }
+        
+        // 刷新权限
+        function refreshPermissions() {
+            permissionController.applyPermissionDirectives();
+            permissionController.createTemporaryAlert('权限已刷新', 'success');
+        }
+        
+        // 显示当前权限
+        function showCurrentPermissions() {
+            const permissions = Array.from(permissionController.permissions);
+            const resultDiv = document.getElementById('permissionTestResult');
+            
+            resultDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <strong>当前用户权限列表:</strong><br>
+                    ${permissions.length > 0 ? permissions.map(p => `• ${p}`).join('<br>') : '无权限'}
+                </div>
+            `;
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            permissionController.initialize();
+            // 默认设置为未登录状态
+            switchRole('guest');
+        });
+    </script>
+</body>
+</html>

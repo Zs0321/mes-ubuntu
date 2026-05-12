@@ -1,0 +1,645 @@
+{% extends "motor_qc/base.html" %}
+
+{% block breadcrumb %}
+<a href="{{ url_for('motor_qc.index') }}">项目列表</a>
+<span> / </span>
+<span id="breadcrumb-project">{{ project_id }}</span>
+{% endblock %}
+
+{% block motor_qc_content %}
+<div class="qc-page">
+    <div class="qc-header card">
+        <h2 id="project-title">电机质检</h2>
+        <div id="project-meta" class="muted">加载中...</div>
+    </div>
+
+    <div class="qc-controls card">
+        <div class="control-row">
+            <label for="product-type-select">产品类型</label>
+            <select id="product-type-select"></select>
+        </div>
+        <div class="control-row">
+            <label for="serial-input">序列号</label>
+            <input id="serial-input" list="serial-list" placeholder="输入或选择序列号">
+            <datalist id="serial-list"></datalist>
+        </div>
+        <div class="control-actions">
+            <button id="refresh-motors-btn" class="btn btn-secondary" type="button">刷新列表</button>
+            <button id="load-report-btn" class="btn btn-primary" type="button">查看当前报告</button>
+            <button id="run-inspect-btn" class="btn btn-success" type="button">执行全工序质检</button>
+        </div>
+        <div id="action-hint" class="muted small"></div>
+        <div id="inspect-progress-panel" class="inspect-progress-panel hidden">
+            <div class="inspect-progress-head">
+                <span id="inspect-progress-title">准备开始质检...</span>
+                <span id="inspect-progress-percent">0%</span>
+            </div>
+            <div class="inspect-progress-track">
+                <div id="inspect-progress-bar" class="inspect-progress-bar"></div>
+            </div>
+            <div id="inspect-progress-detail" class="muted small"></div>
+            <div id="inspect-progress-photo" class="small"></div>
+        </div>
+    </div>
+
+    <div class="qc-layout">
+        <div class="card">
+            <div class="panel-title">产品列表</div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>序列号</th>
+                            <th>照片数</th>
+                            <th>工序数</th>
+                            <th>最后拍照</th>
+                        </tr>
+                    </thead>
+                    <tbody id="motor-list-body">
+                        <tr>
+                            <td colspan="4" class="muted">加载中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="panel-title">质检结果</div>
+            <div id="report-summary" class="muted">请选择序列号后查询</div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>工序</th>
+                            <th>状态</th>
+                            <th>照片数</th>
+                            <th>缺陷</th>
+                            <th>说明</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-body">
+                        <tr>
+                            <td colspan="5" class="muted">暂无数据</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="photo-preview-modal" class="photo-preview-modal hidden">
+        <div class="photo-preview-dialog">
+            <button type="button" class="photo-preview-close" data-close-photo-modal aria-label="关闭">×</button>
+            <img id="photo-preview-image" src="" alt="工序照片预览">
+            <div id="photo-preview-caption" class="small muted"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block motor_qc_js %}
+<script>
+const PROJECT_ID = {{ project_id|tojson }};
+const INSPECT_STREAM_NONCE = {{ inspect_stream_nonce|tojson }};
+let currentProject = null;
+let currentMotors = [];
+let currentReportData = null;
+let lastStreamEvent = null;
+let currentInspectStreamNonce = INSPECT_STREAM_NONCE || '';
+let inspectRequestInFlight = false;
+
+function esc(text) {
+    const div = document.createElement('div');
+    div.textContent = text == null ? '' : String(text);
+    return div.innerHTML;
+}
+
+function statusBadge(status) {
+    const val = (status || '').toLowerCase();
+    const map = {
+        pass: 'status-pass',
+        fail: 'status-fail',
+        ng: 'status-ng',
+        pending: 'status-pending'
+    };
+    const labelMap = {
+        pass: '合格',
+        fail: '不合格',
+        ng: '待复核',
+        pending: '未检测'
+    };
+    const cls = map[val] || 'status-pending';
+    const label = labelMap[val] || '未检测';
+    return `<span class="status-badge ${cls}">${label}</span>`;
+}
+
+function updateHint(text) {
+    document.getElementById('action-hint').textContent = text || '';
+}
+
+function selectedProductType() {
+    const el = document.getElementById('product-type-select');
+    return (el.value || '').trim();
+}
+
+function currentSerial() {
+    return (document.getElementById('serial-input').value || '').trim();
+}
+
+function formatDateTime(value) {
+    if (!value) return '-';
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return value;
+    return d.toLocaleString('zh-CN');
+}
+
+function setBusy(buttonId, busy) {
+    const btn = document.getElementById(buttonId);
+    if (!btn) return;
+    btn.disabled = !!busy;
+}
+
+function setInspectProgressVisible(visible) {
+    const panel = document.getElementById('inspect-progress-panel');
+    if (!panel) return;
+    panel.classList.toggle('hidden', !visible);
+}
+
+function updateInspectProgress(title, percent, detail, photoHtml) {
+    const p = Math.max(0, Math.min(100, Number(percent) || 0));
+    const titleEl = document.getElementById('inspect-progress-title');
+    const percentEl = document.getElementById('inspect-progress-percent');
+    const detailEl = document.getElementById('inspect-progress-detail');
+    const barEl = document.getElementById('inspect-progress-bar');
+    const photoEl = document.getElementById('inspect-progress-photo');
+
+    if (titleEl) titleEl.textContent = title || '';
+    if (percentEl) percentEl.textContent = `${Math.round(p)}%`;
+    if (detailEl) detailEl.textContent = detail || '';
+    if (barEl) barEl.style.width = `${p}%`;
+    if (photoEl) photoEl.innerHTML = photoHtml || '';
+}
+
+function renderPhotoLink(url, label) {
+    if (!url) return '<span class="muted small">-</span>';
+    return `<a class="btn btn-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(label || '查看') }</a>`;
+}
+
+function normalizeProcessPhotos(row) {
+    const photos = Array.isArray(row && row.photos) ? row.photos : [];
+    const normalized = photos
+        .filter((item) => item && item.url)
+        .map((item, idx) => ({
+            url: String(item.url),
+            name: (item.name || `工序图片${idx + 1}`)
+        }));
+
+    if (normalized.length) {
+        return normalized;
+    }
+
+    if (row && row.latest_photo_url) {
+        return [{
+            url: String(row.latest_photo_url),
+            name: row.latest_photo || '工序图片'
+        }];
+    }
+
+    return [];
+}
+
+function normalizeDefectTags(row) {
+    const defects = Array.isArray(row && row.defects) ? row.defects : [];
+    const tags = [];
+    for (const item of defects) {
+        if (typeof item === 'string' && item.trim()) {
+            tags.push(item.trim());
+            continue;
+        }
+        if (item && typeof item === 'object') {
+            const candidate = item.type || item.name || item.code || item.label || '';
+            if (String(candidate).trim()) {
+                tags.push(String(candidate).trim());
+            }
+        }
+    }
+    return [...new Set(tags)];
+}
+
+function defaultHumanResult(aiStatus) {
+    const val = String(aiStatus || '').toLowerCase();
+    if (val === 'pass') return 'pass';
+    if (val === 'fail') return 'fail';
+    if (val === 'ng') return 'ng';
+    return 'pending';
+}
+
+function renderPhotoPreviewGrid(photos) {
+    if (!photos.length) {
+        return '<div class="process-photo-empty muted small">无照片</div>';
+    }
+
+    return `
+        <div class="process-photo-grid">
+            ${photos.map((photo) => `
+                <button type="button"
+                    class="process-photo-thumb"
+                    data-photo-url="${esc(photo.url)}"
+                    data-photo-name="${esc(photo.name || '工序图片')}">
+                    <img src="${esc(photo.url)}" alt="${esc(photo.name || '工序图片')}" loading="lazy">
+                </button>
+            `).join('')}
+        </div>
+    `;
+}
+
+function openPhotoPreview(url, name) {
+    if (!url) return;
+    const modal = document.getElementById('photo-preview-modal');
+    const image = document.getElementById('photo-preview-image');
+    const caption = document.getElementById('photo-preview-caption');
+    if (!modal || !image || !caption) return;
+
+    image.src = url;
+    image.alt = name || '工序照片预览';
+    caption.textContent = name || '';
+    modal.classList.remove('hidden');
+}
+
+function closePhotoPreview() {
+    const modal = document.getElementById('photo-preview-modal');
+    const image = document.getElementById('photo-preview-image');
+    const caption = document.getElementById('photo-preview-caption');
+    if (!modal || !image || !caption) return;
+
+    image.src = '';
+    caption.textContent = '';
+    modal.classList.add('hidden');
+}
+
+function renderMotorList(motors) {
+    const body = document.getElementById('motor-list-body');
+    const datalist = document.getElementById('serial-list');
+    currentMotors = Array.isArray(motors) ? motors : [];
+
+    if (!currentMotors.length) {
+        body.innerHTML = '<tr><td colspan="4" class="muted">该筛选条件下无数据</td></tr>';
+        datalist.innerHTML = '';
+        return;
+    }
+
+    datalist.innerHTML = currentMotors.map((m) =>
+        `<option value="${esc(m.serial_number)}"></option>`
+    ).join('');
+
+    body.innerHTML = currentMotors.map((m, index) => `
+        <tr data-serial="${esc(m.serial_number)}" data-index="${index}">
+            <td class="mono">${esc(m.serial_number)}</td>
+            <td>${m.total_photos || 0}</td>
+            <td>${m.completed_processes || 0}</td>
+            <td>${esc(formatDateTime(m.last_photo_time))}</td>
+        </tr>
+    `).join('');
+
+    for (const row of body.querySelectorAll('tr[data-serial]')) {
+        row.addEventListener('click', () => {
+            const serial = row.getAttribute('data-serial');
+            const idx = Number(row.getAttribute('data-index') || '-1');
+            const motor = idx >= 0 ? currentMotors[idx] : null;
+            document.getElementById('serial-input').value = serial || '';
+            if (motor && Array.isArray(motor.product_types) && motor.product_types.length === 1) {
+                const selector = document.getElementById('product-type-select');
+                const onlyType = String(motor.product_types[0] || '').trim();
+                if (selector && onlyType) {
+                    const hasOption = Array.from(selector.options).some((opt) => opt.value === onlyType);
+                    if (hasOption && !selector.value) {
+                        selector.value = onlyType;
+                    }
+                }
+            }
+            loadReport(false);
+        });
+    }
+}
+
+function renderReport(result) {
+    currentReportData = result || null;
+    const summary = document.getElementById('report-summary');
+    const body = document.getElementById('report-body');
+    const missing = Array.isArray(result.missing_processes) ? result.missing_processes : [];
+    const inspected = result.inspected_processes || 0;
+    const total = result.total_processes || 0;
+
+    summary.innerHTML = `
+        <div class="summary-row">
+            <span class="mono">${esc(result.serial_number || '-')}</span>
+            ${statusBadge(result.overall_status)}
+        </div>
+        <div class="summary-row muted">
+            检测进度: ${inspected}/${total}
+            ${missing.length ? ` | 缺失工序: ${esc(missing.join('、'))}` : ''}
+        </div>
+    `;
+
+    const rows = Array.isArray(result.results) ? result.results : [];
+    if (!rows.length) {
+        body.innerHTML = '<tr><td colspan="5" class="muted">无工序结果</td></tr>';
+        return;
+    }
+
+    body.innerHTML = rows.map((row, rowIndex) => {
+        const processPhotos = normalizeProcessPhotos(row);
+        return `
+            <tr class="process-main-row">
+                <td>${esc(row.process || '-')}</td>
+                <td>${statusBadge(row.status)}</td>
+                <td>${row.photo_count || 0}</td>
+                <td>${row.defect_count || 0}</td>
+                <td class="ellipsis" title="${esc(row.summary || '')}">${esc(row.summary || '-')}</td>
+            </tr>
+            <tr class="process-photo-row">
+                <td colspan="5">
+                    <div class="process-photo-wrap">
+                        <div class="small muted">工序照片预览（${processPhotos.length}）</div>
+                        ${renderPhotoPreviewGrid(processPhotos)}
+                        <div class="process-feedback-wrap" data-feedback-wrap>
+                            <div class="small">人工确认与学习</div>
+                            <div class="process-feedback-controls">
+                                <select class="process-feedback-select" data-feedback-result data-row-index="${rowIndex}">
+                                    <option value="pass" ${defaultHumanResult(row.status) === 'pass' ? 'selected' : ''}>人工判定: 合格</option>
+                                    <option value="fail" ${defaultHumanResult(row.status) === 'fail' ? 'selected' : ''}>人工判定: 不合格</option>
+                                    <option value="ng" ${defaultHumanResult(row.status) === 'ng' ? 'selected' : ''}>人工判定: 待复核</option>
+                                    <option value="pending" ${defaultHumanResult(row.status) === 'pending' ? 'selected' : ''}>人工判定: 未检测</option>
+                                </select>
+                                <input type="text" class="process-feedback-notes" data-feedback-notes data-row-index="${rowIndex}" placeholder="备注（可选）">
+                                <button type="button"
+                                    class="btn btn-secondary process-feedback-submit"
+                                    data-feedback-submit
+                                    data-row-index="${rowIndex}">
+                                    保存人工确认
+                                </button>
+                            </div>
+                            <div class="small muted" data-feedback-message data-row-index="${rowIndex}"></div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+async function submitProcessFeedback(rowIndex) {
+    if (!currentReportData || !Array.isArray(currentReportData.results)) {
+        return;
+    }
+    const row = currentReportData.results[rowIndex];
+    if (!row) {
+        return;
+    }
+
+    const resultEl = document.querySelector(`[data-feedback-result][data-row-index="${rowIndex}"]`);
+    const notesEl = document.querySelector(`[data-feedback-notes][data-row-index="${rowIndex}"]`);
+    const messageEl = document.querySelector(`[data-feedback-message][data-row-index="${rowIndex}"]`);
+    const submitEl = document.querySelector(`[data-feedback-submit][data-row-index="${rowIndex}"]`);
+
+    if (!resultEl || !submitEl) {
+        return;
+    }
+
+    const serialNumber = (currentReportData.serial_number || currentSerial() || '').trim();
+    if (!serialNumber) {
+        if (messageEl) messageEl.textContent = '缺少序列号，无法提交人工确认';
+        return;
+    }
+
+    const processPhotos = normalizeProcessPhotos(row);
+    const payload = {
+        project_id: PROJECT_ID,
+        serial_number: serialNumber,
+        process_name: row.process || '',
+        product_type: currentReportData.product_type || selectedProductType() || '',
+        ai_result: row.status || '',
+        human_result: resultEl.value || 'pending',
+        defect_tags: normalizeDefectTags(row),
+        image_refs: processPhotos.map((item) => item.url),
+        notes: notesEl ? notesEl.value || '' : ''
+    };
+
+    submitEl.disabled = true;
+    if (messageEl) messageEl.textContent = '提交中...';
+    try {
+        await window.motorQCAPI.confirmFeedback(payload);
+        if (messageEl) messageEl.textContent = '人工确认已保存，并已写入经验库';
+    } catch (error) {
+        if (messageEl) messageEl.textContent = `提交失败: ${error.message || error}`;
+    } finally {
+        submitEl.disabled = false;
+    }
+}
+
+function handleInspectStreamEvent(eventData) {
+    if (!eventData || typeof eventData !== 'object') return;
+    lastStreamEvent = eventData;
+    const eventName = eventData.event || '';
+
+    if (eventName === 'start') {
+        if (eventData.next_nonce) {
+            currentInspectStreamNonce = String(eventData.next_nonce);
+        }
+        setInspectProgressVisible(true);
+        updateInspectProgress(
+            '开始执行工序质检',
+            0,
+            `总工序: ${eventData.total_steps || 0}`,
+            ''
+        );
+        return;
+    }
+
+    if (eventName === 'progress') {
+        const step = eventData.process || '';
+        updateInspectProgress(
+            `正在分析：${step}`,
+            eventData.progress_percent || 0,
+            `工序 ${eventData.index || 0}/${eventData.total_steps || 0}`,
+            ''
+        );
+        return;
+    }
+
+    if (eventName === 'step_result') {
+        const row = eventData.result || {};
+        const processPhotos = normalizeProcessPhotos(row);
+        const latestPhoto = processPhotos.length ? processPhotos[processPhotos.length - 1] : null;
+        const photoHtml = latestPhoto
+            ? `当前工序图片：${renderPhotoLink(latestPhoto.url, latestPhoto.name || '查看')}`
+            : '';
+        updateInspectProgress(
+            `完成：${row.process || '-'}`,
+            eventData.progress_percent || 0,
+            `状态：${row.status || 'pending'} | 已完成 ${eventData.index || 0}/${eventData.total_steps || 0}`,
+            photoHtml
+        );
+        return;
+    }
+
+    if (eventName === 'done') {
+        updateInspectProgress('质检完成', 100, '全部工序分析完成', '');
+    }
+}
+
+async function loadProjectDetail() {
+    const project = await window.motorQCAPI.getProject(PROJECT_ID);
+    currentProject = project;
+
+    const projectName = project.name || project.projectName || PROJECT_ID;
+    const processes = Array.isArray(project.processes) ? project.processes : [];
+    const productTypes = [...new Set(processes.map((p) => (p.product_type || '').trim()).filter(Boolean))];
+
+    document.getElementById('project-title').textContent = `项目质检 - ${projectName}`;
+    document.getElementById('breadcrumb-project').textContent = projectName;
+    document.getElementById('project-meta').textContent =
+        `项目号: ${project.project_code || '-'} | 模型: ${project.model || '-'} | 工序数: ${processes.length}`;
+
+    const selector = document.getElementById('product-type-select');
+    selector.innerHTML = ['<option value="">全部产品类型</option>'].concat(
+        productTypes.map((name) => `<option value="${esc(name)}">${esc(name)}</option>`)
+    ).join('');
+}
+
+async function loadMotorList() {
+    updateHint('正在加载产品列表...');
+    setBusy('refresh-motors-btn', true);
+    try {
+        const data = await window.motorQCAPI.listProjectMotors(PROJECT_ID, {
+            productType: selectedProductType()
+        });
+        renderMotorList(data.motors || []);
+        updateHint(`已加载 ${data.total || 0} 台产品`);
+    } catch (error) {
+        renderMotorList([]);
+        updateHint(`加载产品失败: ${error.message || error}`);
+    } finally {
+        setBusy('refresh-motors-btn', false);
+    }
+}
+
+async function loadReport(runInspect) {
+    const serial = currentSerial();
+    if (!serial) {
+        updateHint('请先输入或选择序列号');
+        return;
+    }
+    if (runInspect && inspectRequestInFlight) {
+        updateHint('该序列号质检仍在执行中，请勿重复触发');
+        return;
+    }
+
+    const action = runInspect ? '执行质检' : '加载报告';
+    updateHint(`正在${action}: ${serial}`);
+    setBusy('load-report-btn', true);
+    setBusy('run-inspect-btn', true);
+    if (runInspect) {
+        inspectRequestInFlight = true;
+    }
+    if (!runInspect) {
+        setInspectProgressVisible(false);
+    }
+
+    try {
+        const productType = selectedProductType();
+        const result = runInspect
+            ? await window.motorQCAPI.inspectProjectMotorStream(
+                PROJECT_ID,
+                serial,
+                { productType, nonce: currentInspectStreamNonce },
+                handleInspectStreamEvent
+            )
+            : await window.motorQCAPI.getProjectMotorReport(PROJECT_ID, serial, { productType: productType });
+
+        renderReport(result);
+        updateHint(`${action}完成: ${serial}`);
+        if (runInspect) {
+            setInspectProgressVisible(true);
+        }
+    } catch (error) {
+        const retryAfter = Number((error && error.payload && error.payload.retry_after) || 0);
+        let guardBlocked = false;
+        if (runInspect && (error.status === 409 || error.status === 429)) {
+            const waitText = retryAfter > 0 ? `，请 ${retryAfter}s 后重试` : '';
+            updateHint(`${action}被拒绝: ${(error.message || error)}${waitText}`);
+            updateInspectProgress('识别请求被保护策略拦截', 0, (error.message || '') + waitText, '');
+            guardBlocked = true;
+        } else {
+            updateHint(`${action}失败: ${error.message || error}`);
+        }
+        if (runInspect && !guardBlocked) {
+            const detail = (lastStreamEvent && lastStreamEvent.process)
+                ? `中断工序: ${lastStreamEvent.process}`
+                : '';
+            updateInspectProgress('实时质检失败', 0, detail || '连接中断或服务异常', '');
+            setInspectProgressVisible(true);
+        }
+    } finally {
+        if (runInspect) {
+            inspectRequestInFlight = false;
+        }
+        setBusy('load-report-btn', false);
+        setBusy('run-inspect-btn', false);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await loadProjectDetail();
+        await loadMotorList();
+    } catch (error) {
+        updateHint(`初始化失败: ${error.message || error}`);
+    }
+
+    document.getElementById('product-type-select').addEventListener('change', () => {
+        loadMotorList();
+    });
+    document.getElementById('refresh-motors-btn').addEventListener('click', () => {
+        loadMotorList();
+    });
+    document.getElementById('load-report-btn').addEventListener('click', () => {
+        loadReport(false);
+    });
+    document.getElementById('run-inspect-btn').addEventListener('click', () => {
+        loadReport(true);
+    });
+
+    document.getElementById('report-body').addEventListener('click', (event) => {
+        const feedbackBtn = event.target.closest('[data-feedback-submit]');
+        if (feedbackBtn) {
+            const rowIndex = Number(feedbackBtn.getAttribute('data-row-index') || '-1');
+            if (rowIndex >= 0) {
+                submitProcessFeedback(rowIndex);
+            }
+            return;
+        }
+
+        const thumb = event.target.closest('.process-photo-thumb');
+        if (!thumb) return;
+        openPhotoPreview(
+            thumb.getAttribute('data-photo-url') || '',
+            thumb.getAttribute('data-photo-name') || ''
+        );
+    });
+
+    document.getElementById('photo-preview-modal').addEventListener('click', (event) => {
+        if (event.target.id === 'photo-preview-modal' || event.target.closest('[data-close-photo-modal]')) {
+            closePhotoPreview();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closePhotoPreview();
+        }
+    });
+});
+</script>
+{% endblock %}

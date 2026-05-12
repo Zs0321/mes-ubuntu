@@ -1,0 +1,585 @@
+{% extends "base.html" %}
+
+{% block title %}产品进度详情{% endblock %}
+
+{% block extra_css %}
+<style>
+  .ppd-page {
+    display: grid;
+    gap: 1rem;
+    color: #e6edf7;
+    --ppd-cyan: #22d3ee;
+    --ppd-blue: #3b82f6;
+    --ppd-violet: #8b5cf6;
+    --ppd-pink: #ec4899;
+    --ppd-orange: #f97316;
+    --ppd-green: #22c55e;
+    --ppd-lime: #a3e635;
+  }
+
+  .ppd-hero,
+  .ppd-panel,
+  .ppd-step {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(99, 179, 237, 0.18);
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(12, 20, 32, 0.96), rgba(17, 24, 39, 0.92));
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.34);
+  }
+
+  .ppd-hero::before,
+  .ppd-panel::before,
+  .ppd-step::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 0%, rgba(34, 211, 238, 0.11) 42%, transparent 72%);
+    transform: translateX(-120%);
+    animation: ppdScan 5.8s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .ppd-hero {
+    min-height: 160px;
+    padding: 1.35rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: end;
+  }
+
+  .ppd-eyebrow {
+    color: #67e8f9;
+    font: 700 0.72rem "JetBrains Mono", monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ppd-hero h1 {
+    margin: 0.35rem 0 0.45rem;
+    font-size: clamp(1.55rem, 2.6vw, 2.35rem);
+    line-height: 1.1;
+    letter-spacing: 0;
+    word-break: break-word;
+  }
+
+  .ppd-muted {
+    color: #9fb0c7;
+  }
+
+  .ppd-btn {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    border-radius: 8px;
+    padding: 0 0.85rem;
+    background: rgba(15, 23, 42, 0.72);
+    color: #a5f3fc;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .ppd-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 24px rgba(34, 211, 238, 0.18);
+    text-decoration: none;
+  }
+
+  .ppd-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .ppd-panel {
+    padding: 1rem;
+    animation: ppdCardIn 420ms ease both;
+  }
+
+  .ppd-label {
+    color: #8ea0b8;
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+  }
+
+  .ppd-value {
+    margin-top: 0.32rem;
+    font: 800 1.35rem "JetBrains Mono", monospace;
+    color: #f8fafc;
+    word-break: break-word;
+  }
+
+  .ppd-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.36rem;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 999px;
+    padding: 0.26rem 0.58rem;
+    color: #94a3b8;
+    background: rgba(148, 163, 184, 0.08);
+    font-size: 0.78rem;
+  }
+
+  .ppd-status::before {
+    content: "";
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 10px currentColor;
+  }
+
+  .ppd-status.in_progress {
+    color: #fbbf24;
+    background: rgba(245, 158, 11, 0.1);
+    animation: ppdPulse 1.8s ease-in-out infinite;
+  }
+
+  .ppd-status.completed {
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+  }
+
+  .ppd-timeline {
+    position: relative;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .ppd-timeline::before {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 1px;
+    background: rgba(34, 211, 238, 0.5);
+    box-shadow: 0 0 16px rgba(34, 211, 238, 0.28);
+  }
+
+  .ppd-step {
+    padding: 0.9rem 0.9rem 0.9rem 2.7rem;
+    animation: ppdCardIn 420ms ease both;
+  }
+
+  .ppd-step-dot {
+    position: absolute;
+    left: 0.68rem;
+    top: 1.15rem;
+    width: 0.7rem;
+    aspect-ratio: 1;
+    border: 2px solid #22d3ee;
+    border-radius: 50%;
+    background: #0b1220;
+    box-shadow: 0 0 14px rgba(34, 211, 238, 0.42);
+  }
+
+  .ppd-step-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 0.45rem;
+  }
+
+  .ppd-step-title {
+    color: #f8fafc;
+    font-weight: 800;
+  }
+
+  .ppd-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.62rem;
+  }
+
+  .ppd-file {
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 8px;
+    padding: 0.42rem 0.62rem;
+    color: #dff7ff;
+    background: rgba(2, 8, 16, 0.42);
+    text-decoration: none;
+  }
+
+  .ppd-file:hover {
+    border-color: rgba(34, 211, 238, 0.6);
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.14);
+    text-decoration: none;
+  }
+
+  .ppd-photo-modal[hidden] {
+    display: none;
+  }
+
+  .ppd-photo-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    padding: 1.2rem;
+    background: rgba(2, 6, 23, 0.86);
+    backdrop-filter: blur(12px);
+  }
+
+  .ppd-photo-dialog {
+    width: min(1120px, 96vw);
+    max-height: 92vh;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    border: 1px solid rgba(34, 211, 238, 0.36);
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgba(8,13,24,.98), rgba(15,23,42,.94));
+    box-shadow: 0 30px 90px rgba(0,0,0,.62), 0 0 42px rgba(34,211,238,.12);
+    overflow: hidden;
+  }
+
+  .ppd-photo-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .85rem 1rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  }
+
+  .ppd-photo-title {
+    min-width: 0;
+    color: #e0f2fe;
+    font-weight: 800;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ppd-photo-actions {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .ppd-photo-body {
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    padding: .9rem;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(34,211,238,.12), transparent 32%),
+      radial-gradient(circle at 90% 100%, rgba(139,92,246,.12), transparent 32%),
+      rgba(2, 6, 23, .72);
+  }
+
+  .ppd-photo-body img {
+    max-width: 100%;
+    max-height: 76vh;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 16px 46px rgba(0,0,0,.45);
+  }
+
+  .ppd-photo-close {
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 8px;
+    padding: .45rem .7rem;
+    background: rgba(15, 23, 42, 0.84);
+    color: #dff7ff;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .ppd-photo-open {
+    border-color: rgba(34, 211, 238, 0.45);
+    color: #03131d;
+    background: linear-gradient(135deg, #22d3ee, #60a5fa);
+  }
+
+  body.ppd-modal-open {
+    overflow: hidden;
+  }
+
+  .ppd-empty {
+    padding: 1.2rem;
+    border: 1px dashed rgba(148, 163, 184, 0.24);
+    border-radius: 8px;
+    color: #94a3b8;
+    text-align: center;
+  }
+
+  @keyframes ppdScan {
+    0%, 44% { transform: translateX(-120%); }
+    72%, 100% { transform: translateX(120%); }
+  }
+
+  @keyframes ppdCardIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes ppdPulse {
+    0%, 100% { box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
+    50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.16); }
+  }
+
+  /* Hermes + Kimi color pass: timeline has stronger production-stage colors. */
+  .ppd-hero {
+    border-color: rgba(34, 211, 238, 0.34);
+    background:
+      radial-gradient(circle at 12% 14%, rgba(34, 211, 238, 0.28), transparent 30%),
+      radial-gradient(circle at 74% 4%, rgba(139, 92, 246, 0.18), transparent 28%),
+      radial-gradient(circle at 94% 86%, rgba(249, 115, 22, 0.15), transparent 24%),
+      linear-gradient(135deg, rgba(5, 12, 24, 0.98), rgba(17, 24, 39, 0.92));
+  }
+
+  .ppd-hero::after {
+    content: "";
+    position: absolute;
+    right: 1.2rem;
+    top: 1rem;
+    width: 190px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: conic-gradient(from 120deg, rgba(34,211,238,0), rgba(34,211,238,.32), rgba(139,92,246,.26), rgba(249,115,22,.22), rgba(34,211,238,0));
+    opacity: .40;
+    animation: ppdOrbit 13s linear infinite;
+    pointer-events: none;
+  }
+
+  .ppd-panel,
+  .ppd-step {
+    background:
+      radial-gradient(circle at 8% 0%, rgba(34, 211, 238, 0.13), transparent 28%),
+      radial-gradient(circle at 94% 8%, rgba(139, 92, 246, 0.11), transparent 30%),
+      linear-gradient(145deg, rgba(15,23,42,.96), rgba(8,13,24,.88));
+  }
+
+  .ppd-summary .ppd-panel:nth-child(1) { --summaryColor: var(--ppd-orange); }
+  .ppd-summary .ppd-panel:nth-child(2) { --summaryColor: var(--ppd-cyan); }
+  .ppd-summary .ppd-panel:nth-child(3) { --summaryColor: var(--ppd-violet); }
+  .ppd-summary .ppd-panel:nth-child(4) { --summaryColor: var(--ppd-green); }
+
+  .ppd-summary .ppd-panel {
+    border-color: color-mix(in srgb, var(--summaryColor, var(--ppd-cyan)) 42%, transparent);
+    background:
+      radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--summaryColor, var(--ppd-cyan)) 22%, transparent), transparent 34%),
+      linear-gradient(145deg, rgba(15,23,42,.96), rgba(8,13,24,.86));
+  }
+
+  .ppd-value {
+    color: color-mix(in srgb, var(--summaryColor, var(--ppd-cyan)) 68%, #ffffff);
+    text-shadow: 0 0 18px color-mix(in srgb, var(--summaryColor, var(--ppd-cyan)) 36%, transparent);
+  }
+
+  .ppd-timeline::before {
+    background: linear-gradient(180deg, var(--ppd-cyan), var(--ppd-violet), var(--ppd-orange));
+  }
+
+  .ppd-step:nth-child(6n+1) { --stepColor: var(--ppd-cyan); }
+  .ppd-step:nth-child(6n+2) { --stepColor: var(--ppd-blue); }
+  .ppd-step:nth-child(6n+3) { --stepColor: var(--ppd-violet); }
+  .ppd-step:nth-child(6n+4) { --stepColor: var(--ppd-pink); }
+  .ppd-step:nth-child(6n+5) { --stepColor: var(--ppd-orange); }
+  .ppd-step:nth-child(6n) { --stepColor: var(--ppd-green); }
+
+  .ppd-step {
+    border-color: color-mix(in srgb, var(--stepColor, var(--ppd-cyan)) 32%, transparent);
+  }
+
+  .ppd-step-dot {
+    border-color: var(--stepColor, var(--ppd-cyan));
+    box-shadow: 0 0 18px var(--stepColor, var(--ppd-cyan));
+  }
+
+  .ppd-file:hover {
+    color: #ffffff;
+    background: linear-gradient(90deg, rgba(34,211,238,.14), rgba(139,92,246,.12));
+  }
+
+  @keyframes ppdOrbit {
+    from { transform: rotate(0deg) scale(.96); }
+    50% { transform: rotate(180deg) scale(1.04); }
+    to { transform: rotate(360deg) scale(.96); }
+  }
+
+  @media (max-width: 900px) {
+    .ppd-summary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ppd-hero,
+    .ppd-summary {
+      grid-template-columns: 1fr;
+    }
+
+    .ppd-step-head {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ppd-page">
+  <section class="ppd-hero">
+    <div>
+      <div class="ppd-eyebrow">Production Progress Detail</div>
+      <h1 id="serialTitle">{{ serial }}</h1>
+      <div class="ppd-muted">查看产品状态、总耗时、当前工序、工序时间轴、照片和上传资料。</div>
+    </div>
+    <a class="ppd-btn" href="/production-progress">返回看板</a>
+  </section>
+
+  <section class="ppd-summary" aria-label="产品摘要">
+    <div class="ppd-panel"><div class="ppd-label">状态</div><div class="ppd-value" id="detailStatus">-</div></div>
+    <div class="ppd-panel"><div class="ppd-label">总耗时</div><div class="ppd-value" id="detailDuration">-</div></div>
+    <div class="ppd-panel"><div class="ppd-label">当前工序</div><div class="ppd-value" id="detailStep">-</div></div>
+    <div class="ppd-panel"><div class="ppd-label">最终完成</div><div class="ppd-value" id="detailCompleteAt">-</div></div>
+  </section>
+
+  <section class="ppd-panel">
+    <h2>工序时间轴</h2>
+    <div id="detailMessage" class="ppd-muted"></div>
+    <div id="timeline" class="ppd-timeline"></div>
+  </section>
+</div>
+
+<div id="photoPreviewModal" class="ppd-photo-modal" hidden>
+  <div class="ppd-photo-dialog" role="dialog" aria-modal="true" aria-labelledby="photoPreviewTitle">
+    <div class="ppd-photo-head">
+      <div id="photoPreviewTitle" class="ppd-photo-title">照片预览</div>
+      <div class="ppd-photo-actions">
+        <a id="photoOpenOriginal" class="ppd-photo-close ppd-photo-open" href="#" target="_blank" rel="noopener">另开原图</a>
+        <button class="ppd-photo-close" type="button" data-close-photo>返回详情</button>
+      </div>
+    </div>
+    <div class="ppd-photo-body">
+      <img id="photoPreviewImage" alt="工序照片预览">
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const api = '/api/production-progress';
+const initialSerial = {{ serial|tojson }};
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[char]));
+}
+
+function formatTime(value) {
+  if (!value) return '-';
+  return new Date(value).toLocaleString();
+}
+
+function statusLabel(status) {
+  return { in_progress: '进行中', completed: '已完成', not_started: '未开始' }[status] || status || '-';
+}
+
+async function requestJson(url) {
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error((data && data.message) || `接口返回 ${res.status}`);
+  }
+  return data;
+}
+
+function renderFiles(step) {
+  const photos = ((step.attachments || {}).photos || []).map(photo => `
+    <a class="ppd-file ppd-photo-link" href="${escapeHtml(photo.preview_url)}" data-preview-url="${escapeHtml(photo.preview_url)}" data-photo-name="${escapeHtml(photo.file_name || photo.id)}">照片：${escapeHtml(photo.file_name || photo.id)}</a>
+  `);
+  const docs = ((step.attachments || {}).documents || []).map(doc => `
+    <a class="ppd-file" href="${escapeHtml(doc.download_url)}" target="_blank" rel="noopener">资料：${escapeHtml(doc.file_name)}</a>
+  `);
+  const files = [...photos, ...docs];
+  return files.length ? files.join('') : '<span class="ppd-muted">暂无照片或资料</span>';
+}
+
+function openPhotoPreview(url, name) {
+  if (!url) return;
+  const modal = document.getElementById('photoPreviewModal');
+  const image = document.getElementById('photoPreviewImage');
+  const title = document.getElementById('photoPreviewTitle');
+  const original = document.getElementById('photoOpenOriginal');
+  image.src = url;
+  image.alt = name || '工序照片预览';
+  title.textContent = name || '照片预览';
+  original.href = url;
+  modal.hidden = false;
+  document.body.classList.add('ppd-modal-open');
+}
+
+function closePhotoPreview() {
+  const modal = document.getElementById('photoPreviewModal');
+  const image = document.getElementById('photoPreviewImage');
+  modal.hidden = true;
+  image.removeAttribute('src');
+  document.body.classList.remove('ppd-modal-open');
+}
+
+function renderStep(step, index) {
+  return `<div class="ppd-step" style="animation-delay:${Math.min(index * 60, 360)}ms">
+    <span class="ppd-step-dot"></span>
+    <div class="ppd-step-head">
+      <div class="ppd-step-title">${escapeHtml(step.process_step || '-')}</div>
+      <span class="ppd-status ${escapeHtml(step.status)}">${statusLabel(step.status)}</span>
+    </div>
+    <div class="ppd-muted">开始：${formatTime(step.scan_at)} · 完成：${formatTime(step.complete_at)} · 耗时：${escapeHtml(step.human_duration || '-')}</div>
+    <div class="ppd-files">${renderFiles(step)}</div>
+  </div>`;
+}
+
+async function loadDetail() {
+  const message = document.getElementById('detailMessage');
+  try {
+    const data = await requestJson(`${api}/${encodeURIComponent(initialSerial)}`);
+    document.getElementById('serialTitle').textContent = data.product_serial || initialSerial;
+    document.getElementById('detailStatus').innerHTML = `<span class="ppd-status ${escapeHtml(data.status)}">${statusLabel(data.status)}</span>`;
+    document.getElementById('detailDuration').textContent = (data.total_duration || {}).human_duration || '-';
+    document.getElementById('detailStep').textContent = (data.current_step || {}).process_step || '-';
+    document.getElementById('detailCompleteAt').textContent = formatTime(data.final_complete_at);
+    const timeline = data.timeline || [];
+    message.textContent = timeline.length ? `共 ${timeline.length} 道工序记录` : '暂无工序记录';
+    document.getElementById('timeline').innerHTML = timeline.length
+      ? timeline.map((step, index) => renderStep(step, index)).join('')
+      : '<div class="ppd-empty">暂无工序时间轴</div>';
+  } catch (error) {
+    message.textContent = `详情加载失败：${error.message || '网络异常'}`;
+    document.getElementById('timeline').innerHTML = '';
+  }
+}
+
+document.addEventListener('click', event => {
+  const photoLink = event.target.closest('.ppd-photo-link');
+  if (photoLink) {
+    event.preventDefault();
+    openPhotoPreview(photoLink.dataset.previewUrl || photoLink.href, photoLink.dataset.photoName || photoLink.textContent);
+    return;
+  }
+  if (event.target.matches('[data-close-photo]') || event.target.id === 'photoPreviewModal') {
+    closePhotoPreview();
+  }
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    closePhotoPreview();
+  }
+});
+
+loadDetail();
+</script>
+{% endblock %}

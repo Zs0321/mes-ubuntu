@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">创崎MES系统</string>
+    <string name="scan_qr_code">扫描二维码</string>
+    <string name="test_records">测试记录</string>
+    <string name="serial_number">序列号</string>
+    <string name="start_time">开始时间</string>
+    <string name="end_time">结束时间</string>
+    <string name="test_duration">测试时长</string>
+    <string name="status">状态</string>
+    <string name="testing">测试中...</string>
+    <string name="completed">已完成</string>
+    <string name="waiting_scan">等待扫描二维码...</string>
+    <string name="scan_cancelled">扫描已取消</string>
+    <string name="camera_permission_required">需要相机权限才能扫描二维码</string>
+    <string name="test_started">开始测试产品：%s</string>
+    <string name="test_completed">测试完成！产品 %1$s 测试时长：%2$d 分钟</string>
+    <string name="error_occurred">错误：%s</string>
+    <string name="sync_success">数据同步成功</string>
+    <string name="sync_failed">数据同步失败</string>
+</resources>
+
+

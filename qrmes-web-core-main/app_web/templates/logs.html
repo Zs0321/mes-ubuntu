@@ -1,0 +1,3293 @@
+{% extends "base.html" %}
+
+{% block title %}操作日志 - QRTestScanner 管理后台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .logs-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 1.75rem 2rem;
+        border-radius: var(--radius-lg);
+        background:
+            linear-gradient(135deg, rgba(14,165,233,0.15), rgba(59,130,246,0.02)),
+            #0f172a;
+        color: #e2e8f0;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid #1e293b;
+        margin-bottom: 1.25rem;
+    }
+
+    .logs-hero::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+    }
+
+    .logs-hero::after {
+        content: "";
+        position: absolute;
+        right: -30px;
+        top: -20px;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: rgba(14,165,233,0.15);
+        filter: blur(20px);
+    }
+
+    .logs-hero-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+
+    .logs-hero h2 {
+        margin: 0;
+        font-size: 1.9rem;
+        line-height: 1.15;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: #e2e8f0;
+    }
+
+    .logs-hero p {
+        margin: 0.45rem 0 0;
+        color: #94a3b8;
+        max-width: 720px;
+    }
+
+    .logs-hero-badges {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-top: 0.9rem;
+    }
+
+    .logs-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.32rem 0.8rem;
+        border-radius: 999px;
+        background: #111827;
+        border: 1px solid #1e293b;
+        color: #94a3b8;
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .logs-hero-side {
+        display: grid;
+        gap: 0.55rem;
+        min-width: 0;
+        width: min(100%, 240px);
+    }
+
+    .logs-hero-stat {
+        padding: 0.7rem 0.9rem;
+        border-radius: 12px;
+        background: #111827;
+        border: 1px solid #1e293b;
+    }
+
+    .logs-hero-stat .label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94a3b8;
+    }
+
+    .logs-hero-stat .value {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #e2e8f0;
+        margin-top: 0.25rem;
+    }
+
+    .log-filters {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .log-entry {
+        border: 1px solid #1e293b;
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        margin-bottom: 0.6rem;
+        background: #0f172a;
+        box-shadow: var(--shadow-sm);
+        transition: all var(--transition-base);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .log-entry:hover {
+        border-color: #cbd5e1;
+        box-shadow: var(--shadow-md);
+    }
+
+    .log-entry::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(180deg, #64748b, #334155);
+    }
+
+    .log-entry.log-success::before { background: #10b981; }
+    .log-entry.log-error::before { background: #ef4444; }
+    .log-entry.log-warning::before { background: #f59e0b; }
+
+    .log-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .log-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-family: "JetBrains Mono", monospace;
+        border: 1px solid transparent;
+    }
+
+    .log-type::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .log-type.system { background: #1e3a8a; color: #60a5fa; border-color: #1e40af; }
+    .log-type.login { background: #064e3b; color: #34d399; border-color: #065f46; }
+    .log-type.access { background: #451a03; color: #fbbf24; border-color: #78350f; }
+    .log-type.operation { background: #3b0764; color: #c084fc; border-color: #6b21a8; }
+    .log-type.logout { background: #164e63; color: #22d3ee; border-color: #155e75; }
+
+    .log-timestamp {
+        color: #94a3b8;
+        font-size: 0.72rem;
+        font-weight: 700;
+        font-family: "JetBrains Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .log-user {
+        color: #94a3b8;
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+
+    .log-message {
+        margin: 0.5rem 0;
+        color: #cbd5e1;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .log-details {
+        font-size: 0.78rem;
+        color: #94a3b8;
+        background: #111827;
+        padding: 0.6rem 0.8rem;
+        border-radius: var(--radius-sm);
+        margin-top: 0.5rem;
+        border: 1px solid #1e293b;
+        font-family: "JetBrains Mono", monospace;
+    }
+
+    .log-success { border-left: none; }
+    .log-error { border-left: none; }
+    .log-warning { border-left: none; }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 0.8rem 1rem;
+        background: #0f172a;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid #1e293b;
+        transition: all var(--transition-base);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-item:hover {
+        border-color: #cbd5e1;
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+    }
+
+    .stat-number {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #e8edf5;
+        line-height: 1.1;
+        font-family: "JetBrains Mono", monospace;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .stat-label {
+        font-size: 0.65rem;
+        color: #5a6f85;
+        margin-top: 0.35rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-family: "JetBrains Mono", monospace;
+    }
+    
+    .refresh-btn {
+        position: relative;
+    }
+    
+    .refresh-btn.loading .btn-text {
+        opacity: 0;
+    }
+    
+    .refresh-btn.loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 16px;
+        height: 16px;
+        margin: -8px 0 0 -8px;
+        border: 2px solid #0f172a;
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    .expand-details {
+        cursor: pointer;
+        color: #2563eb;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+        transition: color 0.15s ease;
+    }
+
+    .expand-details:hover {
+        color: #60a5fa;
+        text-decoration: underline;
+    }
+
+    .ai-usage-panel {
+        border: 1px solid #1e293b;
+        border-radius: var(--radius-lg);
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+        background: #0f172a;
+        box-shadow: var(--shadow-md);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ai-usage-panel::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+    }
+
+    .ai-usage-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .ai-usage-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 0.85rem;
+        margin-top: 0.5rem;
+    }
+
+    .ai-stat-item {
+        padding: 0.85rem;
+        border-radius: var(--radius-md);
+        background: #111827;
+        border: 1px solid #1e293b;
+        box-shadow: none;
+        transition: all var(--transition-base);
+    }
+
+    .ai-stat-item:hover {
+        box-shadow: var(--shadow-sm);
+        border-color: #cbd5e1;
+    }
+
+    .ai-stat-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #e2e8f0;
+        line-height: 1.1;
+        font-family: "JetBrains Mono", monospace;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .ai-stat-label {
+        font-size: 0.68rem;
+        color: #94a3b8;
+        margin-top: 0.3rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-family: "JetBrains Mono", monospace;
+    }
+
+    .ai-usage-table,
+    .apk-log-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 0.82rem;
+        margin-top: 0.85rem;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 1px solid #1e293b;
+        background: #0f172a;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .ai-usage-table th,
+    .ai-usage-table td,
+    .apk-log-table th,
+    .apk-log-table td {
+        padding: 0.85rem 1rem;
+        border-bottom: 1px solid #111827;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .ai-usage-table th,
+    .apk-log-table th {
+        background: #111827;
+        color: #94a3b8;
+        font-weight: 700;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-family: "JetBrains Mono", monospace;
+    }
+
+    .ai-usage-table tbody tr:hover td,
+    .apk-log-table tbody tr:hover td {
+        background: #111827;
+    }
+
+    .apk-log-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        font-size: 0.85rem;
+    }
+
+    .apk-log-table th,
+    .apk-log-table td {
+        padding: 0.85rem 0.9rem;
+        border-bottom: 1px solid #111827;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .apk-log-table th {
+        background: #111827;
+        color: #94a3b8;
+        font-weight: 700;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-family: "JetBrains Mono", monospace;
+    }
+
+    .apk-log-meta {
+        color: #94a3b8;
+        font-size: 0.75rem;
+        margin-top: 0.2rem;
+        white-space: pre-wrap;
+        font-family: "JetBrains Mono", monospace;
+    }
+
+    .apk-log-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .apk-log-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.15rem 0.45rem;
+        border-radius: 6px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        white-space: nowrap;
+        font-family: "JetBrains Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        border: 1px solid transparent;
+    }
+
+    .apk-log-badge::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .apk-log-badge.type-exception { background: #450a0a; color: #f87171; border-color: #7f1d1d; }
+    .apk-log-badge.type-upload_failure { background: #451a03; color: #fbbf24; border-color: #78350f; }
+    .apk-log-badge.type-manual { background: #172554; color: #bfdbfe; border-color: #2563eb; }
+    .apk-log-badge.severity-fatal { background: #450a0a; color: #fecaca; border-color: #ef4444; }
+    .apk-log-badge.severity-error { background: #4c0519; color: #fb7185; border-color: #9f1239; }
+    .apk-log-badge.severity-warn { background: #451a03; color: #fbbf24; border-color: #78350f; }
+    .apk-log-badge.feature-photo_upload { background: #064e3b; color: #34d399; border-color: #065f46; }
+    .apk-log-badge.feature-pdf_upload { background: #172554; color: #bfdbfe; border-color: #2563eb; }
+    .apk-log-badge.feature-app_runtime { background: #3b0764; color: #c084fc; border-color: #6b21a8; }
+    .apk-log-badge.feature-config_sync { background: #164e63; color: #22d3ee; border-color: #155e75; }
+
+    .apk-log-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 0.75rem;
+        margin: 0.85rem 0 1rem;
+    }
+
+    .apk-log-summary-card {
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 14px;
+        padding: 1rem 1.1rem;
+        background: #0f172a;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s ease;
+    }
+
+    .apk-log-summary-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .apk-log-summary-card strong {
+        display: block;
+        font-size: 1.25rem;
+        color: #e2e8f0;
+        margin-top: 0.25rem;
+        font-weight: 800;
+    }
+
+    .apk-log-extra {
+        margin-top: 0.5rem;
+        background: linear-gradient(135deg, #111827, #111827);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 12px;
+        padding: 0.65rem 0.85rem;
+    }
+
+    .apk-log-extra summary {
+        cursor: pointer;
+        color: #cbd5e1;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .apk-log-extra pre {
+        margin: 0.55rem 0 0;
+        font-size: 0.78rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: #5f7a94;
+    }
+
+    .logs-browser-card {
+        margin-bottom: 1.4rem;
+    }
+
+    .logs-browser-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem;
+    }
+
+    .logs-nav-card {
+        appearance: none;
+        width: 100%;
+        text-align: left;
+        border: 1px solid #1e293b;
+        border-radius: var(--radius-md);
+        padding: 1.15rem 1.25rem;
+        box-shadow: var(--shadow-sm);
+        color: inherit;
+        cursor: pointer;
+        transition: all var(--transition-base);
+        position: relative;
+        overflow: hidden;
+        background: #0f172a;
+    }
+
+    .logs-nav-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+        opacity: 0.5;
+    }
+
+    .logs-nav-card:hover {
+        border-color: #cbd5e1;
+        background: #0f172a;
+        box-shadow: var(--shadow-md);
+    }
+
+    .logs-nav-card.apk { background: #1e3a8a; border-color: #1e40af; }
+    .logs-nav-card.apk::before { background: linear-gradient(90deg, #0ea5e9, #38bdf8); }
+
+    .logs-nav-card.system { background: #111827; border-color: #1e293b; }
+    .logs-nav-card.system::before { background: linear-gradient(90deg, #64748b, #64748b); }
+
+    .logs-nav-card.dingtalk { background: #064e3b; border-color: #065f46; }
+    .logs-nav-card.dingtalk::before { background: linear-gradient(90deg, #10b981, #059669); }
+
+    .logs-nav-card.apk:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .logs-nav-card.system:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .logs-nav-card.dingtalk:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .logs-nav-card.is-active {
+        outline: 1.5px solid rgba(37,99,235,0.35);
+        outline-offset: 2px;
+    }
+
+    .logs-nav-kicker {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.18rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #94a3b8;
+        background: #111827;
+        border: 1px solid #1e293b;
+        margin-bottom: 0.6rem;
+        font-family: "JetBrains Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .logs-nav-card.system .logs-nav-kicker {
+        color: #94a3b8;
+        background: #111827;
+    }
+
+    .logs-nav-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #e2e8f0;
+        margin-bottom: 0.3rem;
+        letter-spacing: 0.01em;
+    }
+
+    .logs-nav-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #5a6f85;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        font-family: "JetBrains Mono", monospace;
+    }
+
+    .logs-nav-meta::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .logs-nav-meta::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+        box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
+    }
+
+    .logs-nav-desc {
+        font-size: 0.82rem;
+        line-height: 1.55;
+        color: #5a6f85;
+    }
+
+    .logs-subpanel {
+        margin-top: 1rem;
+        border: 1px solid rgba(148,163,184,0.16);
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(15,23,42,0.98) 0%, rgba(10,15,26,0.98) 100%);
+        box-shadow: 0 10px 26px rgba(15,23,42,0.05);
+        overflow: hidden;
+    }
+
+    .logs-subpanel .card-header {
+        padding: 1rem 1.15rem;
+        margin-bottom: 0;
+        border-bottom: 1px solid rgba(148,163,184,0.12);
+        background: linear-gradient(180deg, #111827, #111827);
+    }
+
+    .logs-subpanel .card-header h4 {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #e2e8f0;
+        letter-spacing: -0.01em;
+    }
+
+    .logs-subpanel-body {
+        padding: 1rem 1.1rem;
+    }
+
+    .logs-section-tools {
+        display:flex;
+        gap:0.75rem;
+        flex-wrap:wrap;
+        align-items:center;
+    }
+
+    .logs-subpanel-pre {
+        margin: 0;
+    }
+
+    .logs-section-card {
+        scroll-margin-top: 90px;
+        background: linear-gradient(180deg, rgba(15,23,42,0.98) 0%, rgba(10,15,26,0.98) 100%);
+        border: 1px solid rgba(148,163,184,0.16);
+        box-shadow: 0 12px 30px rgba(15,23,42,0.07);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .logs-section-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #2563eb 0%, #38bdf8 50%, #22c55e 100%);
+    }
+
+    .logs-nav-sections {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .logs-section-card.hidden-by-browser {
+        display: none;
+    }
+
+    .apk-log-pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .autofix-diff-box {
+        background: linear-gradient(135deg, #111827, #111827);
+        color: #cbd5e1;
+        border-radius: 14px;
+        padding: 1.15rem;
+        font-size: 0.82rem;
+        white-space: pre-wrap;
+        overflow: auto;
+        max-height: 480px;
+        border: 1px solid #1e293b;
+        box-shadow: none;
+        line-height: 1.6;
+    }
+
+    .dingtalk-monitor-tail {
+        background: linear-gradient(135deg, #111827, #111827);
+        color: #cbd5e1;
+        border-radius: 14px;
+        padding: 1.15rem;
+        font-size: 0.82rem;
+        white-space: pre-wrap;
+        max-height: 420px;
+        overflow: auto;
+        border: 1px solid #1e293b;
+        box-shadow: none;
+        line-height: 1.6;
+    }
+
+    .dingtalk-monitor-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .dingtalk-category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.85rem;
+        margin-top: 0.75rem;
+    }
+
+    .dingtalk-category-title {
+        font-weight: 700;
+        color: #e2e8f0;
+        margin-bottom: 0.4rem;
+        font-size: 0.95rem;
+    }
+
+    .dingtalk-category-meta {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        line-height: 1.6;
+    }
+
+    .dingtalk-monitor-stat {
+        background: #111827;
+        border: 1px solid #1e293b;
+        border-radius: var(--radius-md);
+        padding: 0.9rem;
+        box-shadow: none;
+        transition: all var(--transition-base);
+    }
+
+    .dingtalk-monitor-stat:hover {
+        box-shadow: var(--shadow-sm);
+        border-color: #cbd5e1;
+    }
+
+    .dingtalk-monitor-stat .label {
+        color: #94a3b8;
+        font-size: 0.68rem;
+        margin-bottom: 0.3rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-family: "JetBrains Mono", monospace;
+    }
+
+    .dingtalk-monitor-stat .value {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #e2e8f0;
+        word-break: break-word;
+        font-family: "JetBrains Mono", monospace;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .dingtalk-monitor-list {
+        display: grid;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .dingtalk-monitor-item {
+        border: 1px solid #1e293b;
+        border-radius: var(--radius-md);
+        padding: 0.9rem 1rem;
+        background: #0f172a;
+        box-shadow: var(--shadow-sm);
+        transition: all var(--transition-base);
+    }
+
+    .dingtalk-monitor-item:hover {
+        box-shadow: var(--shadow-md);
+        border-color: #cbd5e1;
+    }
+
+    .dingtalk-monitor-item.suspicious {
+        border-left: 3px solid #ef4444;
+        background: #450a0a;
+    }
+
+    .dingtalk-monitor-item.fixed {
+        border-left: 3px solid #10b981;
+        background: #064e3b;
+    }
+
+    .dingtalk-issue-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.12rem 0.4rem;
+        border-radius: 6px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        margin-left: 0.5rem;
+        font-family: "JetBrains Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        border: 1px solid transparent;
+    }
+
+    .dingtalk-issue-badge::before,
+    .apk-status-badge::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .dingtalk-issue-badge::before,
+    .apk-status-badge::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .dingtalk-issue-badge.pending { background: rgba(255,61,61,0.1); color: #ff3d3d; border-color: rgba(255,61,61,0.2); }
+
+    .dingtalk-issue-badge.fixed { background: rgba(0,230,118,0.1); color: #00e676; border-color: rgba(0,230,118,0.2); }
+
+    .apk-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.12rem 0.4rem;
+        border-radius: 2px;
+        font-size: 0.62rem;
+        font-weight: 700;
+        margin-top: 0.3rem;
+        font-family: "JetBrains Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        border: 1px solid transparent;
+    }
+
+    .apk-status-badge.fixed { background: rgba(0,230,118,0.1); color: #00e676; border-color: rgba(0,230,118,0.2); }
+
+    .apk-status-badge.pending { background: rgba(255,61,61,0.1); color: #ff3d3d; border-color: rgba(255,61,61,0.2); }
+
+    .apk-status-badge.analysis { background: rgba(255,214,0,0.1); color: #ffd600; border-color: rgba(255,214,0,0.2); }
+
+    .dingtalk-monitor-q {
+        font-weight: 700;
+        color: #e8edf5;
+        margin-bottom: 0.35rem;
+        white-space: pre-wrap;
+    }
+
+    .dingtalk-monitor-a {
+        color: #8a9bb0;
+        white-space: pre-wrap;
+    }
+
+    .dingtalk-monitor-meta {
+        font-size: 0.82rem;
+        color: #829ab1;
+        margin-bottom: 0.4rem;
+    }
+
+    .dingtalk-monitor-tail {
+        background: #0f172a;
+        color: #e2e8f0;
+        border-radius: 10px;
+        padding: 1rem;
+        font-size: 0.82rem;
+        white-space: pre-wrap;
+        max-height: 420px;
+        overflow: auto;
+    }
+
+    .dingtalk-monitor-hint {
+        font-size: 0.9rem;
+        color: #5f7a94;
+        margin-bottom: 0.75rem;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+
+    /* 2026-04 logs refinement: modern light theme */
+    .logs-hero {
+        background:
+            linear-gradient(135deg, rgba(14,165,233,0.15), rgba(59,130,246,0.02)),
+            #0f172a;
+        border-color: #1e293b;
+    }
+    .logs-hero-badge,
+    .logs-hero-stat {
+        background: #111827;
+        border-color: #1e293b;
+        color: #94a3b8;
+    }
+    .logs-nav-card {
+        background: #0f172a;
+        border-color: #1e293b;
+    }
+    .logs-nav-kicker,
+    .logs-nav-desc {
+        color: #94a3b8;
+    }
+    .apk-log-summary-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--radius-md);
+        padding: 0.95rem 1rem;
+        background: #0f172a;
+        border: 1px solid #1e293b;
+        color: #e2e8f0;
+        box-shadow: var(--shadow-sm);
+    }
+    .apk-log-summary-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(180deg, #2563eb, #3b82f6);
+    }
+    .apk-log-summary-card strong {
+        color: #e2e8f0;
+        font-size: 1.45rem;
+        font-family: "JetBrains Mono", monospace;
+        font-variant-numeric: tabular-nums;
+    }
+    .apk-log-summary-card:hover {
+        border-color: #cbd5e1;
+        box-shadow: var(--shadow-md);
+    }
+    .apk-log-extra {
+        background: #111827;
+        border-color: #1e293b;
+        color: #94a3b8;
+        border-radius: var(--radius-md);
+    }
+    .apk-log-extra summary {
+        color: #cbd5e1;
+        font-weight: 700;
+    }
+    .apk-log-extra pre,
+    .logs-subpanel-pre,
+    pre {
+        background: #111827;
+        color: #cbd5e1;
+        border: 1px solid #1e293b;
+        border-radius: var(--radius-sm);
+    }
+    .apk-log-table .text-muted,
+    .text-muted,
+    small {
+        color: #64748b !important;
+    }
+    .apk-log-table td,
+    .apk-log-table th {
+        border-color: #111827;
+    }
+    .apk-log-table th {
+        background: #111827;
+        color: #94a3b8;
+    }
+    .log-entry {
+        background: #0f172a;
+        border-color: #1e293b;
+    }
+    .log-entry:hover {
+        border-color: #cbd5e1;
+        box-shadow: var(--shadow-md);
+    }
+    .log-entry::before {
+        background: linear-gradient(180deg, #64748b, #334155);
+    }
+    .log-entry.log-success::before { background: #10b981; }
+    .log-entry.log-error::before { background: #ef4444; }
+    .log-entry.log-warning::before { background: #f59e0b; }
+    .log-message {
+        color: #cbd5e1;
+    }
+    .log-details {
+        background: #111827;
+        border-color: #1e293b;
+        color: #94a3b8;
+    }
+    .stat-item {
+        background: #0f172a;
+        border-color: #1e293b;
+    }
+    .stat-item:hover {
+        border-color: #cbd5e1;
+        box-shadow: var(--shadow-md);
+    }
+    .stat-item::before {
+        background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+    }
+    .ai-usage-panel {
+        background: #0f172a;
+        border-color: #1e293b;
+    }
+    .ai-stat-item {
+        background: #111827;
+        border-color: #1e293b;
+        box-shadow: none;
+    }
+    .ai-stat-value {
+        color: #e2e8f0;
+    }
+    .ai-stat-label {
+        color: #94a3b8;
+    }
+    .dingtalk-monitor-stat {
+        background: #111827;
+        border-color: #1e293b;
+        box-shadow: none;
+    }
+    .dingtalk-monitor-stat .value {
+        color: #e2e8f0;
+    }
+    .dingtalk-monitor-item {
+        background: #0f172a;
+        border-color: #1e293b;
+        box-shadow: var(--shadow-sm);
+    }
+    .dingtalk-monitor-item.suspicious {
+        background: #450a0a;
+        border-left-color: #ef4444;
+    }
+    .dingtalk-monitor-item.fixed {
+        background: #f0fdf4;
+        border-left-color: #10b981;
+    }
+
+    /* ===== Premium Logs Page Enhancements ===== */
+    
+    /* Logs hero with ambient glow */
+    .logs-hero {
+        background: 
+            radial-gradient(ellipse at top right, rgba(14,165,233,0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at bottom left, rgba(251,191,36,0.04) 0%, transparent 40%),
+            linear-gradient(135deg, rgba(14,165,233,0.05), rgba(59,130,246,0.02)),
+            #0f172a;
+        border: 1px solid rgba(30,41,59,0.6);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .logs-hero h2 {
+        background: linear-gradient(135deg, #e2e8f0 0%, #38bdf8 50%, #e2e8f0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        background-size: 200% auto;
+        animation: gradientShift 8s ease infinite;
+    }
+    
+    /* Nav cards with glass effect */
+    .logs-nav-card {
+        background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(10,15,26,0.98) 100%);
+        border: 1px solid rgba(30,41,59,0.5);
+        border-radius: 14px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .logs-nav-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 50% 0%, rgba(56,189,248,0.03) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+    .logs-nav-card:hover::after {
+        opacity: 1;
+    }
+    .logs-nav-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+        border-color: rgba(56,189,248,0.15);
+    }
+    .logs-nav-card.is-active {
+        outline: 2px solid rgba(56,189,248,0.25);
+        outline-offset: 3px;
+    }
+    
+    /* APK nav card accent */
+    .logs-nav-card.apk {
+        background: linear-gradient(180deg, rgba(14,165,233,0.08) 0%, rgba(15,23,42,0.95) 100%);
+        border-color: rgba(14,165,233,0.2);
+    }
+    .logs-nav-card.apk:hover {
+        border-color: rgba(56,189,248,0.35);
+        box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 30px rgba(14,165,233,0.08);
+    }
+    
+    /* Dingtalk nav card accent */
+    .logs-nav-card.dingtalk {
+        background: linear-gradient(180deg, rgba(16,185,129,0.08) 0%, rgba(15,23,42,0.95) 100%);
+        border-color: rgba(16,185,129,0.2);
+    }
+    .logs-nav-card.dingtalk:hover {
+        border-color: rgba(52,211,153,0.35);
+        box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 30px rgba(16,185,129,0.08);
+    }
+    
+    /* System nav card accent */
+    .logs-nav-card.system {
+        background: linear-gradient(180deg, rgba(100,116,139,0.08) 0%, rgba(15,23,42,0.95) 100%);
+        border-color: rgba(100,116,139,0.2);
+    }
+    .logs-nav-card.system:hover {
+        border-color: rgba(148,163,184,0.35);
+        box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 30px rgba(100,116,139,0.08);
+    }
+    
+    /* Logs section cards */
+    .logs-section-card {
+        background: linear-gradient(180deg, rgba(17,24,39,0.95) 0%, rgba(10,15,26,0.98) 100%);
+        border: 1px solid rgba(30,41,59,0.5);
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03);
+        transition: all 0.3s ease;
+    }
+    .logs-section-card:hover {
+        box-shadow: 0 16px 48px rgba(0,0,0,0.35);
+    }
+    
+    /* Subpanels with glass effect */
+    .logs-subpanel {
+        background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(10,15,26,0.98) 100%);
+        border: 1px solid rgba(30,41,59,0.5);
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        overflow: hidden;
+    }
+    .logs-subpanel .card-header {
+        background: linear-gradient(180deg, rgba(17,24,39,0.8) 0%, rgba(15,23,42,0.6) 100%);
+        border-bottom: 1px solid rgba(30,41,59,0.4);
+        backdrop-filter: blur(10px);
+    }
+    .logs-subpanel .card-header h4 {
+        background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .logs-subpanel-body {
+        background: transparent;
+    }
+    
+    /* APK log entries with subtle glow on hover */
+    .log-entry {
+        background: linear-gradient(90deg, rgba(15,23,42,0.95) 0%, rgba(17,24,39,0.95) 100%);
+        border: 1px solid rgba(30,41,59,0.4);
+        border-radius: 12px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .log-entry:hover {
+        transform: translateX(2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        border-color: rgba(56,189,248,0.15);
+    }
+    .log-entry::before {
+        opacity: 0.7;
+    }
+    
+    /* APK log summary cards */
+    .apk-log-summary-card {
+        background: linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(17,24,39,0.95) 100%);
+        border: 1px solid rgba(30,41,59,0.5);
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+        transition: all 0.25s ease;
+    }
+    .apk-log-summary-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+        border-color: rgba(56,189,248,0.15);
+    }
+    .apk-log-summary-card strong {
+        background: linear-gradient(135deg, #e2e8f0 0%, #38bdf8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Dingtalk monitor items */
+    .dingtalk-monitor-item {
+        background: linear-gradient(90deg, rgba(15,23,42,0.95) 0%, rgba(17,24,39,0.95) 100%);
+        border: 1px solid rgba(30,41,59,0.4);
+        border-radius: 12px;
+        transition: all 0.25s ease;
+    }
+    .dingtalk-monitor-item:hover {
+        transform: translateX(3px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        border-color: rgba(56,189,248,0.1);
+    }
+    .dingtalk-monitor-item.suspicious {
+        background: linear-gradient(90deg, rgba(69,10,10,0.3) 0%, rgba(15,23,42,0.95) 100%);
+        border-left: 3px solid #ef4444;
+    }
+    .dingtalk-monitor-item.fixed {
+        background: linear-gradient(90deg, rgba(6,78,59,0.3) 0%, rgba(15,23,42,0.95) 100%);
+        border-left: 3px solid #10b981;
+    }
+    
+    /* Dingtalk monitor stats */
+    .dingtalk-monitor-stat {
+        background: linear-gradient(180deg, rgba(17,24,39,0.9) 0%, rgba(15,23,42,0.95) 100%);
+        border: 1px solid rgba(30,41,59,0.5);
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+        transition: all 0.25s ease;
+    }
+    .dingtalk-monitor-stat:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        border-color: rgba(56,189,248,0.15);
+    }
+    .dingtalk-monitor-stat .value {
+        background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* AI usage panel premium */
+    .ai-usage-panel {
+        background: linear-gradient(180deg, rgba(17,24,39,0.9) 0%, rgba(15,23,42,0.95) 100%);
+        border: 1px solid rgba(30,41,59,0.5);
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    .ai-stat-item {
+        background: linear-gradient(135deg, rgba(15,23,42,0.8) 0%, rgba(17,24,39,0.9) 100%);
+        border: 1px solid rgba(30,41,59,0.4);
+        border-radius: 10px;
+        transition: all 0.2s ease;
+    }
+    .ai-stat-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        border-color: rgba(56,189,248,0.15);
+    }
+    .ai-stat-value {
+        background: linear-gradient(135deg, #e2e8f0 0%, #38bdf8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Stat items premium */
+    .stat-item {
+        background: linear-gradient(180deg, rgba(17,24,39,0.9) 0%, rgba(15,23,42,0.95) 100%);
+        border: 1px solid rgba(30,41,59,0.5);
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+        transition: all 0.25s ease;
+    }
+    .stat-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+        border-color: rgba(56,189,248,0.1);
+    }
+    .stat-number {
+        background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Log details box */
+    .log-details {
+        background: linear-gradient(135deg, rgba(17,24,39,0.8) 0%, rgba(15,23,42,0.9) 100%);
+        border: 1px solid rgba(30,41,59,0.4);
+        border-radius: 10px;
+    }
+    
+    /* Diff and tail boxes */
+    .autofix-diff-box, .dingtalk-monitor-tail {
+        background: linear-gradient(180deg, rgba(10,15,26,0.95) 0%, rgba(15,23,42,0.9) 100%);
+        border: 1px solid rgba(30,41,59,0.4);
+        border-radius: 12px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    
+    /* Loading state */
+    .loading {
+        color: #64748b;
+    }
+    
+    /* Card headers */
+    .card-header {
+        border-bottom: 1px solid rgba(30,41,59,0.4);
+    }
+    .card-header h2, .card-header h3 {
+        background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Animations */
+    @keyframes gradientShift {
+        0% { background-position: 0% center; }
+        50% { background-position: 100% center; }
+        100% { background-position: 0% center; }
+    }
+
+    /* ===== Logs Page Premium Effects ===== */
+
+    /* Logs navigation card premium hover */
+    .logs-nav-card {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .logs-nav-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+        transition: left 0.6s ease;
+        pointer-events: none;
+    }
+    .logs-nav-card:hover::after {
+        left: 100%;
+    }
+    .logs-nav-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(14,165,233,0.15);
+        border-color: rgba(14,165,233,0.25);
+    }
+    .logs-nav-card:active {
+        transform: translateY(-1px) scale(0.98);
+    }
+
+    /* Subpanel edge glow on hover */
+    .logs-subpanel {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+    .logs-subpanel::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: calc(var(--radius-lg) + 1px);
+        background: linear-gradient(180deg, rgba(14,165,233,0.06) 0%, transparent 50%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: -1;
+        pointer-events: none;
+    }
+    .logs-subpanel:hover::before {
+        opacity: 1;
+    }
+
+    /* Section card premium effect */
+    .logs-section-card {
+        transition: all 0.35s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .logs-section-card:hover {
+        box-shadow: 0 6px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(14,165,233,0.08);
+    }
+
+    /* APK log summary card glow */
+    .apk-log-summary-card {
+        transition: all 0.3s ease;
+    }
+    .apk-log-summary-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(34,197,94,0.1);
+    }
+
+    /* Log entry row enhanced hover */
+    .log-entry {
+        transition: all 0.25s ease;
+    }
+    .log-entry:hover {
+        transform: translateX(4px);
+        border-left-color: var(--accent-blue);
+        box-shadow: -4px 0 12px rgba(14,165,233,0.05);
+    }
+
+    /* Dingtalk monitor item interactions */
+    .dingtalk-monitor-item {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .dingtalk-monitor-item:hover {
+        transform: translateX(4px);
+        border-left-width: 4px;
+    }
+    .dingtalk-monitor-item.fixed:hover {
+        border-left-color: rgba(34,197,94,0.6);
+    }
+
+    /* Table row premium hover */
+    .apk-logs-table tbody tr {
+        transition: all 0.2s ease;
+    }
+    .apk-logs-table tbody tr:hover {
+        background: linear-gradient(90deg, rgba(15,23,42,0.8) 0%, rgba(17,24,39,0.9) 100%);
+        box-shadow: inset 2px 0 0 rgba(14,165,233,0.3);
+    }
+
+    /* Diff view panel glow */
+    .diff-view-panel {
+        transition: all 0.3s ease;
+    }
+    .diff-view-panel:hover {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(14,165,233,0.1);
+    }
+
+    /* Repair log window glow */
+    .repair-log-window {
+        transition: all 0.3s ease;
+    }
+    .repair-log-window:hover {
+        box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(14,165,233,0.1);
+    }
+
+    /* Tab button underline animation */
+    .logs-nav-tab {
+        position: relative;
+        transition: all 0.25s ease;
+    }
+    .logs-nav-tab::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: var(--accent-blue);
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+    .logs-nav-tab:hover::after {
+        width: 50%;
+    }
+    .logs-nav-tab.active::after {
+        width: 70%;
+    }
+
+    /* Form input focus glow */
+    .logs-form input:focus,
+    .logs-form select:focus {
+        box-shadow: 0 0 0 3px rgba(14,165,233,0.1), 0 0 20px rgba(14,165,233,0.05);
+    }
+
+    /* Status badge pulse for active */
+    .logs-status-active {
+        animation: glowPulse 2s ease-in-out infinite;
+    }
+    
+    /* ===== Collapsible Accordion Panels ===== */
+    .collapse-panel {
+        margin-bottom: 0.75rem;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(10,15,26,0.98) 100%);
+        border: 1px solid rgba(30,41,59,0.5);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    .collapse-panel:hover {
+        border-color: rgba(14,165,233,0.15);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .collapse-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.85rem 1.1rem;
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.2s ease;
+        border-bottom: 1px solid transparent;
+    }
+    .collapse-header:hover {
+        background: rgba(14,165,233,0.04);
+    }
+    .collapse-header h4 {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .collapse-header .collapse-icon {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        transition: transform 0.3s ease;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        background: rgba(30,41,59,0.4);
+    }
+    .collapse-panel.open .collapse-header .collapse-icon {
+        transform: rotate(180deg);
+    }
+    .collapse-panel.open .collapse-header {
+        border-bottom-color: rgba(30,41,59,0.4);
+    }
+    .collapse-body {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+        padding: 0 1.1rem;
+    }
+    .collapse-panel.open .collapse-body {
+        max-height: 800px;
+        padding: 1rem 1.1rem;
+        overflow-y: auto;
+    }
+    .collapse-panel.open .collapse-body.auto-height {
+        max-height: none;
+    }
+    .apk-log-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: linear-gradient(180deg, rgba(15,23,42,0.6) 0%, rgba(10,15,26,0.5) 100%);
+        border: 1px solid rgba(30,41,59,0.4);
+        border-radius: 12px;
+    }
+    .apk-log-grid .form-group {
+        margin-bottom: 0;
+    }
+    .apk-log-grid .form-group label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #94a3b8;
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+    }
+    .apk-log-grid .form-control {
+        background: rgba(15,23,42,0.6);
+        border-color: rgba(30,41,59,0.5);
+        color: #e2e8f0;
+    }
+    .apk-log-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+    .apk-log-summary-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0.75rem;
+        margin: 0.75rem 0 1rem;
+    }
+    .apk-log-summary-bar .stat-box {
+        padding: 0.75rem 1rem;
+        background: linear-gradient(180deg, rgba(15,23,42,0.8) 0%, rgba(10,15,26,0.9) 100%);
+        border: 1px solid rgba(30,41,59,0.4);
+        border-radius: 10px;
+        text-align: center;
+    }
+    .apk-log-summary-bar .stat-box .label {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #94a3b8;
+        font-weight: 700;
+    }
+    .apk-log-summary-bar .stat-box .value {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #e2e8f0;
+        margin-top: 0.2rem;
+    }
+
+
+/* Page transitions */
+.card { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.card:hover { box-shadow: 0 10px 24px rgba(0,0,0,0.35); }
+table tbody tr { transition: background 0.15s ease; }
+table tbody tr:hover { background: rgba(56,189,248,0.06); }
+.btn { transition: all 0.15s cubic-bezier(0.4,0,0.2,1); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="logs-hero">
+    <div class="logs-hero-content">
+        <div>
+            <h2>日志与巡检中心</h2>
+            <p>把 APK 异常、钉钉机器人巡检、系统运行日志放在同一套工业化工作台里查看，便于快速切换问题现场与修复链路。</p>
+            <div class="logs-hero-badges">
+                <span class="logs-hero-badge">APK</span>
+                <span class="logs-hero-badge">DINGTALK</span>
+                <span class="logs-hero-badge">SYSTEM</span>
+            </div>
+        </div>
+        <div class="logs-hero-side">
+            <div class="logs-hero-stat">
+                <div class="label">浏览模式</div>
+                <div class="value">独立分区</div>
+            </div>
+            <div class="logs-hero-stat">
+                <div class="label">当前界面</div>
+                <div class="value">工业巡检台</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card logs-browser-card">
+    <div class="card-header">
+        <h2>日志浏览</h2>
+    </div>
+    <div class="logs-browser-grid">
+        <button type="button" class="logs-nav-card apk" data-target="apk-log-group">
+            <div class="logs-nav-kicker">APK 端问题</div>
+            <div class="logs-nav-title">进入 APK 日志查询</div>
+            <div class="logs-nav-meta">移动端异常 · 可直接修复</div>
+            <div class="logs-nav-desc">查看 APK 异常、上传失败、触发点和附加上下文，适合排查移动端现场问题。</div>
+        </button>
+        <button type="button" class="logs-nav-card dingtalk" data-target="dingtalk-log-group">
+            <div class="logs-nav-kicker">钉钉机器人巡检</div>
+            <div class="logs-nav-title">进入钉钉机器人日志 / 自修复</div>
+            <div class="logs-nav-meta">在线问答 · 巡检闭环</div>
+            <div class="logs-nav-desc">查看真实在线机器人提问、可疑回复、自动修复状态和最新日志尾部，适合盯在线问答质量。</div>
+        </button>
+        <button type="button" class="logs-nav-card system" data-target="system-log-group">
+            <div class="logs-nav-kicker">服务端运行</div>
+            <div class="logs-nav-title">进入系统日志</div>
+            <div class="logs-nav-meta">后台状态 · 用量审计</div>
+            <div class="logs-nav-desc">查看 Web 端与服务端操作日志、AI 用量和最下面的系统日志记录，适合排查后台运行问题。</div>
+        </button>
+    </div>
+</div>
+
+<div class="logs-nav-sections">
+<div class="card logs-section-card" id="apk-log-section" data-browser-group="apk-log-group">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <div>
+            <h3>APK 日志查询</h3>
+            <div class="apk-log-meta">目录：{{ apk_logs_dir }}</div>
+        </div>
+        <div class="logs-section-tools">
+            <button class="btn btn-secondary" onclick="toggleApkTotalDiff()">当前总 Diff 差异</button>
+            <button class="btn btn-primary" onclick="refreshApkLogs()">刷新 APK 日志</button>
+        </div>
+    </div>
+
+    <div id="apkTotalDiffPanel" class="logs-subpanel" style="display:none;">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+            <div>
+                <h4>当前总 Diff 差异</h4>
+                <div class="apk-log-meta" id="apkTotalDiffMeta">等待加载源码差异...</div>
+            </div>
+            <button class="btn btn-secondary" onclick="refreshApkTotalDiff()">刷新总 Diff</button>
+        </div>
+        <div class="logs-subpanel-body">
+            <pre id="apkTotalDiffContent" class="autofix-diff-box logs-subpanel-pre">等待加载源码差异...</pre>
+            <div class="logs-section-tools" style="justify-content:flex-end;margin-top:1rem;">
+                <button class="btn btn-secondary" onclick="commitApkSourceToGitLab()">提交到 GitLab</button>
+                <button class="btn btn-primary" onclick="enqueueApkBuild()">下发编译任务</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="apk-log-grid">
+        <div class="form-group">
+            <label for="apkLogUsername">上传用户</label>
+            <input type="text" id="apkLogUsername" class="form-control" placeholder="输入用户名筛选">
+        </div>
+        <div class="form-group">
+            <label for="apkLogDate">上传日期</label>
+            <input type="date" id="apkLogDate" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="apkLogQuery">关键字</label>
+            <input type="text" id="apkLogQuery" class="form-control" placeholder="文件名 / 设备 / 版本">
+        </div>
+        <div class="form-group">
+            <label for="apkLogEventType">问题类型</label>
+            <select id="apkLogEventType" class="form-control">
+                <option value="">全部类型</option>
+                <option value="exception">运行异常</option>
+                <option value="upload_failure">上传失败</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="apkLogFeature">功能模块</label>
+            <select id="apkLogFeature" class="form-control">
+                <option value="">全部模块</option>
+                <option value="app_runtime">APP 运行时</option>
+                <option value="photo_upload">照片上传</option>
+                <option value="pdf_upload">PDF 上传</option>
+                <option value="config_sync">配置同步</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="apkLogReason">异常原因</label>
+            <select id="apkLogReason" class="form-control">
+                <option value="">全部原因</option>
+                <option value="network_timeout">网络超时</option>
+                <option value="network_dns_failure">DNS / 服务器不可达</option>
+                <option value="network_ssl_error">SSL 错误</option>
+                <option value="network_io_error">网络 IO 错误</option>
+                <option value="permission_denied">权限不足</option>
+                <option value="http_unauthorized">HTTP 401</option>
+                <option value="http_forbidden">HTTP 403</option>
+                <option value="http_not_found">HTTP 404</option>
+                <option value="http_server_error">HTTP 5xx</option>
+                <option value="partial_failure">部分上传失败</option>
+                <option value="upload_failed">上传失败</option>
+                <option value="unknown_exception">未知异常</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="apkLogSourceKind">上传来源</label>
+            <select id="apkLogSourceKind" class="form-control">
+                <option value="">全部来源</option>
+                <option value="manual_user">只看用户手动上传</option>
+                <option value="auto_report">只看打点异常上传</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="apk-log-actions">
+        <button class="btn btn-primary" onclick="applyApkLogFilters()">🔍 筛选</button>
+        <button class="btn btn-secondary" onclick="clearApkLogFilters()">❌ 清除筛选</button>
+    </div>
+
+    <div id="apkLogSummary" class="log-details">等待加载 APK 日志...</div>
+    <div class="dingtalk-monitor-grid" style="margin-top:0.75rem;">
+        <div class="dingtalk-monitor-stat"><div class="label">最近一次修复启动</div><div class="value" id="apkLastRepairAt">-</div></div>
+        <div class="dingtalk-monitor-stat"><div class="label">下一次自动修复</div><div class="value" id="apkNextRepairAt">-</div></div>
+        <div class="dingtalk-monitor-stat"><div class="label">当前自修复状态</div><div class="value" id="apkCurrentRepairStatus">-</div></div>
+        <div class="dingtalk-monitor-stat"><div class="label">最近一次修改文件数</div><div class="value" id="apkChangedFileCount">0</div></div>
+    </div>
+    <div id="apkLogSummaryGrid" class="apk-log-summary-grid"></div>
+
+    <div class="table-wrap">
+        <table class="apk-log-table">
+            <thead>
+                <tr>
+                    <th>上传时间</th>
+                    <th>类型 / 原因</th>
+                    <th>用户 / 版本</th>
+                    <th>设备</th>
+                    <th>摘要 / 日志包</th>
+                    <th>附加信息</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="apkLogBody">
+                <tr><td colspan="7" class="log-details">暂无 APK 日志</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="apkLogPagination" class="apk-log-pagination">
+        <div id="apkLogPaginationMeta" class="log-details">等待加载分页信息...</div>
+        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+            <button class="btn btn-secondary" id="apkLogPrevBtn" onclick="changeApkLogPage(-1)">上一页</button>
+            <button class="btn btn-secondary" id="apkLogNextBtn" onclick="changeApkLogPage(1)">下一页</button>
+        </div>
+    </div>
+
+    <div class="collapse-panel" id="collapse-apk-repair">
+        <div class="collapse-header" onclick="toggleCollapse('collapse-apk-repair')">
+            <h4>🪵 APK 后台修复日志窗口</h4>
+            <span class="collapse-icon">▼</span>
+        </div>
+        <div class="collapse-body auto-height">
+            <pre id="apkRepairLogTail" class="autofix-diff-box logs-subpanel-pre">等待加载 APK 后台修复日志...</pre>
+        </div>
+    </div>
+</div>
+
+<div class="card logs-section-card" id="dingtalk-log-section" data-browser-group="dingtalk-log-group">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <div>
+            <h3>钉钉机器人巡检</h3>
+            <div class="dingtalk-monitor-hint">监控目录：{{ dingtalk_bot_monitor_dir }}<br>在线日志：{{ dingtalk_bot_live_log }}</div>
+        </div>
+        <div class="logs-section-tools">
+            <button class="btn btn-secondary" onclick="triggerDingTalkBotWatch()">重新执行巡检</button>
+            <button class="btn btn-secondary" onclick="triggerDingTalkHermesRepair()">立即执行 Hermes 修复</button>
+            <button class="btn btn-secondary" onclick="triggerDingTalkBotRestart()">重启机器人</button>
+            <button class="btn btn-primary" onclick="refreshDingTalkBotMonitor()">只刷新当前结果</button>
+        </div>
+    </div>
+
+    <div class="dingtalk-monitor-grid">
+        <div class="dingtalk-monitor-stat"><div class="label">最近巡检时间</div><div class="value" id="dingtalkMonitorCheckedAt">-</div></div>
+        <div class="dingtalk-monitor-stat"><div class="label">在线可疑回复数</div><div class="value" id="dingtalkMonitorSuspiciousCount">0</div></div>
+        <div class="dingtalk-monitor-stat"><div class="label">自动修复动作</div><div class="value" id="dingtalkMonitorLastAction">-</div></div>
+        <div class="dingtalk-monitor-stat"><div class="label">是否仍需重启</div><div class="value" id="dingtalkMonitorNeedsRestart">-</div></div>
+        <div class="dingtalk-monitor-stat"><div class="label">最近一次自动修复启动</div><div class="value" id="dingtalkMonitorLastAutoRepairAt">-</div></div>
+        <div class="dingtalk-monitor-stat"><div class="label">下一次自动修复</div><div class="value" id="dingtalkMonitorNextAutoRepairAt">-</div></div>
+    </div>
+
+    <div id="dingtalkMonitorMessage" class="log-details">等待加载钉钉机器人巡检信息...</div>
+
+    <div class="logs-subpanel">
+        <div class="card-header"><h4>问题分类统计</h4></div>
+        <div class="logs-subpanel-body">
+            <div id="dingtalkMonitorCategoryStats" class="dingtalk-category-grid">
+                <div class="log-details">暂无分类统计</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="logs-subpanel">
+        <div class="card-header"><h4>本轮识别出的可疑问答</h4></div>
+        <div class="logs-subpanel-body">
+            <div id="dingtalkMonitorSuspiciousList" class="dingtalk-monitor-list">
+                <div class="log-details">暂无可疑问答</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="collapse-panel open" id="collapse-recent-qna">
+        <div class="collapse-header" onclick="toggleCollapse('collapse-recent-qna')">
+            <h4>💬 最新在线问答</h4>
+            <span class="collapse-icon">▼</span>
+        </div>
+        <div class="collapse-body auto-height">
+            <div id="dingtalkMonitorRecentList" class="dingtalk-monitor-list">
+                <div class="log-details">暂无在线问答</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="collapse-panel" id="collapse-autofix-summary">
+        <div class="collapse-header" onclick="toggleCollapse('collapse-autofix-summary')">
+            <h4>🔧 最近一次自动修复摘要</h4>
+            <span class="collapse-icon">▼</span>
+        </div>
+        <div class="collapse-body auto-height">
+            <div id="dingtalkMonitorAutofixSummary" class="log-details">暂无自动修复摘要</div>
+        </div>
+    </div>
+
+    <div class="collapse-panel" id="collapse-changed-files">
+        <div class="collapse-header" onclick="toggleCollapse('collapse-changed-files')">
+            <h4>📁 最近一次修改文件</h4>
+            <span class="collapse-icon">▼</span>
+        </div>
+        <div class="collapse-body auto-height">
+            <div id="dingtalkMonitorChangedFiles" class="dingtalk-monitor-list">
+                <div class="log-details">暂无修改文件记录</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="collapse-panel" id="collapse-verification">
+        <div class="collapse-header" onclick="toggleCollapse('collapse-verification')">
+            <h4>✅ 最近一次验证结果</h4>
+            <span class="collapse-icon">▼</span>
+        </div>
+        <div class="collapse-body auto-height">
+            <div id="dingtalkMonitorVerification" class="dingtalk-monitor-list">
+                <div class="log-details">暂无验证记录</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="collapse-panel" id="collapse-diff-history">
+        <div class="collapse-header" onclick="toggleCollapse('collapse-diff-history')">
+            <h4>📜 修复 Diff 历史（按修改时间）</h4>
+            <span class="collapse-icon">▼</span>
+        </div>
+        <div class="collapse-body auto-height">
+            <div id="dingtalkMonitorDiffHistory" class="dingtalk-monitor-list">
+                <div class="log-details">当前状态文件还没有记录 diff / patch。</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="collapse-panel" id="collapse-live-tail">
+        <div class="collapse-header" onclick="toggleCollapse('collapse-live-tail')">
+            <h4>📋 在线日志尾部</h4>
+            <span class="collapse-icon">▼</span>
+        </div>
+        <div class="collapse-body auto-height">
+            <pre id="dingtalkMonitorLiveTail" class="dingtalk-monitor-tail logs-subpanel-pre">暂无日志</pre>
+        </div>
+    </div>
+
+    <div class="collapse-panel" id="collapse-repair-log">
+        <div class="collapse-header" onclick="toggleCollapse('collapse-repair-log')">
+            <h4>🪵 钉钉后台修复日志窗口</h4>
+            <span class="collapse-icon">▼</span>
+        </div>
+        <div class="collapse-body auto-height">
+            <pre id="dingtalkRepairLogTail" class="autofix-diff-box logs-subpanel-pre">等待加载钉钉后台修复日志... issue-1 / issue-2 会按条打印分析过程。</pre>
+        </div>
+    </div>
+</div>
+
+<div class="card logs-section-card" id="system-log-section" data-browser-group="system-log-group">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>📝 系统日志</h2>
+        <div style="display: flex; gap: 1rem;">
+            <button id="refreshBtn" class="btn btn-primary refresh-btn" onclick="refreshLogs()">
+                <span class="btn-text">🔄 刷新</span>
+            </button>
+            <button class="btn btn-secondary" onclick="exportLogs()">📥 导出</button>
+        </div>
+    </div>
+
+    <!-- 统计信息 -->
+    <div class="stats-row">
+        <div class="stat-item">
+            <div class="stat-number" id="totalLogs">0</div>
+            <div class="stat-label">近30天日志</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="todayLogs">0</div>
+            <div class="stat-label">今日日志</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="errorLogs">0</div>
+            <div class="stat-label">今日错误</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="activeSessions">0</div>
+            <div class="stat-label">已加载</div>
+        </div>
+    </div>
+
+    <div class="ai-usage-panel">
+        <div class="ai-usage-header">
+            <h3>🤖 AI Token 用量监控</h3>
+            <button class="btn btn-primary" onclick="refreshAiUsage()">刷新AI统计</button>
+        </div>
+
+        <div class="log-filters" style="margin-bottom: 0.8rem;">
+            <div class="form-group">
+                <label for="aiDateFrom">开始日期</label>
+                <input type="date" id="aiDateFrom" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="aiDateTo">结束日期</label>
+                <input type="date" id="aiDateTo" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="aiProvider">模型提供方</label>
+                <select id="aiProvider" class="form-control">
+                    <option value="">全部</option>
+                    <option value="qwen">Qwen</option>
+                    <option value="claude">Claude</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="aiInputPrice">输入单价（USD/1K token）</label>
+                <input type="number" step="0.000001" min="0" id="aiInputPrice" class="form-control" value="{{ ai_input_price }}">
+            </div>
+            <div class="form-group">
+                <label for="aiOutputPrice">输出单价（USD/1K token）</label>
+                <input type="number" step="0.000001" min="0" id="aiOutputPrice" class="form-control" value="{{ ai_output_price }}">
+            </div>
+        </div>
+
+        <div id="aiUsageMessage" class="log-details" style="margin-top: 0;">等待加载AI token统计...</div>
+
+        <div class="ai-usage-grid">
+            <div class="ai-stat-item">
+                <div class="ai-stat-label">分析照片数</div>
+                <div class="ai-stat-value" id="aiPhotosCount">0</div>
+            </div>
+            <div class="ai-stat-item">
+                <div class="ai-stat-label">平均 Token/张</div>
+                <div class="ai-stat-value" id="aiAvgTokens">0</div>
+            </div>
+            <div class="ai-stat-item">
+                <div class="ai-stat-label">平均费用/张 (USD)</div>
+                <div class="ai-stat-value" id="aiAvgCost">0</div>
+            </div>
+            <div class="ai-stat-item">
+                <div class="ai-stat-label">100张预计费用 (USD)</div>
+                <div class="ai-stat-value" id="aiCost100">0</div>
+            </div>
+            <div class="ai-stat-item">
+                <div class="ai-stat-label">总 Token</div>
+                <div class="ai-stat-value" id="aiTotalTokens">0</div>
+            </div>
+            <div class="ai-stat-item">
+                <div class="ai-stat-label">总费用 (USD)</div>
+                <div class="ai-stat-value" id="aiTotalCost">0</div>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table class="ai-usage-table">
+                <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>提供方/模型</th>
+                        <th>序列号</th>
+                        <th>工序</th>
+                        <th>Tokens (输/出/总)</th>
+                        <th>估算费用</th>
+                        <th>耗时(ms)</th>
+                    </tr>
+                </thead>
+                <tbody id="aiUsageBody">
+                    <tr><td colspan="7" class="log-details">暂无数据</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 筛选条件 -->
+    <div class="log-filters">
+        <div class="form-group">
+            <label for="logType">日志类型</label>
+            <select id="logType" class="form-control">
+                <option value="">全部类型</option>
+                <option value="access">访问日志</option>
+                <option value="login">登录日志</option>
+                <option value="logout">登出日志</option>
+                <option value="operation">操作日志</option>
+                <option value="system">系统日志</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="logLevel">日志级别</label>
+            <select id="logLevel" class="form-control">
+                <option value="">全部级别</option>
+                <option value="INFO">信息</option>
+                <option value="WARNING">警告</option>
+                <option value="ERROR">错误</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="logUsername">用户</label>
+            <input type="text" id="logUsername" class="form-control" placeholder="输入用户名筛选（可为空）">
+        </div>
+        
+        <div class="form-group">
+            <label for="logDate">日期</label>
+            <input type="date" id="logDate" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="logQuery">关键字</label>
+            <input type="text" id="logQuery" class="form-control" placeholder="path/action/target/message">
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <button class="btn btn-secondary" onclick="applyFilters()">🔍 筛选</button>
+        <button class="btn btn-secondary" onclick="clearFilters()">🗑️ 清除筛选</button>
+    </div>
+</div>
+
+<div class="card logs-section-card" data-browser-group="system-log-group">
+    <div class="card-header">
+        <h3>系统日志记录</h3>
+        <span id="logCount">加载中...</span>
+    </div>
+    
+    <div id="logsContainer">
+        <div class="loading" style="text-align: center; padding: 2rem;">
+            <p>正在加载日志...</p>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 1rem;">
+        <button id="loadMoreBtn" class="btn btn-secondary" onclick="loadMoreLogs()" style="display: none;">
+            加载更多
+        </button>
+    </div>
+</div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let logs = [];
+    let nextCursor = null;
+    let isLoading = false;
+    let aiUsageItems = [];
+    let apkLogs = [];
+    let selectedApkBuildStoredName = '';
+    let apkTotalDiffVisible = false;
+    let apkLogPagination = { page: 1, pageSize: 100, total: 0, hasMore: false };
+    let dingtalkBotMonitor = null;
+
+    window.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
+        const now = new Date();
+        const before = new Date(now.getTime() - 7 * 24 * 3600 * 1000);
+        document.getElementById('aiDateTo').value = now.toISOString().split('T')[0];
+        document.getElementById('aiDateFrom').value = before.toISOString().split('T')[0];
+        activateLogsBrowserGroup('apk-log-group');
+        refreshLogs();
+        refreshAiUsage();
+        refreshApkLogs();
+        refreshApkRepairLog();
+        refreshDingTalkBotMonitor();
+        refreshDingTalkRepairLog();
+        setInterval(() => refreshLogs({ silent: true }), 30000);
+        setInterval(() => refreshAiUsage(true), 30000);
+        setInterval(() => refreshApkLogs(true), 30000);
+        setInterval(() => refreshApkRepairLog(true), 30000);
+        setInterval(() => refreshDingTalkBotMonitor(true), 30000);
+        setInterval(() => refreshDingTalkRepairLog(true), 30000);
+    });
+
+    function buildQueryParams({ includeStats = false } = {}) {
+        const params = new URLSearchParams();
+        params.set('limit', '50');
+        if (includeStats) params.set('include_stats', '1');
+
+        const kind = document.getElementById('logType').value;
+        const level = document.getElementById('logLevel').value;
+        const username = (document.getElementById('logUsername').value || '').trim();
+        const date = document.getElementById('logDate').value;
+        const q = (document.getElementById('logQuery').value || '').trim();
+
+        if (kind) params.set('kind', kind);
+        if (level) params.set('level', level);
+        if (username) params.set('username', username);
+        if (date) params.set('date', date);
+        if (q) params.set('q', q);
+
+        if (nextCursor && nextCursor.ts && nextCursor.id) {
+            params.set('cursor_ts', String(nextCursor.ts));
+            params.set('cursor_id', String(nextCursor.id));
+        }
+        return params.toString();
+    }
+
+    async function refreshLogs({ silent = false } = {}) {
+        if (isLoading) return;
+        isLoading = true;
+
+        const btn = document.getElementById('refreshBtn');
+        if (!silent) btn.classList.add('loading');
+
+        try {
+            logs = [];
+            nextCursor = null;
+            renderLogs();
+
+            const qs = buildQueryParams({ includeStats: true });
+            const result = await apiRequest(`/api/logs?${qs}`);
+
+            if (!result.success) {
+                showMessage('加载日志失败: ' + (result.message || '未知错误'), 'error');
+                return;
+            }
+
+            logs = result.logs || [];
+            nextCursor = result.next_cursor || null;
+            updateStats(result.stats || {});
+            renderLogs();
+        } catch (e) {
+            if (!silent) showMessage('刷新日志失败', 'error');
+        } finally {
+            if (!silent) btn.classList.remove('loading');
+            isLoading = false;
+        }
+    }
+
+    async function loadMoreLogs() {
+        if (isLoading) return;
+        if (!nextCursor) return;
+        isLoading = true;
+        try {
+            const qs = buildQueryParams({ includeStats: false });
+            const result = await apiRequest(`/api/logs?${qs}`);
+            if (!result.success) {
+                showMessage('加载更多失败: ' + (result.message || '未知错误'), 'error');
+                return;
+            }
+            const more = result.logs || [];
+            logs = logs.concat(more);
+            nextCursor = result.next_cursor || null;
+            renderLogs();
+        } catch (e) {
+            showMessage('加载更多失败', 'error');
+        } finally {
+            isLoading = false;
+        }
+    }
+
+    function applyFilters() {
+        refreshLogs();
+    }
+
+    function clearFilters() {
+        document.getElementById('logType').value = '';
+        document.getElementById('logLevel').value = '';
+        document.getElementById('logUsername').value = '';
+        document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('logQuery').value = '';
+        refreshLogs();
+    }
+
+    function buildAiUsageQueryParams() {
+        const params = new URLSearchParams();
+        const dateFrom = document.getElementById('aiDateFrom').value;
+        const dateTo = document.getElementById('aiDateTo').value;
+        const provider = document.getElementById('aiProvider').value;
+        const inputPrice = Number(document.getElementById('aiInputPrice').value || 0);
+        const outputPrice = Number(document.getElementById('aiOutputPrice').value || 0);
+
+        if (dateFrom) params.set('dateFrom', dateFrom);
+        if (dateTo) params.set('dateTo', dateTo);
+        if (provider) params.set('provider', provider);
+        params.set('inputPricePer1k', String(inputPrice));
+        params.set('outputPricePer1k', String(outputPrice));
+        params.set('limit', '5000');
+        return params.toString();
+    }
+
+    function formatUsd(value) {
+        const n = Number(value || 0);
+        return n.toFixed(6);
+    }
+
+    function formatInt(value) {
+        return Number(value || 0).toLocaleString('zh-CN');
+    }
+
+    function renderAiUsageSummary(summary) {
+        const s = summary || {};
+        document.getElementById('aiPhotosCount').textContent = formatInt(s.photos_analyzed || 0);
+        document.getElementById('aiAvgTokens').textContent = (Number(s.avg_tokens_per_photo || 0)).toFixed(2);
+        document.getElementById('aiAvgCost').textContent = formatUsd(s.avg_cost_per_photo_usd || 0);
+        document.getElementById('aiCost100').textContent = formatUsd(s.estimated_cost_100_photos_usd || 0);
+        document.getElementById('aiTotalTokens').textContent = formatInt(s.total_tokens || 0);
+        document.getElementById('aiTotalCost').textContent = formatUsd(s.total_cost_usd || 0);
+    }
+
+    function renderAiUsageItems(items) {
+        const body = document.getElementById('aiUsageBody');
+        aiUsageItems = Array.isArray(items) ? items : [];
+        if (!aiUsageItems.length) {
+            body.innerHTML = '<tr><td colspan="7" class="log-details">当前筛选范围暂无AI token日志</td></tr>';
+            return;
+        }
+
+        body.innerHTML = aiUsageItems.map((item) => {
+            const ts = item.timestamp ? new Date(item.timestamp).toLocaleString('zh-CN') : '-';
+            const model = `${item.provider || '-'} / ${item.model || '-'}`;
+            const tokens = `${item.prompt_tokens || 0} / ${item.completion_tokens || 0} / ${item.total_tokens || 0}`;
+            const cost = formatUsd(item.cost_usd || 0);
+            const serial = item.serial_number || '-';
+            const step = item.process_step || '-';
+            const latency = Number(item.latency_ms || 0);
+
+            return `
+                <tr>
+                    <td>${escapeHtml(ts)}</td>
+                    <td>${escapeHtml(model)}</td>
+                    <td>${escapeHtml(serial)}</td>
+                    <td>${escapeHtml(step)}</td>
+                    <td>${escapeHtml(tokens)}</td>
+                    <td>${escapeHtml(cost)}</td>
+                    <td>${escapeHtml(String(latency))}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    async function refreshAiUsage(silent = false) {
+        try {
+            const qs = buildAiUsageQueryParams();
+            const result = await apiRequest(`/api/logs/ai-usage?${qs}`);
+            if (!result.success) {
+                if (!silent) showMessage(result.message || '获取AI用量失败', 'error');
+                return;
+            }
+            renderAiUsageSummary(result.summary || {});
+            renderAiUsageItems(result.items || []);
+
+            const summary = result.summary || {};
+            const msg = result.message
+                ? `${result.message}（当前单价: 输入 ${summary.input_price_per_1k_usd}/1K, 输出 ${summary.output_price_per_1k_usd}/1K）`
+                : `单价: 输入 ${summary.input_price_per_1k_usd}/1K, 输出 ${summary.output_price_per_1k_usd}/1K`;
+            document.getElementById('aiUsageMessage').textContent = msg;
+        } catch (e) {
+            if (!silent) showMessage('刷新AI token统计失败', 'error');
+        }
+    }
+
+    function renderDingTalkInteractionList(containerId, items, emptyText) {
+        const container = document.getElementById(containerId);
+        const rows = Array.isArray(items) ? items : [];
+        if (!rows.length) {
+            container.innerHTML = `<div class="log-details">${escapeHtml(emptyText)}</div>`;
+            return;
+        }
+        container.innerHTML = rows.map((item) => {
+            const repaired = !!item.repaired;
+            const badge = item.issue_id
+                ? `<span class="dingtalk-issue-badge ${repaired ? 'fixed' : 'pending'}">${repaired ? '已修复' : '待修复'} · ${escapeHtml(item.issue_id)}</span>`
+                : '';
+            return `
+            <div class="dingtalk-monitor-item ${repaired ? 'fixed' : (item.suspicious ? 'suspicious' : '')}">
+                <div class="dingtalk-monitor-meta">提问人：${escapeHtml(item.sender || '-')} ${badge}</div>
+                <div class="dingtalk-monitor-q">Q：${escapeHtml(item.question || '')}</div>
+                <div class="dingtalk-monitor-a">A：${escapeHtml(item.reply || '')}</div>
+            </div>
+        `}).join('');
+    }
+
+    function renderSimpleList(containerId, items, emptyText) {
+        const container = document.getElementById(containerId);
+        const rows = Array.isArray(items) ? items : [];
+        if (!rows.length) {
+            container.innerHTML = `<div class="log-details">${escapeHtml(emptyText)}</div>`;
+            return;
+        }
+        container.innerHTML = rows.map((item) => `
+            <div class="dingtalk-monitor-item">
+                <div class="dingtalk-monitor-a">${escapeHtml(String(item || ''))}</div>
+            </div>
+        `).join('');
+    }
+
+    function formatDisplayTime(value) {
+        if (!value) return '-';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+            return String(value);
+        }
+        return date.toLocaleString('zh-CN');
+    }
+
+    function renderDingTalkDiffHistory(status) {
+        const container = document.getElementById('dingtalkMonitorDiffHistory');
+        const history = Array.isArray(status.diff_history) ? [...status.diff_history] : [];
+        const fallbackPatch = String(status.patch_text || '').trim();
+        const fallbackDiff = Array.isArray(status.diff_preview) ? status.diff_preview : [];
+        if (!history.length && !fallbackPatch && !fallbackDiff.length) {
+            container.innerHTML = '<div class="log-details">当前状态文件还没有记录 diff / patch。</div>';
+            return;
+        }
+        const entries = history.length ? history.sort((a, b) => String(b.ts || '').localeCompare(String(a.ts || ''))) : [{
+            ts: status.checked_at || '',
+            status: (status.hermes_result || {}).status || status.last_action || '',
+            summary: status.summary || '',
+            changed_files: status.changed_files || [],
+            patch_text: fallbackPatch,
+            diff_preview: fallbackDiff,
+            verification: status.verification || [],
+            source: 'legacy_status',
+        }];
+        container.innerHTML = entries.map((entry) => {
+            const patch = String(entry.patch_text || '').trim();
+            const preview = Array.isArray(entry.diff_preview) ? entry.diff_preview.join('\n') : '';
+            const changedFiles = Array.isArray(entry.changed_files) ? entry.changed_files : [];
+            const verification = Array.isArray(entry.verification) ? entry.verification : [];
+            return `
+                <div class="dingtalk-monitor-item">
+                    <div class="dingtalk-monitor-meta">时间：${escapeHtml(formatDisplayTime(entry.ts || entry.started_at || ''))} ｜ 来源：${escapeHtml(entry.source || '-')} ｜ 状态：${escapeHtml(entry.status || '-')}</div>
+                    <div class="dingtalk-monitor-a">${escapeHtml(entry.summary || '无摘要')}</div>
+                    <div class="dingtalk-monitor-meta">修改文件：${escapeHtml(changedFiles.join('，') || '无')}</div>
+                    <div class="dingtalk-monitor-meta">验证：${escapeHtml(verification.join('；') || '无')}</div>
+                    <pre class="autofix-diff-box">${escapeHtml(patch || preview || '当前记录没有 diff 内容。')}</pre>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderCategoryStats(items) {
+        const container = document.getElementById('dingtalkMonitorCategoryStats');
+        const rows = Array.isArray(items) ? items : [];
+        if (!rows.length) {
+            container.innerHTML = '<div class="log-details">暂无分类统计</div>';
+            return;
+        }
+        container.innerHTML = rows.map((item) => `
+            <div class="dingtalk-category-card">
+                <div class="dingtalk-category-title">${escapeHtml(item.category || '未分类')}</div>
+                <div class="dingtalk-category-meta">总问题数：${escapeHtml(String(item.count ?? 0))}<br>可疑回复：${escapeHtml(String(item.suspicious_count ?? 0))}</div>
+            </div>
+        `).join('');
+    }
+
+    async function refreshDingTalkBotMonitor(silent = false) {
+        try {
+            const result = await apiRequest('/api/dingtalk-bot-monitor?tail_lines=80');
+            if (!result.success) {
+                document.getElementById('dingtalkMonitorMessage').textContent = result.message || '读取钉钉机器人巡检失败';
+                if (!silent) showMessage(result.message || '读取钉钉机器人巡检失败', 'error');
+                return;
+            }
+            dingtalkBotMonitor = result;
+            const watch = result.watch || {};
+            const status = result.status || {};
+            const issueFixes = Array.isArray(status.issue_fixes) ? status.issue_fixes : [];
+            const dingtalkFixStatus = String((status.hermes_result || {}).status || status.last_action || '');
+            const fixApplied = ['hermes_fix_applied', 'hermes_fix_already_applied'].some((keyword) => dingtalkFixStatus.includes(keyword));
+            const issueKeyToFix = new Map(issueFixes.map((item) => [`${item.question || ''}__${item.reply || ''}`, item]));
+            const suspiciousItems = (result.suspicious_live_interactions || []).map((item) => {
+                const fix = issueKeyToFix.get(`${item.question || ''}__${item.reply || ''}`);
+                return {
+                    ...item,
+                    issue_id: fix ? fix.issue_id : item.issue_id,
+                    repaired: !!(fixApplied && fix),
+                };
+            });
+            document.getElementById('dingtalkMonitorCheckedAt').textContent = watch.updated_at || status.checked_at || '-';
+            document.getElementById('dingtalkMonitorSuspiciousCount').textContent = String((watch.suspicious_live_count ?? (result.suspicious_live_interactions || []).length ?? 0));
+            document.getElementById('dingtalkMonitorLastAction').textContent = status.last_action || '本轮仅巡检';
+            document.getElementById('dingtalkMonitorNeedsRestart').textContent = status.needs_restart ? '需要' : '不需要';
+            document.getElementById('dingtalkMonitorLastAutoRepairAt').textContent = formatDisplayTime(status.last_auto_repair_started_at || status.last_manual_repair_started_at || '');
+            document.getElementById('dingtalkMonitorNextAutoRepairAt').textContent = formatDisplayTime(status.next_auto_repair_at || '');
+            document.getElementById('dingtalkMonitorMessage').textContent = status.summary || `监控目录：${result.monitor_dir || '-'}；最近已抓取 ${Array.isArray(result.live_interactions) ? result.live_interactions.length : 0} 条在线问答。`;
+            document.getElementById('dingtalkMonitorAutofixSummary').textContent = status.summary || '暂无自动修复摘要';
+            renderCategoryStats((result.watch || {}).live_category_stats || []);
+            renderDingTalkInteractionList('dingtalkMonitorSuspiciousList', suspiciousItems, '当前未发现在线可疑问答');
+            renderDingTalkInteractionList('dingtalkMonitorRecentList', result.live_interactions || [], '当前暂无在线问答');
+            renderSimpleList('dingtalkMonitorChangedFiles', status.changed_files || [], '暂无修改文件记录');
+            renderSimpleList('dingtalkMonitorVerification', status.verification || [], '暂无验证记录');
+            renderDingTalkDiffHistory(status);
+            document.getElementById('dingtalkMonitorLiveTail').textContent = (result.live_log_tail || []).join('\n') || '暂无日志';
+        } catch (e) {
+            if (!silent) showMessage('刷新钉钉机器人巡检失败', 'error');
+        }
+    }
+
+    async function refreshDingTalkRepairLog(silent = false) {
+        try {
+            const result = await apiRequest('/api/dingtalk-bot-monitor/repair-log?limit=120');
+            document.getElementById('dingtalkRepairLogTail').textContent = (result.lines || []).join('\n') || '当前还没有钉钉后台修复日志。';
+        } catch (e) {
+            if (!silent) showMessage('加载钉钉后台修复日志失败', 'error');
+        }
+    }
+
+    async function triggerDingTalkBotWatch() {
+        try {
+            const result = await apiRequest('/api/dingtalk-bot-monitor/run-watch', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: '{}'
+            });
+            if (!result.success) {
+                showMessage(result.message || '手动巡检失败', 'error');
+                return;
+            }
+            showMessage(result.message || '已触发巡检', 'success');
+            await refreshDingTalkBotMonitor();
+            await refreshDingTalkRepairLog();
+        } catch (e) {
+            showMessage('手动巡检失败', 'error');
+        }
+    }
+
+    async function triggerDingTalkBotRestart() {
+        if (!confirm('确认立即重启在线钉钉机器人吗？')) {
+            return;
+        }
+        try {
+            const result = await apiRequest('/api/dingtalk-bot-monitor/restart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: '{}'
+            });
+            if (!result.success) {
+                showMessage(result.message || '重启机器人失败', 'error');
+                return;
+            }
+            showMessage(result.message || '已触发机器人重启', 'success');
+            await refreshDingTalkBotMonitor();
+            await refreshDingTalkRepairLog();
+        } catch (e) {
+            showMessage('重启机器人失败', 'error');
+        }
+    }
+
+    async function triggerDingTalkHermesRepair() {
+        try {
+            const result = await apiRequest('/api/dingtalk-bot-monitor/hermes-repair', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: '{}'
+            });
+            if (!result.success) {
+                showMessage(result.message || '钉钉 Hermes 后台修复失败', 'error');
+                await refreshDingTalkRepairLog();
+                return;
+            }
+            showMessage(result.message || '钉钉 Hermes 后台修复任务已启动', 'success');
+            if (result.task_id) {
+                await pollDingTalkHermesRepairTask(result.task_id);
+            }
+            await refreshDingTalkBotMonitor();
+            await refreshDingTalkRepairLog();
+        } catch (e) {
+            showMessage('钉钉 Hermes 后台修复失败', 'error');
+        }
+    }
+
+    async function pollDingTalkHermesRepairTask(taskId) {
+        for (let i = 0; i < 60; i += 1) {
+            const result = await apiRequest(`/api/dingtalk-bot-monitor/hermes-repair/status?task_id=${encodeURIComponent(taskId)}`);
+            if (!result.success) {
+                break;
+            }
+            if (result.status === 'completed' || result.status === 'failed') {
+                break;
+            }
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            await refreshDingTalkRepairLog(true);
+        }
+    }
+
+    function findApkBuildTargetStoredName() {
+        const repaired = apkLogs.find(item => {
+            const status = item?.autofix?.status || '';
+            return item?.stored_name && ['hermes_fix_applied', 'hermes_fix_already_applied', 'build_requested'].includes(status);
+        });
+        if (repaired) return repaired.stored_name;
+        const withAutofix = apkLogs.find(item => item?.stored_name && item?.autofix?.status);
+        return withAutofix ? withAutofix.stored_name : '';
+    }
+
+    async function enqueueApkBuild(storedName = '') {
+        const targetStoredName = storedName || selectedApkBuildStoredName || findApkBuildTargetStoredName();
+        if (!targetStoredName) {
+            showMessage('当前列表没有可下发编译的 Hermes 修复记录，请先执行 Hermes 后台修复。', 'error');
+            return;
+        }
+        const targetItem = apkLogs.find(item => item.stored_name === targetStoredName) || {};
+        const displayName = targetItem.original_filename || targetItem.stored_name || targetStoredName;
+        if (!confirm(`确认下发 APK 测试编译任务吗？\n目标日志：${displayName}\n编译完成后 APK 会保存到 /volume2/MES/QRMES/APK-test/，不会进入正式 APK 目录。`)) {
+            return;
+        }
+        try {
+            const result = await apiRequest(`/api/apk-autofix/${encodeURIComponent(targetStoredName)}/build`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: '{}'
+            });
+            if (!result.success) {
+                showMessage(result.message || '下发编译任务失败', 'error');
+                return;
+            }
+            showMessage(result.message || '已下发编译任务', 'success');
+            await refreshApkLogs();
+            await refreshApkRepairLog();
+        } catch (e) {
+            showMessage('下发编译任务失败', 'error');
+        }
+    }
+
+    function renderApkTotalDiff(result) {
+        const meta = document.getElementById('apkTotalDiffMeta');
+        const content = document.getElementById('apkTotalDiffContent');
+        const statusLines = Array.isArray(result.status_lines) ? result.status_lines : [];
+        const diffText = String(result.diff_text || '').trim();
+        const repoPath = String(result.repo_path || '-');
+        const changedCount = Number(result.changed_count || statusLines.length || 0);
+        const truncatedText = result.diff_truncated ? '\n\n... diff 内容过长，已截断显示 ...' : '';
+        meta.textContent = `源码仓：${repoPath} ｜ 变更文件：${changedCount} 个`;
+        if (!statusLines.length && !diffText) {
+            content.textContent = '当前源码仓没有未提交 diff。';
+            return;
+        }
+        const statusBlock = statusLines.length ? `# git status --short\n${statusLines.join('\n')}` : '# git status --short\n无';
+        const diffBlock = diffText ? `# git diff\n${diffText}${truncatedText}` : '# git diff\n当前变更没有文本 diff，可能只有未跟踪文件或二进制文件。';
+        content.textContent = `${statusBlock}\n\n${diffBlock}`;
+    }
+
+    async function refreshApkTotalDiff() {
+        const meta = document.getElementById('apkTotalDiffMeta');
+        const content = document.getElementById('apkTotalDiffContent');
+        meta.textContent = '正在读取源码仓总 Diff...';
+        content.textContent = '正在读取源码仓总 Diff...';
+        try {
+            const result = await apiRequest('/api/apk-autofix/source-diff');
+            if (!result.success) {
+                meta.textContent = '读取总 Diff 失败';
+                content.textContent = result.message || '读取总 Diff 失败';
+                showMessage(result.message || '读取总 Diff 失败', 'error');
+                return;
+            }
+            renderApkTotalDiff(result);
+        } catch (e) {
+            meta.textContent = '读取总 Diff 失败';
+            content.textContent = '读取总 Diff 失败';
+            showMessage('读取总 Diff 失败', 'error');
+        }
+    }
+
+    async function toggleApkTotalDiff() {
+        const panel = document.getElementById('apkTotalDiffPanel');
+        if (!panel) return;
+        apkTotalDiffVisible = !apkTotalDiffVisible;
+        panel.style.display = apkTotalDiffVisible ? 'block' : 'none';
+        if (apkTotalDiffVisible) {
+            await refreshApkTotalDiff();
+        }
+    }
+
+    async function commitApkSourceToGitLab() {
+        if (!confirm('确认把当前 Android 源码总 Diff 提交并推送到 GitLab 吗？')) {
+            return;
+        }
+        const meta = document.getElementById('apkTotalDiffMeta');
+        try {
+            meta.textContent = '正在提交并推送到 GitLab...';
+            const result = await apiRequest('/api/apk-autofix/source-commit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: '{}'
+            });
+            if (!result.success) {
+                showMessage(result.message || '提交到 GitLab 失败', 'error');
+                await refreshApkTotalDiff();
+                return;
+            }
+            showMessage(result.message || '已提交并推送到 GitLab', 'success');
+            await refreshApkTotalDiff();
+        } catch (e) {
+            showMessage('提交到 GitLab 失败', 'error');
+            await refreshApkTotalDiff();
+        }
+    }
+
+    async function triggerApkHermesRepair(storedName) {
+        try {
+            const result = await apiRequest(`/api/apk-autofix/${storedName}/hermes-repair`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: '{}'
+            });
+            if (!result.success) {
+                showMessage(result.message || 'APK Hermes 后台修复失败', 'error');
+                await refreshApkRepairLog();
+                return;
+            }
+            showMessage(result.message || 'APK Hermes 后台修复已执行', 'success');
+            if (result.task_id) {
+                await pollApkHermesRepairTask(storedName, result.task_id);
+            }
+            await refreshApkLogs();
+            await refreshApkRepairLog();
+        } catch (e) {
+            showMessage('APK Hermes 后台修复失败', 'error');
+        }
+    }
+
+    async function pollApkHermesRepairTask(storedName, taskId) {
+        for (let i = 0; i < 60; i += 1) {
+            const result = await apiRequest(`/api/apk-autofix/${storedName}/hermes-repair/status?task_id=${encodeURIComponent(taskId)}`);
+            if (!result.success) {
+                break;
+            }
+            if (result.status === 'completed' || result.status === 'failed') {
+                break;
+            }
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            await refreshApkRepairLog(true);
+        }
+    }
+
+    function updateStats(stats) {
+        document.getElementById('totalLogs').textContent = stats.total_30d ?? 0;
+        document.getElementById('todayLogs').textContent = stats.today ?? 0;
+        document.getElementById('errorLogs').textContent = stats.errors_today ?? 0;
+        document.getElementById('activeSessions').textContent = logs.length;
+    }
+
+    function buildApkLogQueryParams() {
+        const params = new URLSearchParams();
+        params.set('page', String(apkLogPagination.page || 1));
+        params.set('page_size', String(apkLogPagination.pageSize || 100));
+        const username = (document.getElementById('apkLogUsername').value || '').trim();
+        const date = document.getElementById('apkLogDate').value;
+        const q = (document.getElementById('apkLogQuery').value || '').trim();
+        const eventType = document.getElementById('apkLogEventType').value;
+        const feature = document.getElementById('apkLogFeature').value;
+        const reasonCode = document.getElementById('apkLogReason').value;
+        const sourceKind = document.getElementById('apkLogSourceKind').value;
+        if (username) params.set('username', username);
+        if (date) params.set('date', date);
+        if (q) params.set('q', q);
+        if (eventType) params.set('event_type', eventType);
+        if (feature) params.set('feature', feature);
+        if (reasonCode) params.set('reason_code', reasonCode);
+        if (sourceKind) params.set('source_kind', sourceKind);
+        return params.toString();
+    }
+
+    function updateApkRepairStats(autofix) {
+        const data = autofix || {};
+        const recentStarted = data.last_manual_repair_started_at || data.last_auto_repair_started_at || '';
+        document.getElementById('apkLastRepairAt').textContent = formatDisplayTime(recentStarted);
+        document.getElementById('apkNextRepairAt').textContent = data.next_auto_repair_at ? formatDisplayTime(data.next_auto_repair_at) : '未配置';
+        document.getElementById('apkCurrentRepairStatus').textContent = String(data.status || '-');
+        document.getElementById('apkChangedFileCount').textContent = String((Array.isArray(data.changed_files) ? data.changed_files.length : 0));
+    }
+
+    function collectApkAutofixDiffEntries(autofix) {
+        const data = autofix || {};
+        const history = Array.isArray(data.diff_history) ? [...data.diff_history] : [];
+        const fallbackPatch = String(data.patch_text || '').trim();
+        const fallbackDiff = Array.isArray(data.diff_preview) ? data.diff_preview : [];
+        const fallbackChangedFiles = Array.isArray(data.changed_files) ? data.changed_files : [];
+        const fallbackVerification = Array.isArray(data.verification) ? data.verification : [];
+        const fallbackSummary = String((data.hermes_result || {}).summary || data.summary || '').trim();
+        const fallbackStatus = String(data.status || '').trim();
+        const recentStarted = data.last_manual_repair_started_at || data.last_auto_repair_started_at || '';
+        const entries = history.length ? history.sort((a, b) => String(b.ts || '').localeCompare(String(a.ts || ''))) : [];
+        if (!history.length || fallbackPatch || fallbackDiff.length) {
+            entries.unshift({
+            ts: data.last_manual_repair_completed_at || data.last_auto_repair_completed_at || data.prepared_at || '',
+            started_at: recentStarted,
+            source: data.hermes_enabled ? 'hermes_status' : 'legacy_status',
+            status: fallbackStatus,
+            summary: fallbackSummary,
+            changed_files: fallbackChangedFiles,
+            patch_text: fallbackPatch,
+            diff_preview: fallbackDiff,
+            verification: fallbackVerification,
+            target_file: (data.hermes_result || {}).target_file || '',
+            });
+        }
+        return entries.filter((entry) => {
+            const patch = String(entry.patch_text || '').trim();
+            const preview = Array.isArray(entry.diff_preview) ? entry.diff_preview.join('\n').trim() : '';
+            const status = String(entry.status || '').trim();
+            const summary = String(entry.summary || '').trim();
+            const changedFiles = Array.isArray(entry.changed_files) ? entry.changed_files : [];
+            const verification = Array.isArray(entry.verification) ? entry.verification : [];
+            return patch || preview || status || summary || changedFiles.length || verification.length;
+        });
+    }
+
+    function selectApkAutofixDiffEntry(entries) {
+        if (!entries.length) return null;
+        const withPatch = entries.find((entry) => {
+            const patch = String(entry.patch_text || '').trim();
+            const preview = Array.isArray(entry.diff_preview) ? entry.diff_preview.join('\n').trim() : '';
+            return patch || preview;
+        });
+        return withPatch || entries[0];
+    }
+
+    function buildApkAutofixDiffHtml(autofix) {
+        const entries = collectApkAutofixDiffEntries(autofix);
+        const entry = selectApkAutofixDiffEntry(entries);
+        if (!entry) {
+            return '<div class="log-details">当前这条日志还没有生成可展示的 diff / patch。</div>';
+        }
+        const patch = String(entry.patch_text || '').trim();
+        const preview = Array.isArray(entry.diff_preview) ? entry.diff_preview.join('\n') : '';
+        const changedFiles = Array.isArray(entry.changed_files) ? entry.changed_files : [];
+        const verification = Array.isArray(entry.verification) ? entry.verification : [];
+        const emptyDiffText = '本次 Hermes 修复没有生成代码 diff：通常表示源码已经包含对应修复，或模型分析后认为不能安全自动改动。';
+        return `
+            <div class="dingtalk-monitor-item">
+                <div class="dingtalk-monitor-meta">时间：${escapeHtml(formatDisplayTime(entry.ts || entry.started_at || ''))} ｜ 来源：${escapeHtml(entry.source || '-')} ｜ 状态：${escapeHtml(entry.status || '-')}</div>
+                <div class="dingtalk-monitor-a">${escapeHtml(entry.summary || '无摘要')}</div>
+                <div class="dingtalk-monitor-meta">修改文件：${escapeHtml(changedFiles.join('，') || '无')}</div>
+                <div class="dingtalk-monitor-meta">验证：${escapeHtml(verification.join('；') || '无')}</div>
+                <pre class="autofix-diff-box">${escapeHtml(patch || preview || emptyDiffText)}</pre>
+            </div>
+        `;
+    }
+
+    function toggleApkLogDiff(index) {
+        const row = document.getElementById(`apkLogDiffRow-${index}`);
+        const container = document.getElementById(`apkLogDiffContent-${index}`);
+        if (!row || !container) return;
+        const isHidden = row.style.display === 'none' || !row.style.display;
+        if (isHidden) {
+            const item = apkLogs[index] || {};
+            selectedApkBuildStoredName = item.stored_name || '';
+            container.innerHTML = buildApkAutofixDiffHtml(item.autofix || {});
+            row.style.display = 'table-row';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+
+    async function refreshApkRepairLog(silent = false) {
+        try {
+            const result = await apiRequest('/api/apk-repair-log?limit=120');
+            document.getElementById('apkRepairLogTail').textContent = (result.lines || []).join('\n') || '当前还没有 APK 后台修复日志。';
+        } catch (e) {
+            if (!silent) showMessage('加载 APK 后台修复日志失败', 'error');
+        }
+    }
+
+    function updateApkLogPagination() {
+        const meta = document.getElementById('apkLogPaginationMeta');
+        const prevBtn = document.getElementById('apkLogPrevBtn');
+        const nextBtn = document.getElementById('apkLogNextBtn');
+        const page = Number(apkLogPagination.page || 1);
+        const pageSize = Number(apkLogPagination.pageSize || 100);
+        const total = Number(apkLogPagination.total || 0);
+        const start = total ? ((page - 1) * pageSize) + 1 : 0;
+        const end = total ? Math.min(page * pageSize, total) : 0;
+        meta.textContent = total ? `第 ${page} 页，显示 ${start}-${end} / 共 ${total} 条` : '当前没有可展示的 APK 日志';
+        prevBtn.disabled = page <= 1;
+        nextBtn.disabled = !apkLogPagination.hasMore;
+    }
+
+    function changeApkLogPage(delta) {
+        const nextPage = Math.max(1, Number(apkLogPagination.page || 1) + Number(delta || 0));
+        if (nextPage === apkLogPagination.page) {
+            return;
+        }
+        apkLogPagination.page = nextPage;
+        refreshApkLogs();
+    }
+
+    async function refreshApkLogs(silent = false) {
+        try {
+            const qs = buildApkLogQueryParams();
+            const result = await apiRequest(`/api/apk-logs?${qs}`);
+            if (!result.success) {
+                if (!silent) showMessage(result.message || '获取 APK 日志失败', 'error');
+                return;
+            }
+            apkLogs = Array.isArray(result.logs) ? result.logs : [];
+            apkLogPagination = {
+                page: Number(result.page || apkLogPagination.page || 1),
+                pageSize: Number(result.page_size || apkLogPagination.pageSize || 100),
+                total: Number(result.total || apkLogs.length || 0),
+                hasMore: Boolean(result.has_more),
+            };
+            renderApkLogs();
+            updateApkLogPagination();
+        } catch (e) {
+            if (!silent) showMessage('获取 APK 日志失败', 'error');
+        }
+    }
+
+    function toggleCollapse(panelId) {
+        const panel = document.getElementById(panelId);
+        if (panel) {
+            panel.classList.toggle('open');
+        }
+    }
+
+    function applyApkLogFilters() {
+        apkLogPagination.page = 1;
+        refreshApkLogs();
+    }
+
+    function clearApkLogFilters() {
+        document.getElementById('apkLogUsername').value = '';
+        document.getElementById('apkLogDate').value = '';
+        document.getElementById('apkLogQuery').value = '';
+        document.getElementById('apkLogEventType').value = '';
+        document.getElementById('apkLogFeature').value = '';
+        document.getElementById('apkLogReason').value = '';
+        document.getElementById('apkLogSourceKind').value = '';
+        apkLogPagination.page = 1;
+        refreshApkLogs();
+    }
+
+    function formatApkLogLabel(map, value, fallback = '-') {
+        if (!value) return fallback;
+        return map[value] || value;
+    }
+
+    function buildApkLogSummaryCards(items) {
+        const container = document.getElementById('apkLogSummaryGrid');
+        if (!items.length) {
+            container.innerHTML = '';
+            return;
+        }
+
+        const byType = items.reduce((acc, item) => {
+            const key = item.event_type || 'manual';
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+        }, {});
+        const cards = [
+            ['全部事件', items.length],
+            ['运行异常', byType.exception || 0],
+            ['上传失败', byType.upload_failure || 0],
+            ['致命异常', items.filter(item => String(item.severity || '') === 'fatal').length],
+        ];
+        container.innerHTML = cards.map(([label, value]) => `
+            <div class="apk-log-summary-card">
+                <div>${escapeHtml(String(label))}</div>
+                <strong>${escapeHtml(String(value))}</strong>
+            </div>
+        `).join('');
+    }
+
+    function renderApkLogs() {
+        const body = document.getElementById('apkLogBody');
+        const summary = document.getElementById('apkLogSummary');
+        if (!apkLogs.length) {
+            summary.textContent = '当前筛选范围暂无 APK 日志包';
+            buildApkLogSummaryCards([]);
+            body.innerHTML = '<tr><td colspan="7" class="log-details">暂无 APK 日志</td></tr>';
+            updateApkRepairStats(null);
+            return;
+        }
+
+        const typeLabels = {
+            exception: '运行异常',
+            upload_failure: '上传失败',
+            manual: '手动上传',
+        };
+        const featureLabels = {
+            app_runtime: 'APP 运行时',
+            photo_upload: '照片上传',
+            pdf_upload: 'PDF 上传',
+            config_sync: '配置同步',
+        };
+        const reasonLabels = {
+            network_timeout: '网络超时',
+            network_dns_failure: 'DNS / 服务不可达',
+            network_ssl_error: 'SSL 错误',
+            network_io_error: '网络 IO 错误',
+            permission_denied: '权限不足',
+            http_bad_request: 'HTTP 400',
+            http_unauthorized: 'HTTP 401',
+            http_forbidden: 'HTTP 403',
+            http_not_found: 'HTTP 404',
+            http_timeout: 'HTTP 408',
+            http_payload_too_large: 'HTTP 413',
+            http_rate_limited: 'HTTP 429',
+            http_server_error: 'HTTP 5xx',
+            http_upload_failed: 'HTTP 上传失败',
+            partial_failure: '部分上传失败',
+            upload_failed: '上传失败',
+            unknown_exception: '未知异常',
+        };
+
+        summary.textContent = `已加载 ${apkLogs.length} 条 APK 异常/上传事件`;
+        buildApkLogSummaryCards(apkLogs);
+        updateApkRepairStats(apkLogs[0]?.autofix || null);
+        body.innerHTML = apkLogs.map((item, index) => {
+            const uploadedAt = item.uploaded_at ? new Date(item.uploaded_at).toLocaleString('zh-CN') : '-';
+            const versionText = `${item.app_version_name || '-'} / ${item.app_version_code || '-'}`;
+            const deviceText = `${item.manufacturer || '-'} ${item.device_model || ''}`.trim();
+            const sizeKb = Number(item.size_bytes || 0) > 0 ? `${Math.round(Number(item.size_bytes) / 1024)} KB` : '-';
+            const deviceInfo = item.device_info_text
+                ? escapeHtml(String(item.device_info_text).slice(0, 300))
+                : '无设备信息';
+            let extraPreview = '无附加信息';
+            try {
+                const parsed = item.extra_json ? JSON.parse(item.extra_json) : null;
+                if (parsed && Object.keys(parsed).length > 0) {
+                    extraPreview = `<details class="apk-log-extra"><summary>查看附加字段</summary><pre>${escapeHtml(JSON.stringify(parsed, null, 2))}</pre></details>`;
+                }
+            } catch (_) {}
+            const eventType = item.event_type || 'manual';
+            const severity = item.severity || 'warn';
+            const featureText = formatApkLogLabel(featureLabels, item.feature, '未标记模块');
+            const reasonText = formatApkLogLabel(reasonLabels, item.reason_code, '未标记原因');
+            const summaryText = item.summary || item.original_filename || item.stored_name || '-';
+            const autofix = item.autofix || {};
+            const severityAllowsFix = ['fatal', 'error'].includes(String(item.severity || '').toLowerCase());
+            const autofixStatus = autofix.status || (severityAllowsFix ? '未执行 Hermes 修复' : '仅支持 fatal/error');
+            const compileStatus = autofix.compile_status || 'not_started';
+            const apkFixed = ['hermes_fix_applied', 'hermes_fix_already_applied'].includes(autofixStatus);
+            const apkAnalysisOnly = autofixStatus === 'hermes_analysis_only';
+            const apkStatusClass = apkFixed ? 'fixed' : (apkAnalysisOnly ? 'analysis' : 'pending');
+            const apkStatusLabel = apkFixed ? '已修复' : (apkAnalysisOnly ? '仅分析未落地' : '待修复');
+
+            return `
+                <tr>
+                    <td>${escapeHtml(uploadedAt)}</td>
+                    <td>
+                        <div class="apk-log-badges">
+                            <span class="apk-log-badge type-${escapeHtml(eventType)}">${escapeHtml(formatApkLogLabel(typeLabels, eventType, '手动上传'))}</span>
+                            <span class="apk-log-badge severity-${escapeHtml(severity)}">${escapeHtml(String(severity).toUpperCase())}</span>
+                            ${item.feature ? `<span class="apk-log-badge feature-${escapeHtml(item.feature)}">${escapeHtml(featureText)}</span>` : ''}
+                        </div>
+                        <div>${escapeHtml(reasonText)}</div>
+                        <div class="apk-status-badge ${apkStatusClass}">${escapeHtml(apkStatusLabel)}</div>
+                        <div class="apk-log-meta">触发点：${escapeHtml(item.trigger || '-')}</div>
+                        ${item.http_status ? `<div class="apk-log-meta">HTTP 状态：${escapeHtml(String(item.http_status))}</div>` : ''}
+                        <div class="apk-log-meta">Hermes 修复状态：${escapeHtml(autofixStatus)}</div>
+                        <div class="apk-log-meta">编译状态：${escapeHtml(String(compileStatus))}</div>
+                    </td>
+                    <td>
+                        <div>${escapeHtml(item.username || '-')}</div>
+                        <div class="apk-log-meta">${escapeHtml(versionText)}</div>
+                    </td>
+                    <td>
+                        <div>${escapeHtml(deviceText || '-')}</div>
+                        <div class="apk-log-meta">Android ${escapeHtml(item.android_version || '-')}</div>
+                    </td>
+                    <td>
+                        <div>${escapeHtml(summaryText)}</div>
+                        <div class="apk-log-meta">${escapeHtml(item.original_filename || item.stored_name || '-')}</div>
+                        <div class="apk-log-meta">${escapeHtml(sizeKb)} / ${escapeHtml(String(item.log_file_count || 0))} 个日志文件</div>
+                        <button class="btn btn-secondary" style="margin-top:0.5rem;" onclick="toggleApkLogDiff(${index})">查看本条 Diff</button>
+                    </td>
+                    <td>
+                        <div class="apk-log-meta">${deviceInfo}</div>
+                        ${extraPreview}
+                    </td>
+                    <td>
+                        <a class="btn btn-secondary" href="/api/apk-logs/${encodeURIComponent(item.stored_name)}/download">下载</a>
+                        <div style="display:flex;flex-direction:column;gap:0.4rem;margin-top:0.5rem;">
+                            <button class="btn btn-secondary" onclick="triggerApkHermesRepair('${encodeURIComponent(item.stored_name)}')">Hermes后台修复</button>
+                        </div>
+                        <div class="apk-log-meta">仅 Hermes 修复处理 fatal / error；编译任务请在顶部手动下发。</div>
+                    </td>
+                </tr>
+                <tr class="apk-log-diff-row" id="apkLogDiffRow-${index}" style="display:none;">
+                    <td colspan="7">
+                        <div id="apkLogDiffContent-${index}" class="dingtalk-monitor-list"></div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderLogs() {
+        const container = document.getElementById('logsContainer');
+        if (!logs || logs.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state" style="text-align: center; padding: 3rem;">
+                    <p>📝 没有找到符合条件的日志记录</p>
+                </div>
+            `;
+            document.getElementById('logCount').textContent = '共 0 条记录';
+            document.getElementById('loadMoreBtn').style.display = 'none';
+            return;
+        }
+
+        let html = '';
+        logs.forEach((log, index) => {
+            html += createLogEntry(log, index);
+        });
+        container.innerHTML = html;
+
+        document.getElementById('logCount').textContent = `已加载 ${logs.length} 条记录`;
+        document.getElementById('loadMoreBtn').style.display = nextCursor ? 'inline-block' : 'none';
+        document.getElementById('activeSessions').textContent = logs.length;
+    }
+
+    function createLogEntry(log, index) {
+        const ts = log.timestamp ? new Date(log.timestamp).toLocaleString('zh-CN') : '';
+        const kind = (log.kind || 'system').toLowerCase();
+
+        let statusClass = 'log-success';
+        if (log.level === 'ERROR' || log.success === 0) statusClass = 'log-error';
+        else if (log.level === 'WARNING') statusClass = 'log-warning';
+
+        const who = log.display_name || log.username || '系统';
+        const typeLabel = (log.kind || 'system').toUpperCase();
+
+        let message = '';
+        if (kind === 'access') {
+            message = `${log.method || ''} ${log.path || ''} → ${log.status_code || ''}`;
+            if (log.duration_ms !== null && log.duration_ms !== undefined) message += ` (${log.duration_ms}ms)`;
+        } else if (kind === 'operation') {
+            message = `${log.action || '操作'} ${log.target || ''}`;
+            if (log.message) message += ` - ${log.message}`;
+        } else {
+            message = log.message || `${log.action || ''} ${log.target || ''}`.trim();
+        }
+
+        const details = {};
+        if (log.ip) details['IP'] = log.ip;
+        if (log.user_agent) details['UA'] = log.user_agent;
+        if (log.request_id) details['request_id'] = log.request_id;
+        if (log.query_keys) details['query_keys'] = log.query_keys;
+        if (log.details_json) details['details_json'] = log.details_json;
+
+        const hasDetails = Object.keys(details).length > 0;
+
+        return `
+            <div class="log-entry ${statusClass}">
+                <div class="log-header">
+                    <div>
+                        <span class="log-type ${kind}">${typeLabel}</span>
+                        <span class="log-user">${escapeHtml(who)}</span>
+                    </div>
+                    <span class="log-timestamp">${escapeHtml(ts)}</span>
+                </div>
+                <div class="log-message">${escapeHtml(message)}</div>
+                ${hasDetails ? `
+                    <div class="expand-details" onclick="toggleDetails(${index})">
+                        <span id="toggle-${index}">▼ 显示详情</span>
+                    </div>
+                    <div id="details-${index}" class="log-details collapsed">
+                        ${Object.entries(details).map(([k, v]) => `<div><strong>${escapeHtml(k)}:</strong> ${escapeHtml(String(v))}</div>`).join('')}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    function toggleDetails(index) {
+        const detailsEl = document.getElementById(`details-${index}`);
+        const toggleEl = document.getElementById(`toggle-${index}`);
+        if (!detailsEl || !toggleEl) return;
+        if (detailsEl.classList.contains('collapsed')) {
+            detailsEl.classList.remove('collapsed');
+            toggleEl.textContent = '▲ 隐藏详情';
+        } else {
+            detailsEl.classList.add('collapsed');
+            toggleEl.textContent = '▼ 显示详情';
+        }
+    }
+
+    function activateLogsBrowserGroup(targetId) {
+        const cards = Array.from(document.querySelectorAll('.logs-nav-card'));
+        const sections = Array.from(document.querySelectorAll('.logs-section-card'));
+        cards.forEach(card => {
+            card.classList.toggle('is-active', card.dataset.target === targetId);
+        });
+        sections.forEach(section => {
+            section.classList.toggle('hidden-by-browser', section.dataset.browserGroup !== targetId);
+        });
+    }
+
+    async function exportLogs() {
+        try {
+            const filters = {
+                kind: document.getElementById('logType').value,
+                level: document.getElementById('logLevel').value,
+                username: (document.getElementById('logUsername').value || '').trim(),
+                date: document.getElementById('logDate').value,
+                q: (document.getElementById('logQuery').value || '').trim(),
+                limit: 5000
+            };
+
+            const response = await fetch('/api/logs/export', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filters })
+            });
+
+            if (!response.ok) {
+                let msg = '导出失败';
+                try {
+                    const j = await response.json();
+                    msg = j.message || msg;
+                } catch (e) {}
+                showMessage(msg, 'error');
+                return;
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `系统日志_${new Date().toISOString().split('T')[0]}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            showMessage('日志导出成功！', 'success');
+        } catch (e) {
+            showMessage('导出失败', 'error');
+        }
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    document.querySelectorAll('.logs-nav-card').forEach((card) => {
+        card.addEventListener('click', () => activateLogsBrowserGroup(card.dataset.target));
+    });
+</script>
+{% endblock %}

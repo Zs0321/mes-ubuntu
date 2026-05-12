@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_surfaceContainerLow"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.QRTestScanner.Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@drawable/bg_toolbar_gradient"
+        android:elevation="0dp"
+        app:title="质量工作台" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardBackgroundColor="@color/md_surface"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/md_panelStroke"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSerialPage"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="&#24207;&#21015;&#21495;&#36136;&#37327;&#36319;&#36394;"
+                android:textAllCaps="false"
+                android:textColor="@color/md_onSecondary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/md_primary"
+                app:cornerRadius="14dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStatsPage"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="&#20170;&#26085;&#20986;&#21378;&#32479;&#35745;"
+                android:textAllCaps="false"
+                android:textColor="@color/md_primary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/md_surface"
+                app:cornerRadius="14dp" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:id="@+id/serialPageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/inputSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_panel_card"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="序列号质量跟踪"
+                    android:textColor="@color/md_onSurface"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="输入或扫描产品序列号，快速查看工序、物料、测试和质检结论。"
+                    android:textColor="@color/md_onSurfaceVariant"
+                    android:textSize="13sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxBackgroundColor="@color/md_surface"
+                        app:boxCornerRadiusBottomEnd="16dp"
+                        app:boxCornerRadiusBottomStart="16dp"
+                        app:boxCornerRadiusTopEnd="16dp"
+                        app:boxCornerRadiusTopStart="16dp"
+                        app:boxStrokeColor="@color/md_surface">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etSerialNumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="&#36755;&#20837;&#20135;&#21697;&#24207;&#21015;&#21495;"
+                            android:imeOptions="actionSearch"
+                            android:inputType="text"
+                            android:singleLine="true"
+                            android:textColor="@color/md_onSurface"
+                            android:textSize="14sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnScan"
+                            style="@style/Widget.MaterialComponents.Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:text="&#25195;&#30721;"
+                            android:textAllCaps="false"
+                            android:textColor="@color/md_onSecondary"
+                            android:textSize="13sp"
+                            app:backgroundTint="@color/md_secondary"
+                            app:cornerRadius="16dp"
+                            app:icon="@drawable/ic_qr_code_scanner"
+                            app:iconSize="18dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSearch"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="8dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:text="&#26597;&#35810;"
+                            android:textAllCaps="false"
+                            android:textColor="@color/md_primary"
+                            android:textSize="13sp"
+                            app:cornerRadius="16dp"
+                            app:strokeColor="@color/md_primary" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/loadingSection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="正在加载质量工作台..."
+                    android:textColor="@color/md_onSurfaceVariant"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvEmptyMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="24dp"
+                android:text=""
+                android:textColor="@color/md_onSurfaceVariant"
+                android:textSize="14sp"
+                tools:text="请输入序列号查看质量工作台" />
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/workbenchContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="24dp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        app:cardBackgroundColor="@android:color/transparent"
+                        app:cardCornerRadius="24dp"
+                        app:cardElevation="0dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_info_banner"
+                            android:orientation="vertical"
+                            android:padding="18dp">
+
+                            <TextView android:id="@+id/tvConclusionLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" android:textColor="@color/md_onSurface" android:textSize="13sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvShipmentStatus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="" android:textColor="@color/md_teal" android:textSize="20sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvConclusionSummary" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="" android:textColor="@color/md_onSurfaceVariant" android:textSize="13sp" />
+                            <TextView android:id="@+id/tvSummarySerial" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="" android:textColor="@color/md_onSurface" android:textSize="16sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvSummaryProject" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="" android:textColor="@color/md_onSurfaceVariant" android:textSize="12sp" />
+                            <TextView android:id="@+id/tvSummaryProductType" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="" android:textColor="@color/md_onSurfaceVariant" android:textSize="12sp" />
+                            <TextView android:id="@+id/tvShipmentEvidence" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="" android:textColor="@color/md_onSurface" android:textSize="12sp" android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardBackgroundColor="@color/md_surface" app:cardCornerRadius="22dp" app:cardElevation="0dp" app:strokeColor="@color/md_panelStroke" app:strokeWidth="1dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="18dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="基础信息" android:textColor="@color/md_onSurface" android:textSize="14sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvBaseRecordMeta" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="" android:textColor="@color/md_onSurfaceVariant" android:textSize="13sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardBackgroundColor="@color/md_surface" app:cardCornerRadius="22dp" app:cardElevation="0dp" app:strokeColor="@color/md_panelStroke" app:strokeWidth="1dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="18dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="物料状态" android:textColor="@color/md_onSurface" android:textSize="14sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvMaterialMeta" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="" android:textColor="@color/md_onSurfaceVariant" android:textSize="13sp" />
+                            <TextView android:id="@+id/tvMissingMaterials" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:background="@drawable/bg_info_banner" android:padding="12dp" android:text="" android:textColor="@color/md_onSurface" android:textSize="12sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardBackgroundColor="@color/md_surface" app:cardCornerRadius="22dp" app:cardElevation="0dp" app:strokeColor="@color/md_panelStroke" app:strokeWidth="1dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="18dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="工序状态" android:textColor="@color/md_onSurface" android:textSize="14sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvProcessMeta" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="" android:textColor="@color/md_onSurfaceVariant" android:textSize="13sp" />
+                            <TextView android:id="@+id/tvMissingProcesses" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:background="@drawable/bg_info_banner" android:padding="12dp" android:text="" android:textColor="@color/md_onSurface" android:textSize="12sp" />
+                            <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerViewProcessSteps" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:nestedScrollingEnabled="false" android:paddingBottom="6dp" />
+                            <TextView android:id="@+id/tvProcessEmpty" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="暂无工序数据" android:textColor="@color/md_onSurfaceVariant" android:textSize="12sp" android:visibility="gone" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" app:cardBackgroundColor="@color/md_surface" app:cardCornerRadius="22dp" app:cardElevation="0dp" app:strokeColor="@color/md_panelStroke" app:strokeWidth="1dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="18dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="测试报告" android:textColor="@color/md_onSurface" android:textSize="14sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvHilStatus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="" android:textColor="@color/md_onSurface" android:textSize="13sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvHilMeta" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="" android:textColor="@color/md_onSurfaceVariant" android:textSize="12sp" />
+                            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="12dp" android:layout_marginBottom="12dp" android:background="@color/md_panelStroke" />
+                            <TextView android:id="@+id/tvBemfStatus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" android:textColor="@color/md_onSurface" android:textSize="13sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvBemfMeta" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="" android:textColor="@color/md_onSurfaceVariant" android:textSize="12sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" app:cardBackgroundColor="@color/md_surface" app:cardCornerRadius="22dp" app:cardElevation="0dp" app:strokeColor="@color/md_panelStroke" app:strokeWidth="1dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="18dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="触发检查" android:textColor="@color/md_onSurface" android:textSize="14sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvTriggeredChecks" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="" android:textColor="@color/md_onSurfaceVariant" android:textSize="12sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/statsPageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="24dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/shipmentStatsSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_info_banner"
+                        android:orientation="vertical"
+                        android:padding="18dp">
+
+                        <TextView android:id="@+id/tvShipmentStatsDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="今日出厂统计" android:textColor="@color/md_onSurface" android:textSize="14sp" android:textStyle="bold" />
+                        <TextView android:id="@+id/tvShipmentStatsCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="0" android:textColor="@color/md_teal" android:textSize="30sp" android:textStyle="bold" />
+                        <TextView android:id="@+id/tvShipmentStatsTrend" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="" android:textColor="@color/md_onSurfaceVariant" android:textSize="12sp" />
+                        <TextView android:id="@+id/tvShipmentStatsModels" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="" android:textColor="@color/md_onSurface" android:textSize="13sp" android:textStyle="bold" />
+                        <TextView android:id="@+id/tvShipmentStatsRecent" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="" android:textColor="@color/md_onSurfaceVariant" android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
+
+</LinearLayout>

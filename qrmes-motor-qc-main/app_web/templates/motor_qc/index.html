@@ -1,0 +1,53 @@
+{% extends "motor_qc/base.html" %}
+
+{% block breadcrumb %}
+<span>项目列表</span>
+{% endblock %}
+
+{% block motor_qc_content %}
+<div class="project-list">
+    <h2>选择电机项目</h2>
+    <div id="project-cards" class="project-cards">
+        <div class="loading">加载中...</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block motor_qc_js %}
+<script>
+// 加载项目列表
+async function loadProjects() {
+    try {
+        const response = await fetch('/motor-qc/api/projects');
+        const data = await response.json();
+        const container = document.getElementById('project-cards');
+
+        if (data.projects.length === 0) {
+            container.innerHTML = '<p>暂无项目</p>';
+            return;
+        }
+
+        container.innerHTML = data.projects.map(project => `
+            <div class="card" onclick="location.href='/motor-qc/tasks/${encodeURIComponent(project.project_id)}'">
+                <h3>${project.name}</h3>
+                <p class="model">${project.model}</p>
+                <div class="meta">
+                    <span>${project.processes.length} 道工序</span>
+                    <span>${project.vision_provider === 'claude' ? 'Claude Vision' : '千问 Vision'}</span>
+                </div>
+                <div class="meta" style="margin-top:10px;">
+                    <a href="/motor-qc/tasks/${encodeURIComponent(project.project_id)}" onclick="event.stopPropagation();">进入任务中心</a>
+                    <a href="/motor-qc/inspect/${encodeURIComponent(project.project_id)}" onclick="event.stopPropagation();">查看报告页</a>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Failed to load projects:', error);
+        document.getElementById('project-cards').innerHTML = '<p class="error">加载失败</p>';
+    }
+}
+
+// 页面加载时获取项目列表
+document.addEventListener('DOMContentLoaded', loadProjects);
+</script>
+{% endblock %}

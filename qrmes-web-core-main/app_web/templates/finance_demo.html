@@ -1,0 +1,1157 @@
+{% extends "base.html" %}
+
+{% block title %}财务报价 - MESAPP{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="/finance-demo/styles.css?v=20260424-ui-wide-fix5">
+<style>
+    .container {
+        width: min(1680px, calc(100vw - 28px));
+        max-width: none;
+        padding: 0 0.9rem 2.2rem;
+        overflow-x: hidden;
+    }
+
+    .finance-demo-shell {
+        position: relative;
+        display: grid;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .finance-demo-shell::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        background:
+            radial-gradient(circle at top right, rgba(14, 116, 144, 0.14), transparent 28%),
+            radial-gradient(circle at left bottom, rgba(212, 154, 58, 0.14), transparent 24%);
+        pointer-events: none;
+    }
+
+    .finance-demo-stage {
+        position: relative;
+        z-index: 1;
+        border-radius: 28px;
+        border: 1px solid rgba(30, 41, 59, 0.96);
+        background: rgba(15, 23, 42, 0.98);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(14px);
+    }
+
+    .finance-demo-stage {
+        padding: 1rem;
+        overflow: hidden;
+    }
+
+    .finance-demo-page {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        --bg: transparent;
+        --paper: rgba(15, 23, 42, 0.96);
+        --line: #b9cbd7;
+        --ink: #e2e8f0;
+        --muted: #64748b;
+        --accent: #0f5d7a;
+        --accent-deep: #123f52;
+        --teal: #c68822;
+        --soft: rgba(15,23,42,0.6);
+        --warn-bg: rgba(124,45,18,0.2);
+        --warn-ink: #fbbf24;
+        --ok-bg: rgba(6,78,59,0.2);
+        --ok-ink: #34d399;
+    }
+
+    .finance-demo-page .bg-glow {
+        display: none;
+    }
+
+    .finance-demo-page .shell {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .finance-demo-page .hero,
+    .finance-demo-page .card {
+        border-radius: 24px;
+        border-color: rgba(51, 65, 85, 0.96);
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.5);
+        background: rgba(15, 23, 42, 0.99);
+    }
+
+    .finance-demo-page .workspace,
+    .finance-demo-page .summary-grid,
+    .finance-demo-page .quote-lanes,
+    .finance-demo-page .finance-actions,
+    .finance-demo-page .grid-two,
+    .finance-demo-page .form-grid,
+    .finance-demo-page .finance-insight-stack,
+    .finance-demo-page .card,
+    .finance-demo-page .hero {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .finance-demo-page .hero {
+        background:
+            linear-gradient(135deg, rgba(33, 95, 120, 0.22), rgba(212, 154, 58, 0.14)),
+            rgba(15, 23, 42, 0.99);
+        border-color: rgba(51, 65, 85, 0.98);
+        grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.95fr);
+        gap: 1.2rem 1.5rem;
+        align-items: center;
+    }
+
+    .finance-demo-page .hero-copy {
+        min-width: 0;
+    }
+
+    .finance-demo-page .hero-side {
+        display: grid;
+        gap: 1rem;
+        align-content: center;
+        justify-items: stretch;
+    }
+
+    .finance-demo-page button {
+        box-shadow: 0 14px 28px rgba(15, 111, 139, 0.24);
+    }
+
+    .finance-demo-page button:hover {
+        transform: translateY(-1px);
+    }
+
+    .finance-demo-page .mode-pill.active,
+    .finance-demo-page button {
+        background: linear-gradient(135deg, #215f78 0%, #2f7b9a 100%);
+    }
+
+    .finance-demo-page .hero-note,
+    .finance-demo-page .summary-card,
+    .finance-demo-page .break-item,
+    .finance-demo-page .preview-card,
+    .finance-demo-page .import-card {
+        background: linear-gradient(180deg, rgba(17, 24, 39, 0.99), rgba(15, 23, 42, 0.98));
+    }
+
+    .finance-demo-page .hero-note {
+        display: grid !important;
+        border: 1px solid rgba(205, 186, 145, 0.85);
+        background: linear-gradient(180deg, rgba(69, 26, 3, 0.99), rgba(45, 15, 0, 0.98));
+        box-shadow: 0 12px 26px rgba(142, 95, 20, 0.1);
+    }
+
+    .finance-demo-page .hero-note strong {
+        font-size: 1.05rem;
+        color: #c084fc;
+    }
+
+    .finance-demo-page .hero-note span {
+        color: #94a3b8;
+        line-height: 1.75;
+    }
+
+    .finance-demo-page .summary-hero {
+        color: #e2e8f0;
+    }
+
+    .finance-demo-page .finance-route {
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(15, 23, 42, 0.99));
+    }
+
+    .finance-demo-page .ai-route {
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(45, 26, 3, 0.99));
+        box-shadow: 0 18px 36px rgba(142, 95, 20, 0.18);
+    }
+
+    .finance-demo-page .summary-hero p,
+    .finance-demo-page .summary-hero .summary-row,
+    .finance-demo-page .summary-hero .status-chip {
+        color: #94a3b8;
+    }
+
+    .finance-demo-page .summary-hero h3 {
+        color: #e2e8f0;
+    }
+
+    .finance-demo-page .ai-route h3,
+    .finance-demo-page .ai-route .status-chip {
+        color: #fbbf24;
+    }
+
+    .finance-demo-page .low-key-card,
+    .finance-demo-page #breakdownPanel,
+    .finance-demo-page #toggleBreakdownBtn {
+        display: none !important;
+    }
+
+    .finance-demo-page #engineerTab,
+    .finance-demo-page #engineerView,
+    .finance-demo-page .mode-switch,
+    .finance-demo-page #toggleBreakdownBtn {
+        display: none !important;
+    }
+
+    .finance-demo-page .finance-home-upload {
+        order: 2;
+        border-style: solid;
+        border-width: 1px;
+        border-color: rgba(251, 191, 36, 0.3);
+        background: linear-gradient(180deg, rgba(69, 26, 3, 0.99), rgba(45, 15, 0, 0.98));
+        box-shadow: 0 22px 48px rgba(0, 0, 0, 0.5);
+    }
+
+    .finance-demo-page .finance-home-upload .section-title {
+        margin-bottom: 14px;
+    }
+
+    .finance-demo-page .finance-home-upload .section-kicker {
+        display: inline-flex;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(251, 191, 36, 0.15), rgba(217, 119, 6, 0.15));
+        border: 1px solid rgba(194, 149, 63, 0.32);
+        color: #fbbf24;
+    }
+
+    .finance-demo-page .finance-top {
+        order: 1;
+        border-color: rgba(56, 189, 248, 0.3);
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.99), rgba(10, 15, 26, 0.98));
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .finance-demo-page .finance-top .section-title {
+        display: grid;
+        grid-template-columns: minmax(280px, 1.1fr) minmax(560px, 1.4fr);
+        gap: 1rem 1.25rem;
+        align-items: start;
+    }
+
+    .finance-demo-page .finance-top .section-title > div:first-child h2 {
+        font-size: clamp(2rem, 2.3vw, 2.4rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+    }
+
+    .finance-demo-page .finance-top .finance-top-insights {
+        margin-top: 1.3rem;
+        padding-top: 1.1rem;
+        border-top: 1px solid rgba(120, 153, 174, 0.34);
+    }
+
+    .finance-demo-page .single-bom-card {
+        border-color: rgba(56, 189, 248, 0.3);
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.99), rgba(10, 15, 26, 0.98));
+        box-shadow: 0 20px 44px rgba(0, 0, 0, 0.4);
+    }
+
+    .finance-demo-page .finance-module-hub {
+        order: 0;
+        border-color: rgba(51, 65, 85, 0.5);
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.99), rgba(10, 15, 26, 0.98));
+    }
+
+    .finance-demo-page .finance-module-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.95rem;
+    }
+
+    .finance-demo-page .finance-module-card {
+        min-height: 172px;
+        padding: 1.2rem;
+        border-radius: 22px;
+        border: 1px solid rgba(174, 192, 205, 0.94);
+        background: linear-gradient(180deg, rgba(17, 24, 39, 0.98), rgba(15, 23, 42, 0.98));
+        color: #e2e8f0;
+        display: grid;
+        gap: 0.75rem;
+        align-content: start;
+        text-align: left;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+        cursor: pointer;
+    }
+
+    .finance-demo-page .finance-module-card strong {
+        font-size: 1.2rem;
+        line-height: 1.3;
+    }
+
+    .finance-demo-page .finance-module-card span:last-child {
+        color: #94a3b8;
+        line-height: 1.65;
+        font-weight: 500;
+    }
+
+    .finance-demo-page .finance-module-index {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(251, 191, 36, 0.15));
+        color: #38bdf8;
+        font-size: 0.92rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+    }
+
+    .finance-demo-page .finance-module-card.active {
+        border-color: rgba(56, 189, 248, 0.3);
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.9), rgba(168, 85, 247, 0.9));
+        color: #e2e8f0;
+        box-shadow: 0 18px 36px rgba(87, 73, 168, 0.22);
+    }
+
+    .finance-demo-page .finance-module-card.active .finance-module-index {
+        background: rgba(56, 189, 248, 0.18);
+        color: #e2e8f0;
+    }
+
+    .finance-demo-page .finance-module-card.active span:last-child {
+        color: rgba(226, 232, 240, 0.88);
+    }
+
+    .finance-demo-page .finance-module-section {
+        display: none !important;
+    }
+
+    .finance-demo-page .finance-module-section.active {
+        display: block !important;
+    }
+
+    .finance-demo-page .finance-insight-stack.finance-module-section.active {
+        display: grid !important;
+    }
+
+    .finance-demo-page .finance-bottom-detail {
+        order: 10;
+        margin-top: 0.25rem;
+    }
+
+    .finance-demo-page .single-bom-card .section-title {
+        gap: 0.9rem;
+    }
+
+    .finance-demo-page .single-bom-card .section-title h2 {
+        color: #e2e8f0;
+    }
+
+    .finance-demo-page .single-bom-card .section-kicker {
+        display: inline-flex;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(14, 165, 233, 0.15), rgba(8, 145, 178, 0.15));
+        border: 1px solid rgba(85, 124, 147, 0.28);
+        color: #38bdf8;
+    }
+
+    .finance-demo-page .single-bom-intro {
+        margin: 0;
+        color: #94a3b8;
+        line-height: 1.7;
+        font-size: 0.94rem;
+    }
+
+    .finance-demo-page .single-bom-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.85rem;
+    }
+
+    .finance-demo-page .single-bom-grid .field.full {
+        grid-column: span 2;
+    }
+
+    .finance-demo-page .single-bom-preview {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.99), rgba(17, 24, 39, 0.98));
+    }
+
+    .finance-demo-page .single-bom-actions {
+        margin-top: 1rem;
+    }
+
+    .finance-demo-page .finance-detail-card,
+    .finance-demo-page .card:has(.table-wrap) {
+        border-color: rgba(51, 65, 85, 0.5);
+        background: linear-gradient(180deg, rgba(17, 24, 39, 0.99), rgba(15, 23, 42, 0.99));
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4);
+    }
+
+    .finance-demo-page .finance-detail-card .section-kicker,
+    .finance-demo-page .card:has(.table-wrap) .section-kicker {
+        color: #94a3b8;
+    }
+
+    .finance-demo-page .finance-top .toolbar {
+        grid-template-columns:
+            minmax(180px, 1fr)
+            minmax(240px, 1.15fr)
+            minmax(180px, 0.86fr)
+            minmax(180px, 0.9fr);
+        gap: 0.85rem;
+        align-items: end;
+        margin-bottom: 0.15rem;
+    }
+
+    .finance-demo-page .finance-top-cta-stack {
+        display: grid;
+        grid-template-rows: auto auto;
+        gap: 0.7rem;
+        align-self: start;
+    }
+
+    .finance-demo-page .finance-top-cta-stack button {
+        width: 100%;
+        min-height: 52px;
+        white-space: nowrap;
+    }
+
+    .finance-demo-page .finance-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .finance-demo-page .finance-detail-card {
+        margin-top: -2px;
+    }
+
+    .finance-demo-page .finance-bom-selection,
+    .finance-demo-page .finance-bom-selection-hint {
+        grid-column: 2;
+        margin: 0;
+        padding: 0.5rem 0 0;
+        border-bottom: none;
+    }
+
+    .finance-demo-page .finance-bom-selection-hint {
+        grid-column: 2 / 5;
+    }
+
+    .finance-demo-page .finance-bom-selection strong,
+    .finance-demo-page .finance-bom-selection-hint strong {
+        color: #94a3b8;
+    }
+
+    .finance-demo-page .finance-bom-selection span,
+    .finance-demo-page .finance-bom-selection-hint span {
+        color: #94a3b8;
+        line-height: 1.6;
+    }
+
+    .finance-demo-page .summary-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.9rem;
+        align-items: stretch;
+    }
+
+    .finance-demo-page .quote-lanes {
+        grid-column: span 2;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+    }
+
+    .finance-demo-page .summary-hero {
+        min-height: 190px;
+        padding: 1.25rem 1.2rem;
+    }
+
+    .finance-demo-page .summary-card {
+        min-height: 190px;
+        padding: 1.2rem 1.15rem;
+    }
+
+    .finance-demo-page .warning-card {
+        grid-column: span 2;
+        min-height: 138px;
+    }
+
+    .finance-demo-page .summary-hero h3 {
+        font-size: clamp(2.2rem, 2.7vw, 3rem);
+    }
+
+    .finance-demo-page .summary-card h3 {
+        font-size: clamp(1.9rem, 2.2vw, 2.4rem);
+    }
+
+    .finance-demo-page .summary-hero .status-chip,
+    .finance-demo-page .summary-card span {
+        font-weight: 700;
+    }
+
+    @media (max-width: 980px) {
+        .container {
+            padding: 0 1rem 1.6rem;
+        }
+
+        .finance-demo-stage {
+            padding: 1rem;
+        }
+
+        .finance-demo-page .finance-top .toolbar,
+        .finance-demo-page .single-bom-grid,
+        .finance-demo-page .single-bom-preview {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .finance-demo-page .hero,
+        .finance-demo-page .finance-top .section-title,
+        .finance-demo-page .summary-grid,
+        .finance-demo-page .quote-lanes {
+            grid-template-columns: 1fr;
+        }
+
+        .finance-demo-page .finance-bom-selection,
+        .finance-demo-page .finance-bom-selection-hint,
+        .finance-demo-page .quote-lanes,
+        .finance-demo-page .warning-card {
+            grid-column: auto;
+        }
+
+        .finance-demo-page .finance-module-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .finance-demo-page .single-bom-grid .field.full {
+            grid-column: span 2;
+        }
+    }
+
+    @media (max-width: 720px) {
+        .finance-demo-stage {
+            padding: 0.65rem;
+            border-radius: 22px;
+        }
+
+        .finance-demo-page .finance-top .toolbar,
+        .finance-demo-page .single-bom-grid,
+        .finance-demo-page .single-bom-preview {
+            grid-template-columns: 1fr;
+        }
+
+        .finance-demo-page .single-bom-grid .field.full {
+            grid-column: auto;
+        }
+    }
+
+    /* Finance page transitions */
+    .finance-demo-page .finance-module-card,
+    .finance-demo-page .card,
+    .finance-demo-page .summary-card,
+    .finance-demo-page .single-bom-card {
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .finance-demo-page .finance-module-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(14,165,233,0.1);
+    }
+    .finance-demo-page button {
+        transition: all 0.25s ease;
+    }
+    .finance-demo-page button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 20px rgba(14,165,233,0.15);
+    }
+    .finance-demo-page .summary-card:hover,
+    .finance-demo-page .single-bom-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+    }
+
+    /* ===== Dark theme overrides for finance-data-table ===== */
+    .finance-demo-page th {
+        color: #38bdf8;
+        background: linear-gradient(135deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95));
+        border-bottom: 1px solid #1e293b;
+    }
+    .finance-demo-page thead .group-head th {
+        background: linear-gradient(135deg, rgba(30,41,59,0.95), rgba(15,23,42,0.98));
+        color: #7dd3fc;
+    }
+    .finance-demo-page tbody tr:nth-child(even) {
+        background: rgba(15,23,42,0.5);
+    }
+    .finance-demo-page tbody tr:hover {
+        background: rgba(56,189,248,0.08);
+    }
+    .finance-demo-page .finance-data-table tbody td {
+        color: #e2e8f0;
+    }
+    .finance-demo-page .finance-data-table thead .finance-column-head th:nth-child(8),
+    .finance-demo-page .finance-data-table .cell-finance-main {
+        background: rgba(14,165,233,0.12);
+        color: #38bdf8;
+    }
+    .finance-demo-page .finance-data-table thead .finance-column-head th:nth-child(9),
+    .finance-demo-page .finance-data-table .cell-ai-main {
+        background: rgba(251,191,36,0.12);
+        color: #fbbf24;
+    }
+    .finance-demo-page .finance-data-table .head-volume-base,
+    .finance-demo-page .finance-data-table .cell-volume-base {
+        background: rgba(59,130,246,0.12);
+        color: #60a5fa;
+    }
+    .finance-demo-page .finance-data-table .head-volume-cons,
+    .finance-demo-page .finance-data-table .cell-volume-cons {
+        background: rgba(34,197,94,0.12);
+        color: #4ade80;
+    }
+    .finance-demo-page .finance-data-table .head-volume-aggr,
+    .finance-demo-page .finance-data-table .cell-volume-aggr {
+        background: rgba(249,115,22,0.12);
+        color: #fb923c;
+    }
+    .finance-demo-page .cell-subnote {
+        color: #94a3b8;
+    }
+    .finance-demo-page .cell-weight-estimated {
+        color: #38bdf8;
+    }
+    .finance-demo-page .ai-analysis-breakdown {
+        background: linear-gradient(180deg, rgba(69,26,3,0.6), rgba(45,15,0,0.7));
+        border: 1px solid rgba(251,191,36,0.2);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .finance-demo-page .ai-analysis-title {
+        color: #fbbf24;
+    }
+    .finance-demo-page .ai-analysis-item {
+        color: #fde68a;
+    }
+    .finance-demo-page .ai-inference-reference {
+        background: linear-gradient(180deg, rgba(15,23,42,0.8), rgba(10,15,26,0.9));
+        border: 1px solid rgba(56,189,248,0.2);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .finance-demo-page .ai-inference-title {
+        color: #38bdf8;
+    }
+    .finance-demo-page .ai-inference-item {
+        color: #7dd3fc;
+    }
+    .finance-demo-page .status-filter-select {
+        background: linear-gradient(180deg, rgba(15,23,42,0.98), rgba(10,15,26,0.98));
+        color: #e2e8f0;
+        border-color: #334155;
+    }
+    .finance-demo-page .cell-empty-state {
+        color: #94a3b8;
+        background: rgba(15,23,42,0.8);
+    }
+    .finance-demo-page .finance-data-table .cell-source {
+        color: #fbbf24;
+    }
+    .finance-demo-page .row-status.ok {
+        background: rgba(6,78,59,0.35);
+        color: #34d399;
+        border-color: rgba(16,185,129,0.25);
+    }
+    .finance-demo-page .row-status.warn {
+        background: rgba(124,45,18,0.35);
+        color: #fbbf24;
+        border-color: rgba(245,158,11,0.25);
+    }
+    .finance-demo-page .finance-data-table .cell-ai-reason,
+    .finance-demo-page .finance-data-table .cell-analysis {
+        color: #94a3b8;
+    }
+
+    /* ===== Excel quote dark overrides ===== */
+    .finance-demo-page .excel-quote-card {
+        background:
+            radial-gradient(circle at top right, rgba(194,149,63,0.15), transparent 26%),
+            radial-gradient(circle at top left, rgba(14,165,233,0.15), transparent 28%),
+            linear-gradient(180deg, rgba(15,23,42,0.99), rgba(10,15,26,0.98));
+        border-color: rgba(194,149,63,0.2);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 24px 52px rgba(0,0,0,0.35);
+    }
+    .finance-demo-page .excel-quote-hero-main {
+        background:
+            linear-gradient(135deg, rgba(14,165,233,0.08), rgba(251,191,36,0.08)),
+            linear-gradient(180deg, rgba(15,23,42,0.7), rgba(15,23,42,0.4));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 10px 28px rgba(0,0,0,0.2);
+    }
+    .finance-demo-page .excel-quote-hero-main h3 {
+        color: #e2e8f0;
+    }
+    .finance-demo-page .excel-quote-hero-main p {
+        color: #94a3b8;
+    }
+    .finance-demo-page .excel-quote-tag {
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+        border-color: rgba(51,65,85,0.3);
+    }
+    .finance-demo-page .excel-quote-tag.tag-blue {
+        background: linear-gradient(135deg, rgba(14,165,233,0.12), rgba(56,189,248,0.08));
+        color: #38bdf8;
+    }
+    .finance-demo-page .excel-quote-tag.tag-gold {
+        background: linear-gradient(135deg, rgba(251,191,36,0.12), rgba(217,119,6,0.08));
+        color: #fbbf24;
+    }
+    .finance-demo-page .excel-quote-tag.tag-green {
+        background: linear-gradient(135deg, rgba(34,197,94,0.12), rgba(16,185,129,0.08));
+        color: #4ade80;
+    }
+    .finance-demo-page .excel-quote-input-shell {
+        background: linear-gradient(180deg, rgba(15,23,42,0.98), rgba(10,15,26,0.96));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .finance-demo-page .excel-quote-control-shell {
+        background: linear-gradient(180deg, rgba(15,23,42,0.98), rgba(10,15,26,0.96));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .finance-demo-page .excel-quote-card .import-line strong,
+    .finance-demo-page .excel-quote-card .field,
+    .finance-demo-page .excel-quote-card .field label,
+    .finance-demo-page .excel-quote-card .excel-progress-head strong,
+    .finance-demo-page .excel-quote-card .excel-export-head strong {
+        color: #e2e8f0;
+    }
+    .finance-demo-page .excel-quote-card .import-line span,
+    .finance-demo-page .excel-quote-card .excel-progress-head span,
+    .finance-demo-page .excel-quote-card .excel-progress-detail,
+    .finance-demo-page .excel-quote-card .excel-progress-hint,
+    .finance-demo-page .excel-quote-card .excel-export-head span,
+    .finance-demo-page .excel-quote-card .excel-export-item span {
+        color: #94a3b8;
+    }
+    .finance-demo-page .excel-quote-card input,
+    .finance-demo-page .excel-quote-card textarea,
+    .finance-demo-page .excel-quote-card select {
+        background: rgba(15,23,42,0.92);
+        border-color: rgba(51,65,85,0.7);
+        color: #e2e8f0;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 8px 16px rgba(0,0,0,0.2);
+    }
+    .finance-demo-page .excel-quote-card input::placeholder,
+    .finance-demo-page .excel-quote-card textarea::placeholder {
+        color: #64748b;
+    }
+    .finance-demo-page .source-tag {
+        color: #fbbf24;
+    }
+    .finance-demo-page .sub-note {
+        color: #94a3b8;
+    }
+    .finance-demo-page .excel-quote-orb {
+        background: linear-gradient(135deg, rgba(14,165,233,0.8), rgba(37,99,235,0.8));
+        color: #e2e8f0;
+    }
+    /* Smooth transitions for finance interactive elements */
+    .finance-demo-page .excel-quote-tag,
+    .finance-demo-page .excel-quote-hero-main,
+    .finance-demo-page .excel-quote-input-shell,
+    .finance-demo-page .excel-quote-control-shell {
+        transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ===== Global text color fix for dark theme ===== */
+    .finance-demo-page,
+    .finance-demo-page .shell,
+    .finance-demo-page .hero,
+    .finance-demo-page .hero-copy,
+    .finance-demo-page .hero-side,
+    .finance-demo-page .workspace,
+    .finance-demo-page .card,
+    .finance-demo-page .section-title,
+    .finance-demo-page h1,
+    .finance-demo-page h2,
+    .finance-demo-page h3,
+    .finance-demo-page h4,
+    .finance-demo-page h5,
+    .finance-demo-page h6 {
+        color: #e2e8f0;
+    }
+    .finance-demo-page .hero-sub,
+    .finance-demo-page p,
+    .finance-demo-page .section-kicker,
+    .finance-demo-page .import-line span,
+    .finance-demo-page .excel-progress-head span,
+    .finance-demo-page .excel-progress-detail,
+    .finance-demo-page .excel-progress-hint,
+    .finance-demo-page .excel-export-head span,
+    .finance-demo-page .excel-export-item span {
+        color: #94a3b8;
+    }
+    .finance-demo-page .hero-note strong,
+    .finance-demo-page .finance-module-card strong,
+    .finance-demo-page .section-title h2,
+    .finance-demo-page .excel-quote-hero-main h3 {
+        color: #e2e8f0;
+    }
+    .finance-demo-page .mode-switch {
+        color: #e2e8f0;
+    }
+    .finance-demo-page .mode-pill {
+        color: #94a3b8;
+    }
+    .finance-demo-page .mode-pill.active {
+        color: #e2e8f0;
+    }
+    .finance-demo-page .finance-module-card span:last-child,
+    .finance-demo-page .single-bom-intro,
+    .finance-demo-page .finance-bom-selection span,
+    .finance-demo-page .finance-bom-selection-hint span {
+        color: #94a3b8;
+    }
+
+    /* ===== Remaining dark text fixes ===== */
+    .finance-demo-page h2,
+    .finance-demo-page strong,
+    .finance-demo-page .excel-progress-stage,
+    .finance-demo-page .script-plan-title,
+    .finance-demo-page .progress-log-title,
+    .finance-demo-page .progress-log-download,
+    .finance-demo-page .progress-log-pre,
+    .finance-demo-page .ghost {
+        color: #e2e8f0 !important;
+    }
+    .finance-demo-page .excel-progress-stage {
+        color: #94a3b8 !important;
+    }
+    .finance-demo-page .ghost {
+        color: #64748b !important;
+    }
+
+    /* ===== Chart text fixes ===== */
+    .finance-demo-page .chart-caption,
+    .finance-demo-page .chart-label,
+    .finance-demo-page .chart-value {
+        color: #e2e8f0 !important;
+    }
+
+    /* ===== Catch-all for any remaining dark text on dark bg ===== */
+    .finance-demo-page * {
+        color: #e2e8f0;
+    }
+    /* Preserve accent colors for specific elements */
+    .finance-demo-page a,
+    .finance-demo-page a:link,
+    .finance-demo-page a:visited {
+        color: #38bdf8;
+    }
+    .finance-demo-page .cell-finance-main,
+    .finance-demo-page .cell-finance-main * {
+        color: #38bdf8 !important;
+    }
+    .finance-demo-page .cell-ai-main,
+    .finance-demo-page .cell-ai-main * {
+        color: #fbbf24 !important;
+    }
+    .finance-demo-page .cell-volume-base,
+    .finance-demo-page .cell-volume-base * {
+        color: #60a5fa !important;
+    }
+    .finance-demo-page .cell-volume-cons,
+    .finance-demo-page .cell-volume-cons * {
+        color: #4ade80 !important;
+    }
+    .finance-demo-page .cell-volume-aggr,
+    .finance-demo-page .cell-volume-aggr * {
+        color: #fb923c !important;
+    }
+    .finance-demo-page .row-status.ok,
+    .finance-demo-page .row-status.ok * {
+        color: #34d399 !important;
+    }
+    .finance-demo-page .row-status.warn,
+    .finance-demo-page .row-status.warn * {
+        color: #fbbf24 !important;
+    }
+    .finance-demo-page .ai-analysis-title,
+    .finance-demo-page .ai-analysis-title * {
+        color: #fbbf24 !important;
+    }
+    .finance-demo-page .ai-analysis-item,
+    .finance-demo-page .ai-analysis-item * {
+        color: #fde68a !important;
+    }
+    .finance-demo-page .ai-inference-title,
+    .finance-demo-page .ai-inference-title * {
+        color: #38bdf8 !important;
+    }
+    .finance-demo-page .ai-inference-item,
+    .finance-demo-page .ai-inference-item * {
+        color: #7dd3fc !important;
+    }
+    .finance-demo-page .excel-quote-tag.tag-blue,
+    .finance-demo-page .excel-quote-tag.tag-blue * {
+        color: #38bdf8 !important;
+    }
+    .finance-demo-page .excel-quote-tag.tag-gold,
+    .finance-demo-page .excel-quote-tag.tag-gold * {
+        color: #fbbf24 !important;
+    }
+    .finance-demo-page .excel-quote-tag.tag-green,
+    .finance-demo-page .excel-quote-tag.tag-green * {
+        color: #4ade80 !important;
+    }
+    .finance-demo-page .source-tag,
+    .finance-demo-page .source-tag * {
+        color: #fbbf24 !important;
+    }
+    .finance-demo-page .sub-note,
+    .finance-demo-page .sub-note * {
+        color: #94a3b8 !important;
+    }
+    .finance-demo-page .excel-quote-orb,
+    .finance-demo-page .excel-quote-orb * {
+        color: #e2e8f0 !important;
+    }
+    .finance-demo-page .cell-subnote,
+    .finance-demo-page .cell-subnote * {
+        color: #94a3b8 !important;
+    }
+    .finance-demo-page .cell-empty-state,
+    .finance-demo-page .cell-empty-state * {
+        color: #94a3b8 !important;
+    }
+    .finance-demo-page .finance-data-table .cell-ai-reason,
+    .finance-demo-page .finance-data-table .cell-analysis,
+    .finance-demo-page .finance-data-table .cell-ai-reason *,
+    .finance-demo-page .finance-data-table .cell-analysis * {
+        color: #94a3b8 !important;
+    }
+    .finance-demo-page .placeholder,
+    .finance-demo-page .placeholder * {
+        color: #94a3b8 !important;
+    }
+    .finance-demo-page button[disabled],
+    .finance-demo-page .ghost {
+        color: #64748b !important;
+    }
+    .finance-demo-page .excel-progress-stage {
+        color: #94a3b8 !important;
+    }
+    .finance-demo-page .status-filter-select {
+        color: #e2e8f0 !important;
+    }
+    .finance-demo-page .finance-module-index {
+        color: #38bdf8 !important;
+    }
+    .finance-demo-page .hero-note strong,
+    .finance-demo-page .hero-note strong * {
+        color: #c084fc !important;
+    }
+    .finance-demo-page .hero-note span,
+    .finance-demo-page .hero-note span * {
+        color: #94a3b8 !important;
+    }
+    .finance-demo-page .summary-hero p,
+    .finance-demo-page .summary-hero .summary-row,
+    .finance-demo-page .summary-hero .status-chip {
+        color: #94a3b8 !important;
+    }
+    .finance-demo-page .summary-hero h3,
+    .finance-demo-page .summary-card h3 {
+        color: #e2e8f0 !important;
+    }
+    .finance-demo-page .ai-route h3,
+    .finance-demo-page .ai-route .status-chip {
+        color: #fbbf24 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="finance-demo-shell">
+    <div class="finance-demo-stage">
+        <div class="finance-demo-page">
+            {{ finance_demo_markup }}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    function applyFinanceModule(target) {
+        if (!target) return;
+        document.querySelectorAll('[data-finance-module-target]').forEach((node) => {
+            node.classList.toggle('active', node.dataset.financeModuleTarget === target);
+        });
+        document.querySelectorAll('.finance-module-section').forEach((node) => {
+            node.classList.toggle('active', node.dataset.financeModule === target);
+        });
+    }
+
+    document.addEventListener('click', function (event) {
+        const trigger = event.target.closest('[data-finance-module-target]');
+        if (!trigger) return;
+        const target = trigger.dataset.financeModuleTarget || 'warehouse-recheck';
+        applyFinanceModule(target);
+        document.querySelector('.finance-module-section[data-finance-module="' + target + '"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    window.financeDemoApplyModuleFallback = applyFinanceModule;
+})();
+</script>
+<script src="/finance-demo/app.js?v=20260424-ui-wide-fix5"></script>
+<script>
+window.addEventListener('load', function () {
+    try {
+        if (typeof ensureExcelQuoteProgressUi === 'function') ensureExcelQuoteProgressUi();
+        if (typeof ensureAiRouteProgressUi === 'function') ensureAiRouteProgressUi();
+
+        function bindExcelFallback() {
+            const quoteBtn = document.getElementById('quoteExcelBtn');
+            const fileInput = document.getElementById('excelQuoteFile');
+            const pasteText = document.getElementById('excelQuotePasteText');
+            const useResultBtn = document.getElementById('useExcelScenarioBtn');
+
+            const prepareSubmission = function (stageDetail, statusText) {
+                if (typeof state === 'undefined') return 0;
+                state.financeModule = 'excel-quote';
+                if (typeof renderFinanceModules === 'function') renderFinanceModules();
+                const pollToken = typeof nextExcelQuotePollToken === 'function' ? nextExcelQuotePollToken() : 0;
+                state.lastExcelQuotePayload = null;
+                if (typeof renderExcelQuoteExports === 'function') renderExcelQuoteExports(null);
+                if (typeof resetExcelQuoteProgress === 'function') resetExcelQuoteProgress();
+                if (typeof renderExcelQuoteProgress === 'function') {
+                    renderExcelQuoteProgress({
+                        stage: 'queued',
+                        stageTag: '\u5df2\u63d0\u4ea4',
+                        stageLabel: '\u4efb\u52a1\u5df2\u63d0\u4ea4',
+                        percent: 4,
+                        detail: stageDetail,
+                        hint: '\u6b63\u5728\u521b\u5efa\u62a5\u4ef7\u4efb\u52a1\uff0c\u9a6c\u4e0a\u5f00\u59cb\u8bfb\u53d6\u62a5\u4ef7\u8868\u6570\u636e',
+                    }, true);
+                }
+                document.getElementById('excelQuoteProgressPanel')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                const statusNode = document.getElementById('excelQuoteStatus');
+                if (statusNode) statusNode.textContent = statusText;
+                return pollToken;
+            };
+
+            if (quoteBtn && quoteBtn.dataset.fallbackBound !== '1') {
+                quoteBtn.onclick = function () {
+                    const file = fileInput?.files?.[0];
+                    const tableText = pasteText?.value || '';
+                    const trimmedTableText = String(tableText || '').trim();
+
+                    if (file && trimmedTableText) {
+                        alert('\u0045\u0078\u0063\u0065\u006c \u6587\u4ef6\u548c\u7c98\u8d34\u6570\u636e\u4e0d\u80fd\u540c\u65f6\u5b58\u5728\uff0c\u8bf7\u53ea\u4fdd\u7559\u4e00\u79cd\u8f93\u5165\u65b9\u5f0f');
+                        return;
+                    }
+
+                    if (file) {
+                        const pollToken = prepareSubmission('\u7b49\u5f85\u670d\u52a1\u5f00\u59cb\u5904\u7406\u4e0a\u4f20\u6587\u4ef6', '\u62a5\u4ef7\u4efb\u52a1\u5df2\u63d0\u4ea4');
+                        quoteExcelWorkbook(file, document.getElementById('excelQuoteModelLabel')?.value || '', getExcelQuoteOptions())
+                            .then((task) => {
+                                if (task.error) throw new Error(task.message || task.error);
+                                if (typeof state !== 'undefined') state.excelQuoteTaskId = task.task_id || null;
+                                if (typeof syncExcelQuoteTaskUi === 'function') syncExcelQuoteTaskUi(task);
+                                if (typeof pollExcelQuoteTask === 'function') pollExcelQuoteTask(task.task_id, pollToken);
+                            })
+                            .catch((err) => {
+                                const statusNode = document.getElementById('excelQuoteStatus');
+                                if (statusNode) statusNode.textContent = '\u62a5\u4ef7\u5931\u8d25';
+                                alert(`Excel \u62a5\u4ef7\u5931\u8d25\uff1a${err.message}`);
+                            });
+                        return;
+                    }
+
+                    const recognized = typeof analyzePastedExcelTable === 'function'
+                        ? analyzePastedExcelTable(trimmedTableText)
+                        : { ok: false };
+                    if (typeof renderExcelPasteRecognition === 'function') renderExcelPasteRecognition(recognized);
+                    if (!recognized.ok) {
+                        alert('\u8bf7\u5148\u9009\u62e9\u4e00\u4e2a .xlsx \u6587\u4ef6\uff0c\u6216\u7c98\u8d34\u4ece Excel \u590d\u5236\u7684\u8868\u683c\u6570\u636e');
+                        return;
+                    }
+
+                    const pollToken = prepareSubmission('\u7b49\u5f85\u670d\u52a1\u5f00\u59cb\u89e3\u6790\u7c98\u8d34\u8868\u683c', '\u7c98\u8d34\u62a5\u4ef7\u4efb\u52a1\u5df2\u63d0\u4ea4');
+                    quoteExcelPastedTable(trimmedTableText, document.getElementById('excelQuoteModelLabel')?.value || '', getExcelQuoteOptions())
+                        .then((task) => {
+                            if (task.error) throw new Error(task.message || task.error);
+                            if (typeof state !== 'undefined') state.excelQuoteTaskId = task.task_id || null;
+                            if (typeof syncExcelQuoteTaskUi === 'function') syncExcelQuoteTaskUi(task);
+                            if (typeof pollExcelQuoteTask === 'function') pollExcelQuoteTask(task.task_id, pollToken);
+                        })
+                        .catch((err) => {
+                            const statusNode = document.getElementById('excelQuoteStatus');
+                            if (statusNode) statusNode.textContent = '\u62a5\u4ef7\u5931\u8d25';
+                            alert(`\u7c98\u8d34\u8868\u683c\u62a5\u4ef7\u5931\u8d25\uff1a${err.message}`);
+                        });
+                };
+                quoteBtn.dataset.fallbackBound = '1';
+            }
+
+            if (fileInput && fileInput.dataset.fallbackBound !== '1') {
+                fileInput.addEventListener('change', function () {
+                    const hasFile = !!fileInput.files?.[0];
+                    if (!hasFile) return;
+                    if (pasteText && String(pasteText.value || '').trim()) {
+                        pasteText.value = '';
+                        if (typeof renderExcelPasteRecognition === 'function') renderExcelPasteRecognition(null);
+                    }
+                });
+                fileInput.dataset.fallbackBound = '1';
+            }
+
+            if (pasteText && pasteText.dataset.fallbackBound !== '1') {
+                let timer = 0;
+                const rerender = function (delay) {
+                    if (fileInput?.files?.length) fileInput.value = '';
+                    window.clearTimeout(timer);
+                    timer = window.setTimeout(function () {
+                        if (typeof analyzePastedExcelTable === 'function' && typeof renderExcelPasteRecognition === 'function') {
+                            renderExcelPasteRecognition(analyzePastedExcelTable(pasteText.value || ''));
+                        }
+                    }, delay);
+                };
+                pasteText.addEventListener('input', function () { rerender(180); });
+                pasteText.addEventListener('paste', function () { rerender(30); });
+                pasteText.dataset.fallbackBound = '1';
+            }
+
+            if (useResultBtn && useResultBtn.dataset.fallbackBound !== '1') {
+                useResultBtn.onclick = function () {
+                    if (typeof state === 'undefined' || !state.lastExcelScenarioId || !state.scenarioItems[state.lastExcelScenarioId]?.length) {
+                        alert('\u8fd8\u6ca1\u6709\u53ef\u67e5\u770b\u7684 Excel \u62a5\u4ef7\u7ed3\u679c');
+                        return;
+                    }
+                    state.financeScenario = state.lastExcelScenarioId;
+                    state.engineerScenario = state.lastExcelScenarioId;
+                    state.activeView = 'finance';
+                    state.financeModule = 'excel-quote';
+                    if (typeof renderAll === 'function') renderAll();
+                };
+                useResultBtn.dataset.fallbackBound = '1';
+            }
+
+            if (typeof renderExcelPasteRecognition === 'function') {
+                renderExcelPasteRecognition(null);
+            }
+        }
+
+        bindExcelFallback();
+        if (typeof bindEvents === 'function') {
+            try {
+                bindEvents();
+            } catch (error) {
+                console.error('finance-demo bindEvents failed', error);
+            }
+        }
+        bindExcelFallback();
+    } catch (error) {
+        console.error('finance-demo fallback init failed', error);
+    }
+});
+</script>
+{% endblock %}
+
+
+
+

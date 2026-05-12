@@ -1,0 +1,812 @@
+{% extends "base.html" %}
+
+{% block title %}SOP查询 - MES系统{% endblock %}
+
+{% block head %}
+<style>
+/* SOP全屏页面样式 */
+.sop-page {
+    display: grid;
+    gap: 1.5rem;
+    color: var(--text-primary);
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+/* 覆盖.container的宽度限制 */
+.container .sop-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.search-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.search-modes {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--surface);
+    padding: 0.375rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+}
+
+.search-mode-btn {
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.search-mode-btn:hover {
+    color: var(--text-primary);
+}
+
+.search-mode-btn.active {
+    background: var(--primary);
+    color: #0a0a0a;
+}
+
+.search-panel {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.search-input-group {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.search-input-wrapper {
+    flex: 1;
+}
+
+.search-input-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: var(--shadow-glow);
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+}
+
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.filter-select {
+    padding: 0.625rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    min-width: 150px;
+}
+
+.results-section {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.results-count {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.results-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.results-list {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-item:hover {
+    background: var(--surface);
+}
+
+.result-main {
+    flex: 1;
+}
+
+.result-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.result-file-number {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.result-title {
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.result-meta-row {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.result-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.result-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.result-action-btn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+}
+
+.result-action-btn.primary {
+    background: var(--primary);
+    color: #0a0a0a;
+}
+
+.result-action-btn.secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.qr-scanner-section {
+    display: none;
+}
+
+.qr-scanner-section.active {
+    display: block;
+}
+
+.qr-scanner-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+}
+
+.qr-scanner-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+}
+
+.qr-scanner-text {
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.qr-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 1rem;
+    font-size: 1.125rem;
+    text-align: center;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+}
+
+.qr-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.recent-searches {
+    margin-top: 2rem;
+}
+
+.recent-title {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.recent-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.recent-item {
+    padding: 0.5rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.recent-item:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #0a0a0a;
+}
+
+.btn-primary:hover {
+    background: var(--primary-light);
+}
+
+.btn-secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+    border-color: var(--border-strong);
+}
+
+@media (max-width: 768px) {
+    .search-input-group {
+        flex-direction: column;
+    }
+    
+    .result-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .result-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sop-page">
+<div class="search-container">
+    <div class="page-header">
+        <h1 class="page-title">
+            <span>🔍</span>
+            SOP查询
+        </h1>
+        <a href="{{ url_for('sop.sop_home') }}" class="btn btn-secondary">
+            ← 返回首页
+        </a>
+    </div>
+    
+    <!-- 查询模式选择 -->
+    <div class="search-modes">
+        <button class="search-mode-btn active" onclick="switchMode('keyword')">
+            🔢 编号/关键词查询
+        </button>
+        <button class="search-mode-btn" onclick="switchMode('qr')">
+            📱 扫码查询
+        </button>
+        <button class="search-mode-btn" onclick="switchMode('product')">
+            🏭 产品查询
+        </button>
+        <button class="search-mode-btn" onclick="switchMode('process')">
+            🔧 工序查询
+        </button>
+    </div>
+    
+    <!-- 关键词查询 -->
+    <div class="search-panel" id="keyword-panel">
+        <div class="search-input-group">
+            <div class="search-input-wrapper">
+                <div class="search-input-label">输入查询内容</div>
+                <input type="text" class="search-input" id="keyword-input" 
+                       placeholder="文件编号、标题、产品名称...">
+            </div>
+            <button class="btn btn-primary search-btn" onclick="searchByKeyword()">
+                🔍 查询
+            </button>
+        </div>
+        
+        <div class="filter-row">
+            <div class="filter-item">
+                <div class="filter-label">状态</div>
+                <select class="filter-select" id="status-filter">
+                    <option value="">全部状态</option>
+                    <option value="approved">已批准</option>
+                    <option value="pending_review">待审核</option>
+                    <option value="draft">草稿</option>
+                    <option value="rejected">已拒绝</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <div class="filter-label">产品</div>
+                <select class="filter-select" id="product-filter">
+                    <option value="">全部产品</option>
+                    <!-- 动态加载 -->
+                </select>
+            </div>
+            <div class="filter-item">
+                <div class="filter-label">文件类型</div>
+                <select class="filter-select" id="type-filter">
+                    <option value="">全部类型</option>
+                    <option value="docx">Word文档</option>
+                    <option value="xlsx">Excel表格</option>
+                    <option value="pdf">PDF文档</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- 最近搜索 -->
+        <div class="recent-searches">
+            <div class="recent-title">最近搜索</div>
+            <div class="recent-items">
+                <span class="recent-item" onclick="quickSearch('CQ-WI-D230')">CQ-WI-D230</span>
+                <span class="recent-item" onclick="quickSearch('产品230')">产品230</span>
+                <span class="recent-item" onclick="quickSearch('装配')">装配</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 扫码查询 -->
+    <div class="search-panel qr-scanner-section" id="qr-panel">
+        <div class="qr-scanner-area">
+            <div class="qr-scanner-icon">📱</div>
+            <div class="qr-scanner-text">扫描产品或工序二维码</div>
+            <input type="text" class="qr-input" id="qr-input" 
+                   placeholder="扫码枪输入..." autocomplete="off">
+            <div class="recent-searches" style="margin-top: 2rem;">
+                <div class="recent-title">演示扫码</div>
+                <div class="recent-items">
+                    <span class="recent-item" onclick="demoQR('230')">产品230</span>
+                    <span class="recent-item" onclick="demoQR('OP10')">工序OP10</span>
+                    <span class="recent-item" onclick="demoQR('CQ-WI-D230-A1')">文件编号</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 产品查询 -->
+    <div class="search-panel" id="product-panel" style="display: none;">
+        <div class="search-input-group">
+            <div class="search-input-wrapper">
+                <div class="search-input-label">输入产品编码</div>
+                <input type="text" class="search-input" id="product-input" 
+                       placeholder="如: 230, 350, PC-230...">
+            </div>
+            <button class="btn btn-primary search-btn" onclick="searchByProduct()">
+                🏭 查询产品SOP
+            </button>
+        </div>
+    </div>
+    
+    <!-- 工序查询 -->
+    <div class="search-panel" id="process-panel" style="display: none;">
+        <div class="search-input-group">
+            <div class="search-input-wrapper">
+                <div class="search-input-label">输入工序编码</div>
+                <input type="text" class="search-input" id="process-input" 
+                       placeholder="如: OP10, OP20, ASSY-01...">
+            </div>
+            <button class="btn btn-primary search-btn" onclick="searchByProcess()">
+                🔧 查询工序SOP
+            </button>
+        </div>
+    </div>
+    
+    <!-- 查询结果 -->
+    <div class="results-section" id="results-section" style="display: none;">
+        <div class="results-header">
+            <div class="results-count" id="results-count">共 0 条结果</div>
+            <div class="results-actions">
+                <button class="btn btn-secondary" onclick="exportResults()">
+                    📥 导出结果
+                </button>
+            </div>
+        </div>
+        <div class="results-list" id="results-list">
+            <!-- 动态生成 -->
+        </div>
+    </div>
+    
+    <!-- 空状态 -->
+    <div class="empty-state" id="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <div>输入查询条件开始搜索</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentMode = 'keyword';
+
+// 切换查询模式
+function switchMode(mode) {
+    currentMode = mode;
+    
+    // 更新按钮状态
+    document.querySelectorAll('.search-mode-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+    
+    // 显示对应面板
+    document.getElementById('keyword-panel').style.display = mode === 'keyword' ? 'block' : 'none';
+    document.getElementById('qr-panel').style.display = mode === 'qr' ? 'block' : 'none';
+    document.getElementById('product-panel').style.display = mode === 'product' ? 'block' : 'none';
+    document.getElementById('process-panel').style.display = mode === 'process' ? 'block' : 'none';
+    
+    // 聚焦输入框
+    if (mode === 'qr') {
+        document.getElementById('qr-input').focus();
+    }
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+    // 监听回车键
+    document.getElementById('keyword-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchByKeyword();
+    });
+    
+    document.getElementById('qr-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchByQR();
+    });
+    
+    document.getElementById('product-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchByProduct();
+    });
+    
+    document.getElementById('process-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchByProcess();
+    });
+});
+
+// 快速搜索
+function quickSearch(keyword) {
+    document.getElementById('keyword-input').value = keyword;
+    searchByKeyword();
+}
+
+// 演示扫码
+function demoQR(code) {
+    document.getElementById('qr-input').value = code;
+    searchByQR();
+}
+
+// 关键词查询
+async function searchByKeyword() {
+    const keyword = document.getElementById('keyword-input').value.trim();
+    const status = document.getElementById('status-filter').value;
+    const product = document.getElementById('product-filter').value;
+    
+    if (!keyword && !status && !product) {
+        alert('请输入查询条件');
+        return;
+    }
+    
+    await performSearch({ search: keyword, status, product_code: product });
+}
+
+// 扫码查询
+async function searchByQR() {
+    const qrData = document.getElementById('qr-input').value.trim();
+    
+    if (!qrData) {
+        alert('请扫描或输入二维码');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/sop/api/query?qr_data=${encodeURIComponent(qrData)}`);
+        const result = await response.json();
+        
+        if (result.success && result.found) {
+            // 显示单个结果
+            window.location.href = `/sop/preview/${result.data.id}`;
+        } else {
+            alert(result.message || '未找到对应的SOP');
+        }
+    } catch (error) {
+        console.error('查询失败:', error);
+        alert('查询失败，请重试');
+    }
+}
+
+// 产品查询
+async function searchByProduct() {
+    const productCode = document.getElementById('product-input').value.trim();
+    
+    if (!productCode) {
+        alert('请输入产品编码');
+        return;
+    }
+    
+    await performSearch({ product_code: productCode });
+}
+
+// 工序查询
+async function searchByProcess() {
+    const processCode = document.getElementById('process-input').value.trim();
+    
+    if (!processCode) {
+        alert('请输入工序编码');
+        return;
+    }
+    
+    // 工序查询直接跳转到预览
+    try {
+        const response = await fetch(`/sop/api/query?qr_data=${encodeURIComponent(processCode)}`);
+        const result = await response.json();
+        
+        if (result.success && result.found) {
+            window.location.href = `/sop/preview/${result.data.id}`;
+        } else {
+            alert(result.message || '未找到对应的SOP');
+        }
+    } catch (error) {
+        console.error('查询失败:', error);
+        alert('查询失败，请重试');
+    }
+}
+
+// 执行查询
+async function performSearch(params) {
+    const queryString = new URLSearchParams(params).toString();
+    
+    try {
+        const response = await fetch(`/sop/api/list?${queryString}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            displayResults(result.data);
+        } else {
+            alert('查询失败');
+        }
+    } catch (error) {
+        console.error('查询失败:', error);
+        alert('查询失败，请重试');
+    }
+}
+
+// 显示结果
+function displayResults(sops) {
+    const resultsSection = document.getElementById('results-section');
+    const resultsList = document.getElementById('results-list');
+    const resultsCount = document.getElementById('results-count');
+    const emptyState = document.getElementById('empty-state');
+    
+    if (sops.length === 0) {
+        resultsSection.style.display = 'none';
+        emptyState.style.display = 'block';
+        emptyState.innerHTML = `
+            <div class="empty-state-icon">📭</div>
+            <div>未找到匹配的SOP</div>
+        `;
+        return;
+    }
+    
+    emptyState.style.display = 'none';
+    resultsSection.style.display = 'block';
+    resultsCount.textContent = `共 ${sops.length} 条结果`;
+    
+    resultsList.innerHTML = sops.map(sop => `
+        <div class="result-item" onclick="viewSOP(${sop.id})">
+            <div class="result-main">
+                <div class="result-title-row">
+                    <span class="result-file-number">${sop.file_number || '--'}</span>
+                    <span class="result-title">${sop.title}</span>
+                </div>
+                <div class="result-meta-row">
+                    <div class="result-meta-item">
+                        <span>🏭</span>
+                        <span>${sop.product_name || '未知产品'}</span>
+                    </div>
+                    <div class="result-meta-item">
+                        <span>📄</span>
+                        <span>${sop.file_type?.toUpperCase() || '--'}</span>
+                    </div>
+                    <div class="result-meta-item">
+                        <span>👤</span>
+                        <span>${sop.creator || '--'}</span>
+                    </div>
+                    <div class="result-meta-item">
+                        <span>📅</span>
+                        <span>${formatDate(sop.create_time)}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="result-actions">
+                <span class="status-badge ${sop.status}">${getStatusText(sop.status)}</span>
+                <button class="result-action-btn primary" onclick="event.stopPropagation(); previewSOP(${sop.id})">
+                    👁️ 预览
+                </button>
+                <button class="result-action-btn secondary" onclick="event.stopPropagation(); downloadSOP(${sop.id})">
+                    📥
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// 查看SOP
+function viewSOP(id) {
+    window.location.href = `/sop/preview/${id}`;
+}
+
+// 预览SOP
+function previewSOP(id) {
+    window.open(`/sop/preview/${id}`, '_blank');
+}
+
+// 下载SOP
+function downloadSOP(id) {
+    window.location.href = `/sop/api/download/${id}`;
+}
+
+// 导出结果
+function exportResults() {
+    alert('导出功能开发中...');
+}
+
+// 辅助函数
+function getStatusText(status) {
+    const statusMap = {
+        'draft': '草稿',
+        'pending_review': '待审核',
+        'approved': '已批准',
+        'rejected': '已拒绝',
+        'recycled': '已回收'
+    };
+    return statusMap[status] || status;
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '--';
+    return new Date(dateStr).toLocaleDateString('zh-CN');
+}
+</script>
+{% endblock %}

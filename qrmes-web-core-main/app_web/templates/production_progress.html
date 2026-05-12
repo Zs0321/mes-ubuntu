@@ -1,0 +1,949 @@
+{% extends "base.html" %}
+
+{% block title %}生产进度看板{% endblock %}
+
+{% block extra_css %}
+<style>
+  .pp-page {
+    display: grid;
+    gap: 1rem;
+    color: #e6edf7;
+    --pp-cyan: #22d3ee;
+    --pp-blue: #3b82f6;
+    --pp-violet: #8b5cf6;
+    --pp-pink: #ec4899;
+    --pp-orange: #f97316;
+    --pp-green: #22c55e;
+    --pp-lime: #a3e635;
+  }
+
+  .pp-hero,
+  .pp-panel,
+  .pp-kpi,
+  .pp-chart {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(99, 179, 237, 0.18);
+    border-radius: 8px;
+    background:
+      linear-gradient(135deg, rgba(12, 20, 32, 0.96), rgba(17, 24, 39, 0.92)),
+      linear-gradient(90deg, rgba(56, 189, 248, 0.07) 1px, transparent 1px);
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.34);
+  }
+
+  .pp-hero::before,
+  .pp-panel::before,
+  .pp-kpi::before,
+  .pp-chart::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 0%, rgba(34, 211, 238, 0.12) 42%, transparent 72%);
+    transform: translateX(-120%);
+    animation: ppScan 5.8s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .pp-hero {
+    min-height: 176px;
+    padding: 1.45rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: end;
+  }
+
+  .pp-eyebrow {
+    color: #67e8f9;
+    font: 700 0.72rem "JetBrains Mono", monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .pp-hero h1 {
+    margin: 0.35rem 0 0.5rem;
+    font-size: clamp(1.75rem, 3vw, 2.7rem);
+    line-height: 1.08;
+    letter-spacing: 0;
+  }
+
+  .pp-hero p,
+  .pp-muted {
+    color: #9fb0c7;
+  }
+
+  .pp-hero p {
+    margin: 0;
+    max-width: 880px;
+  }
+
+  .pp-actions,
+  .pp-row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    align-items: center;
+  }
+
+  .pp-btn,
+  .pp-link-btn,
+  .pp-row-actions a {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    border-radius: 8px;
+    padding: 0 0.85rem;
+    background: linear-gradient(135deg, #0891b2, #22d3ee);
+    color: #03131d;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+  }
+
+  .pp-btn:hover,
+  .pp-link-btn:hover,
+  .pp-row-actions a:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.08);
+    box-shadow: 0 0 24px rgba(34, 211, 238, 0.22);
+    text-decoration: none;
+  }
+
+  .pp-link-btn.secondary,
+  .pp-btn.secondary {
+    background: rgba(15, 23, 42, 0.72);
+    color: #a5f3fc;
+  }
+
+  .pp-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .pp-kpi {
+    padding: 1rem;
+    animation: ppCardIn 420ms ease both;
+  }
+
+  .pp-kpi:nth-child(2) { animation-delay: 60ms; }
+  .pp-kpi:nth-child(3) { animation-delay: 120ms; }
+  .pp-kpi:nth-child(4) { animation-delay: 180ms; }
+
+  .pp-kpi-label {
+    color: #8ea0b8;
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+  }
+
+  .pp-kpi-value {
+    margin-top: 0.38rem;
+    color: #f8fafc;
+    font: 800 2rem "JetBrains Mono", monospace;
+    text-shadow: 0 0 18px rgba(34, 211, 238, 0.22);
+  }
+
+  .pp-kpi-note {
+    color: #64748b;
+    font-size: 0.78rem;
+  }
+
+  .pp-panel {
+    padding: 1rem;
+    animation: ppCardIn 460ms ease both;
+  }
+
+  .pp-panel h2,
+  .pp-chart h3 {
+    margin: 0 0 0.8rem;
+    color: #e2e8f0;
+    font-size: 1rem;
+  }
+
+  .pp-toolbar,
+  .pp-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+    align-items: end;
+  }
+
+  .pp-field {
+    display: grid;
+    gap: 0.35rem;
+    color: #9fb0c7;
+    font-size: 0.78rem;
+  }
+
+  .pp-field input,
+  .pp-field select {
+    min-height: 38px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 8px;
+    padding: 0 0.7rem;
+    background: rgba(2, 8, 16, 0.7);
+    color: #e5f2ff;
+    outline: none;
+  }
+
+  .pp-field input:focus,
+  .pp-field select:focus {
+    border-color: rgba(34, 211, 238, 0.62);
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.08);
+  }
+
+  .pp-charts {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.8fr) minmax(260px, 1.1fr) minmax(260px, 1.1fr);
+    gap: 0.85rem;
+  }
+
+  .pp-chart {
+    min-height: 230px;
+    padding: 1rem;
+  }
+
+  .pp-donut-wrap {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr);
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .pp-donut {
+    width: 132px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: conic-gradient(#22c55e 0deg, #22c55e var(--completedDeg), #f59e0b var(--completedDeg), #f59e0b var(--inProgressDeg), #64748b var(--inProgressDeg), #64748b 360deg);
+    display: grid;
+    place-items: center;
+    box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.42), 0 0 26px rgba(34, 211, 238, 0.12);
+  }
+
+  .pp-donut::after {
+    content: attr(data-total);
+    width: 82px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #0b1220;
+    color: #f8fafc;
+    font: 800 1.45rem "JetBrains Mono", monospace;
+  }
+
+  .pp-legend {
+    display: grid;
+    gap: 0.45rem;
+    color: #9fb0c7;
+    font-size: 0.84rem;
+  }
+
+  .pp-legend span::before {
+    content: "";
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    margin-right: 0.4rem;
+    border-radius: 50%;
+    background: var(--dot);
+    box-shadow: 0 0 10px var(--dot);
+  }
+
+  .pp-bars {
+    display: grid;
+    gap: 0.58rem;
+  }
+
+  .pp-bar {
+    display: grid;
+    grid-template-columns: minmax(82px, 0.8fr) minmax(120px, 1.4fr) 42px;
+    gap: 0.55rem;
+    align-items: center;
+    color: #cbd5e1;
+    font-size: 0.82rem;
+  }
+
+  .pp-bar-track {
+    display: block;
+    height: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(15,23,42,.92), rgba(30,41,59,.72));
+    box-shadow: inset 0 0 12px rgba(0,0,0,.42);
+  }
+
+  .pp-bar-fill {
+    display: block;
+    width: var(--barWidth);
+    min-width: 10px;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--barStart, #38bdf8), var(--barMid, #8b5cf6), var(--barEnd, #22c55e));
+    box-shadow: 0 0 16px var(--barGlow, rgba(34, 211, 238, 0.45));
+    animation: ppGrow 680ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  #durationBars {
+    gap: 0.72rem;
+  }
+
+  #durationBars .pp-bar {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.36rem;
+    align-items: stretch;
+    padding: 0.62rem 0.7rem;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.74), rgba(2, 8, 16, 0.46));
+  }
+
+  #durationBars .pp-bar > span:first-child {
+    display: block;
+    width: 100%;
+    color: #dff7ff;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.74rem;
+    line-height: 1.32;
+    white-space: normal;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+  }
+
+  #durationBars .pp-bar-track {
+    width: 100%;
+    height: 12px;
+  }
+
+  #durationBars .pp-bar > span:last-child {
+    width: auto;
+    justify-self: end;
+    padding-top: 0.1rem;
+    font-size: 0.72rem;
+    line-height: 1.2;
+    white-space: normal;
+    text-align: right;
+  }
+
+  .pp-message {
+    min-height: 1.4rem;
+    color: #9fb0c7;
+  }
+
+  .pp-table-wrap {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .pp-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0 0.45rem;
+  }
+
+  .pp-table th,
+  .pp-table td {
+    padding: 0.72rem 0.62rem;
+    text-align: left;
+    white-space: normal;
+    vertical-align: middle;
+  }
+
+  .pp-table th:nth-child(1), .pp-table td:nth-child(1) { width: 31%; }
+  .pp-table th:nth-child(2), .pp-table td:nth-child(2) { width: 11%; }
+  .pp-table th:nth-child(3), .pp-table td:nth-child(3) { width: 12%; }
+  .pp-table th:nth-child(4), .pp-table td:nth-child(4) { width: 13%; }
+  .pp-table th:nth-child(5), .pp-table td:nth-child(5) { width: 8%; }
+  .pp-table th:nth-child(6), .pp-table td:nth-child(6) { width: 17%; }
+  .pp-table th:nth-child(7), .pp-table td:nth-child(7) { width: 8%; }
+
+  .pp-serial-cell {
+    color: #dff7ff;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.76rem;
+    line-height: 1.38;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+  }
+
+  .pp-time-cell,
+  .pp-duration-cell,
+  .pp-step-cell {
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .pp-table th {
+    color: #94a3b8;
+    font-size: 0.72rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .pp-table tbody tr {
+    background: rgba(15, 23, 42, 0.74);
+    transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  }
+
+  .pp-table tbody tr:hover {
+    background: rgba(8, 47, 73, 0.5);
+    box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.22), 0 0 24px rgba(34, 211, 238, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .pp-table td:first-child {
+    border-radius: 8px 0 0 8px;
+    color: #dff7ff;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  .pp-table td:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+
+  .pp-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.36rem;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 999px;
+    padding: 0.26rem 0.58rem;
+    color: #94a3b8;
+    background: rgba(148, 163, 184, 0.08);
+    font-size: 0.78rem;
+  }
+
+  .pp-status::before {
+    content: "";
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 10px currentColor;
+  }
+
+  .pp-status.in_progress {
+    color: #fbbf24;
+    background: rgba(245, 158, 11, 0.1);
+    animation: ppPulse 1.8s ease-in-out infinite;
+  }
+
+  .pp-status.completed {
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+  }
+
+  .pp-empty {
+    padding: 1.2rem;
+    border: 1px dashed rgba(148, 163, 184, 0.24);
+    border-radius: 8px;
+    color: #94a3b8;
+    text-align: center;
+  }
+
+  @keyframes ppScan {
+    0%, 44% { transform: translateX(-120%); }
+    72%, 100% { transform: translateX(120%); }
+  }
+
+  @keyframes ppCardIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes ppPulse {
+    0%, 100% { box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
+    50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.16); }
+  }
+
+  @keyframes ppGrow {
+    from { width: 0; }
+    to { width: var(--barWidth); }
+  }
+
+  /* Hermes + Kimi color pass: richer but still industrial. */
+  .pp-hero {
+    border-color: rgba(34, 211, 238, 0.34);
+    background:
+      radial-gradient(circle at 12% 18%, rgba(34, 211, 238, 0.30), transparent 30%),
+      radial-gradient(circle at 72% 6%, rgba(236, 72, 153, 0.18), transparent 28%),
+      radial-gradient(circle at 94% 90%, rgba(249, 115, 22, 0.16), transparent 24%),
+      linear-gradient(135deg, rgba(5, 12, 24, 0.98), rgba(17, 24, 39, 0.92));
+  }
+
+  .pp-hero::after {
+    content: "";
+    position: absolute;
+    right: 1.2rem;
+    top: 1rem;
+    width: 220px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: conic-gradient(from 90deg, rgba(34,211,238,0), rgba(34,211,238,.34), rgba(139,92,246,.28), rgba(249,115,22,.24), rgba(34,211,238,0));
+    opacity: .42;
+    animation: ppOrbit 12s linear infinite;
+    pointer-events: none;
+  }
+
+  .pp-panel,
+  .pp-kpi,
+  .pp-chart {
+    background:
+      radial-gradient(circle at 8% 0%, rgba(34, 211, 238, 0.14), transparent 28%),
+      radial-gradient(circle at 92% 10%, rgba(139, 92, 246, 0.12), transparent 30%),
+      linear-gradient(145deg, rgba(15,23,42,.96), rgba(8,13,24,.88));
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.34), inset 0 0 0 1px rgba(255,255,255,0.025);
+  }
+
+  .pp-kpi:nth-child(1) { --kpiColor: var(--pp-cyan); }
+  .pp-kpi:nth-child(2) { --kpiColor: var(--pp-orange); }
+  .pp-kpi:nth-child(3) { --kpiColor: var(--pp-green); }
+  .pp-kpi:nth-child(4) { --kpiColor: var(--pp-violet); }
+
+  .pp-kpi {
+    border-color: color-mix(in srgb, var(--kpiColor, var(--pp-cyan)) 42%, transparent);
+    background:
+      radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--kpiColor, var(--pp-cyan)) 23%, transparent), transparent 34%),
+      linear-gradient(145deg, rgba(15,23,42,.96), rgba(8,13,24,.86));
+  }
+
+  .pp-kpi-value {
+    color: color-mix(in srgb, var(--kpiColor, var(--pp-cyan)) 68%, #ffffff);
+    text-shadow: 0 0 18px color-mix(in srgb, var(--kpiColor, var(--pp-cyan)) 38%, transparent);
+  }
+
+  .pp-chart:nth-child(1) { --chartColor: var(--pp-cyan); }
+  .pp-chart:nth-child(2) { --chartColor: var(--pp-blue); }
+  .pp-chart:nth-child(3) { --chartColor: var(--pp-pink); }
+
+  .pp-chart h3::before,
+  .pp-panel h2::before {
+    content: "";
+    display: inline-block;
+    width: .58rem;
+    height: .58rem;
+    margin-right: .42rem;
+    border-radius: 50%;
+    background: var(--chartColor, var(--pp-cyan));
+    box-shadow: 0 0 14px var(--chartColor, var(--pp-cyan));
+    vertical-align: .05rem;
+  }
+
+  .pp-bars .pp-bar:nth-child(6n+1) .pp-bar-fill { --barStart: #22d3ee; --barEnd: #3b82f6; }
+  .pp-bars .pp-bar:nth-child(6n+2) .pp-bar-fill { --barStart: #8b5cf6; --barEnd: #ec4899; }
+  .pp-bars .pp-bar:nth-child(6n+3) .pp-bar-fill { --barStart: #f97316; --barEnd: #facc15; }
+  .pp-bars .pp-bar:nth-child(6n+4) .pp-bar-fill { --barStart: #22c55e; --barEnd: #a3e635; }
+  .pp-bars .pp-bar:nth-child(6n+5) .pp-bar-fill { --barStart: #06b6d4; --barEnd: #14b8a6; }
+  .pp-bars .pp-bar:nth-child(6n) .pp-bar-fill { --barStart: #6366f1; --barEnd: #22d3ee; }
+
+  .pp-bar-fill {
+    background: linear-gradient(90deg, var(--barStart, #38bdf8), var(--barEnd, #22c55e));
+    box-shadow: 0 0 18px color-mix(in srgb, var(--barEnd, #22c55e) 42%, transparent);
+  }
+
+  .pp-table tbody tr {
+    background: linear-gradient(90deg, rgba(15, 23, 42, 0.84), rgba(8, 13, 24, 0.72));
+  }
+
+  .pp-status.in_progress {
+    color: #fb923c;
+    background: linear-gradient(90deg, rgba(249, 115, 22, 0.16), rgba(245, 158, 11, 0.08));
+  }
+
+  .pp-status.completed {
+    color: #4ade80;
+    background: linear-gradient(90deg, rgba(34, 197, 94, 0.16), rgba(163, 230, 53, 0.08));
+  }
+
+  @keyframes ppOrbit {
+    from { transform: rotate(0deg) scale(.96); }
+    50% { transform: rotate(180deg) scale(1.04); }
+    to { transform: rotate(360deg) scale(.96); }
+  }
+
+  @media (max-width: 1120px) {
+    .pp-kpis,
+    .pp-charts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 720px) {
+    .pp-hero,
+    .pp-donut-wrap,
+    .pp-kpis,
+    .pp-charts {
+      grid-template-columns: 1fr;
+    }
+
+    .pp-hero {
+      align-items: start;
+    }
+
+    .pp-table,
+    .pp-table thead,
+    .pp-table tbody,
+    .pp-table tr,
+    .pp-table th,
+    .pp-table td {
+      display: block;
+    }
+
+    .pp-table thead {
+      display: none;
+    }
+
+    .pp-table tbody tr {
+      margin-bottom: 0.7rem;
+      border-radius: 8px;
+      padding: 0.45rem;
+    }
+
+    .pp-table td {
+      white-space: normal;
+      padding: 0.45rem;
+    }
+
+    .pp-table td::before {
+      content: attr(data-label);
+      display: block;
+      color: #64748b;
+      font-size: 0.72rem;
+      margin-bottom: 0.15rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pp-page">
+  <section class="pp-hero">
+    <div>
+      <div class="pp-eyebrow">Production Flow Board</div>
+      <h1>生产进度看板</h1>
+      <p>以首道扫码或历史工序照片进入看板，以“完成生产”照片作为最终完成依据，持续跟踪当前工序、总耗时和现场资料。</p>
+    </div>
+    <div class="pp-actions">
+      <a class="pp-link-btn secondary" href="/records">数据查询</a>
+      <button id="refreshBtn" class="pp-btn" type="button">刷新看板</button>
+    </div>
+  </section>
+
+  <section class="pp-kpis" aria-label="生产进度统计">
+    <div class="pp-kpi"><div class="pp-kpi-label">在制产品</div><div class="pp-kpi-value" id="kpiTotal">0</div><div class="pp-kpi-note">当前筛选范围</div></div>
+    <div class="pp-kpi"><div class="pp-kpi-label">进行中</div><div class="pp-kpi-value" id="kpiInProgress">0</div><div class="pp-kpi-note">尚未上传完成生产照片</div></div>
+    <div class="pp-kpi"><div class="pp-kpi-label">已完成</div><div class="pp-kpi-value" id="kpiCompleted">0</div><div class="pp-kpi-note">完成生产拍照即可</div></div>
+    <div class="pp-kpi"><div class="pp-kpi-label">最长总耗时</div><div class="pp-kpi-value" id="kpiLongest">-</div><div class="pp-kpi-note">用于识别滞留产品</div></div>
+  </section>
+
+  <section class="pp-panel">
+    <h2>筛选与刷新</h2>
+    <div class="pp-toolbar">
+      <label class="pp-field">序列号<input id="filterSerial" type="search" placeholder="输入序列号"></label>
+      <label class="pp-field">项目<input id="filterProject" list="projectOptions" placeholder="项目名称"></label>
+      <label class="pp-field">产品类型<input id="filterProductType" list="productTypeOptions" placeholder="产品类型"></label>
+      <label class="pp-field">状态
+        <select id="filterStatus">
+          <option value="">全部</option>
+          <option value="in_progress">进行中</option>
+          <option value="completed">已完成</option>
+          <option value="not_started">未开始</option>
+        </select>
+      </label>
+    </div>
+    <datalist id="projectOptions"></datalist>
+    <datalist id="productTypeOptions"></datalist>
+    <datalist id="processOptions"></datalist>
+  </section>
+
+  <section class="pp-charts" aria-label="看板图表">
+    <div class="pp-chart">
+      <h3>状态环形图</h3>
+      <div class="pp-donut-wrap">
+        <div class="pp-donut" id="statusDonut" data-total="0" style="--completedDeg: 0deg; --inProgressDeg: 0deg;"></div>
+        <div class="pp-legend" id="statusLegend"></div>
+      </div>
+    </div>
+    <div class="pp-chart">
+      <h3>工序分布</h3>
+      <div class="pp-bars" id="stepBars"></div>
+    </div>
+    <div class="pp-chart">
+      <h3>耗时排行</h3>
+      <div class="pp-bars" id="durationBars"></div>
+    </div>
+  </section>
+
+  <section class="pp-panel">
+    <h2>实时产品列表</h2>
+    <div class="pp-message" id="boardMessage"></div>
+    <div class="pp-table-wrap">
+      <table class="pp-table">
+        <colgroup>
+          <col style="width:31%">
+          <col style="width:11%">
+          <col style="width:12%">
+          <col style="width:13%">
+          <col style="width:8%">
+          <col style="width:17%">
+          <col style="width:8%">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>序列号</th>
+            <th>当前工序</th>
+            <th>当前耗时</th>
+            <th>总耗时</th>
+            <th>状态</th>
+            <th>最后更新</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="boardRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="pp-panel">
+    <h2>测试录入 / 扫码接口模拟</h2>
+    <div class="pp-form-grid">
+      <label class="pp-field">序列号<input id="eventSerial" required></label>
+      <label class="pp-field">工序<input id="eventProcess" list="processOptions" required></label>
+      <label class="pp-field">项目<input id="eventProject" list="projectOptions"></label>
+      <label class="pp-field">产品类型<input id="eventProductType" list="productTypeOptions"></label>
+      <label class="pp-field">操作员<input id="eventOperator"></label>
+      <button id="scanBtn" class="pp-btn" type="button">扫码开始</button>
+      <button id="completeBtn" class="pp-btn secondary" type="button">工序完成</button>
+    </div>
+    <form id="uploadForm" class="pp-form-grid" style="margin-top: 0.85rem;">
+      <label class="pp-field">序列号<input id="uploadSerial" name="serial" required></label>
+      <label class="pp-field">工序<input id="uploadProcess" name="process_step" list="processOptions" required></label>
+      <label class="pp-field">资料/图片<input id="uploadFile" name="file" type="file" required></label>
+      <button class="pp-btn" type="submit">上传资料</button>
+    </form>
+    <div class="pp-message" id="formMessage"></div>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const api = '/api/production-progress';
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[char]));
+}
+
+function formatTime(value) {
+  if (!value) return '-';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  const pad = number => String(number).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
+function statusLabel(status) {
+  return { in_progress: '进行中', completed: '已完成', not_started: '未开始' }[status] || status || '-';
+}
+
+function fillDatalist(id, values) {
+  document.getElementById(id).innerHTML = (values || []).map(value => `<option value="${escapeHtml(value)}"></option>`).join('');
+}
+
+async function requestJson(url, options) {
+  const res = await fetch(url, options);
+  let data = null;
+  try {
+    data = await res.json();
+  } catch (error) {
+    if (!res.ok) throw new Error(`接口返回 ${res.status}`);
+    throw error;
+  }
+  if (!res.ok) {
+    throw new Error((data && data.message) || `接口返回 ${res.status}`);
+  }
+  return data;
+}
+
+function durationSeconds(item) {
+  return Number((item.total_duration || {}).duration_seconds || 0);
+}
+
+function updateKpis(rows, summary = null) {
+  const stats = summary || {};
+  const total = Number.isFinite(Number(stats.total)) ? Number(stats.total) : rows.length;
+  const inProgress = Number.isFinite(Number(stats.in_progress)) ? Number(stats.in_progress) : rows.filter(item => item.status === 'in_progress').length;
+  const completed = Number.isFinite(Number(stats.completed)) ? Number(stats.completed) : rows.filter(item => item.status === 'completed').length;
+  const longest = rows.reduce((best, item) => {
+    const seconds = durationSeconds(item);
+    return seconds > best.seconds ? { seconds, text: (item.total_duration || {}).human_duration || '-' } : best;
+  }, { seconds: 0, text: '-' });
+  document.getElementById('kpiTotal').textContent = total;
+  document.getElementById('kpiInProgress').textContent = inProgress;
+  document.getElementById('kpiCompleted').textContent = completed;
+  document.getElementById('kpiLongest').textContent = longest.text;
+}
+
+function renderStatusChart(rows, summary = null) {
+  const stats = summary || {};
+  const total = Number.isFinite(Number(stats.total)) ? Number(stats.total) : rows.length;
+  const completed = Number.isFinite(Number(stats.completed)) ? Number(stats.completed) : rows.filter(item => item.status === 'completed').length;
+  const inProgress = Number.isFinite(Number(stats.in_progress)) ? Number(stats.in_progress) : rows.filter(item => item.status === 'in_progress').length;
+  const notStarted = Number.isFinite(Number(stats.not_started)) ? Number(stats.not_started) : Math.max(0, total - completed - inProgress);
+  const completedDeg = total ? Math.round((completed / total) * 360) : 0;
+  const inProgressDeg = total ? completedDeg + Math.round((inProgress / total) * 360) : 0;
+  const donut = document.getElementById('statusDonut');
+  donut.style.setProperty('--completedDeg', `${completedDeg}deg`);
+  donut.style.setProperty('--inProgressDeg', `${inProgressDeg}deg`);
+  donut.dataset.total = String(total);
+  document.getElementById('statusLegend').innerHTML = [
+    ['已完成', completed, '#22c55e'],
+    ['进行中', inProgress, '#f59e0b'],
+    ['未开始', notStarted, '#64748b'],
+  ].map(([label, value, color]) => `<span style="--dot:${color}">${label} ${value}</span>`).join('');
+}
+
+function renderBarList(targetId, rows, emptyText) {
+  const target = document.getElementById(targetId);
+  if (!rows.length) {
+    target.innerHTML = `<div class="pp-empty">${escapeHtml(emptyText)}</div>`;
+    return;
+  }
+  const palette = [
+    ['#22d3ee', '#60a5fa', '#3b82f6', 'rgba(59,130,246,.58)'],
+    ['#8b5cf6', '#c084fc', '#ec4899', 'rgba(236,72,153,.55)'],
+    ['#f97316', '#facc15', '#f59e0b', 'rgba(249,115,22,.58)'],
+    ['#22c55e', '#a3e635', '#16a34a', 'rgba(34,197,94,.52)'],
+    ['#06b6d4', '#2dd4bf', '#14b8a6', 'rgba(20,184,166,.52)'],
+    ['#6366f1', '#818cf8', '#22d3ee', 'rgba(99,102,241,.54)'],
+  ];
+  const maxValue = Math.max(...rows.map(row => row.value), 1);
+  target.innerHTML = rows.map((row, index) => {
+    const width = Math.max(6, Math.round((row.value / maxValue) * 100));
+    const [start, mid, end, glow] = palette[index % palette.length];
+    const style = `--barWidth:${width}%;--barStart:${start};--barMid:${mid};--barEnd:${end};--barGlow:${glow}`;
+    return `<div class="pp-bar" style="--rowAccent:${end}">
+      <span title="${escapeHtml(row.label)}">${escapeHtml(row.label)}</span>
+      <span class="pp-bar-track"><span class="pp-bar-fill" style="${style}"></span></span>
+      <span style="color:${end};font-weight:800;">${escapeHtml(row.display || row.value)}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderCharts(rows, summary = null) {
+  renderStatusChart(rows, summary);
+  const stepCounts = new Map();
+  rows.forEach(item => {
+    const step = ((item.current_step || {}).process_step || '未识别工序').trim();
+    stepCounts.set(step, (stepCounts.get(step) || 0) + 1);
+  });
+  renderBarList(
+    'stepBars',
+    Array.from(stepCounts, ([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value).slice(0, 8),
+    '暂无工序分布'
+  );
+  renderBarList(
+    'durationBars',
+    rows
+      .map(item => ({
+        label: item.product_serial || '-',
+        value: durationSeconds(item),
+        display: (item.total_duration || {}).human_duration || '-'
+      }))
+      .filter(item => item.value > 0)
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 8),
+    '暂无耗时数据'
+  );
+}
+
+async function loadOptions() {
+  const data = await requestJson(`${api}/options`);
+  fillDatalist('projectOptions', data.projects);
+  fillDatalist('productTypeOptions', data.product_types);
+  fillDatalist('processOptions', data.process_steps);
+}
+
+async function loadBoard() {
+  const boardMessage = document.getElementById('boardMessage');
+  const boardRows = document.getElementById('boardRows');
+  try {
+    const params = new URLSearchParams();
+    const serial = document.getElementById('filterSerial').value.trim();
+    const project = document.getElementById('filterProject').value.trim();
+    const productType = document.getElementById('filterProductType').value.trim();
+    const status = document.getElementById('filterStatus').value;
+    if (serial) params.set('serial', serial);
+    if (project) params.set('project', project);
+    if (productType) params.set('product_type', productType);
+    if (status) params.set('status', status);
+    const data = await requestJson(`${api}/board?${params.toString()}`);
+    const rows = data.items || [];
+    const summary = data.summary || null;
+    updateKpis(rows, summary);
+    renderCharts(rows, summary);
+    const displayed = summary && Number.isFinite(Number(summary.displayed)) ? Number(summary.displayed) : rows.length;
+    const total = summary && Number.isFinite(Number(summary.total)) ? Number(summary.total) : rows.length;
+    boardMessage.textContent = rows.length ? `当前显示 ${displayed} / ${total} 条，详情页可查看工序时间轴、照片和资料` : '暂无数据：首道扫码或工序照片会自动进入看板';
+    boardRows.innerHTML = rows.map(item => {
+      const step = item.current_step || {};
+      const detailHref = `/production-progress/${encodeURIComponent(item.product_serial)}`;
+      return `<tr>
+        <td class="pp-serial-cell" data-label="序列号" title="${escapeHtml(item.product_serial)}">${escapeHtml(item.product_serial)}</td>
+        <td class="pp-step-cell" data-label="当前工序">${escapeHtml(step.process_step || '-')}</td>
+        <td class="pp-duration-cell" data-label="当前耗时">${escapeHtml(step.human_duration || '-')}</td>
+        <td class="pp-duration-cell" data-label="总耗时">${escapeHtml((item.total_duration || {}).human_duration || '-')}</td>
+        <td data-label="状态"><span class="pp-status ${escapeHtml(item.status)}">${statusLabel(item.status)}</span></td>
+        <td class="pp-time-cell" data-label="最后更新">${formatTime(item.last_event_at)}</td>
+        <td data-label="操作"><div class="pp-row-actions"><a href="${escapeHtml(detailHref)}" data-serial="${escapeHtml(item.product_serial)}">详情</a></div></td>
+      </tr>`;
+    }).join('');
+  } catch (error) {
+    updateKpis([]);
+    renderCharts([]);
+    boardRows.innerHTML = '';
+    boardMessage.textContent = `看板加载失败：${error.message || '网络异常'}`;
+  }
+}
+
+async function submitEvent(eventType) {
+  const payload = {
+    serial: document.getElementById('eventSerial').value.trim(),
+    process_step: document.getElementById('eventProcess').value.trim(),
+    project_name: document.getElementById('eventProject').value.trim(),
+    product_type: document.getElementById('eventProductType').value.trim(),
+    operator: document.getElementById('eventOperator').value.trim()
+  };
+  const data = await requestJson(`${api}/${eventType}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  document.getElementById('formMessage').textContent = data.success ? '已保存' : (data.message || '保存失败');
+  await loadOptions();
+  await loadBoard();
+}
+
+document.getElementById('refreshBtn').addEventListener('click', loadBoard);
+document.getElementById('scanBtn').addEventListener('click', () => submitEvent('scan'));
+document.getElementById('completeBtn').addEventListener('click', () => submitEvent('complete'));
+document.getElementById('uploadForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget);
+  const data = await requestJson(`${api}/upload`, { method: 'POST', body: form });
+  document.getElementById('formMessage').textContent = data.success ? '上传成功' : (data.message || '上传失败');
+  await loadBoard();
+});
+
+loadOptions().then(loadBoard).catch(error => {
+  document.getElementById('boardMessage').textContent = `初始化失败：${error.message || '网络异常'}`;
+});
+</script>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}测试报告 - MESAPP 管理平台{% endblock %}
+
+{% block content %}
+<style>
+    .vr-home-shell { display: grid; gap: 1.5rem; min-width: 0; }
+    .vr-home-hero { background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.82)); border: 1px solid rgba(56,189,248,0.22); border-radius: 20px; padding: 1.9rem; display: flex; justify-content: space-between; gap: 1.5rem; align-items: flex-start; box-shadow: 0 18px 54px rgba(0,0,0,0.34); min-width: 0; }
+    .vr-home-hero > div { min-width: 0; }
+    .vr-home-hero h2 { margin: 0 0 0.75rem; font-size: 1.9rem; color: #e5f2ff; }
+    .vr-home-hero p { margin: 0; max-width: 760px; color: #c7d7ea; line-height: 1.75; }
+    .vr-home-meta { display: grid; grid-template-columns: repeat(3, minmax(120px, 1fr)); gap: 0.85rem; min-width: 0; width: min(100%, 420px); }
+    .vr-home-stat { background: rgba(15, 23, 42, 0.76); border: 1px solid rgba(125,211,252,0.26); border-radius: 14px; padding: 0.9rem 1rem; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 10px 24px rgba(0, 0, 0, 0.22); }
+    .vr-home-stat span { display: block; color: #93c5fd; font-size: 0.82rem; margin-bottom: 0.35rem; font-weight: 700; }
+    .vr-home-stat strong { color: #f8fbff; font-size: 1.15rem; }
+    .vr-home-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
+    .vr-home-card { display: block; text-decoration: none; background: linear-gradient(180deg, rgba(15,23,42,0.96) 0%, rgba(8,15,28,0.98) 100%); border: 1px solid rgba(56,189,248,0.18); border-radius: 20px; padding: 1.55rem; box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4); transition: all 0.2s ease; color: #dbeafe; min-width: 0; }
+    .vr-home-card:visited { color: #dbeafe; }
+    .vr-home-card:hover { transform: translateY(-2px); border-color: rgba(125,211,252,0.52); box-shadow: 0 18px 36px rgba(14, 165, 233, 0.16); text-decoration: none; }
+    .vr-home-badge { display: inline-flex; align-items: center; padding: 0.24rem 0.7rem; border-radius: 999px; background: rgba(219,234,254,0.98); color: #1d4ed8; font-size: 0.78rem; font-weight: 800; margin-bottom: 1rem; }
+    .vr-home-card h3 { margin: 0 0 0.65rem; color: #dbeafe; font-size: 1.25rem; }
+    .vr-home-card p { margin: 0 0 1rem; color: #c7d7ea; line-height: 1.75; }
+    .vr-home-list { display: grid; gap: 0.6rem; color: #dbeafe; }
+    .vr-home-list div { background: rgba(15,23,42,0.82); border: 1px solid rgba(226,232,240,0.72); border-radius: 14px; padding: 0.85rem 0.95rem; color: #dbeafe; }
+    .vr-home-projects { background: linear-gradient(180deg, rgba(15,23,42,0.96) 0%, rgba(8,15,28,0.98) 100%); border: 1px solid rgba(56,189,248,0.18); border-radius: 24px; padding: 1.6rem; box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4); }
+    .vr-home-projects-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; margin-bottom: 1.2rem; flex-wrap: wrap; }
+    .vr-home-projects-head h3 { margin: 0 0 0.55rem; color: #dbeafe; font-size: 1.35rem; }
+    .vr-home-projects-head p { margin: 0; color: #c7d7ea; line-height: 1.7; }
+    .vr-home-project-count { color: #c7d7ea; font-size: 0.92rem; }
+    .vr-home-project-table-wrap { overflow: auto; border: 1px solid rgba(226,232,240,0.7); border-radius: 18px; background: rgba(8,15,28,0.56); }
+    .vr-home-project-table { width: 100%; border-collapse: collapse; min-width: 560px; }
+    .vr-home-project-table thead th { text-align: left; background: rgba(15,23,42,0.96); color: #93c5fd; font-size: 0.95rem; padding: 1rem 1.15rem; border-bottom: 1px solid rgba(226,232,240,0.7); }
+    .vr-home-project-table tbody td { padding: 1rem 1.15rem; border-bottom: 1px solid rgba(226,232,240,0.28); color: #dbeafe; vertical-align: middle; }
+    .vr-home-project-table tbody tr:hover td { background: rgba(56,189,248,0.08); }
+    .vr-home-project-table tbody tr:last-child td { border-bottom: 0; }
+    .vr-home-project-name { font-weight: 800; color: #e5f2ff; }
+    .vr-home-empty { padding: 2.5rem 1.2rem; text-align: center; color: #c7d7ea; }
+    @media (max-width: 980px) { .vr-home-hero { flex-direction: column; } .vr-home-meta { width: 100%; min-width: 0; } .vr-home-actions { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) { .vr-home-meta { grid-template-columns: 1fr; } }
+</style>
+
+<div class="vr-home-shell">
+    <section class="vr-home-hero">
+        <div>
+            <h2>测试报告</h2>
+                <p>当前页面只保留模块内部入口，不新增顶层模块，也不影响 MES 其他功能。点击“测试工作台”会进入扫码匹配模板和填写测试报告的页面，点击“质量工作台”会进入按产品序列号查询已保存报告的页面。下方空白区域先为你预留，后续新需求可以直接继续扩展。</p>
+        </div>
+        <div class="vr-home-meta">
+            <div class="vr-home-stat"><span>当前结构</span><strong>模块内跳转</strong></div>
+            <div class="vr-home-stat"><span>测试入口</span><strong>扫码填表</strong></div>
+            <div class="vr-home-stat"><span>质量入口</span><strong>序列号查询</strong></div>
+        </div>
+    </section>
+
+    <section class="vr-home-actions">
+        <a class="vr-home-card" href="{{ url_for('visual_reports_test_page') }}">
+            <span class="vr-home-badge">模块内页面</span>
+            <h3>测试工作台</h3>
+            <p>进入扫码识别、模板匹配、表格填写、保存和故障即时存档页面。</p>
+            <div class="vr-home-list">
+                <div>扫码自动识别产品型号和产品序列号</div>
+                <div>按产品型号匹配 Excel 模板并自动回填序列号</div>
+                <div>填写完成后保存到 `QRMES/test-report`</div>
+            </div>
+        </a>
+
+        <a class="vr-home-card" href="{{ url_for('visual_reports_quality_page') }}">
+            <span class="vr-home-badge">模块内页面</span>
+            <h3>质量工作台</h3>
+            <p>进入已保存测试报告查询页面，按产品序列号查看普通保存和故障上报记录。</p>
+            <div class="vr-home-list">
+                <div>支持产品序列号模糊查询</div>
+                <div>展示报告状态、保存时间和来源模板</div>
+                <div>直接预览对应 Excel 表格内容</div>
+            </div>
+        </a>
+    </section>
+
+    <section class="vr-home-projects">
+        <div class="vr-home-projects-head">
+            <div>
+                <h3>项目管理目录</h3>
+                <p>这里同步读取 `QRMES/projects` 数据库中的项目，只保留项目名称和操作两列。点击配置后会进入当前测试报告模块内的项目详情页。</p>
+            </div>
+            <div class="vr-home-project-count">共 {{ visual_report_projects|length }} 个项目</div>
+        </div>
+
+        <div class="vr-home-project-table-wrap">
+            {% if visual_report_projects %}
+            <table class="vr-home-project-table">
+                <thead>
+                    <tr>
+                        <th>项目名称</th>
+                        <th style="width: 180px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in visual_report_projects %}
+                    <tr>
+                        <td>
+                            <div class="vr-home-project-name">{{ project.project_name }}</div>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary btn-sm" href="{{ url_for('visual_reports_project_detail_page', project_name=project.project_name) }}">配置</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="vr-home-empty">当前没有从项目数据库中读取到可配置项目。</div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

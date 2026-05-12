@@ -1,0 +1,3912 @@
+{% extends "base.html" %}
+
+{% block title %}{{ print_mode_title or "标签打印" }} - MESAPP{% endblock %}
+
+{% block extra_css %}
+<style id="zebraInlineStyle">
+.zebra-print-intro{max-width:1440px;margin:0 auto;background:linear-gradient(180deg,#fff 0%,#111827 100%)}
+.zebra-print-page{display:flex;flex-direction:column;gap:.9rem}.zebra-print-switch,.zebra-ops-bar,.zebra-jump-nav,.zebra-card{border:1px solid #dbe3ea;border-radius:8px;background:#fff;box-shadow:0 12px 30px rgba(15,23,42,.05)}
+.zebra-print-switch,.zebra-ops-bar,.zebra-jump-nav{padding:1rem;display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}.zebra-ops-bar{justify-content:space-between;background:linear-gradient(135deg,#fff 0%,#111827 100%)}.zebra-entry-panel{padding:1.2rem 1.25rem;border:1px solid #dbe3ea;border-radius:8px;background:linear-gradient(135deg,#0f172a 0%,#111827 100%);box-shadow:0 14px 30px rgba(15,23,42,.06)}.zebra-entry-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:1rem}.zebra-entry-header h3{margin:0;color:#0f172a}.zebra-entry-header p{margin:.35rem 0 0;color:#475569}.zebra-entry-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.zebra-entry-link{display:flex;flex-direction:column;gap:.75rem;padding:1.15rem 1.1rem;border:1px solid #dbe3ea;border-radius:8px;background:#fff;text-decoration:none;color:#0f172a;box-shadow:0 10px 24px rgba(15,23,42,.06);transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease}.zebra-entry-link:hover{transform:translateY(-1px);box-shadow:0 16px 28px rgba(15,23,42,.10);border-color:#94a3b8}.zebra-entry-kicker{display:inline-flex;align-items:center;align-self:flex-start;min-height:1.9rem;padding:.2rem .65rem;border-radius:999px;font-size:.84rem;font-weight:800}.zebra-entry-kicker.product{background:#eef2ff;color:#4f46e5}.zebra-entry-kicker.device{background:#fff7ed;color:#c2410c}.zebra-entry-kicker.material{background:#ecfeff;color:#0f766e}.zebra-entry-title{font-size:1.2rem;font-weight:800;line-height:1.2}.zebra-entry-meta{font-size:.95rem;font-weight:700;color:#475569}.zebra-entry-desc{font-size:.95rem;line-height:1.6;color:#64748b}.zebra-entry-arrow{font-size:.95rem;font-weight:800;color:#0f172a}
+.zebra-status-strip,.zebra-inline-actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}.zebra-status-chip{display:inline-flex;align-items:center;min-height:2.25rem;padding:.25rem .8rem;border:1px solid #dbe3ea;border-radius:999px;background:#f8fafc;font-size:.92rem;font-weight:700;color:#334155}
+.zebra-jump-link{color:#0f172a;text-decoration:none;font-weight:700}.zebra-workbench{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(380px,.9fr);gap:1rem;align-items:start}.zebra-editor-column,.zebra-preview-column,.zebra-layout{display:flex;flex-direction:column;gap:1rem}.zebra-card{padding:1rem}.zebra-section-header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.9rem;align-items:flex-start;margin-bottom:.9rem}.zebra-section-header h3{margin:0;color:#0f172a}.zebra-section-header p{margin:.35rem 0 0;color:#475569}.zebra-inline-actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}.zebra-print-settings-card{gap:1rem}.zebra-tip,.custom-field-tip{border-radius:8px;background:#111827;color:#475569;padding:.75rem .9rem;line-height:1.6;font-size:.92rem}.zebra-form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem}.product-form-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.material-form-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.zebra-span-2{grid-column:span 2}.field-editor-card,.custom-field-row,.material-row,.layout-editor-panel{border:1px solid #dbe3ea;border-radius:8px;background:#fff}.field-editor-card,.material-row,.custom-field-row,.layout-editor-panel{padding:.85rem}.field-editor-title{margin-bottom:.55rem;font-size:.92rem;font-weight:700;color:#0f172a}.field-editor-label-input{margin-bottom:.55rem;font-weight:700;color:#0f766e}.custom-field-editor{display:flex;flex-direction:column;gap:.75rem;margin-top:.95rem}.custom-field-editor-header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.75rem;align-items:center}.custom-field-list{display:flex;flex-direction:column;gap:.75rem}.custom-field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) auto;gap:.75rem}.paste-table-textarea{min-height:108px;resize:vertical}.material-row-header{display:flex;justify-content:space-between;gap:.75rem;align-items:center;margin-bottom:.85rem}.material-row-title{font-size:1.05rem;color:#0f172a}.material-row-pager{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.8rem;align-items:center;margin-bottom:.9rem;padding:.8rem .95rem;border:1px solid #dbe3ea;border-radius:8px;background:#f8fafc}.material-row-pager-summary{color:#334155;font-weight:700}.material-row-pager-actions{display:flex;flex-wrap:wrap;gap:.5rem}.material-row-page-button.is-active{background:#0f766e;color:#fff;border-color:#0f766e}.zebra-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:start}.preview-panel{border:1px solid #dbe3ea;border-radius:8px;background:#fff;overflow:hidden;min-width:0}.preview-panel-header{display:flex;justify-content:space-between;gap:.75rem;align-items:center;padding:.8rem .95rem;border-bottom:1px solid #1e293b;background:#111827}.preview-title{font-size:1rem;font-weight:800;color:#0f172a}.preview-header-actions,.preview-zoom-controls{display:flex;align-items:center;gap:.55rem}.preview-zoom-value{min-width:56px;text-align:center;font-weight:800;color:#334155}.preview-canvas{min-height:500px;padding:1rem 1.1rem;background:linear-gradient(180deg,#ecfeff 0%,#fff 100%);display:flex;align-items:flex-start;justify-content:center;overflow:auto}.preview-stack{display:flex;flex-direction:column;align-items:center;gap:1rem;transform-origin:top center;width:100%}.preview-empty{width:100%;min-height:240px;display:flex;align-items:center;justify-content:center;padding:1rem;border:1px dashed #334155;border-radius:8px;background:rgba(255,255,255,.9);color:#64748b;text-align:center;line-height:1.6}.layout-editor-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem;align-items:start;margin-top:.8rem}.field-control-group{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;padding:.75rem .85rem;border:1px solid #dbe3ea;border-radius:8px;background:#fff;min-width:0}.field-control-group .form-control{max-width:110px}.field-control-label{min-width:64px;font-weight:700;color:#0f172a}.field-control-unit{min-width:2ch;color:#64748b;font-weight:700}.bottom-settings-grid,.font-setting-grid,.zebra-settings-grid{display:grid;gap:.8rem}.bottom-settings-grid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}.bottom-settings-grid>.field-editor-card,.font-setting-grid>div,.zebra-settings-grid>.form-group{min-width:0}.font-setting-grid,.zebra-settings-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.zebra-print-mode-product .zebra-preview-grid,.zebra-print-mode-material .zebra-preview-grid{grid-template-columns:1fr}.zebra-print-mode-product .bottom-settings-grid,.zebra-print-mode-material .bottom-settings-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.zebra-print-mode-product .layout-editor-controls,.zebra-print-mode-material .layout-editor-controls{grid-template-columns:1fr}.zebra-print-mode-product .preview-panel,.zebra-print-mode-material .preview-panel,.zebra-print-mode-product .field-editor-card,.zebra-print-mode-material .field-editor-card{min-width:0}.zebra-label{position:relative;box-sizing:border-box;border:1px solid #334155;border-radius:6px;background:#fff;color:#0f172a;overflow:hidden;box-shadow:0 14px 28px rgba(15,23,42,.08)}.product-label{width:60mm;height:80mm}.material-label{width:80mm;height:60mm}.zebra-label-content{box-sizing:border-box;width:100%;height:100%}.product-label-photo{padding:5mm 4.5mm 4.5mm}.material-label-photo{padding:2.2mm 3mm 2.6mm}.product-layout-photo{height:70mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:2mm}.product-text-block{width:100%;display:flex;flex-direction:column;gap:1.6mm;text-align:center}.material-layout-photo{height:54.6mm;display:grid;grid-template-columns:minmax(0,1fr) 22mm;gap:2.2mm;align-items:start}.material-text-photo{display:flex;flex-direction:column;gap:.75mm}.label-row{display:flex;align-items:flex-start;gap:1.2mm;line-height:1.18;word-break:break-word}.product-text-block .label-row{justify-content:center}.label-row strong{font-weight:800;flex:0 0 auto}.label-row span{min-width:0}.label-qr-block,.material-qr-side{display:flex;align-items:flex-start;justify-content:center}.product-qr-center{width:100%;margin-top:auto}.label-qr-block img,.material-qr-side img{display:block;width:32mm;height:32mm;object-fit:contain}.material-qr-side img{width:25mm;height:25mm}.zebra-editable{cursor:pointer}.zebra-editable:hover{outline:1px dashed rgba(15,118,110,.35);outline-offset:1px}.compact-number-input,.template-name-input,.template-select{max-width:140px}.layout-editor-controls .btn,.zebra-inline-actions .btn{white-space:nowrap}#addMaterialSharedFieldButton,.material-shared-values,#materialSharedFieldList,.material-field-label-editor{display:none!important}.layout-editor-panel{padding:.7rem .85rem;background:#f8fafc}.layout-editor-status{margin:0;color:#475569}.zebra-print-mode-product .preview-canvas,.zebra-print-mode-material .preview-canvas{min-height:460px}.zebra-print-mode-product .zebra-material-only,.zebra-print-mode-product #materialPrintSection,.zebra-print-mode-product .zebra-material-preview{display:none!important}.zebra-print-mode-material .zebra-product-only,.zebra-print-mode-material #productPrintSection,.zebra-print-mode-material .zebra-product-preview{display:none!important}.zebra-print-mode-all .zebra-product-only,.zebra-print-mode-all .zebra-material-only{display:inline-flex}.zebra-view-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem}.zebra-view-card{display:flex;flex-direction:column;gap:.35rem;padding:1rem 1.05rem;border:1px solid #dbe3ea;border-radius:10px;background:linear-gradient(180deg,#fff 0%,#111827 100%);cursor:pointer;text-align:left;color:#0f172a;font-weight:800}.zebra-view-card small{font-size:.85rem;font-weight:600;color:#64748b}.zebra-view-card.is-active{border-color:#0f766e;box-shadow:0 8px 22px rgba(15,118,110,.14);background:linear-gradient(180deg,#f0fdfa 0%,#0f172a 100%)}#zebraPrintPage.view-data .zebra-preview-column{display:none}#zebraPrintPage.view-preview .zebra-editor-column{display:none}#zebraPrintPage.view-preview .zebra-workbench{grid-template-columns:1fr}#zebraPrintPage.view-preview .zebra-preview-column{display:flex}@media (max-width:1180px){.zebra-workbench,.zebra-preview-grid,.bottom-settings-grid,.layout-editor-controls,.zebra-view-nav{grid-template-columns:1fr}}@media (max-width:900px){.product-form-grid,.material-form-grid,.font-setting-grid,.zebra-settings-grid,.layout-editor-controls{grid-template-columns:1fr}.custom-field-row{grid-template-columns:1fr}.zebra-span-2{grid-column:span 1}.preview-canvas{min-height:420px}}</style>
+{% endblock %}
+
+{% block content %}
+
+{% if is_device_print %}
+<style id="zebraDeviceLightStyle">
+body{background:#f6f8fb!important;}
+.zebra-print-intro,.zebra-entry-panel,.zebra-card,.zebra-print-switch,.zebra-jump-nav,.preview-panel,.field-editor-card,.material-row,.custom-field-row,.layout-editor-panel,.material-row-pager,.zebra-view-card,.zebra-view-card.is-active{background:#fff!important;color:#111827!important;border:1px solid #e5e7eb!important;box-shadow:0 12px 28px rgba(15,23,42,.06)!important;}
+.zebra-print-intro{background:#fff!important;}
+.zebra-ops-bar{background:#fff!important;color:#111827!important;border:1px solid #dbe3ea!important;box-shadow:0 12px 28px rgba(15,23,42,.06)!important;}
+.zebra-ops-bar::after,.zebra-card::after{display:none!important;}
+.zebra-ops-bar .btn.btn-secondary{background:#f8fafc!important;border:1px solid #d1d5db!important;color:#111827!important;}
+.zebra-ops-bar .btn.btn-primary{background:linear-gradient(135deg,#2563eb 0%,#0ea5e9 100%)!important;color:#fff!important;}
+.zebra-print-intro>.card-header h2,.zebra-section-header h3,.field-editor-title,.material-row-title,.field-control-label,.preview-title,.zebra-entry-title,.zebra-view-card,.zebra-jump-link,.zebra-entry-header h3{color:#111827!important;}
+.zebra-print-intro>.card-header p,.zebra-section-header p,.zebra-tip,.custom-field-tip,.zebra-status-chip,.zebra-entry-meta,.zebra-entry-desc,.zebra-view-card small,.layout-editor-status,.preview-zoom-value,.material-row-pager-summary,.zebra-entry-header p{color:#374151!important;}
+.zebra-status-chip{background:#f8fafc!important;border-color:#d1d5db!important;}
+.zebra-form-grid input,.zebra-form-grid textarea,.zebra-form-grid select,.custom-field-row input,.custom-field-row textarea,.field-control-group .form-control,.paste-table-textarea{background:#fff!important;color:#111827!important;border:1px solid #d1d5db!important;}
+.zebra-form-grid input::placeholder,.zebra-form-grid textarea::placeholder,.paste-table-textarea::placeholder{color:#9ca3af!important;}
+.preview-panel-header{background:#fff!important;border-bottom:1px solid #e5e7eb!important;}
+.preview-canvas{background:#f8fafc!important;}
+.preview-empty{background:#fff!important;border-color:#d1d5db!important;color:#4b5563!important;}
+</style>
+{% endif %}
+
+<style>
+@media (max-width:1180px){.zebra-entry-grid{grid-template-columns:1fr}}
+@media (max-width:900px){.zebra-entry-grid{grid-template-columns:1fr}}
+</style>
+<style id="zebraPolishStyle">
+.zebra-print-intro{
+    padding:1.2rem;
+    border:0;
+    border-radius:28px;
+    background:
+        radial-gradient(circle at top left, rgba(15,118,110,.14), transparent 34%),
+        radial-gradient(circle at top right, rgba(14,165,233,.16), transparent 28%),
+        linear-gradient(180deg, #eef7ff 0%, #dff1ff 45%, #f4f8fc 100%);
+    box-shadow:0 28px 66px rgba(15, 23, 42, .12);
+}
+
+.zebra-print-intro > .card-header{
+    padding:0 0 1rem;
+    margin-bottom:1.1rem;
+    border-bottom:1px solid rgba(148, 163, 184, .22);
+    background:transparent;
+}
+
+.zebra-print-intro > .card-header h2{
+    margin:0;
+    font-size:1.65rem;
+    font-weight:900;
+    letter-spacing:.02em;
+    color:#0f172a;
+}
+
+.zebra-print-intro > .card-header p{
+    margin:.45rem 0 0;
+    max-width:860px;
+    color:#475569;
+    line-height:1.7;
+    font-size:.98rem;
+}
+
+.zebra-print-page{
+    gap:.95rem;
+}
+
+.zebra-print-switch,
+.zebra-ops-bar,
+.zebra-jump-nav,
+.zebra-card{
+    border:none;
+    border-radius:24px;
+    box-shadow:0 18px 36px rgba(15, 23, 42, .08);
+    position:relative;
+    overflow:hidden;
+}
+
+.zebra-print-switch{
+    padding:.9rem 1rem;
+    background:linear-gradient(135deg, rgba(255,255,255,.92) 0%, rgba(246,250,255,.88) 100%);
+    backdrop-filter:blur(10px);
+}
+
+.zebra-ops-bar{
+    padding:.9rem 1rem;
+    background:linear-gradient(135deg, #0f172a 0%, #123b52 55%, #0f766e 100%);
+    color:#f8fafc;
+    box-shadow:0 24px 40px rgba(15, 23, 42, .18);
+}
+
+.zebra-ops-bar::after,
+.zebra-card::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(135deg, rgba(255,255,255,.12), transparent 34%, transparent 70%, rgba(255,255,255,.08));
+    opacity:.45;
+}
+
+.zebra-ops-bar .btn.btn-secondary{
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.18);
+    color:#f8fafc;
+}
+
+.zebra-ops-bar .btn.btn-secondary:hover,
+.zebra-ops-bar .btn.btn-secondary:focus{
+    background:rgba(255,255,255,.18);
+    color:#fff;
+}
+
+.zebra-ops-bar .btn.btn-primary{
+    background:linear-gradient(135deg, #f97316 0%, #fb7185 100%);
+    border:none;
+    color:#fff;
+}
+
+.zebra-status-chip{
+    background:rgba(255,255,255,.10);
+    border-color:rgba(255,255,255,.16);
+    color:#eff6ff;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+    backdrop-filter:blur(8px);
+}
+
+.zebra-view-nav{
+    gap:1rem;
+    padding:0;
+    background:transparent;
+    box-shadow:none;
+}
+
+.zebra-view-card{
+    position:relative;
+    min-height:112px;
+    justify-content:flex-end;
+    padding:1rem 1.1rem 1.05rem;
+    border:1px solid rgba(100, 116, 139, .24);
+    border-radius:26px;
+    background:linear-gradient(145deg, rgba(255,255,255,.98) 0%, rgba(232,240,248,.95) 100%);
+    cursor:pointer;
+    overflow:hidden;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.zebra-view-card::before{
+    content:'';
+    position:absolute;
+    inset:0 auto auto 0;
+    width:96px;
+    height:96px;
+    border-radius:0 0 100% 0;
+    opacity:.9;
+    background:linear-gradient(135deg, rgba(14,165,233,.18), rgba(15,118,110,.04));
+}
+
+.zebra-view-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 22px 40px rgba(15, 23, 42, .12);
+}
+
+.zebra-view-card span{
+    position:relative;
+    z-index:1;
+    font-size:1.18rem;
+    line-height:1.2;
+}
+
+.zebra-view-card small{
+    position:relative;
+    z-index:1;
+    max-width:28ch;
+    line-height:1.55;
+}
+
+.zebra-view-card.is-active{
+    border-color:rgba(13, 148, 136, .44);
+    background:linear-gradient(145deg, rgba(231,255,251,.99) 0%, rgba(210,241,255,.99) 100%);
+    box-shadow:0 24px 48px rgba(13, 148, 136, .20);
+}
+
+.zebra-workbench{
+    gap:1rem;
+}
+
+#zebraPrintPage.view-data .zebra-workbench{
+    grid-template-columns:1fr;
+}
+
+#zebraPrintPage.view-preview .zebra-preview-column{
+    display:grid;
+    grid-template-columns:minmax(0, .96fr) minmax(420px, .92fr);
+    gap:1.25rem;
+    align-items:start;
+}
+
+#zebraPrintPage.view-preview .zebra-preview-card,
+#zebraPrintPage.view-preview .zebra-print-settings-card{
+    height:100%;
+}
+
+.zebra-card{
+    padding:1rem;
+    background:linear-gradient(180deg, rgba(255,255,255,.94) 0%, rgba(248,250,252,.92) 100%);
+    backdrop-filter:blur(14px);
+}
+
+.zebra-preview-card{
+    background:
+        linear-gradient(180deg, rgba(255,255,255,.99) 0%, rgba(233,245,255,.99) 100%),
+        radial-gradient(circle at top left, rgba(14,165,233,.20), transparent 34%);
+}
+
+.zebra-print-settings-card{
+    background:
+        linear-gradient(180deg, rgba(255,255,255,.99) 0%, rgba(255,244,233,.99) 100%),
+        radial-gradient(circle at top right, rgba(249,115,22,.16), transparent 30%);
+    max-width:600px;
+    width:100%;
+    justify-self:end;
+}
+
+.zebra-section-header{
+    margin-bottom:.95rem;
+}
+
+.zebra-section-header h3{
+    font-size:1.42rem;
+    font-weight:900;
+    letter-spacing:.01em;
+}
+
+.zebra-section-header p{
+    max-width:54ch;
+    line-height:1.7;
+    color:#475569;
+}
+
+.zebra-inline-actions{
+    gap:.55rem;
+}
+
+.zebra-print-page .btn{
+    min-height:40px;
+    padding:.56rem .95rem;
+    border-radius:14px;
+    font-weight:800;
+    letter-spacing:.01em;
+    box-shadow:0 10px 18px rgba(15, 23, 42, .08);
+    transition:transform .16s ease, box-shadow .16s ease, filter .16s ease;
+}
+
+.zebra-print-page .btn:hover,
+.zebra-print-page .btn:focus{
+    transform:translateY(-1px);
+    box-shadow:0 14px 24px rgba(15, 23, 42, .12);
+}
+
+.zebra-print-page .btn.btn-secondary{
+    background:linear-gradient(180deg, #f8fbfe 0%, #e9f0f7 100%);
+    border:1px solid #d5e1ed;
+    color:#1e293b;
+}
+
+.zebra-print-page .btn.btn-secondary:hover,
+.zebra-print-page .btn.btn-secondary:focus{
+    background:#e2ebf4;
+    border-color:#c8d7e6;
+    color:#0f172a;
+}
+
+.zebra-print-page .btn.btn-success{
+    background:linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+    border:none;
+    color:#fff;
+    box-shadow:0 14px 26px rgba(15, 118, 110, .24);
+}
+
+.zebra-print-page .btn.btn-success:hover,
+.zebra-print-page .btn.btn-success:focus{
+    color:#fff;
+    filter:brightness(1.04);
+}
+
+.zebra-print-page .btn.btn-danger{
+    background:linear-gradient(135deg, #ef4444 0%, #fb7185 100%);
+    border:none;
+    color:#fff;
+    box-shadow:0 14px 26px rgba(239, 68, 68, .18);
+}
+
+.zebra-tip,
+.custom-field-tip{
+    border:1px solid rgba(148, 163, 184, .20);
+    border-radius:18px;
+    background:linear-gradient(180deg, rgba(255,255,255,.94) 0%, rgba(248,250,252,.94) 100%);
+    color:#475569;
+    position:relative;
+    overflow:hidden;
+}
+
+.zebra-tip::before,
+.custom-field-tip::before{
+    content:'';
+    position:absolute;
+    inset:0 auto 0 0;
+    width:4px;
+    background:linear-gradient(180deg, #38bdf8 0%, #14b8a6 100%);
+    opacity:.9;
+}
+
+.zebra-material-section{
+    background:
+        linear-gradient(180deg, rgba(255,255,255,.99) 0%, rgba(240,247,255,.99) 48%, rgba(255,250,244,.98) 100%),
+        radial-gradient(circle at top right, rgba(14,165,233,.10), transparent 32%);
+}
+
+.material-field-label-editor{
+    padding:1.15rem;
+    border:1px solid rgba(14, 165, 233, .16);
+    border-radius:24px;
+    background:linear-gradient(180deg, rgba(240,249,255,.98) 0%, rgba(255,255,255,.98) 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 16px 30px rgba(15, 23, 42, .05);
+}
+
+.material-field-label-editor .custom-field-editor-header{
+    margin-bottom:.85rem;
+}
+
+.material-field-label-editor .custom-field-editor-header strong{
+    font-size:1.12rem;
+    color:#0f172a;
+}
+
+.material-field-label-editor .custom-field-tip{
+    margin-bottom:1rem;
+    background:linear-gradient(180deg, rgba(240,249,255,.98) 0%, rgba(255,255,255,.94) 100%);
+}
+
+.material-label-form-grid{
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:1rem;
+}
+
+.material-label-form-grid .field-editor-card{
+    min-height:132px;
+    background:linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border-color:rgba(148, 163, 184, .16);
+}
+
+.material-label-form-grid .field-editor-row-actions{
+    grid-template-columns:minmax(0, 1fr) auto;
+}
+
+.material-row-pager{
+    margin-top:1.1rem;
+    margin-bottom:1.05rem;
+    padding:1rem 1.1rem;
+    border:1px solid rgba(14, 165, 233, .14);
+    border-radius:22px;
+    background:linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(240,249,255,.96) 100%);
+    box-shadow:0 14px 28px rgba(15, 23, 42, .05);
+}
+
+.zebra-material-section #materialRowPager,
+.zebra-material-section #materialRows{
+    width:100%;
+    max-width:none;
+    align-self:stretch;
+}
+
+.material-rows{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+}
+
+.zebra-material-section #materialRows .material-row{
+    display:block !important;
+    width:100% !important;
+    max-width:none;
+    align-self:stretch;
+    background:linear-gradient(180deg, rgba(255,255,255,.99) 0%, rgba(255,252,247,.98) 100%);
+    border:1px solid rgba(249, 115, 22, .12);
+    box-shadow:0 18px 34px rgba(15, 23, 42, .06);
+}
+
+.zebra-material-section #materialRows .material-row-header{
+    padding-bottom:.85rem;
+    margin-bottom:1rem;
+    border-bottom:1px solid rgba(148, 163, 184, .14);
+}
+
+.zebra-material-section #materialRows .material-row-title{
+    font-size:1.45rem;
+    font-weight:900;
+    letter-spacing:.01em;
+}
+
+.zebra-material-section #materialRows .material-form-grid{
+    width:100%;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:1rem;
+}
+
+.zebra-material-section #materialRows .form-group{
+    padding:.9rem .95rem;
+    border:1px solid rgba(148, 163, 184, .16);
+    border-radius:18px;
+    background:#fff;
+}
+
+.zebra-material-section #materialRows .form-group label{
+    margin-bottom:.5rem;
+    color:#475569;
+    font-weight:700;
+}
+
+.zebra-material-section #materialRows .form-group .form-control{
+    min-height:46px;
+}
+
+.field-editor-card,
+.custom-field-row,
+.material-row,
+.layout-editor-panel,
+.preview-panel{
+    border:1px solid rgba(148, 163, 184, .18);
+    border-radius:22px;
+    box-shadow:0 16px 32px rgba(15, 23, 42, .06);
+    backdrop-filter:blur(10px);
+}
+
+.field-editor-card,
+.material-row,
+.custom-field-row,
+.layout-editor-panel{
+    padding:.9rem;
+}
+
+.field-editor-card{
+    background:
+        linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(244,249,255,.96) 100%),
+        radial-gradient(circle at top left, rgba(56,189,248,.08), transparent 36%);
+}
+
+.preview-panel{
+    background:rgba(255,255,255,.98);
+}
+
+.preview-panel-header{
+    padding:.85rem 1rem;
+    border-bottom:1px solid rgba(226, 232, 240, .9);
+    background:linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.preview-title{
+    font-size:1rem;
+    letter-spacing:.01em;
+}
+
+.preview-canvas{
+    min-height:520px;
+    padding:1.1rem 1.15rem;
+    background:
+        radial-gradient(circle at top, rgba(56, 189, 248, .36), transparent 34%),
+        linear-gradient(180deg, #e7f6ff 0%, #ffffff 100%);
+}
+
+.preview-stack{
+    gap:1.25rem;
+}
+
+.layout-editor-panel{
+    display:flex;
+    flex-direction:column;
+    gap:.85rem;
+    background:linear-gradient(180deg, rgba(255,255,255,.99) 0%, rgba(255,241,226,.99) 100%);
+}
+
+.layout-editor-status{
+    padding:.85rem .95rem;
+    border:1px solid rgba(249, 115, 22, .14);
+    border-radius:18px;
+    background:rgba(255,255,255,.78);
+    color:#475569;
+    line-height:1.65;
+}
+
+.layout-editor-controls{
+    grid-template-columns:1fr;
+    gap:.75rem;
+    margin-top:0;
+}
+
+.field-control-group{
+    gap:.65rem;
+    padding:.8rem .9rem;
+    border:1px solid rgba(251, 146, 60, .16);
+    border-radius:18px;
+    background:rgba(255,255,255,.96);
+}
+
+.field-control-label{
+    min-width:88px;
+}
+
+.field-control-group .form-control{
+    max-width:120px;
+}
+
+.template-name-input,
+.template-select{
+    flex:1 1 220px;
+    min-width:180px;
+    max-width:none;
+    min-height:42px;
+    border-radius:14px;
+}
+
+.bottom-settings-grid{
+    grid-template-columns:1fr;
+    gap:.8rem;
+}
+
+.bottom-settings-grid .field-editor-card{
+    padding:.9rem .95rem 1rem;
+    background:linear-gradient(180deg, rgba(255,255,255,.99) 0%, rgba(255,247,240,.99) 100%);
+}
+
+.field-editor-title{
+    margin-bottom:.65rem;
+    font-size:1rem;
+}
+
+.font-setting-grid,
+.zebra-settings-grid{
+    gap:.7rem;
+}
+
+.font-setting-grid > div,
+.zebra-settings-grid > .form-group{
+    padding:.72rem .8rem;
+    border:1px solid rgba(251, 146, 60, .14);
+    border-radius:16px;
+    background:rgba(255,255,255,.97);
+}
+
+.font-setting-grid label,
+.zebra-settings-grid label{
+    margin-bottom:.35rem;
+    color:#334155;
+    font-weight:700;
+}
+
+.zebra-print-page .form-control{
+    min-height:42px;
+    border-radius:14px;
+    border:1px solid rgba(148, 163, 184, .18);
+    background:rgba(255,255,255,.88);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.75);
+}
+
+.zebra-print-page .form-control:focus{
+    border-color:rgba(14,165,233,.42);
+    box-shadow:0 0 0 4px rgba(56,189,248,.14);
+}
+
+#printSettingsSection .zebra-inline-actions{
+    align-items:stretch;
+}
+
+#printSettingsSection .zebra-inline-actions .btn{
+    flex:1 1 140px;
+}
+
+@media (max-width:1280px){
+    #zebraPrintPage.view-preview .zebra-preview-column{
+        grid-template-columns:minmax(0, .92fr) minmax(360px, .86fr);
+    }
+}
+
+@media (max-width:1180px){
+    #zebraPrintPage.view-preview .zebra-preview-column{
+        grid-template-columns:1fr;
+    }
+
+    .preview-canvas{
+        min-height:460px;
+    }
+}
+
+@media (max-width:900px){
+    .material-label-form-grid,
+    .material-rows .material-form-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+<div class="card zebra-print-intro">
+    <div class="card-header">
+        <h2>{{ print_mode_title or "标签打印" }}</h2>
+        <p>{{ print_mode_description or "统一支持多种打印机，一个产品编码可挂多张物料编码标签，支持批量打印、草稿自动保存和标签字号设置。" }}</p>
+    </div>
+    <div class="zebra-print-page zebra-print-mode-{{ print_mode or 'all' }}" id="zebraPrintPage" data-print-mode="{{ print_mode or 'all' }}" data-qr-endpoint="{{ zebra_qr_endpoint }}" data-import-endpoint="{{ url_for('zebra_print.zebra_print_import_excel') }}">
+        <input id="zebraExcelImportInput" type="file" accept=".xlsx,.xlsm" hidden>
+
+        {% if print_mode == 'all' %}
+        <div class="zebra-entry-panel">
+            <div class="zebra-entry-header">
+                <div>
+                    <h3>选择打印窗口</h3>
+                    <p>按标签方向进入对应页面，直接开始录入、排版和打印。</p>
+                </div>
+            </div>
+            <div class="zebra-entry-grid">
+                <a class="zebra-entry-link" href="{{ url_for('zebra_print.zebra_print_product') }}" target="_blank" rel="noopener">
+                    <span class="zebra-entry-kicker product">产品标签</span>
+                    <div class="zebra-entry-title">产品编码打印</div>
+                    <div class="zebra-entry-meta">60 x 80 mm 纵向标签</div>
+                    <div class="zebra-entry-desc">适合整机与产品级标签，支持字段排版、二维码调整和单张打印。</div>
+                    <div class="zebra-entry-arrow">打开产品打印窗口</div>
+                </a>
+                <a class="zebra-entry-link" href="{{ url_for('zebra_print.zebra_print_device') }}" target="_blank" rel="noopener">
+                    <span class="zebra-entry-kicker device">设备标签</span>
+                    <div class="zebra-entry-title">设备编码打印</div>
+                    <div class="zebra-entry-meta">60 x 80 mm 纵向标签</div>
+                    <div class="zebra-entry-desc">适合设备、工装和资产标签，支持字段排版、二维码调整和单张打印。</div>
+                    <div class="zebra-entry-arrow">打开设备打印窗口</div>
+                </a>
+                <a class="zebra-entry-link" href="{{ url_for('zebra_print.zebra_print_material') }}" target="_blank" rel="noopener">
+                    <span class="zebra-entry-kicker material">物料标签</span>
+                    <div class="zebra-entry-title">物料编码打印</div>
+                    <div class="zebra-entry-meta">80 x 60 mm 横向标签</div>
+                    <div class="zebra-entry-desc">适合 Excel 批量粘贴与物料标签连续打印，字段显示跟随表头和内容。</div>
+                    <div class="zebra-entry-arrow">打开物料打印窗口</div>
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="zebra-print-switch">
+            <a class="btn btn-secondary" href="{{ url_for('zebra_print.zebra_print_index') }}">返回打印入口</a>
+            {% if product_switch_url %}
+            <a class="btn btn-primary" href="{{ product_switch_url }}" target="_blank" rel="noopener">{{ product_switch_text }}</a>
+            {% elif print_mode == 'material' %}
+            <a class="btn btn-primary" href="{{ url_for('zebra_print.zebra_print_product') }}" target="_blank" rel="noopener">打开产品编码打印</a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="zebra-ops-bar">
+            <div class="zebra-status-strip">
+                <span class="zebra-status-chip status-online">打印机在线工作台</span>
+                <span class="zebra-status-chip status-paper">60 x 80 / 80 x 60</span>
+                <span class="zebra-status-chip status-mode">{{ print_mode_title or "标签打印" }}</span>
+            </div>
+            <div class="zebra-inline-actions zebra-ops-actions">
+                <button type="button" class="btn btn-secondary" id="newSampleButton">新建示例</button>
+                <button type="button" class="btn btn-secondary" id="clearPrintDataButton">清空打印数据</button>
+                <button type="button" class="btn btn-secondary" id="printSettingsQuickButton">打印设置</button>
+                <button type="button" class="btn btn-primary zebra-product-only" id="topPrintProductButton">{{ product_print_button_text or "打印产品码" }}</button>
+                <button type="button" class="btn btn-primary zebra-material-only" id="topPrintMaterialsButton">打印物料码</button>
+            </div>
+        </div>
+
+        <div class="zebra-jump-nav zebra-view-nav" id="zebraViewTabs">
+            <button type="button" class="zebra-view-card is-active" data-workbench-view="data">
+                <span>{% if print_mode == 'material' %}物料数据{% else %}{{ product_data_tab_title or "产品数据" }}{% endif %}</span>
+                <small>录入、粘贴和字段编辑</small>
+            </button>
+            <button type="button" class="zebra-view-card" data-workbench-view="preview">
+                <span>排版预览与设置</span>
+                <small>预览标签、AI排版和打印设置</small>
+            </button>
+        </div>
+
+        <div class="zebra-workbench">
+        <div class="zebra-editor-column">
+        <div class="zebra-layout">
+            <section class="card zebra-card zebra-product-section" id="productPrintSection">
+                <div class="zebra-section-header">
+                    <div>
+                        <h3>{{ product_section_title or "产品编码标签" }}</h3>
+                        <p>{{ product_section_description or "对应第一张大标签，通常用于整机或产品级流转。" }}</p>
+                    </div>
+                    <div class="zebra-inline-actions">
+                        <button type="button" class="btn btn-secondary" id="importExcelButton">{{ product_data_tab_title or "产品数据" }}导入Excel</button>
+                        <button type="button" class="btn btn-secondary" id="loadSampleButton">新建示例</button>
+                        <button type="button" class="btn btn-primary" id="printProductButton">{{ product_print_button_text or "打印产品码" }}</button>
+                    </div>
+                </div>
+                <div class="zebra-tip">
+                    Excel 导入支持两个 sheet：`产品` 使用“字段 / 值 / 标签名”，`物料` 使用表头行；物料可导入“二维码内容”，自定义字段列可写成 `自定义:客户`。
+                </div>
+                <div class="custom-field-editor paste-import-panel">
+                    <div class="custom-field-editor-header">
+                        <strong>快速粘贴 Excel 表格</strong>
+                        <div class="zebra-inline-actions">
+                            <button type="button" class="btn btn-secondary btn-small" id="parseProductPasteButton">识别产品表格</button>
+                            <button type="button" class="btn btn-secondary btn-small" id="clearProductPasteButton">清空粘贴区</button>
+                            <button type="button" class="btn btn-danger btn-small" id="clearProductPrintDataInlineButton">清空打印数据</button>
+                        </div>
+                    </div>
+                    <div class="custom-field-tip">直接从 Excel 复制单元格后粘贴到这里，支持“字段/值/标签名”或“表头 + 数据”两种{{ product_data_tab_title or "产品数据" }}表格格式。</div>
+                    <textarea id="productPasteTable" class="form-control paste-table-textarea" rows="4" placeholder="在这里粘贴{{ product_data_tab_title or '产品数据' }}表格，系统会自动识别字段和数据"></textarea>
+                </div>
+                <div class="zebra-form-grid product-form-grid">
+                    {% for field in product_field_defs or [] %}
+                    <div class="form-group field-editor-card{% if field.span and field.span|int > 1 %} zebra-span-{{ field.span|int }}{% endif %}" data-product-field-key="{{ field.key }}">
+                        <div class="field-editor-row-actions">
+                        <input id="{{ field.labelInputId }}" class="form-control field-editor-label-input" type="text" value="{{ field.defaultLabel }}" placeholder="字段名称">
+                            <button type="button" class="btn btn-danger btn-small field-editor-remove-button product-standard-field-remove-button" data-field-key="{{ field.key }}">删除</button>
+                        </div>
+                        <input id="{{ field.valueInputId }}" class="form-control" type="text" placeholder="{{ field.placeholder or '输入内容' }}">
+                    </div>
+                    {% endfor %}
+                    <div class="form-group field-editor-card" data-product-static-card="qr">
+                        <div class="field-editor-title">二维码内容（默认自动生成）</div>
+                        <input id="productQrValue" class="form-control" type="text" placeholder="{{ product_qr_placeholder or '自动按产品型号+序列号生成' }}">
+                    </div>
+                    <div class="form-group field-editor-card" data-product-static-card="copies">
+                        <div class="field-editor-title">打印份数</div>
+                        <input id="productCopies" class="form-control" type="number" min="1" max="50" value="1">
+                    </div>
+                </div>
+                <div class="custom-field-editor">
+                    <div class="custom-field-editor-header">
+                        <strong>产品自定义文本框</strong>
+                        <button type="button" class="btn btn-secondary btn-small" id="addProductCustomFieldButton">新增产品字段</button>
+                    </div>
+                    <div class="custom-field-tip">可新增其他文字字段；预览里双击文字可直接改内容。</div>
+                    <div id="productCustomFields" class="custom-field-list"></div>
+                </div>
+                <div id="productRowPager" class="material-row-pager" hidden></div>
+            </section>
+
+            <section class="card zebra-card zebra-material-section" id="materialPrintSection">
+                <div class="zebra-section-header">
+                    <div>
+                        <h3>物料编码标签</h3>
+                        <p>一个产品码可对应多张物料码标签，支持批量维护与统一打印。</p>
+                    </div>
+                    <div class="zebra-inline-actions">
+                        <button type="button" class="btn btn-secondary" id="importMaterialExcelButton">物料导入Excel</button>
+                        <button type="button" class="btn btn-success" id="addMaterialButton">新增物料字段</button>
+                        <button type="button" class="btn btn-primary" id="printMaterialsButton">打印物料码</button>
+                    </div>
+                </div>
+                <div class="zebra-tip">
+                    建议每一行对应一张物料标签，二维码默认跟随物料编码，也可由 Excel 的“二维码内容”列导入或手动覆盖。
+                </div>
+                <div class="custom-field-editor paste-import-panel">
+                    <div class="custom-field-editor-header">
+                        <strong>快速粘贴 Excel 表格</strong>
+                        <div class="zebra-inline-actions">
+                            <button type="button" class="btn btn-secondary btn-small" id="parseMaterialPasteButton">识别物料表格</button>
+                            <button type="button" class="btn btn-secondary btn-small" id="clearMaterialPasteButton">清空粘贴区</button>
+                            <button type="button" class="btn btn-danger btn-small" id="clearPrintDataInlineButton">清空打印数据</button>
+                        </div>
+                    </div>
+                    <div class="custom-field-tip">直接从 Excel 复制整块物料表粘贴到这里，系统会自动识别表头、字段名和每一行数据。</div>
+                    <textarea id="materialPasteTable" class="form-control paste-table-textarea" rows="5" placeholder="在这里粘贴物料表格，支持工单号、产品名称、物料编码、物料名称、物料规格、数量、批号等字段"></textarea>
+                </div>
+                <div class="custom-field-editor material-field-label-editor">
+                    <div class="custom-field-editor-header">
+                        <strong>物料字段名称</strong>
+                        <button type="button" class="btn btn-secondary btn-small" id="addMaterialSharedFieldButton">新增物料字段</button>
+                    </div>
+                        <div class="custom-field-tip">可统一修改物料标签的字段名；新增字段后，每一张物料标签都会自动出现对应的数据输入框，预览里双击字段名也可直接修改。</div>
+                        <div class="zebra-form-grid material-label-form-grid">
+                            <div class="form-group field-editor-card" data-field-key="ticketNo">
+                                <div class="field-editor-row-actions">
+                            <input id="materialTicketLabel" class="form-control field-editor-label-input" type="text" value="工单号" placeholder="字段名称">
+                            <button type="button" class="btn btn-danger btn-small field-editor-remove-button material-standard-field-remove-button" data-field-key="ticketNo">删除</button>
+                                </div>
+                                <input id="materialEditorTicketNoValue" class="form-control material-editor-value-input" type="text" placeholder="输入工单号">
+                            </div>
+                            <div class="form-group field-editor-card" data-field-key="itemName">
+                                <div class="field-editor-row-actions">
+                            <input id="materialItemNameLabel" class="form-control field-editor-label-input" type="text" value="产品名称" placeholder="字段名称">
+                            <button type="button" class="btn btn-danger btn-small field-editor-remove-button material-standard-field-remove-button" data-field-key="itemName">删除</button>
+                                </div>
+                                <input id="materialEditorItemNameValue" class="form-control material-editor-value-input" type="text" placeholder="输入产品名称">
+                            </div>
+                            <div class="form-group field-editor-card" data-field-key="materialCode">
+                                <div class="field-editor-row-actions">
+                            <input id="materialCodeLabel" class="form-control field-editor-label-input" type="text" value="物料编码" placeholder="字段名称">
+                            <button type="button" class="btn btn-danger btn-small field-editor-remove-button material-standard-field-remove-button" data-field-key="materialCode">删除</button>
+                                </div>
+                                <input id="materialEditorCodeValue" class="form-control material-editor-value-input" type="text" placeholder="输入物料编码">
+                            </div>
+                            <div class="form-group field-editor-card" data-field-key="materialName">
+                                <div class="field-editor-row-actions">
+                            <input id="materialNameLabel" class="form-control field-editor-label-input" type="text" value="物料名称" placeholder="字段名称">
+                            <button type="button" class="btn btn-danger btn-small field-editor-remove-button material-standard-field-remove-button" data-field-key="materialName">删除</button>
+                                </div>
+                                <input id="materialEditorNameValue" class="form-control material-editor-value-input" type="text" placeholder="输入物料名称">
+                            </div>
+                            <div class="form-group field-editor-card" data-field-key="materialSpec">
+                                <div class="field-editor-row-actions">
+                            <input id="materialSpecLabel" class="form-control field-editor-label-input" type="text" value="物料规格" placeholder="字段名称">
+                            <button type="button" class="btn btn-danger btn-small field-editor-remove-button material-standard-field-remove-button" data-field-key="materialSpec">删除</button>
+                                </div>
+                                <input id="materialEditorSpecValue" class="form-control material-editor-value-input" type="text" placeholder="输入物料规格">
+                            </div>
+                            <div class="form-group field-editor-card" data-field-key="quantity">
+                                <div class="field-editor-row-actions">
+                            <input id="materialQuantityLabel" class="form-control field-editor-label-input" type="text" value="数量" placeholder="字段名称">
+                            <button type="button" class="btn btn-danger btn-small field-editor-remove-button material-standard-field-remove-button" data-field-key="quantity">删除</button>
+                                </div>
+                                <input id="materialEditorQuantityValue" class="form-control material-editor-value-input" type="text" placeholder="输入数量">
+                            </div>
+                            <div class="form-group field-editor-card" data-field-key="batchNo">
+                                <div class="field-editor-row-actions">
+                            <input id="materialBatchLabel" class="form-control field-editor-label-input" type="text" value="批号" placeholder="字段名称">
+                            <button type="button" class="btn btn-danger btn-small field-editor-remove-button material-standard-field-remove-button" data-field-key="batchNo">删除</button>
+                                </div>
+                                <input id="materialEditorBatchValue" class="form-control material-editor-value-input" type="text" placeholder="输入批号">
+                            </div>
+                            <div class="form-group field-editor-card" data-field-key="projectName">
+                                <div class="field-editor-row-actions">
+                            <input id="materialProjectLabel" class="form-control field-editor-label-input" type="text" value="项目" placeholder="字段名称">
+                            <button type="button" class="btn btn-danger btn-small field-editor-remove-button material-standard-field-remove-button" data-field-key="projectName">删除</button>
+                                </div>
+                                <input id="materialEditorProjectValue" class="form-control material-editor-value-input" type="text" placeholder="输入项目">
+                            </div>
+                        </div>
+                    <div id="materialSharedFieldList" class="custom-field-list material-shared-field-list"></div>
+                </div>
+                <div id="materialRowPager" class="material-row-pager" hidden></div>
+                <div id="materialRows" class="material-rows"></div>
+            </section>
+        </div>
+
+        </div>
+
+        <div class="zebra-preview-column">
+        <section class="card zebra-card zebra-preview-card" id="previewSection">
+            <div class="zebra-section-header">
+                <div>
+                    <h3>排版预览</h3>
+                    <p>产品标签按 60 x 80 纵向输出，物料标签按 80 x 60 横向输出；双击文本可修改内容，拖动边框手柄可调整文本框大小。</p>
+                </div>
+                <div class="zebra-inline-actions">
+                    <button type="button" class="btn btn-secondary zebra-product-only" id="resetProductLayoutButton">重置产品排版</button>
+                    <button type="button" class="btn btn-secondary zebra-material-only" id="resetMaterialLayoutButton">重置物料排版</button>
+                    <button type="button" class="btn btn-success zebra-product-only" id="productAiLayoutButton">AI排版</button>
+                    <button type="button" class="btn btn-success zebra-material-only" id="materialAiLayoutButton">AI排版</button>
+                    {% if print_mode == 'all' %}
+                    <button type="button" class="btn btn-primary zebra-all-only" id="printAllButton">全部打印</button>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="zebra-preview-grid">
+                <div class="preview-panel zebra-product-preview">
+                    <div class="preview-panel-header">
+                        <div class="preview-title">{{ product_preview_title or "产品码排版预览" }}</div>
+                        <div class="preview-header-actions">
+                            <div class="preview-zoom-controls">
+                                <button type="button" class="btn btn-secondary btn-small" id="productPreviewZoomOut">-</button>
+                                <span class="preview-zoom-value" id="productPreviewZoomValue">100%</span>
+                                <button type="button" class="btn btn-secondary btn-small" id="productPreviewZoomIn">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-canvas">
+                        <div id="productPreview" class="preview-stack">
+                            <div class="zebra-label product-label">
+                                <div class="zebra-label-content product-label-photo">
+                                    <div class="product-layout-photo">
+                                        <div class="product-text-block">
+                                            {% for field in product_field_defs or [] %}
+                                            <div class="label-row" style="font-size:17px;"><strong>{{ field.defaultLabel }} </strong><span>{{ sample_product[field.dataKey] if sample_product else '' }}</span></div>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="label-qr-block product-qr-center">
+                                            <img alt="{{ product_section_title or '产品编码标签' }}二维码" src="{{ zebra_qr_endpoint }}?value={{ sample_product.productQrValue }}&amp;box_size=8&amp;border=1" style="width:32mm;height:32mm;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="preview-panel zebra-material-preview">
+                    <div class="preview-panel-header">
+                        <div class="preview-title">物料码排版预览</div>
+                        <div class="preview-header-actions">
+                            <div class="preview-zoom-controls">
+                                <button type="button" class="btn btn-secondary btn-small" id="materialPreviewZoomOut">-</button>
+                                <span class="preview-zoom-value" id="materialPreviewZoomValue">100%</span>
+                                <button type="button" class="btn btn-secondary btn-small" id="materialPreviewZoomIn">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-canvas">
+                        <div id="materialsPreview" class="preview-stack preview-materials">
+                            <div class="zebra-label material-label">
+                                <div class="zebra-label-content material-label-photo">
+                                    <div class="material-layout-photo">
+                                        <div class="material-text-photo">
+                                            <div class="label-row" style="font-size:17px;"><strong>工单号 </strong><span>MO0000930</span></div>
+                                            <div class="label-row" style="font-size:17px;"><strong>产品名称 </strong><span>电控总成</span></div>
+                                            <div class="label-row" style="font-size:17px;"><strong>物料编码 </strong><span>D12280055</span></div>
+                                            <div class="label-row" style="font-size:17px;"><strong>物料名称 </strong><span>涂胶板</span></div>
+                                            <div class="label-row" style="font-size:17px;"><strong>规格型号 </strong><span>02_CAPB1_D_02</span></div>
+                                            <div class="label-row" style="font-size:17px;"><strong>数量 </strong><span>2</span></div>
+                                            <div class="label-row" style="font-size:17px;"><strong>批号 </strong><span>B24040301</span></div>
+                                            <div class="label-row" style="font-size:17px;"><strong>项目 </strong><span>柳工1.8T挖机</span></div>
+                                        </div>
+                                        <div class="material-qr-side">
+                                            <img alt="物料二维码" src="{{ zebra_qr_endpoint }}?value=D12280055&amp;box_size=8&amp;border=1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card zebra-card zebra-print-settings-card" id="printSettingsSection">
+            <div class="zebra-section-header">
+                <div>
+                    <h3>字号与打印设置</h3>
+                    <p>这里统一管理标签字号、文本框尺寸和打印纸张设置。</p>
+                </div>
+                <div class="zebra-inline-actions">
+                    <input id="templateNameInput" class="form-control template-name-input" type="text" placeholder="输入模板名称">
+                    <select id="templateSelect" class="form-control template-select">
+                        <option value="">选择模板</option>
+                    </select>
+                    <button type="button" class="btn btn-secondary" id="saveTemplateButton">保存模板</button>
+                    <button type="button" class="btn btn-secondary" id="loadTemplateButton">载入模板</button>
+                    <button type="button" class="btn btn-secondary" id="deleteTemplateButton">删除模板</button>
+                </div>
+            </div>
+            <div class="layout-editor-panel">
+                <div class="layout-editor-status" id="layoutEditorStatus">点击预览中的字段后，可调整位置、字号和文本框尺寸。</div>
+                <div class="layout-editor-controls">
+                    <div class="field-control-group">
+                        <span class="field-control-label">选中字段字号</span>
+                        <button type="button" class="btn btn-secondary btn-small" id="selectedFieldFontDecreaseButton">-</button>
+                        <input id="selectedFieldFontSize" class="form-control compact-number-input" type="number" disabled>
+                        <span class="field-control-unit" id="selectedFieldFontUnit">-</span>
+                        <button type="button" class="btn btn-secondary btn-small" id="selectedFieldFontIncreaseButton">+</button>
+                        <button type="button" class="btn btn-secondary btn-small" id="resetSelectedFieldFontButton">重置字号</button>
+                    </div>
+                    <div class="field-control-group">
+                        <span class="field-control-label">宽 mm</span>
+                        <button type="button" class="btn btn-secondary btn-small" id="selectedFieldWidthDecreaseButton">-</button>
+                        <input id="selectedFieldWidth" class="form-control compact-number-input" type="number" disabled>
+                        <button type="button" class="btn btn-secondary btn-small" id="selectedFieldWidthIncreaseButton">+</button>
+                        <button type="button" class="btn btn-secondary btn-small" id="resetSelectedFieldWidthButton">自动宽</button>
+                    </div>
+                    <div class="field-control-group">
+                        <span class="field-control-label">高 mm</span>
+                        <button type="button" class="btn btn-secondary btn-small" id="selectedFieldHeightDecreaseButton">-</button>
+                        <input id="selectedFieldHeight" class="form-control compact-number-input" type="number" disabled>
+                        <button type="button" class="btn btn-secondary btn-small" id="selectedFieldHeightIncreaseButton">+</button>
+                        <button type="button" class="btn btn-secondary btn-small" id="resetSelectedFieldHeightButton">自动高</button>
+                    </div>
+                    <div class="field-control-group">
+                        <span class="field-control-label">对齐</span>
+                        <button type="button" class="btn btn-secondary btn-small" id="alignLeftButton">左对齐</button>
+                        <button type="button" class="btn btn-secondary btn-small" id="alignHorizontalCenterButton">水平居中</button>
+                        <button type="button" class="btn btn-secondary btn-small" id="alignRightButton">右对齐</button>
+                        <button type="button" class="btn btn-secondary btn-small" id="alignTopButton">顶部</button>
+                        <button type="button" class="btn btn-secondary btn-small" id="alignVerticalCenterButton">垂直居中</button>
+                        <button type="button" class="btn btn-secondary btn-small" id="alignBottomButton">底部</button>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-small" id="resetSelectedFieldButton" disabled>重置当前字段</button>
+                </div>
+            </div>
+            <div class="bottom-settings-grid">
+                <div class="field-editor-card zebra-product-only">
+                    <div class="field-editor-title">{{ product_section_title or "产品编码标签" }}字号</div>
+                    <div class="font-setting-grid">
+                        <div>
+                            <label for="productNameFontSize">{{ product_name_font_size_label or "产品名称字号" }}</label>
+                            <input id="productNameFontSize" class="form-control" type="number" min="8" max="28" value="14">
+                        </div>
+                        <div>
+                            <label for="productMetaFontSize">顶部信息字号</label>
+                            <input id="productMetaFontSize" class="form-control" type="number" min="8" max="28" value="12">
+                        </div>
+                        <div>
+                            <label for="productMaterialCodeFontSize">{{ product_code_font_size_label or "产品型号/序列号字号" }}</label>
+                            <input id="productMaterialCodeFontSize" class="form-control" type="number" min="8" max="28" value="14">
+                        </div>
+                        <div>
+                            <label for="productCodeFontSize">二维码尺寸 mm</label>
+                            <input id="productCodeFontSize" class="form-control" type="number" min="4" max="24" step="0.5" value="6.4">
+                        </div>
+                        <div>
+                            <label for="productFooterFontSize">底部信息字号</label>
+                            <input id="productFooterFontSize" class="form-control" type="number" min="8" max="28" value="12">
+                        </div>
+                        <div>
+                            <label for="productWorkOrderNumberFontSize">工单号字号</label>
+                            <input id="productWorkOrderNumberFontSize" class="form-control" type="number" min="8" max="28" value="12">
+                        </div>
+                        <div>
+                            <label for="productProcessNameFontSize">工序字号</label>
+                            <input id="productProcessNameFontSize" class="form-control" type="number" min="8" max="28" value="12">
+                        </div>
+                    </div>
+                </div>
+                <div class="field-editor-card zebra-material-only">
+                    <div class="field-editor-title">物料标签字号</div>
+                    <div class="font-setting-grid">
+                        <div>
+                            <label for="materialInfoFontSize">信息字号</label>
+                            <input id="materialInfoFontSize" class="form-control" type="number" min="8" max="28" value="12">
+                        </div>
+                        <div>
+                            <label for="materialCodeFontSize">物料编码字号</label>
+                            <input id="materialCodeFontSize" class="form-control" type="number" min="8" max="28" value="12">
+                        </div>
+                        <div>
+                            <label for="materialProjectFontSize">项目字号</label>
+                            <input id="materialProjectFontSize" class="form-control" type="number" min="8" max="24" step="1" value="12">
+                        </div>
+                    </div>
+                </div>
+                <div class="field-editor-card">
+                    <div class="field-editor-title">打印设置</div>
+                    <div class="zebra-tip" id="printerProfileNotes"></div>
+                    <div class="zebra-settings-grid">
+                        <div class="form-group">
+                            <label for="printerProfile">打印机配置</label>
+                            <select id="printerProfile" class="form-control">
+                                <option value="zebra">标准标签机</option>
+                                <option value="deli_ge350">deli GE350 热敏机</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="printLayoutMode">输出方式</label>
+                            <select id="printLayoutMode" class="form-control">
+                                <option value="single_label">单张标签连续打印</option>
+                                <option value="compact_portrait">紧凑分页打印</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="printPageSize">纸张尺寸</label>
+                            <select id="printPageSize" class="form-control">
+                                <option value="GE350_80MM">60 x 80 标签纸</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="labelsPerPage">每页标签数</label>
+                            <input id="labelsPerPage" class="form-control" type="number" min="1" max="10" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="printScale">紧凑打印缩放</label>
+                            <input id="printScale" class="form-control" type="number" min="40" max="100" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="printGapMm">标签间距 mm</label>
+                            <input id="printGapMm" class="form-control" type="number" min="0" max="20" step="0.5" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="pageMarginMm">页面边距 mm</label>
+                            <input id="pageMarginMm" class="form-control" type="number" min="0" max="20" step="0.5" value="0">
+                        </div>
+                        <div class="form-group zebra-product-only">
+                            <label for="productRotation">{{ product_rotation_label or "产品编码方向" }}</label>
+                            <select id="productRotation" class="form-control">
+                                <option value="0">纵向输出</option>
+                            </select>
+                        </div>
+                        <div class="form-group zebra-material-only">
+                            <label for="materialRotation">物料编码方向</label>
+                            <select id="materialRotation" class="form-control">
+                                <option value="0">横向输出</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        </div>
+        </div>
+    </div>
+</div>
+
+<template id="materialRowTemplate">
+    <div class="material-row">
+        <div class="material-row-header">
+            <strong class="material-row-title">未填写物料编码</strong>
+            <button type="button" class="btn btn-danger btn-small material-remove-button">删除</button>
+        </div>
+        <div class="zebra-form-grid material-form-grid">
+            <div class="form-group">
+                <label>工单号</label>
+                <input class="form-control material-ticket-no" type="text" placeholder="例如：MO0000930">
+            </div>
+            <div class="form-group">
+                <label>产品名称</label>
+                <input class="form-control material-item-name" type="text" placeholder="例如：转子总成">
+            </div>
+            <div class="form-group">
+                <label>物料编码</label>
+                <input class="form-control material-code" type="text" placeholder="例如：T45130732.A1">
+            </div>
+            <div class="form-group">
+                <label>物料名称</label>
+                <input class="form-control material-name" type="text" placeholder="例如：永磁体">
+            </div>
+            <div class="form-group">
+                <label>物料规格</label>
+                <input class="form-control material-spec" type="text" placeholder="例如：3.5×9.7×15mm">
+            </div>
+            <div class="form-group">
+                <label>数量</label>
+                <input class="form-control material-quantity" type="text" placeholder="例如：120">
+            </div>
+            <div class="form-group">
+                <label>批号</label>
+                <input class="form-control material-batch-no" type="text" placeholder="例如：B24040301">
+            </div>
+            <div class="form-group">
+                <label>项目</label>
+                <input class="form-control material-project" type="text" placeholder="默认可同步产品项目">
+            </div>
+            <div class="form-group zebra-span-2">
+                <label>二维码内容</label>
+                <input class="form-control material-qr-value" type="text" placeholder="默认跟随物料编码，可由 Excel 导入">
+            </div>
+            <div class="form-group">
+                <label>打印份数</label>
+                <input class="form-control material-copies" type="number" min="1" max="50" value="1">
+            </div>
+        </div>
+        <div class="material-shared-values">
+            <div class="custom-field-editor-header">
+                <strong>物料新增字段数据</strong>
+            </div>
+            <div class="custom-field-tip">这里填写上方“物料字段名称”里新增字段的内容。</div>
+            <div class="zebra-form-grid material-form-grid material-shared-values-grid"></div>
+        </div>
+    </div>
+</template>
+
+<template id="materialSharedFieldTemplate">
+    <div class="custom-field-row material-shared-field-row">
+        <div class="form-group zebra-span-2">
+            <label>字段名称</label>
+            <input class="form-control material-shared-field-label" type="text" placeholder="例如：供应商 / 仓位 / 备注">
+        </div>
+        <button type="button" class="btn btn-danger btn-small material-shared-field-remove-button">删除</button>
+    </div>
+</template>
+
+<template id="customFieldRowTemplate">
+    <div class="custom-field-row">
+        <div class="form-group">
+            <label>字段名称</label>
+            <input class="form-control custom-field-label" type="text" placeholder="例如：客户 / 批次 / 备注">
+        </div>
+        <div class="form-group">
+            <label>字段内容</label>
+            <input class="form-control custom-field-value" type="text" placeholder="输入展示内容">
+        </div>
+        <button type="button" class="btn btn-danger btn-small custom-field-remove-button">删除</button>
+    </div>
+</template>
+<style id="zebraInteractiveStyle">
+.product-layout-photo,.material-layout-photo{position:relative;overflow:hidden}
+.layout-field{position:absolute;box-sizing:border-box;border:1px dashed transparent;border-radius:4px;padding:.3mm .5mm;background:rgba(255,255,255,.01);cursor:move;user-select:none;touch-action:none}
+.layout-field:hover{border-color:rgba(15,118,110,.35);background:rgba(255,255,255,.16)}
+.layout-field.is-selected{border-color:#0f766e;background:rgba(15,118,110,.08);box-shadow:0 0 0 1px rgba(15,118,110,.16)}
+.layout-field-text{width:100%;height:100%;display:flex;align-items:flex-start;gap:1.1mm;line-height:1.18;word-break:break-word}
+.layout-field-text.is-centered{justify-content:center;text-align:center}
+.layout-field-text strong{font-weight:800;flex:0 0 auto}
+.layout-field-text span{min-width:0}
+.layout-field-qr{padding:0;display:flex;align-items:center;justify-content:center}
+.layout-field-qr img{width:100%;height:100%;object-fit:contain;display:block}
+.material-field-label-editor{display:flex!important}
+#addMaterialSharedFieldButton{display:inline-flex!important}
+#materialSharedFieldList{display:none!important}
+.product-form-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field-editor-row-actions{display:grid;grid-template-columns:minmax(84px,1fr) auto;align-items:center;gap:.75rem;width:100%}
+.field-editor-row-actions .field-editor-label-input{margin-bottom:0;min-width:0;width:100%}
+.field-editor-row-actions .field-editor-remove-button{flex:0 0 auto;min-width:64px}
+.material-label-form-grid .field-editor-card{display:flex;flex-direction:column;align-items:stretch;gap:.75rem}
+.material-label-form-grid .field-editor-label-input{margin-bottom:0;flex:1}
+.material-label-form-grid .field-editor-remove-button{flex:0 0 auto;min-width:72px}
+.material-label-form-grid .material-dynamic-field-card{grid-column:span 1}
+.material-row.has-shared-fields .material-shared-values{display:none!important}
+.material-field-label-editor{display:flex!important}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var SAMPLE_PRODUCT = {{ (sample_product or {}) | tojson }};
+    var PRODUCT_FIELD_DEFS = {{ (product_field_defs or []) | tojson }};
+    var PRODUCT_PASTE_FIELD_ALIASES = {{ (product_paste_field_aliases or {}) | tojson }};
+    var PRODUCT_QR_SOURCE_KEYS = {{ (product_qr_source_keys or ['productCode', 'productSerialNumber']) | tojson }};
+    var PRODUCT_QR_SEPARATOR = {{ (product_qr_separator or '') | tojson }};
+    var PRODUCT_UI_TEXT = {
+        dataTabTitle: {{ (product_data_tab_title or '产品数据') | tojson }},
+        sectionTitle: {{ (product_section_title or '产品编码标签') | tojson }},
+        printButtonText: {{ (product_print_button_text or '打印产品码') | tojson }},
+        nameLabel: {{ (product_name_label_default or '产品名称') | tojson }},
+        codeLabel: {{ (product_code_label_default or '产品型号') | tojson }},
+        serialLabel: {{ (product_serial_label_default or '序列号') | tojson }},
+        printPreviewTitle: {{ (product_print_preview_title or '产品码打印') | tojson }}
+    };
+
+    var SAMPLE_MATERIALS = [
+        {
+            ticketNo: 'MO0000930',
+            itemName: '电控总成',
+            materialCode: 'D12280055',
+            materialName: '涂胶板',
+            materialSpec: '02_CAPB1_D_02',
+            quantity: '2',
+            batchNo: 'B24040301',
+            projectName: '柳工1.8T挖机',
+            qrValue: 'D12280055',
+            copies: '1'
+        }
+    ];
+    window.__activeProductPage = 0;
+    window.__productRowsData = [];
+    window.__activeMaterialPage = 0;
+    window.__selectedLayoutField = null;
+    window.__materialSharedFields = [];
+
+    function cloneJson(obj) {
+        return JSON.parse(JSON.stringify(obj));
+    }
+
+    function ensureMaterialSharedFields() {
+        if (!Array.isArray(window.__materialSharedFields)) {
+            window.__materialSharedFields = [];
+        }
+        return window.__materialSharedFields;
+    }
+
+    function materialSharedFieldId(label) {
+        var base = normalizePasteHeader(label || 'field') || 'field';
+        var all = ensureMaterialSharedFields();
+        var candidate = 'mf_' + base;
+        var i = 1;
+        while (all.some(function (item) { return item.id === candidate; })) {
+            candidate = 'mf_' + base + '_' + i;
+            i += 1;
+        }
+        return candidate;
+    }
+
+    function upsertMaterialSharedField(label, preferredId, options) {
+        var cleanLabel = String(label || '').trim();
+        if (!cleanLabel) return '';
+        var all = ensureMaterialSharedFields();
+        var nextRemovable = !(options && options.removable === false);
+        var existed = all.find(function (item) {
+            return normalizePasteHeader(item.label) === normalizePasteHeader(cleanLabel) || (preferredId && item.id === preferredId);
+        });
+        if (existed) {
+            if (cleanLabel) existed.label = cleanLabel;
+            if (options && Object.prototype.hasOwnProperty.call(options, 'removable')) {
+                existed.removable = nextRemovable;
+            }
+            return existed.id;
+        }
+        var fieldId = preferredId || materialSharedFieldId(cleanLabel);
+        all.push({ id: fieldId, label: cleanLabel, removable: nextRemovable });
+        return fieldId;
+    }
+
+    function defaultProductFieldDefs() {
+        return PRODUCT_FIELD_DEFS.map(function (def) {
+            var next = Object.assign({}, def || {});
+            next.key = String(next.key || '').trim();
+            next.dataKey = String(next.dataKey || '').trim();
+            next.labelInputId = String(next.labelInputId || '').trim();
+            next.valueInputId = String(next.valueInputId || '').trim();
+            next.defaultLabel = String(next.defaultLabel || '').trim() || next.key;
+            next.placeholder = String(next.placeholder || '').trim();
+            next.span = Number(next.span || 1);
+            return next;
+        }).filter(function (def) {
+            return def.key && def.dataKey && def.labelInputId && def.valueInputId;
+        });
+    }
+
+    function getProductFieldDef(key) {
+        return defaultProductFieldDefs().find(function (def) { return def.key === key; }) || null;
+    }
+
+    function getProductFieldDefByDataKey(dataKey) {
+        return defaultProductFieldDefs().find(function (def) { return def.dataKey === dataKey; }) || null;
+    }
+
+    function getProductFieldValueMap(data) {
+        var source = data || {};
+        var values = {};
+        defaultProductFieldDefs().forEach(function (def) {
+            values[def.key] = String(source[def.dataKey] || '').trim();
+        });
+        return values;
+    }
+
+    function buildDefaultProductLayoutState() {
+        var defs = defaultProductFieldDefs();
+        var legacyKeys = ['project', 'name', 'code', 'serial', 'qty', 'order', 'process'];
+        var isLegacy = defs.length === legacyKeys.length && defs.every(function (def, index) {
+            return def.key === legacyKeys[index];
+        });
+        if (isLegacy) {
+            return {
+                name: { x: 5.8, y: 1.2, width: 39.4, height: 6.7, fontSize: 3.25, align: 'left' },
+                code: { x: 5.8, y: 8.4, width: 39.4, height: 7.4, fontSize: 3.25, align: 'left' },
+                serial: { x: 5.8, y: 16.7, width: 39.4, height: 6.7, fontSize: 3.25, align: 'left' },
+                project: { x: 5.8, y: 24.5, width: 39.4, height: 4.7, fontSize: 3.25, align: 'left' },
+                qty: { x: 5.8, y: 30.6, width: 39.4, height: 4.7, fontSize: 3.25, align: 'left' },
+                order: { x: 5.8, y: 36.7, width: 39.4, height: 4.7, fontSize: 3.25, align: 'left' },
+                process: { x: 5.8, y: 42.8, width: 39.4, height: 5.5, fontSize: 3.25, align: 'left' },
+                qr: { x: 16.4, y: 51.8, width: 18.2, height: 18.2, fontSize: 0, align: 'center' }
+            };
+        }
+
+        var layout = {};
+        var top = 1.2;
+        var gap = 0.35;
+        var x = 4.2;
+        var width = 42.6;
+        defs.forEach(function (def) {
+            layout[def.key] = {
+                x: x,
+                y: Math.round(top * 10) / 10,
+                width: width,
+                height: 3.7,
+                fontSize: 2.25,
+                align: 'left'
+            };
+            top += 4.05;
+        });
+        layout.qr = { x: 18.5, y: 55.2, width: 14, height: 14, fontSize: 0, align: 'center' };
+        return layout;
+    }
+
+    function defaultLayoutState() {
+        return {
+            product: buildDefaultProductLayoutState(),
+            material: {
+                ticket: { x: 3, y: 2.2, width: 40, height: 5.4, fontSize: 3.3, align: 'left' },
+                item: { x: 3, y: 8.1, width: 40, height: 5.4, fontSize: 3.3, align: 'left' },
+                code: { x: 3, y: 14, width: 41, height: 5.4, fontSize: 3.3, align: 'left' },
+                name: { x: 3, y: 19.9, width: 39, height: 5.4, fontSize: 3.3, align: 'left' },
+                spec: { x: 3, y: 26.6, width: 40, height: 8, fontSize: 3.3, align: 'left' },
+                qty: { x: 3, y: 35, width: 18, height: 5.4, fontSize: 3.3, align: 'left' },
+                batch: { x: 3, y: 40.9, width: 30, height: 5.4, fontSize: 3.3, align: 'left' },
+                project: { x: 3, y: 46.8, width: 38, height: 5.4, fontSize: 3.3, align: 'left' },
+                qr: { x: 50.5, y: 3, width: 22, height: 22, fontSize: 0, align: 'center' }
+            }
+        };
+    }
+
+    function ensureLayoutState() {
+        if (!window.__layoutState) {
+            window.__layoutState = defaultLayoutState();
+        }
+        return window.__layoutState;
+    }
+
+    function getLayoutField(mode, key) {
+        var state = ensureLayoutState();
+        if (!state[mode]) state[mode] = {};
+        if (!state[mode][key]) {
+            state[mode][key] = cloneJson(defaultLayoutState()[mode][key]);
+        }
+        return state[mode][key];
+    }
+
+    function resetLayoutMode(mode) {
+        var defaults = defaultLayoutState();
+        ensureLayoutState()[mode] = cloneJson(defaults[mode]);
+        if (window.__selectedLayoutField && window.__selectedLayoutField.mode === mode) {
+            window.__selectedLayoutField = null;
+        }
+        updateSelectedFieldControls();
+        renderFallbackPreviews();
+    }
+
+    function getPaperSize(mode) {
+        return mode === 'material' ? { width: 74, height: 54.6 } : { width: 51, height: 70 };
+    }
+
+    function clampLayoutFieldPosition(mode, cfg) {
+        var paper = getPaperSize(mode);
+        var width = Math.max(0, Number(cfg.width || 0));
+        var height = Math.max(0, Number(cfg.height || 0));
+        var maxX = Math.max(0, paper.width - width);
+        var maxY = Math.max(0, paper.height - height);
+        cfg.x = Math.min(maxX, Math.max(0, Number(cfg.x || 0)));
+        cfg.y = Math.min(maxY, Math.max(0, Number(cfg.y || 0)));
+    }
+
+    function markSelectedFieldElement(field) {
+        document.querySelectorAll('.layout-field.is-selected').forEach(function (node) {
+            if (node !== field) node.classList.remove('is-selected');
+        });
+        if (field) field.classList.add('is-selected');
+    }
+
+    function getSelectedFieldMetricsMm() {
+        if (!window.__selectedLayoutField || !window.__selectedLayoutField.element) return null;
+        var el = window.__selectedLayoutField.element;
+        var parent = el.parentElement;
+        if (!parent) return null;
+        var rect = el.getBoundingClientRect();
+        var parentRect = parent.getBoundingClientRect();
+        var paper = getPaperSize(window.__selectedLayoutField.mode);
+        if (!parentRect.width || !parentRect.height) return null;
+        return {
+            width: rect.width * paper.width / parentRect.width,
+            height: rect.height * paper.height / parentRect.height
+        };
+    }
+
+    function updateLayoutStatus(text) {
+        var el = document.getElementById('layoutEditorStatus');
+        if (el) el.textContent = text;
+    }
+
+    function updateSelectedFieldControls() {
+        var fontInput = document.getElementById('selectedFieldFontSize');
+        var widthInput = document.getElementById('selectedFieldWidth');
+        var heightInput = document.getElementById('selectedFieldHeight');
+        var resetBtn = document.getElementById('resetSelectedFieldButton');
+        var fontUnit = document.getElementById('selectedFieldFontUnit');
+        var selected = window.__selectedLayoutField;
+        if (!fontInput || !widthInput || !heightInput || !resetBtn || !fontUnit) return;
+        if (!selected) {
+            fontInput.value = '';
+            widthInput.value = '';
+            heightInput.value = '';
+            fontInput.disabled = true;
+            widthInput.disabled = true;
+            heightInput.disabled = true;
+            resetBtn.disabled = true;
+            fontUnit.textContent = '-';
+            updateLayoutStatus('点击预览中的字段后，可调整位置、字号和文本框尺寸。');
+            return;
+        }
+        var cfg = getLayoutField(selected.mode, selected.key);
+        var metrics = getSelectedFieldMetricsMm();
+        fontInput.disabled = false;
+        widthInput.disabled = false;
+        heightInput.disabled = false;
+        resetBtn.disabled = false;
+        fontUnit.textContent = 'mm';
+        fontInput.value = Number(cfg.fontSize || 0).toFixed(1);
+        widthInput.value = cfg.width != null ? Number(cfg.width).toFixed(1) : (metrics ? metrics.width.toFixed(1) : '');
+        heightInput.value = cfg.height != null ? Number(cfg.height).toFixed(1) : (metrics ? metrics.height.toFixed(1) : '');
+        updateLayoutStatus('已选中字段：' + selected.label + '，可拖动移动，并用下面控件调整字号、宽高和对齐。');
+    }
+
+    function setSelectedLayoutField(mode, key, label, element, skipRender) {
+        window.__selectedLayoutField = { mode: mode, key: key, label: label, element: element };
+        markSelectedFieldElement(element);
+        updateSelectedFieldControls();
+        if (!skipRender) {
+            renderFallbackPreviews();
+        }
+    }
+
+    function adjustSelectedField(prop, delta, minValue) {
+        var selected = window.__selectedLayoutField;
+        if (!selected) return;
+        var cfg = getLayoutField(selected.mode, selected.key);
+        var current = Number(cfg[prop] || 0);
+        cfg[prop] = Math.max(minValue, Math.round((current + delta) * 10) / 10);
+        if (prop === 'width' || prop === 'height') {
+            clampLayoutFieldPosition(selected.mode, cfg);
+        }
+        renderFallbackPreviews();
+    }
+
+    function setSelectedFieldNumeric(prop, value) {
+        var selected = window.__selectedLayoutField;
+        if (!selected) return;
+        var num = Number(value);
+        if (!Number.isFinite(num)) return;
+        getLayoutField(selected.mode, selected.key).manual = true;
+        getLayoutField(selected.mode, selected.key)[prop] = num;
+        if (prop === 'width' || prop === 'height') {
+            clampLayoutFieldPosition(selected.mode, getLayoutField(selected.mode, selected.key));
+        }
+        renderFallbackPreviews();
+    }
+
+    function resetSelectedFieldSize(prop) {
+        var selected = window.__selectedLayoutField;
+        if (!selected) return;
+        var defaults = defaultLayoutState()[selected.mode][selected.key];
+        if (defaults && Object.prototype.hasOwnProperty.call(defaults, prop)) {
+            getLayoutField(selected.mode, selected.key)[prop] = cloneJson(defaults[prop]);
+        }
+        renderFallbackPreviews();
+    }
+
+    function alignSelectedField(horizontal, vertical) {
+        var selected = window.__selectedLayoutField;
+        if (!selected) return;
+        var cfg = getLayoutField(selected.mode, selected.key);
+        cfg.manual = true;
+        var paper = getPaperSize(selected.mode);
+        var metrics = getSelectedFieldMetricsMm() || { width: cfg.width || 0, height: cfg.height || 0 };
+        var width = cfg.width != null ? cfg.width : metrics.width;
+        var height = cfg.height != null ? cfg.height : metrics.height;
+        if (horizontal === 'left') cfg.x = 0;
+        if (horizontal === 'center') cfg.x = Math.max(0, (paper.width - width) / 2);
+        if (horizontal === 'right') cfg.x = Math.max(0, paper.width - width);
+        if (vertical === 'top') cfg.y = 0;
+        if (vertical === 'middle') cfg.y = Math.max(0, (paper.height - height) / 2);
+        if (vertical === 'bottom') cfg.y = Math.max(0, paper.height - height);
+        clampLayoutFieldPosition(selected.mode, cfg);
+        renderFallbackPreviews();
+    }
+
+    function estimateLayoutLines(labelText, valueText, widthMm, fontSizeMm) {
+        function weightedUnits(text) {
+            return Array.prototype.reduce.call(String(text || ''), function (total, ch) {
+                if (/\s/.test(ch)) return total + 0.35;
+                if (/[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/.test(ch)) return total + 1.95;
+                if (/[A-Z0-9]/.test(ch)) return total + 1.18;
+                if (/[a-z]/.test(ch)) return total + 0.98;
+                return total + 0.82;
+            }, 0);
+        }
+        var lineUnits = Math.max(7.5, (Number(widthMm || 1) * 1.18) / Math.max(1, Number(fontSizeMm || 1)));
+        var labelUnits = weightedUnits(labelText) + 0.6;
+        var valueUnits = weightedUnits(valueText);
+        var firstLineCapacity = Math.max(1.8, lineUnits - Math.min(labelUnits, lineUnits * 0.78));
+        if (valueUnits <= firstLineCapacity) {
+            return 1;
+        }
+        return 1 + Math.ceil((valueUnits - firstLineCapacity) / lineUnits);
+    }
+
+    function hasPreviewLayoutCollision(mode) {
+        var wrap = document.getElementById(mode === 'product' ? 'productPreview' : 'materialsPreview');
+        if (!wrap) return false;
+        var layout = wrap.querySelector(mode === 'product' ? '.product-layout-photo' : '.material-layout-photo');
+        if (!layout) return false;
+        var qrField = layout.querySelector('.layout-field-qr');
+        var layoutRect = layout.getBoundingClientRect();
+        var qrRect = qrField ? qrField.getBoundingClientRect() : null;
+        var hasIssue = false;
+        layout.querySelectorAll('.layout-field:not(.layout-field-qr)').forEach(function (field) {
+            if (hasIssue) return;
+            var text = field.querySelector('.layout-field-text');
+            var fieldRect = field.getBoundingClientRect();
+            if (text && (text.scrollHeight > text.clientHeight + 1 || text.scrollWidth > text.clientWidth + 1)) {
+                hasIssue = true;
+                return;
+            }
+            if (fieldRect.bottom > layoutRect.bottom - 1 || fieldRect.right > layoutRect.right - 1 || fieldRect.top < layoutRect.top - 1 || fieldRect.left < layoutRect.left - 1) {
+                hasIssue = true;
+                return;
+            }
+            if (!qrRect) return;
+            var gapViolation = fieldRect.bottom > qrRect.top - 4
+                && fieldRect.left < qrRect.right - 1
+                && fieldRect.right > qrRect.left + 1;
+            var overlap = !(fieldRect.right <= qrRect.left + 1 || fieldRect.left >= qrRect.right - 1 || fieldRect.bottom <= qrRect.top + 1 || fieldRect.top >= qrRect.bottom - 1);
+            if (gapViolation || overlap) {
+                hasIssue = true;
+            }
+        });
+        if (!hasIssue && qrRect) {
+            hasIssue = qrRect.bottom > layoutRect.bottom - 1
+                || qrRect.right > layoutRect.right - 1
+                || qrRect.left < layoutRect.left - 1
+                || qrRect.top < layoutRect.top - 1;
+        }
+        return hasIssue;
+    }
+
+    function autoOptimizeProductLayout() {
+        syncActiveProductPageData();
+        if (!hasPreviewLayoutCollision('product')) {
+            return;
+        }
+        var state = (Array.isArray(window.__productRowsData) && window.__productRowsData.length)
+            ? window.__productRowsData[Math.max(0, Math.min(window.__activeProductPage || 0, window.__productRowsData.length - 1))]
+            : {
+                data: getCurrentProductFormData(),
+                visibleFields: getProductEditorVisibleFields(),
+                fieldLabels: getCurrentProductFieldLabels()
+            };
+        var visibleFields = Array.isArray(state.visibleFields) && state.visibleFields.length ? state.visibleFields.slice() : getProductEditorVisibleFields();
+        var data = state.data || getCurrentProductFormData();
+        var labels = state.fieldLabels || getCurrentProductFieldLabels();
+        var paper = getPaperSize('product');
+        var placed = null;
+        var previousLayout = cloneJson(ensureLayoutState().product);
+        var valueMap = getProductFieldValueMap(data);
+
+        function valueForKey(key) {
+            return String(valueMap[key] || '');
+        }
+
+        function labelForKey(key) {
+            return String(labels[key] || '').trim() || (getProductFieldDef(key) || {}).defaultLabel || '';
+        }
+
+        function buildAttempt(fontSize, width, qrMin, qrMax, top, bottomPadding, qrGap, tightGap, looseGap) {
+            var cursorY = top;
+            var layout = [];
+            visibleFields.forEach(function (key, index) {
+                var labelText = labelForKey(key);
+                var valueText = valueForKey(key);
+                var lines = estimateLayoutLines(labelText, valueText, width, fontSize);
+                var minHeight = Math.max(key === 'process' ? 4.6 : 4.1, lines * fontSize * 1.22 + (lines > 1 ? 1 : 0.78));
+                layout.push({
+                    key: key,
+                    x: Math.round((paper.width - width) / 2 * 10) / 10,
+                    y: Math.round(cursorY * 10) / 10,
+                    width: width,
+                    height: Math.round(minHeight * 10) / 10,
+                    fontSize: fontSize
+                });
+                if (index < visibleFields.length - 1) {
+                    cursorY += minHeight + (index < 2 ? tightGap : looseGap);
+                } else {
+                    cursorY += minHeight;
+                }
+            });
+            var remaining = paper.height - bottomPadding - cursorY - qrGap;
+            if (remaining < qrMin) {
+                return null;
+            }
+            return {
+                fields: layout,
+                qrSize: Math.min(qrMax, remaining),
+                qrY: cursorY + qrGap
+            };
+        }
+
+        function applyCandidate(candidate) {
+            candidate.fields.forEach(function (item) {
+                var cfg = getLayoutField('product', item.key);
+                cfg.manual = true;
+                cfg.x = item.x;
+                cfg.y = item.y;
+                cfg.width = item.width;
+                cfg.height = item.height;
+                cfg.fontSize = item.fontSize;
+                cfg.align = 'left';
+            });
+            var qr = getLayoutField('product', 'qr');
+            qr.manual = true;
+            qr.width = Math.round(candidate.qrSize * 10) / 10;
+            qr.height = Math.round(candidate.qrSize * 10) / 10;
+            qr.x = Math.round((paper.width - qr.width) / 2 * 10) / 10;
+            qr.y = Math.round(Math.max(candidate.fields.length ? candidate.fields[candidate.fields.length - 1].y + candidate.fields[candidate.fields.length - 1].height + 1.2 : candidate.qrY, candidate.qrY) * 10) / 10;
+            clampLayoutFieldPosition('product', qr);
+            renderFallbackPreviews();
+        }
+
+        var attempts = [
+            { fontSize: 3.2, width: 39.4, qrMin: 16, qrMax: 18.8, top: 1.2, bottomPadding: 1.2, qrGap: 1.35, tightGap: 0.9, looseGap: 1.05 },
+            { fontSize: 3.05, width: 40.2, qrMin: 15.6, qrMax: 18.4, top: 1.15, bottomPadding: 1.15, qrGap: 1.25, tightGap: 0.82, looseGap: 0.96 },
+            { fontSize: 2.9, width: 41, qrMin: 15, qrMax: 18, top: 1.1, bottomPadding: 1.1, qrGap: 1.2, tightGap: 0.76, looseGap: 0.9 },
+            { fontSize: 2.75, width: 41.8, qrMin: 14.5, qrMax: 17.5, top: 1.05, bottomPadding: 1.05, qrGap: 1.15, tightGap: 0.72, looseGap: 0.84 },
+            { fontSize: 2.6, width: 42.6, qrMin: 14, qrMax: 17, top: 1, bottomPadding: 1, qrGap: 1.05, tightGap: 0.66, looseGap: 0.78 },
+            { fontSize: 2.45, width: 43.2, qrMin: 13.5, qrMax: 16.5, top: 0.95, bottomPadding: 0.95, qrGap: 1, tightGap: 0.6, looseGap: 0.72 },
+            { fontSize: 2.3, width: 43.8, qrMin: 13, qrMax: 16, top: 0.9, bottomPadding: 0.9, qrGap: 0.95, tightGap: 0.56, looseGap: 0.66 }
+        ];
+        if (visibleFields.length) {
+            attempts.push({ fontSize: 2.2, width: 44.2, qrMin: 12.5, qrMax: 15.5, top: 0.8, bottomPadding: 0.8, qrGap: 0.85, tightGap: 0.5, looseGap: 0.6 });
+        }
+
+        var success = attempts.some(function (attempt) {
+            placed = buildAttempt(
+                attempt.fontSize,
+                attempt.width,
+                attempt.qrMin,
+                attempt.qrMax,
+                attempt.top,
+                attempt.bottomPadding,
+                attempt.qrGap,
+                attempt.tightGap,
+                attempt.looseGap
+            );
+            if (!placed) return false;
+            applyCandidate(placed);
+            return !hasPreviewLayoutCollision('product');
+        });
+
+        if (!success) {
+            ensureLayoutState().product = previousLayout;
+            renderFallbackPreviews();
+        }
+    }
+
+    function autoOptimizeMaterialLayout() {
+        var row = getActiveMaterialRow();
+        if (!row) return;
+        var rowMeta = getMaterialRowMeta(row);
+        var visibleKeys = rowMeta.visibleFields.length ? rowMeta.visibleFields.slice() : defaultMaterialFieldDefs().map(function (def) { return def.key; });
+        var sharedFields = getMaterialOrderedSharedFields(rowMeta).filter(function (field) {
+            return String((rowMeta.sharedFieldValues || {})[field.id] || '').trim();
+        });
+        var total = visibleKeys.length + sharedFields.length;
+        var leftCount = Math.min(total, 8);
+        var leftWidth = 42.5;
+        var rightWidth = 20;
+        var leftFont = total > 6 ? 3.0 : 3.3;
+        var rightFont = total > 9 ? 2.8 : 3.0;
+        var leftCursor = 2.4;
+        var rightCursor = 28.4;
+        visibleKeys.forEach(function (key, index) {
+            var def = getMaterialFieldDefByKey(key);
+            if (!def) return;
+            var cfg = getLayoutField('material', def.layoutKey);
+            cfg.manual = true;
+            cfg.align = 'left';
+            if (index < leftCount) {
+                var leftLines = estimateLayoutLines(getInputValue(def.labelInputId) || def.defaultLabel, (row.querySelector(def.selector) || {}).value || '', leftWidth, leftFont);
+                cfg.x = 3;
+                cfg.y = Math.round(leftCursor * 10) / 10;
+                cfg.width = leftWidth;
+                cfg.fontSize = leftFont;
+                cfg.height = Math.round(Math.max(4.6, leftLines * leftFont * 1.2 + 0.8) * 10) / 10;
+                leftCursor += cfg.height + 0.8;
+            } else {
+                var rightLines = estimateLayoutLines(getInputValue(def.labelInputId) || def.defaultLabel, (row.querySelector(def.selector) || {}).value || '', rightWidth, rightFont);
+                cfg.x = 50.5;
+                cfg.y = Math.round(rightCursor * 10) / 10;
+                cfg.width = rightWidth;
+                cfg.fontSize = rightFont;
+                cfg.height = Math.round(Math.max(4.2, rightLines * rightFont * 1.15 + 0.6) * 10) / 10;
+                rightCursor += cfg.height + 0.7;
+            }
+        });
+        sharedFields.forEach(function (field, index) {
+            var globalIndex = visibleKeys.length + index;
+            var cfg = getMaterialSharedLayoutField(field.id, index);
+            cfg.manual = true;
+            cfg.align = 'left';
+            if (globalIndex < leftCount) {
+                var leftLines = estimateLayoutLines(field.label || '新增字段', (rowMeta.sharedFieldValues || {})[field.id] || '', leftWidth, leftFont);
+                cfg.x = 3;
+                cfg.y = Math.round(leftCursor * 10) / 10;
+                cfg.width = leftWidth;
+                cfg.fontSize = leftFont;
+                cfg.height = Math.round(Math.max(4.6, leftLines * leftFont * 1.2 + 0.8) * 10) / 10;
+                leftCursor += cfg.height + 0.8;
+            } else {
+                var rightLines = estimateLayoutLines(field.label || '新增字段', (rowMeta.sharedFieldValues || {})[field.id] || '', rightWidth, rightFont);
+                cfg.x = 50.5;
+                cfg.y = Math.round(rightCursor * 10) / 10;
+                cfg.width = rightWidth;
+                cfg.fontSize = rightFont;
+                cfg.height = Math.round(Math.max(4.2, rightLines * rightFont * 1.15 + 0.6) * 10) / 10;
+                rightCursor += cfg.height + 0.7;
+            }
+        });
+        var qr = getLayoutField('material', 'qr');
+        qr.manual = true;
+        qr.x = 50.5;
+        qr.y = 3;
+        qr.width = 22;
+        qr.height = 22;
+        clampLayoutFieldPosition('material', qr);
+        renderFallbackPreviews();
+    }
+
+    function bindLayoutEditorControls() {
+        if (window.__layoutControlBound) return;
+        window.__layoutControlBound = true;
+        var binds = [
+            ['selectedFieldFontDecreaseButton', function () { adjustSelectedField('fontSize', -0.2, 1); }],
+            ['selectedFieldFontIncreaseButton', function () { adjustSelectedField('fontSize', 0.2, 1); }],
+            ['resetSelectedFieldFontButton', function () { resetSelectedFieldSize('fontSize'); }],
+            ['selectedFieldWidthDecreaseButton', function () { adjustSelectedField('width', -1, 5); }],
+            ['selectedFieldWidthIncreaseButton', function () { adjustSelectedField('width', 1, 5); }],
+            ['resetSelectedFieldWidthButton', function () { resetSelectedFieldSize('width'); }],
+            ['selectedFieldHeightDecreaseButton', function () { adjustSelectedField('height', -1, 4); }],
+            ['selectedFieldHeightIncreaseButton', function () { adjustSelectedField('height', 1, 4); }],
+            ['resetSelectedFieldHeightButton', function () { resetSelectedFieldSize('height'); }],
+            ['alignLeftButton', function () { alignSelectedField('left', null); }],
+            ['alignHorizontalCenterButton', function () { alignSelectedField('center', null); }],
+            ['alignRightButton', function () { alignSelectedField('right', null); }],
+            ['alignTopButton', function () { alignSelectedField(null, 'top'); }],
+            ['alignVerticalCenterButton', function () { alignSelectedField(null, 'middle'); }],
+            ['alignBottomButton', function () { alignSelectedField(null, 'bottom'); }],
+            ['productAiLayoutButton', function () { autoOptimizeProductLayout(); }],
+            ['materialAiLayoutButton', function () { autoOptimizeMaterialLayout(); }],
+            ['resetSelectedFieldButton', function () {
+                var selected = window.__selectedLayoutField;
+                if (!selected) return;
+                var defaults = defaultLayoutState()[selected.mode][selected.key];
+                if (defaults) {
+                    ensureLayoutState()[selected.mode][selected.key] = cloneJson(defaults);
+                } else {
+                    delete ensureLayoutState()[selected.mode][selected.key].manual;
+                }
+                renderFallbackPreviews();
+            }],
+            ['resetProductLayoutButton', function () { resetLayoutMode('product'); }],
+            ['resetMaterialLayoutButton', function () { resetLayoutMode('material'); }]
+        ];
+        binds.forEach(function (item) {
+            var el = document.getElementById(item[0]);
+            if (el) el.addEventListener('click', item[1]);
+        });
+        var fontInput = document.getElementById('selectedFieldFontSize');
+        var widthInput = document.getElementById('selectedFieldWidth');
+        var heightInput = document.getElementById('selectedFieldHeight');
+        if (fontInput) fontInput.addEventListener('change', function () { setSelectedFieldNumeric('fontSize', fontInput.value); });
+        if (widthInput) widthInput.addEventListener('change', function () { setSelectedFieldNumeric('width', widthInput.value); });
+        if (heightInput) heightInput.addEventListener('change', function () { setSelectedFieldNumeric('height', heightInput.value); });
+    }
+
+    function bindDragForField(field, mode, key, label) {
+        field.addEventListener('pointerdown', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            setSelectedLayoutField(mode, key, label, field, true);
+            var startX = event.clientX;
+            var startY = event.clientY;
+            var cfg = getLayoutField(mode, key);
+            var startLeft = Number(cfg.x || 0);
+            var startTop = Number(cfg.y || 0);
+            var moved = false;
+            var parent = field.parentElement;
+            if (!parent) return;
+            var rect = parent.getBoundingClientRect();
+            var paper = getPaperSize(mode);
+
+            function onMove(moveEvent) {
+                var dx = moveEvent.clientX - startX;
+                var dy = moveEvent.clientY - startY;
+                if (!moved && Math.abs(dx) < 2 && Math.abs(dy) < 2) return;
+                moved = true;
+                cfg.manual = true;
+                cfg.x = Math.round((startLeft + dx * paper.width / rect.width) * 10) / 10;
+                cfg.y = Math.round((startTop + dy * paper.height / rect.height) * 10) / 10;
+                clampLayoutFieldPosition(mode, cfg);
+                field.style.left = cfg.x + 'mm';
+                field.style.top = cfg.y + 'mm';
+                updateSelectedFieldControls();
+            }
+
+            function onUp() {
+                document.removeEventListener('pointermove', onMove);
+                document.removeEventListener('pointerup', onUp);
+                if (moved) {
+                    renderFallbackPreviews();
+                }
+            }
+
+            document.addEventListener('pointermove', onMove);
+            document.addEventListener('pointerup', onUp);
+        });
+        field.addEventListener('click', function (event) {
+            event.stopPropagation();
+            setSelectedLayoutField(mode, key, label, field, true);
+        });
+    }
+
+    function createTextLayoutField(mode, key, labelText, valueText, cfg, centered) {
+        var field = document.createElement('div');
+        field.className = 'layout-field';
+        if (window.__selectedLayoutField && window.__selectedLayoutField.mode === mode && window.__selectedLayoutField.key === key) {
+            field.classList.add('is-selected');
+        }
+        field.style.left = cfg.x + 'mm';
+        field.style.top = cfg.y + 'mm';
+        field.style.width = cfg.width + 'mm';
+        field.style.height = cfg.height + 'mm';
+        field.style.fontSize = cfg.fontSize + 'mm';
+        var inner = document.createElement('div');
+        inner.className = 'layout-field-text' + (centered || cfg.align === 'center' ? ' is-centered' : '');
+        var strong = document.createElement('strong');
+        strong.textContent = labelText + ' ';
+        var span = document.createElement('span');
+        span.textContent = valueText || '';
+        inner.appendChild(strong);
+        inner.appendChild(span);
+        field.appendChild(inner);
+        bindDragForField(field, mode, key, labelText);
+        return field;
+    }
+
+    function createQrLayoutField(mode, key, qrValue, cfg) {
+        var field = document.createElement('div');
+        field.className = 'layout-field layout-field-qr';
+        if (window.__selectedLayoutField && window.__selectedLayoutField.mode === mode && window.__selectedLayoutField.key === key) {
+            field.classList.add('is-selected');
+        }
+        field.style.left = cfg.x + 'mm';
+        field.style.top = cfg.y + 'mm';
+        field.style.width = cfg.width + 'mm';
+        field.style.height = cfg.height + 'mm';
+        var img = document.createElement('img');
+        img.alt = '二维码';
+        img.src = (document.getElementById('zebraPrintPage').dataset.qrEndpoint || '') + '?value=' + encodeURIComponent(qrValue || 'EMPTY') + '&box_size=8&border=1';
+        field.appendChild(img);
+        bindDragForField(field, mode, key, '二维码');
+        return field;
+    }
+
+    function setValue(id, value) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.value = value;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function fillProductSample() {
+        clearProductFieldEditor();
+        window.__productRowsData = [];
+        window.__activeProductPage = 0;
+        defaultProductFieldDefs().forEach(function (def) {
+            setValue(def.valueInputId, SAMPLE_PRODUCT[def.dataKey] || '');
+        });
+        setValue('productQrValue', SAMPLE_PRODUCT.productQrValue);
+        var qrInput = document.getElementById('productQrValue');
+        if (qrInput) qrInput.dataset.lastGenerated = SAMPLE_PRODUCT.productQrValue || '';
+        setValue('productCopies', SAMPLE_PRODUCT.productCopies);
+        syncProductPageState();
+    }
+
+    function emptyProductData() {
+        var data = {};
+        defaultProductFieldDefs().forEach(function (def) {
+            data[def.dataKey] = '';
+        });
+        data.productQrValue = '';
+        data.productCopies = '1';
+        return data;
+    }
+
+    function getCurrentProductFieldLabels() {
+        var labels = {};
+        defaultProductFieldDefs().forEach(function (def) {
+            labels[def.key] = getInputValue(def.labelInputId) || def.defaultLabel;
+        });
+        return labels;
+    }
+
+    function getCurrentProductFormData() {
+        var data = emptyProductData();
+        defaultProductFieldDefs().forEach(function (def) {
+            data[def.dataKey] = getInputValue(def.valueInputId);
+        });
+        data.productQrValue = getInputValue('productQrValue');
+        data.productCopies = getInputValue('productCopies') || '1';
+        return data;
+    }
+
+    function setInputValueSilently(id, value) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.value = value;
+    }
+
+    function applyProductFormState(state) {
+        state = state || {};
+        window.__applyingProductPage = true;
+        clearProductFieldEditor();
+        syncProductFieldEditor(state.visibleFields, state.fieldLabels);
+        var data = state.data || emptyProductData();
+        defaultProductFieldDefs().forEach(function (def) {
+            setInputValueSilently(def.valueInputId, data[def.dataKey] || '');
+        });
+        setInputValueSilently('productQrValue', data.productQrValue || '');
+        setInputValueSilently('productCopies', data.productCopies || '1');
+        syncProductQrValue(!data.productQrValue);
+        window.__applyingProductPage = false;
+    }
+
+    function syncActiveProductPageData() {
+        if (window.__applyingProductPage || !Array.isArray(window.__productRowsData) || !window.__productRowsData.length) return;
+        if (window.__activeProductPage < 0) window.__activeProductPage = 0;
+        if (window.__activeProductPage >= window.__productRowsData.length) window.__activeProductPage = window.__productRowsData.length - 1;
+        window.__productRowsData[window.__activeProductPage] = {
+            data: getCurrentProductFormData(),
+            visibleFields: getProductEditorVisibleFields(),
+            fieldLabels: getCurrentProductFieldLabels()
+        };
+    }
+
+    function renderProductPager(current, total) {
+        var pager = document.getElementById('productRowPager');
+        if (!pager) return;
+        pager.hidden = total <= 0;
+        pager.style.display = total <= 0 ? 'none' : '';
+        pager.innerHTML = '';
+        if (total <= 0) return;
+        var summary = document.createElement('div');
+        summary.className = 'material-row-pager-summary';
+        summary.textContent = '第 ' + current + ' 页 / 共 ' + total + ' 页';
+        pager.appendChild(summary);
+        var actions = document.createElement('div');
+        actions.className = 'material-row-pager-actions';
+        for (var i = 1; i <= total; i += 1) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-secondary btn-small material-row-page-button' + (i === current ? ' is-active' : '');
+            btn.textContent = String(i);
+            btn.addEventListener('click', (function (page) {
+                return function () {
+                    syncActiveProductPageData();
+                    window.__activeProductPage = page - 1;
+                    syncProductPageState();
+                    renderFallbackPreviews();
+                };
+            })(i));
+            actions.appendChild(btn);
+        }
+        pager.appendChild(actions);
+    }
+
+    function syncProductPageState() {
+        var rows = Array.isArray(window.__productRowsData) ? window.__productRowsData : [];
+        if (!rows.length) {
+            window.__activeProductPage = 0;
+            renderProductPager(0, 0);
+            return;
+        }
+        if (window.__activeProductPage < 0) window.__activeProductPage = 0;
+        if (window.__activeProductPage >= rows.length) window.__activeProductPage = rows.length - 1;
+        applyProductFormState(rows[window.__activeProductPage]);
+        renderProductPager(window.__activeProductPage + 1, rows.length);
+    }
+
+    function getProductEditorVisibleFields() {
+        if (!Array.isArray(window.__productEditorVisibleFields) || !window.__productEditorVisibleFields.length) {
+            window.__productEditorVisibleFields = defaultProductFieldDefs().map(function (def) { return def.key; });
+        }
+        return window.__productEditorVisibleFields.slice();
+    }
+
+    function syncProductFieldEditor(visibleFields, fieldLabels) {
+        var defs = defaultProductFieldDefs();
+        var defaultOrder = defs.map(function (def) { return def.key; });
+        var defMap = {};
+        defs.forEach(function (def) {
+            defMap[def.key] = def;
+        });
+        var nextOrder = Array.isArray(visibleFields) && visibleFields.length
+            ? visibleFields.filter(function (key, index, arr) {
+                return defaultOrder.indexOf(key) !== -1 && arr.indexOf(key) === index;
+            })
+            : defaultOrder.slice();
+        if (!nextOrder.length) {
+            nextOrder = defaultOrder.slice();
+        }
+        window.__productEditorVisibleFields = nextOrder.slice();
+        var grid = document.querySelector('.product-form-grid');
+        defs.forEach(function (def) {
+            if (fieldLabels && Object.prototype.hasOwnProperty.call(fieldLabels, def.key)) {
+                var labelInput = document.getElementById(def.labelInputId);
+                var nextLabel = String(fieldLabels[def.key] || '').trim();
+                if (labelInput && nextLabel) {
+                    labelInput.value = nextLabel;
+                }
+            }
+            var card = document.querySelector('[data-product-field-key="' + def.key + '"]');
+            if (!card) return;
+            var isVisible = nextOrder.indexOf(def.key) !== -1;
+            card.hidden = !isVisible;
+            card.style.display = isVisible ? '' : 'none';
+        });
+        if (grid) {
+            nextOrder.forEach(function (key) {
+                var def = defMap[key];
+                if (!def) return;
+                var card = document.querySelector('[data-product-field-key="' + def.key + '"]');
+                if (card && !card.hidden) {
+                    grid.appendChild(card);
+                }
+            });
+        }
+        if (grid) {
+            grid.querySelectorAll('[data-product-static-card]').forEach(function (card) {
+                card.hidden = false;
+                card.style.display = '';
+                grid.appendChild(card);
+            });
+        }
+    }
+
+    function clearProductFieldEditor() {
+        window.__productEditorVisibleFields = defaultProductFieldDefs().map(function (def) { return def.key; });
+        defaultProductFieldDefs().forEach(function (def) {
+            var labelInput = document.getElementById(def.labelInputId);
+            if (labelInput) {
+                labelInput.value = def.defaultLabel;
+            }
+        });
+        syncProductFieldEditor();
+    }
+
+    function removeProductStandardField(key) {
+        var nextVisible = getProductEditorVisibleFields().filter(function (item) { return item !== key; });
+        var def = getProductFieldDef(key);
+        if (def) {
+            setValue(def.valueInputId, '');
+        }
+        syncProductFieldEditor(nextVisible);
+        renderFallbackPreviews();
+    }
+
+    function bindProductFieldEditorActions() {
+        if (window.__productFieldEditorActionsBound) return;
+        window.__productFieldEditorActionsBound = true;
+        document.querySelectorAll('.product-standard-field-remove-button').forEach(function (button) {
+            button.addEventListener('click', function () {
+                removeProductStandardField(button.getAttribute('data-field-key') || '');
+            });
+        });
+    }
+
+    function isProductFieldLabelEditorInput(target) {
+        if (!target || !target.id) return false;
+        return defaultProductFieldDefs().some(function (def) {
+            return def.labelInputId === target.id;
+        });
+    }
+
+    function isProductValueEditorInput(target) {
+        if (!target || !target.id) return false;
+        var ids = defaultProductFieldDefs().map(function (def) { return def.valueInputId; }).concat(['productQrValue', 'productCopies']);
+        return ids.indexOf(target.id) !== -1;
+    }
+
+    function renderFallbackPager(current, total) {
+        var pager = document.getElementById('materialRowPager');
+        if (!pager) return;
+        pager.hidden = total <= 0;
+        pager.style.display = total <= 0 ? 'none' : '';
+        pager.innerHTML = '';
+
+        var summary = document.createElement('div');
+        summary.className = 'material-row-pager-summary';
+        summary.textContent = '第 ' + current + ' 页 / 共 ' + total + ' 页';
+        pager.appendChild(summary);
+
+        var actions = document.createElement('div');
+        actions.className = 'material-row-pager-actions';
+        for (var i = 1; i <= total; i += 1) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-secondary btn-small material-row-page-button' + (i === current ? ' is-active' : '');
+            btn.textContent = String(i);
+            btn.addEventListener('click', (function (page) {
+                return function () {
+                    window.__activeMaterialPage = page - 1;
+                    syncMaterialPageState();
+                    renderFallbackPreviews();
+                };
+            })(i));
+            actions.appendChild(btn);
+        }
+        pager.appendChild(actions);
+    }
+
+    function syncMaterialPageState() {
+        var rows = Array.prototype.slice.call(document.querySelectorAll('#materialRows .material-row'));
+        if (!rows.length) {
+            window.__activeMaterialPage = 0;
+            var pager = document.getElementById('materialRowPager');
+            if (pager) {
+                pager.hidden = true;
+                pager.style.display = 'none';
+                pager.innerHTML = '';
+            }
+            syncMaterialEditorFieldValues(null);
+            return;
+        }
+        if (window.__activeMaterialPage < 0) window.__activeMaterialPage = 0;
+        if (window.__activeMaterialPage >= rows.length) window.__activeMaterialPage = rows.length - 1;
+        rows.forEach(function (row, index) {
+            row.style.display = index === window.__activeMaterialPage ? '' : 'none';
+        });
+        syncMaterialEditorFieldValues(rows[window.__activeMaterialPage]);
+        renderFallbackPager(window.__activeMaterialPage + 1, rows.length);
+    }
+
+    function fillMaterialRow(row, data, meta) {
+        var title = row.querySelector('.material-row-title');
+        if (title) title.textContent = data.materialCode || '未填写物料编码';
+        var removeButton = row.querySelector('.material-remove-button');
+        if (removeButton) removeButton.style.display = 'none';
+        row.dataset.visibleFields = JSON.stringify(meta && meta.visibleFields ? meta.visibleFields : defaultMaterialFieldDefs().map(function (item) { return item.key; }));
+        row.dataset.fieldLabels = JSON.stringify(meta && meta.fieldLabels ? meta.fieldLabels : {});
+        row.dataset.sharedFieldValues = JSON.stringify(meta && meta.sharedFieldValues ? meta.sharedFieldValues : {});
+        row.dataset.sharedFieldOrder = JSON.stringify(meta && meta.sharedFieldOrder ? meta.sharedFieldOrder : []);
+        row.dataset.autoLayout = meta && meta.autoLayout ? '1' : '0';
+
+        function setBySelector(selector, value) {
+            var el = row.querySelector(selector);
+            if (!el) return;
+            el.value = value;
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        setBySelector('.material-ticket-no', data.ticketNo);
+        setBySelector('.material-item-name', data.itemName);
+        setBySelector('.material-code', data.materialCode);
+        setBySelector('.material-name', data.materialName);
+        setBySelector('.material-spec', data.materialSpec);
+        setBySelector('.material-quantity', data.quantity);
+        setBySelector('.material-batch-no', data.batchNo);
+        setBySelector('.material-project', data.projectName);
+        setBySelector('.material-qr-value', data.qrValue);
+        setBySelector('.material-copies', data.copies);
+        syncMaterialRowSharedInputs(row);
+        syncMaterialRowFieldLayout(row);
+    }
+
+    function fillMaterialSample() {
+        var wrap = document.getElementById('materialRows');
+        var tpl = document.getElementById('materialRowTemplate');
+        if (!wrap || !tpl) return;
+        syncMaterialFieldLabelEditor();
+        wrap.innerHTML = '';
+        SAMPLE_MATERIALS.forEach(function (item) {
+            var frag = tpl.content.cloneNode(true);
+            var row = frag.querySelector('.material-row');
+            fillMaterialRow(row, item);
+            wrap.appendChild(frag);
+        });
+        window.__activeMaterialPage = 0;
+        syncMaterialPageState();
+    }
+
+    function hasVisibleContent() {
+        var ids = defaultProductFieldDefs().map(function (def) { return def.valueInputId; });
+        return ids.some(function (id) {
+            var el = document.getElementById(id);
+            return el && String(el.value || '').trim();
+        }) || !!document.querySelector('#materialRows .material-row');
+    }
+
+    function applySampleData() {
+        fillProductSample();
+        fillMaterialSample();
+        repairZebraTexts();
+        renderFallbackPreviews();
+    }
+
+    function getInputValue(id) {
+        var el = document.getElementById(id);
+        return el ? String(el.value || '').trim() : '';
+    }
+
+    function makeRow(label, value, center, sizePx) {
+        var row = document.createElement('div');
+        row.className = 'label-row';
+        if (center) row.style.justifyContent = 'center';
+        if (sizePx) row.style.fontSize = sizePx + 'px';
+        var strong = document.createElement('strong');
+        strong.textContent = label + ' ';
+        var span = document.createElement('span');
+        span.textContent = value || '';
+        row.appendChild(strong);
+        row.appendChild(span);
+        return row;
+    }
+
+    function calcProductQrValue() {
+        var qr = getInputValue('productQrValue');
+        if (qr) return qr;
+        var parts = PRODUCT_QR_SOURCE_KEYS
+            .map(function (dataKey) {
+                var def = getProductFieldDefByDataKey(dataKey);
+                return def ? getInputValue(def.valueInputId) : '';
+            })
+            .filter(function (value) { return value; });
+        return parts.join(PRODUCT_QR_SEPARATOR || '');
+    }
+
+    function calcQrValueFromData(data) {
+        var source = data || {};
+        return PRODUCT_QR_SOURCE_KEYS
+            .map(function (dataKey) {
+                return String(source[dataKey] || '').trim();
+            })
+            .filter(function (value) { return value; })
+            .join(PRODUCT_QR_SEPARATOR || '');
+    }
+
+    function syncProductQrValue(force) {
+        var qrInput = document.getElementById('productQrValue');
+        if (!qrInput) return;
+        var currentValue = String(qrInput.value || '').trim();
+        var generatedValue = calcQrValueFromData(getCurrentProductFormData());
+        var lastGenerated = String(qrInput.dataset.lastGenerated || '').trim();
+        var shouldReplace = !!force || !currentValue || currentValue === lastGenerated;
+        if (!shouldReplace) return;
+        qrInput.value = generatedValue;
+        qrInput.dataset.lastGenerated = generatedValue;
+    }
+
+    function buildProductPreviewNode() {
+        var state = null;
+        if (arguments.length > 0 && arguments[0]) {
+            state = arguments[0];
+        }
+        ensureLayoutState();
+        var label = document.createElement('div');
+        label.className = 'zebra-label product-label';
+        var content = document.createElement('div');
+        content.className = 'zebra-label-content product-label-photo';
+        var layout = document.createElement('div');
+        layout.className = 'product-layout-photo';
+        var stateData = state && state.data ? state.data : getCurrentProductFormData();
+        var stateLabels = state && state.fieldLabels ? state.fieldLabels : getCurrentProductFieldLabels();
+        var visibleFields = state && Array.isArray(state.visibleFields) && state.visibleFields.length ? state.visibleFields : getProductEditorVisibleFields();
+        var valueMap = getProductFieldValueMap(stateData);
+        function fieldLabel(key, fallback) {
+            return String(stateLabels[key] || '').trim() || fallback;
+        }
+        visibleFields.forEach(function (key) {
+            var def = getProductFieldDef(key);
+            if (!def) return;
+            layout.appendChild(createTextLayoutField('product', def.key, fieldLabel(def.key, def.defaultLabel), valueMap[def.key], getLayoutField('product', def.key), false));
+        });
+        layout.appendChild(createQrLayoutField('product', 'qr', stateData.productQrValue || calcQrValueFromData(stateData), getLayoutField('product', 'qr')));
+        content.appendChild(layout);
+        label.appendChild(content);
+        return label;
+    }
+
+    function buildMaterialPreviewNode(rowEl) {
+        ensureLayoutState();
+        var label = document.createElement('div');
+        label.className = 'zebra-label material-label';
+        var content = document.createElement('div');
+        content.className = 'zebra-label-content material-label-photo';
+        var layout = document.createElement('div');
+        layout.className = 'material-layout-photo';
+        var rowMeta = getMaterialRowMeta(rowEl);
+        var materialDefs = defaultMaterialFieldDefs();
+
+        function rowValue(selector) {
+            var el = rowEl.querySelector(selector);
+            return el ? String(el.value || '').trim() : '';
+        }
+
+        var hasDeclaredFields = rowMeta.visibleFields.length > 0;
+        var visibleKeys = hasDeclaredFields ? rowMeta.visibleFields : materialDefs.map(function (item) { return item.key; });
+        var autoLayoutIndex = 0;
+        var autoLayoutTotal = getMaterialAutoLayoutTotal(rowMeta);
+        visibleKeys.forEach(function (key) {
+            var def = materialDefs.find(function (item) { return item.key === key; });
+            if (!def) return;
+            var value = rowValue(def.selector);
+            if (!hasDeclaredFields && !value) return;
+            var labelText = rowMeta.fieldLabels[key] || getInputValue(def.labelInputId) || def.defaultLabel;
+            layout.appendChild(createTextLayoutField('material', def.layoutKey, labelText, value, getMaterialTextLayoutField(rowMeta, def.layoutKey, autoLayoutIndex, autoLayoutTotal), false));
+            autoLayoutIndex += 1;
+        });
+        getMaterialOrderedSharedFields(rowMeta).forEach(function (field, index) {
+            var value = rowMeta.sharedFieldValues[field.id] || '';
+            if (!value) return;
+            if (rowMeta.autoLayout && !getMaterialTextLayoutField(rowMeta, 'shared:' + field.id, autoLayoutIndex, autoLayoutTotal).manual) {
+                layout.appendChild(createTextLayoutField('material', 'shared:' + field.id, field.label || '鏂板瀛楁', value, getMaterialTextLayoutField(rowMeta, 'shared:' + field.id, autoLayoutIndex, autoLayoutTotal), false));
+                autoLayoutIndex += 1;
+                return;
+            }
+            layout.appendChild(createTextLayoutField('material', 'shared:' + field.id, field.label || '新增字段', value, getMaterialSharedLayoutField(field.id, index), false));
+        });
+        layout.appendChild(createQrLayoutField('material', 'qr', rowValue('.material-qr-value') || rowValue('.material-code'), getLayoutField('material', 'qr')));
+        content.appendChild(layout);
+        label.appendChild(content);
+        return label;
+    }
+
+    function renderFallbackPreviews() {
+        var productWrap = document.getElementById('productPreview');
+        var materialsWrap = document.getElementById('materialsPreview');
+        if (productWrap) {
+            var productRows = Array.isArray(window.__productRowsData) ? window.__productRowsData : [];
+            var productState = null;
+            if (productRows.length) {
+                var productIndex = Math.max(0, Math.min(window.__activeProductPage || 0, productRows.length - 1));
+                productState = productRows[productIndex];
+            }
+            productWrap.innerHTML = '';
+            productWrap.appendChild(buildProductPreviewNode(productState));
+            applyPreviewZoom('product', window.__fallbackProductZoom || 1);
+        }
+        if (materialsWrap) {
+            materialsWrap.innerHTML = '';
+            var rows = Array.prototype.slice.call(document.querySelectorAll('#materialRows .material-row'));
+            if (!rows.length) {
+                var empty = document.createElement('div');
+                empty.className = 'preview-empty';
+                empty.textContent = '暂无物料标签内容';
+                materialsWrap.appendChild(empty);
+            } else {
+                if (window.__activeMaterialPage < 0) window.__activeMaterialPage = 0;
+                if (window.__activeMaterialPage >= rows.length) window.__activeMaterialPage = rows.length - 1;
+                materialsWrap.appendChild(buildMaterialPreviewNode(rows[window.__activeMaterialPage]));
+            }
+            applyPreviewZoom('material', window.__fallbackMaterialZoom || 1);
+        }
+        updateSelectedFieldControls();
+    }
+
+    function applyPreviewZoom(kind, zoom) {
+        var wrap = document.getElementById(kind === 'product' ? 'productPreview' : 'materialsPreview');
+        var value = document.getElementById(kind === 'product' ? 'productPreviewZoomValue' : 'materialPreviewZoomValue');
+        if (!wrap || !value) return;
+        wrap.style.transform = 'scale(' + zoom + ')';
+        value.textContent = Math.round(zoom * 100) + '%';
+        if (kind === 'product') {
+            window.__fallbackProductZoom = zoom;
+        } else {
+            window.__fallbackMaterialZoom = zoom;
+        }
+    }
+
+    function bindFallbackPreviewZoom() {
+        var productOut = document.getElementById('productPreviewZoomOut');
+        var productIn = document.getElementById('productPreviewZoomIn');
+        var materialOut = document.getElementById('materialPreviewZoomOut');
+        var materialIn = document.getElementById('materialPreviewZoomIn');
+        if (productOut) productOut.addEventListener('click', function () { applyPreviewZoom('product', Math.max(0.5, (window.__fallbackProductZoom || 1) - 0.1)); });
+        if (productIn) productIn.addEventListener('click', function () { applyPreviewZoom('product', Math.min(2, (window.__fallbackProductZoom || 1) + 0.1)); });
+        if (materialOut) materialOut.addEventListener('click', function () { applyPreviewZoom('material', Math.max(0.5, (window.__fallbackMaterialZoom || 1) - 0.1)); });
+        if (materialIn) materialIn.addEventListener('click', function () { applyPreviewZoom('material', Math.min(2, (window.__fallbackMaterialZoom || 1) + 0.1)); });
+    }
+
+    function repairZebraTexts() {
+        document.querySelectorAll('.material-row-pager-summary').forEach(function (el) {
+            var raw = String(el.textContent || '').trim();
+            var match = raw.match(/^\?+\s*(\d+)\s*\?\s*\/\s*\?\s*(\d+)\s*\?+$/);
+            if (match) {
+                el.textContent = '第 ' + match[1] + ' 页 / 共 ' + match[2] + ' 页';
+            }
+        });
+
+        var templateOption = document.querySelector('#templateSelect option[value=""]');
+        if (templateOption && (!templateOption.textContent || /\?{2,}/.test(templateOption.textContent))) {
+            templateOption.textContent = '选择模板';
+        }
+
+        document.querySelectorAll('[title]').forEach(function (el) {
+            if (/\?{2,}/.test(String(el.getAttribute('title') || ''))) {
+                el.setAttribute('title', '双击编辑');
+            }
+        });
+
+        document.querySelectorAll('img[alt]').forEach(function (el) {
+            if (/\?{2,}/.test(String(el.getAttribute('alt') || ''))) {
+                el.setAttribute('alt', '二维码');
+            }
+        });
+    }
+
+    function emptyMaterialRowData() {
+        return {
+            ticketNo: '',
+            itemName: '',
+            materialCode: '',
+            materialName: '',
+            materialSpec: '',
+            quantity: '',
+            batchNo: '',
+            projectName: getInputValue('productProjectName'),
+            qrValue: '',
+            copies: '1'
+        };
+    }
+
+    function defaultMaterialFieldDefs() {
+        return [
+            { key: 'ticketNo', layoutKey: 'ticket', selector: '.material-ticket-no', labelInputId: 'materialTicketLabel', editorValueInputId: 'materialEditorTicketNoValue', defaultLabel: '工单号' },
+            { key: 'itemName', layoutKey: 'item', selector: '.material-item-name', labelInputId: 'materialItemNameLabel', editorValueInputId: 'materialEditorItemNameValue', defaultLabel: '产品名称' },
+            { key: 'materialCode', layoutKey: 'code', selector: '.material-code', labelInputId: 'materialCodeLabel', editorValueInputId: 'materialEditorCodeValue', defaultLabel: '物料编码' },
+            { key: 'materialName', layoutKey: 'name', selector: '.material-name', labelInputId: 'materialNameLabel', editorValueInputId: 'materialEditorNameValue', defaultLabel: '物料名称' },
+            { key: 'materialSpec', layoutKey: 'spec', selector: '.material-spec', labelInputId: 'materialSpecLabel', editorValueInputId: 'materialEditorSpecValue', defaultLabel: '规格型号' },
+            { key: 'quantity', layoutKey: 'qty', selector: '.material-quantity', labelInputId: 'materialQuantityLabel', editorValueInputId: 'materialEditorQuantityValue', defaultLabel: '数量' },
+            { key: 'batchNo', layoutKey: 'batch', selector: '.material-batch-no', labelInputId: 'materialBatchLabel', editorValueInputId: 'materialEditorBatchValue', defaultLabel: '批号' },
+            { key: 'projectName', layoutKey: 'project', selector: '.material-project', labelInputId: 'materialProjectLabel', editorValueInputId: 'materialEditorProjectValue', defaultLabel: '项目' }
+        ];
+    }
+
+    function getMaterialFieldDefByKey(key) {
+        return defaultMaterialFieldDefs().find(function (item) {
+            return item.key === key;
+        }) || null;
+    }
+
+    function getMaterialVisibleFieldOrder(visibleFields) {
+        var fallback = defaultMaterialFieldDefs().map(function (item) { return item.key; });
+        if (!Array.isArray(visibleFields) || !visibleFields.length) {
+            return fallback;
+        }
+        var order = [];
+        visibleFields.forEach(function (key) {
+            if (!getMaterialFieldDefByKey(key) || order.indexOf(key) !== -1) return;
+            order.push(key);
+        });
+        return order.length ? order : fallback;
+    }
+
+    function getMaterialEditorVisibleFields() {
+        if (Array.isArray(window.__materialEditorVisibleFields) && window.__materialEditorVisibleFields.length) {
+            return window.__materialEditorVisibleFields.slice();
+        }
+        var firstRow = document.querySelector('#materialRows .material-row');
+        if (firstRow) {
+            return getMaterialVisibleFieldOrder(getMaterialRowMeta(firstRow).visibleFields);
+        }
+        return defaultMaterialFieldDefs().map(function (item) { return item.key; });
+    }
+
+    function getMaterialEditorFieldLabels() {
+        var labels = cloneJson(window.__materialEditorFieldLabels || {});
+        var firstRow = document.querySelector('#materialRows .material-row');
+        if (firstRow) {
+            var rowLabels = getMaterialRowMeta(firstRow).fieldLabels || {};
+            Object.keys(rowLabels).forEach(function (key) {
+                labels[key] = rowLabels[key];
+            });
+        }
+        return labels;
+    }
+
+    function getActiveMaterialRow() {
+        var rows = Array.prototype.slice.call(document.querySelectorAll('#materialRows .material-row'));
+        if (!rows.length) return null;
+        if (window.__activeMaterialPage < 0) window.__activeMaterialPage = 0;
+        if (window.__activeMaterialPage >= rows.length) window.__activeMaterialPage = rows.length - 1;
+        return rows[window.__activeMaterialPage] || null;
+    }
+
+    function setMaterialRowInputValue(row, selector, value) {
+        if (!row) return;
+        var input = row.querySelector(selector);
+        if (!input) return;
+        input.value = String(value || '');
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function syncMaterialEditorFieldValues(row) {
+        var activeRow = row || getActiveMaterialRow();
+        defaultMaterialFieldDefs().forEach(function (def) {
+            var input = document.getElementById(def.editorValueInputId);
+            if (!input) return;
+            if (!activeRow) {
+                input.value = '';
+                input.disabled = true;
+                return;
+            }
+            var rowInput = activeRow.querySelector(def.selector);
+            input.disabled = false;
+            input.value = rowInput ? String(rowInput.value || '') : '';
+        });
+        document.querySelectorAll('.material-shared-field-value').forEach(function (input) {
+            if (!activeRow) {
+                input.value = '';
+                input.disabled = true;
+                return;
+            }
+            var meta = getMaterialRowMeta(activeRow);
+            var fieldId = input.getAttribute('data-field-id') || '';
+            input.disabled = false;
+            input.value = String((meta.sharedFieldValues || {})[fieldId] || '');
+        });
+    }
+
+    function syncMaterialStandardFieldValue(target) {
+        if (!target || !target.id) return;
+        var def = defaultMaterialFieldDefs().find(function (item) {
+            return item.editorValueInputId === target.id;
+        });
+        if (!def) return;
+        var row = getActiveMaterialRow();
+        if (!row) return;
+        setMaterialRowInputValue(row, def.selector, target.value);
+        if (def.key === 'materialCode') {
+            var title = row.querySelector('.material-row-title');
+            if (title) {
+                title.textContent = String(target.value || '').trim() || '未填写物料编码';
+            }
+        }
+    }
+
+    function syncMaterialSharedFieldValue(target) {
+        if (!target) return;
+        var row = getActiveMaterialRow();
+        if (!row) return;
+        var fieldId = target.getAttribute('data-field-id') || '';
+        if (!fieldId) return;
+        var meta = getMaterialRowMeta(row);
+        var values = meta.sharedFieldValues || {};
+        values[fieldId] = String(target.value || '');
+        row.dataset.sharedFieldValues = JSON.stringify(values);
+        syncMaterialRowSharedInputs(row);
+    }
+
+    function removeMaterialSharedFieldById(fieldId) {
+        window.__materialSharedFields = ensureMaterialSharedFields().filter(function (item) { return item.id !== fieldId; });
+        document.querySelectorAll('#materialRows .material-row').forEach(function (materialRow) {
+            var meta = getMaterialRowMeta(materialRow);
+            var values = meta.sharedFieldValues || {};
+            delete values[fieldId];
+            materialRow.dataset.sharedFieldValues = JSON.stringify(values);
+            materialRow.dataset.sharedFieldOrder = JSON.stringify((meta.sharedFieldOrder || []).filter(function (id) {
+                return id !== fieldId;
+            }));
+        });
+        delete ensureLayoutState().material['shared:' + fieldId];
+        renderMaterialSharedFieldList();
+        syncAllMaterialRowsSharedInputs();
+        syncAllMaterialRowFieldLayouts();
+        renderFallbackPreviews();
+    }
+
+    function removeMaterialStandardField(key) {
+        var nextVisibleFields = getMaterialEditorVisibleFields().filter(function (item) {
+            return item !== key;
+        });
+        var nextLabels = getMaterialEditorFieldLabels();
+        delete nextLabels[key];
+        document.querySelectorAll('#materialRows .material-row').forEach(function (row) {
+            var meta = getMaterialRowMeta(row);
+            var visibleFields = (meta.visibleFields || []).filter(function (item) {
+                return item !== key;
+            });
+            var labels = meta.fieldLabels || {};
+            delete labels[key];
+            row.dataset.visibleFields = JSON.stringify(visibleFields);
+            row.dataset.fieldLabels = JSON.stringify(labels);
+        });
+        syncMaterialFieldLabelEditor(nextVisibleFields, nextLabels);
+        syncAllMaterialRowFieldLayouts();
+        renderFallbackPreviews();
+    }
+
+    function clearMaterialFieldEditor() {
+        window.__materialSharedFields = [];
+        window.__materialEditorVisibleFields = [];
+        window.__materialEditorFieldLabels = {};
+        Object.keys(ensureLayoutState().material || {}).forEach(function (key) {
+            if (key.indexOf('shared:') === 0) {
+                delete ensureLayoutState().material[key];
+            }
+        });
+        defaultMaterialFieldDefs().forEach(function (def) {
+            var input = document.getElementById(def.labelInputId);
+            var card = input ? input.closest('.field-editor-card') : null;
+            var valueInput = document.getElementById(def.editorValueInputId);
+            if (input) {
+                input.value = '';
+            }
+            if (valueInput) {
+                valueInput.value = '';
+                valueInput.disabled = true;
+            }
+            if (card) {
+                card.hidden = true;
+                card.style.display = 'none';
+            }
+        });
+        var grid = document.querySelector('.material-label-form-grid');
+        if (grid) {
+            grid.querySelectorAll('.material-dynamic-field-card').forEach(function (node) {
+                node.remove();
+            });
+        }
+        var sharedList = document.getElementById('materialSharedFieldList');
+        if (sharedList) {
+            sharedList.innerHTML = '';
+        }
+    }
+
+    function syncMaterialFieldLabelEditor(visibleFields, fieldLabels) {
+        var grid = document.querySelector('.material-label-form-grid');
+        var order = getMaterialVisibleFieldOrder(visibleFields);
+        var labels = fieldLabels || {};
+        window.__materialEditorVisibleFields = order.slice();
+        window.__materialEditorFieldLabels = cloneJson(labels);
+        defaultMaterialFieldDefs().forEach(function (def) {
+            var input = document.getElementById(def.labelInputId);
+            var card = input ? input.closest('.field-editor-card') : null;
+            if (input) {
+                input.value = String(labels[def.key] || '').trim() || def.defaultLabel;
+            }
+            if (card) {
+                var isVisible = order.indexOf(def.key) !== -1;
+                card.hidden = !isVisible;
+                card.style.display = isVisible ? 'flex' : 'none';
+            }
+        });
+        if (!grid) return;
+        order.forEach(function (key) {
+            var def = getMaterialFieldDefByKey(key);
+            var input = def ? document.getElementById(def.labelInputId) : null;
+            var card = input ? input.closest('.field-editor-card') : null;
+            if (card) {
+                grid.appendChild(card);
+            }
+        });
+        renderMaterialSharedFieldList();
+    }
+
+    function syncMaterialRowFieldLayout(row) {
+        if (!row) return;
+        var grid = row.querySelector('.material-form-grid');
+        if (!grid) return;
+        var meta = getMaterialRowMeta(row);
+        var order = getMaterialEditorVisibleFields();
+        var labels = meta.fieldLabels || {};
+        order.forEach(function (key) {
+            var def = getMaterialFieldDefByKey(key);
+            var input = def ? row.querySelector(def.selector) : null;
+            var group = input ? input.closest('.form-group') : null;
+            var label = group ? group.querySelector('label') : null;
+            if (!group) return;
+            if (label) {
+                label.textContent = String(labels[def.key] || '').trim() || getInputValue(def.labelInputId) || def.defaultLabel;
+            }
+            group.hidden = false;
+            grid.appendChild(group);
+        });
+        defaultMaterialFieldDefs().forEach(function (def) {
+            if (order.indexOf(def.key) !== -1) return;
+            var input = row.querySelector(def.selector);
+            var group = input ? input.closest('.form-group') : null;
+            var label = group ? group.querySelector('label') : null;
+            if (!group) return;
+            if (label) {
+                label.textContent = getInputValue(def.labelInputId) || def.defaultLabel;
+            }
+            group.hidden = true;
+        });
+        ['.material-qr-value', '.material-copies'].forEach(function (selector) {
+            var input = row.querySelector(selector);
+            var group = input ? input.closest('.form-group') : null;
+            if (!group) return;
+            group.hidden = false;
+            grid.appendChild(group);
+        });
+    }
+
+    function syncAllMaterialRowFieldLayouts() {
+        document.querySelectorAll('#materialRows .material-row').forEach(function (row) {
+            syncMaterialRowFieldLayout(row);
+        });
+    }
+
+    function isMaterialFieldLabelEditorInput(target) {
+        if (!target || !target.id) return false;
+        return defaultMaterialFieldDefs().some(function (def) {
+            return def.labelInputId === target.id;
+        });
+    }
+
+    function isMaterialFieldValueEditorInput(target) {
+        if (!target || !target.id) return false;
+        return defaultMaterialFieldDefs().some(function (def) {
+            return def.editorValueInputId === target.id;
+        });
+    }
+
+    function syncMaterialStandardFieldLabelValue(target) {
+        var def = defaultMaterialFieldDefs().find(function (item) {
+            return item.labelInputId === target.id;
+        });
+        if (!def) return;
+        var nextLabels = getMaterialEditorFieldLabels();
+        nextLabels[def.key] = String(target.value || '').trim() || def.defaultLabel;
+        window.__materialEditorFieldLabels = cloneJson(nextLabels);
+        document.querySelectorAll('#materialRows .material-row').forEach(function (row) {
+            var labels = getMaterialRowMeta(row).fieldLabels || {};
+            labels[def.key] = nextLabels[def.key];
+            row.dataset.fieldLabels = JSON.stringify(labels);
+        });
+    }
+
+    function bindMaterialFieldEditorActions() {
+        if (window.__materialFieldEditorActionsBound) return;
+        window.__materialFieldEditorActionsBound = true;
+        document.querySelectorAll('.material-standard-field-remove-button').forEach(function (button) {
+            button.addEventListener('click', function () {
+                removeMaterialStandardField(button.getAttribute('data-field-key') || '');
+            });
+        });
+    }
+
+    function getMaterialRowMeta(row) {
+        if (!row) return { visibleFields: [], fieldLabels: {}, sharedFieldValues: {}, sharedFieldOrder: [], autoLayout: false };
+        var visibleFields = [];
+        var fieldLabels = {};
+        var sharedFieldValues = {};
+        var sharedFieldOrder = [];
+        try {
+            visibleFields = JSON.parse(row.dataset.visibleFields || '[]');
+        } catch (err) {
+            visibleFields = [];
+        }
+        try {
+            fieldLabels = JSON.parse(row.dataset.fieldLabels || '{}');
+        } catch (err) {
+            fieldLabels = {};
+        }
+        try {
+            sharedFieldValues = JSON.parse(row.dataset.sharedFieldValues || '{}');
+        } catch (err) {
+            sharedFieldValues = {};
+        }
+        try {
+            sharedFieldOrder = JSON.parse(row.dataset.sharedFieldOrder || '[]');
+        } catch (err) {
+            sharedFieldOrder = [];
+        }
+        return {
+            visibleFields: visibleFields,
+            fieldLabels: fieldLabels,
+            sharedFieldValues: sharedFieldValues,
+            sharedFieldOrder: sharedFieldOrder,
+            autoLayout: row.dataset.autoLayout === '1'
+        };
+    }
+
+    function getMaterialOrderedSharedFields(rowMeta) {
+        var sharedValues = rowMeta.sharedFieldValues || {};
+        var order = Array.isArray(rowMeta.sharedFieldOrder) && rowMeta.sharedFieldOrder.length
+            ? rowMeta.sharedFieldOrder.slice()
+            : ensureMaterialSharedFields().map(function (field) { return field.id; });
+        return order.map(function (fieldId) {
+            return ensureMaterialSharedFields().find(function (field) { return field.id === fieldId; });
+        }).filter(function (field) {
+            return field && Object.prototype.hasOwnProperty.call(sharedValues, field.id);
+        });
+    }
+
+    function getMaterialAutoLayoutTotal(rowMeta) {
+        var sharedCount = getMaterialOrderedSharedFields(rowMeta).filter(function (field) {
+            return String((rowMeta.sharedFieldValues || {})[field.id] || '').trim();
+        }).length;
+        return rowMeta.visibleFields.length + sharedCount;
+    }
+
+    function getMaterialAutoSlot(slotIndex, total) {
+        var leftSlots = [2.4, 8.2, 14, 19.8, 25.6, 31.4, 37.2, 43];
+        var rightSlots = [28.4, 34, 39.6, 45.2];
+        var leftCapacity = Math.min(total, 8);
+        if (slotIndex < leftCapacity) {
+            return {
+                x: 3,
+                y: leftSlots[Math.min(slotIndex, leftSlots.length - 1)],
+                width: 42.5,
+                height: 4.6,
+                fontSize: 3.3,
+                align: 'left'
+            };
+        }
+        var rightIndex = slotIndex - leftCapacity;
+        return {
+            x: 50.5,
+            y: rightSlots[Math.min(rightIndex, rightSlots.length - 1)],
+            width: 20,
+            height: 4.2,
+            fontSize: 3.3,
+            align: 'left'
+        };
+    }
+
+    function getMaterialTextLayoutField(rowMeta, key, slotIndex, total) {
+        var isSharedField = key.indexOf('shared:') === 0;
+        var stored = isSharedField
+            ? getMaterialSharedLayoutField(key.slice('shared:'.length), slotIndex)
+            : getLayoutField('material', key);
+        if (!rowMeta.autoLayout || stored.manual) {
+            return stored;
+        }
+        var autoCfg = getMaterialAutoSlot(slotIndex, total);
+        return {
+            x: autoCfg.x,
+            y: autoCfg.y,
+            width: autoCfg.width,
+            height: autoCfg.height,
+            fontSize: autoCfg.fontSize,
+            align: stored.align || autoCfg.align
+        };
+    }
+
+    function syncMaterialRowSharedInputs(row) {
+        if (!row) return;
+        var wrap = row.querySelector('.material-shared-values');
+        var grid = row.querySelector('.material-form-grid');
+        if (!grid) return;
+        var fields = ensureMaterialSharedFields();
+        var meta = getMaterialRowMeta(row);
+        var values = meta.sharedFieldValues || {};
+        grid.querySelectorAll('.material-shared-group').forEach(function (group) {
+            group.remove();
+        });
+        if (wrap) {
+            wrap.hidden = true;
+            wrap.style.setProperty('display', 'none', 'important');
+        }
+        row.classList.remove('has-shared-fields');
+        fields.forEach(function (field) {
+            var group = document.createElement('div');
+            group.className = 'form-group material-shared-group';
+            var label = document.createElement('label');
+            label.textContent = field.label || '新增字段';
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-control material-shared-input';
+            input.value = values[field.id] || '';
+            input.setAttribute('data-field-id', field.id);
+            input.addEventListener('input', function () {
+                var nextValues = getMaterialRowMeta(row).sharedFieldValues || {};
+                nextValues[field.id] = String(input.value || '');
+                row.dataset.sharedFieldValues = JSON.stringify(nextValues);
+                renderFallbackPreviews();
+            });
+            group.appendChild(label);
+            group.appendChild(input);
+            grid.appendChild(group);
+        });
+    }
+
+    function syncAllMaterialRowsSharedInputs() {
+        document.querySelectorAll('#materialRows .material-row').forEach(function (row) {
+            syncMaterialRowSharedInputs(row);
+        });
+    }
+
+    function renderMaterialSharedFieldList() {
+        var list = document.getElementById('materialSharedFieldList');
+        var grid = document.querySelector('.material-label-form-grid');
+        if (list) list.innerHTML = '';
+        if (!grid) return;
+        grid.querySelectorAll('.material-dynamic-field-card').forEach(function (node) {
+            node.remove();
+        });
+        ensureMaterialSharedFields().forEach(function (field) {
+            var row = document.createElement('div');
+            row.className = 'form-group field-editor-card material-dynamic-field-card';
+            row.setAttribute('data-shared-id', field.id);
+            var actions = document.createElement('div');
+            actions.className = 'field-editor-row-actions';
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-control field-editor-label-input material-shared-field-label';
+            input.placeholder = '例如：供应商 / 仓位 / 备注';
+            var valueInput = document.createElement('input');
+            valueInput.type = 'text';
+            valueInput.className = 'form-control material-editor-value-input material-shared-field-value';
+            valueInput.placeholder = '输入字段内容';
+            valueInput.setAttribute('data-field-id', field.id);
+            var removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-danger btn-small field-editor-remove-button material-shared-field-remove-button';
+            removeBtn.textContent = '删除';
+            if (input) {
+                input.value = field.label || '';
+                input.addEventListener('input', function () {
+                    field.label = String(input.value || '').trim() || '新增字段';
+                    syncAllMaterialRowsSharedInputs();
+                    renderFallbackPreviews();
+                });
+            }
+            if (removeBtn) {
+                removeBtn.addEventListener('click', function () {
+                    removeMaterialSharedFieldById(field.id);
+                });
+            }
+            actions.appendChild(input);
+            actions.appendChild(removeBtn);
+            row.appendChild(actions);
+            row.appendChild(valueInput);
+            grid.appendChild(row);
+        });
+        syncMaterialEditorFieldValues();
+    }
+
+    function addMaterialSharedField(label, preferredId) {
+        var nextLabel = label || ('新增字段' + (ensureMaterialSharedFields().length + 1));
+        var fieldId = upsertMaterialSharedField(nextLabel, preferredId);
+        if (!fieldId) return;
+        renderMaterialSharedFieldList();
+        syncAllMaterialRowsSharedInputs();
+        renderFallbackPreviews();
+        scrollToSection('materialPrintSection');
+    }
+
+    function getMaterialSharedLayoutField(id, index) {
+        var state = ensureLayoutState();
+        var key = 'shared:' + id;
+        if (!state.material[key]) {
+            state.material[key] = {
+                x: 50.5,
+                y: 26.5 + index * 4.6,
+                width: 20,
+                height: 4,
+                fontSize: 3.3,
+                align: 'left'
+            };
+        }
+        return state.material[key];
+    }
+
+    function normalizePasteHeader(value) {
+        return String(value || '')
+            .trim()
+            .replace(/[：:]/g, '')
+            .replace(/\s+/g, '')
+            .toLowerCase();
+    }
+
+    function mapMaterialHeader(header) {
+        var key = normalizePasteHeader(header);
+        var table = {
+            '工单号': 'ticketNo',
+            '单号': 'ticketNo',
+            '产品名称': 'itemName',
+            '品名': 'itemName',
+            '物料编码': 'materialCode',
+            '物料代码': 'materialCode',
+            '料号': 'materialCode',
+            '物料名称': 'materialName',
+            '名称': 'materialName',
+            '物料规格': 'materialSpec',
+            '规格': 'materialSpec',
+            '数量': 'quantity',
+            '到货数量': 'quantity',
+            '来料数量': 'quantity',
+            '批次': 'batchNo',
+            '批次号': 'batchNo',
+            '批号': 'batchNo',
+            '项目': 'projectName',
+            '二维码内容': 'qrValue',
+            '二维码': 'qrValue',
+            '打印份数': 'copies',
+            '工单号': 'ticketNo',
+            '工单': 'ticketNo',
+            '单号': 'ticketNo',
+            '工单编号': 'ticketNo',
+            '产品名称': 'itemName',
+            '品名称': 'itemName',
+            '品名': 'itemName',
+            '产品': 'itemName',
+            '物料编码': 'materialCode',
+            '编码': 'materialCode',
+            '物料号': 'materialCode',
+            '料号': 'materialCode',
+            '物料名称': 'materialName',
+            '名称': 'materialName',
+            '规格型号': 'materialSpec',
+            '物料规格': 'materialSpec',
+            '规格': 'materialSpec',
+            '型号': 'materialSpec',
+            '数量': 'quantity',
+            '默认数量': 'quantity',
+            '批号': 'batchNo',
+            '批次': 'batchNo',
+            '项目': 'projectName',
+            '二维码内容': 'qrValue',
+            '二维码': 'qrValue',
+            '打印份数': 'copies',
+            '份数': 'copies'
+        };
+        return table[key] || '';
+    }
+
+    function mapMaterialHeaderNormalized(header) {
+        var key = normalizePasteHeader(header);
+        var table = {
+            '工单号': 'ticketNo',
+            '工单': 'ticketNo',
+            '单号': 'ticketNo',
+            '工单编号': 'ticketNo',
+            '产品名称': 'itemName',
+            '品名名称': 'itemName',
+            '品名': 'itemName',
+            '产品': 'itemName',
+            '物料编码': 'materialCode',
+            '编码': 'materialCode',
+            '物料代码': 'materialCode',
+            '料号': 'materialCode',
+            '物料名称': 'materialName',
+            '名称': 'materialName',
+            '规格型号': 'materialSpec',
+            '物料规格': 'materialSpec',
+            '规格': 'materialSpec',
+            '型号': 'materialSpec',
+            '数量': 'quantity',
+            '默认数量': 'quantity',
+            '到货数量': 'quantity',
+            '来料数量': 'quantity',
+            '批号': 'batchNo',
+            '批次': 'batchNo',
+            '批次号': 'batchNo',
+            'lot': 'batchNo',
+            'lotno': 'batchNo',
+            'batch': 'batchNo',
+            'batchno': 'batchNo',
+            '二维码': 'qrValue',
+            '二维码内容': 'qrValue',
+            '项目': 'projectName',
+            '打印份数': 'copies',
+            '份数': 'copies',
+            'ticketno': 'ticketNo',
+            'itemname': 'itemName',
+            'materialcode': 'materialCode',
+            'materialname': 'materialName',
+            'materialspec': 'materialSpec',
+            'quantity': 'quantity',
+            'qrvalue': 'qrValue',
+            'qrcode': 'qrValue',
+            'projectname': 'projectName',
+            'copies': 'copies'
+        };
+        return table[key] || mapMaterialHeader(header);
+    }
+
+    function splitPasteTable(text) {
+        return String(text || '')
+            .replace(/\r\n/g, '\n')
+            .replace(/\r/g, '\n')
+            .split('\n')
+            .map(function (line) { return line.trim(); })
+            .filter(function (line) { return line; })
+            .map(function (line) {
+                var cols = line.split('\t');
+                if (cols.length === 1) {
+                    cols = line.split(/,|，/);
+                }
+                return cols.map(function (col) { return String(col || '').trim(); });
+            });
+    }
+
+    function mapProductHeader(header) {
+        var key = normalizePasteHeader(header);
+        return PRODUCT_PASTE_FIELD_ALIASES[key] || '';
+    }
+
+    function assignProductColumns(headers) {
+        var slotOrder = defaultProductFieldDefs().map(function (def) { return def.key; });
+        var used = [];
+        var assignments = headers.map(function (header) {
+            var field = mapProductHeader(header);
+            if (!field || used.indexOf(field) !== -1 || field === 'qr' || field === 'copies') return null;
+            used.push(field);
+            return { field: field, label: String(header || '').trim() };
+        });
+        headers.forEach(function (header, index) {
+            if (assignments[index]) return;
+            var nextField = slotOrder.find(function (key) {
+                return used.indexOf(key) === -1;
+            });
+            if (!nextField) return;
+            used.push(nextField);
+            assignments[index] = { field: nextField, label: String(header || '').trim() };
+        });
+        return assignments;
+    }
+
+    function getProductPasteFieldConfig() {
+        var config = {};
+        defaultProductFieldDefs().forEach(function (def) {
+            config[def.key] = { valueId: def.valueInputId, dataKey: def.dataKey, labelId: def.labelInputId };
+        });
+        config.qr = { valueId: 'productQrValue', dataKey: 'productQrValue' };
+        config.copies = { valueId: 'productCopies', dataKey: 'productCopies' };
+        return config;
+    }
+
+    function resetProductPasteValues() {
+        defaultProductFieldDefs().map(function (def) {
+            return def.valueInputId;
+        }).concat(['productQrValue']).forEach(function (id) {
+            setValue(id, '');
+        });
+        setValue('productCopies', '1');
+    }
+
+    function applyProductPasteField(field, value, label) {
+        var config = getProductPasteFieldConfig()[field];
+        if (!config) return false;
+        if (config.labelId && String(label || '').trim()) {
+            setValue(config.labelId, String(label || '').trim());
+        }
+        setValue(config.valueId, String(value || '').trim());
+        return true;
+    }
+
+    function parseProductPasteTable() {
+        var textarea = document.getElementById('productPasteTable');
+        if (!textarea) return;
+
+        var rows = splitPasteTable(textarea.value);
+        if (!rows.length) {
+            window.alert('请先粘贴 Excel 产品表格');
+            return;
+        }
+
+        var keyValueHeader = rows[0] || [];
+        var firstKey = normalizePasteHeader(keyValueHeader[0]);
+        var secondKey = normalizePasteHeader(keyValueHeader[1]);
+        var thirdKey = normalizePasteHeader(keyValueHeader[2]);
+        var explicitKeyValueHeader = firstKey === '字段' || firstKey === 'field' || firstKey === '字段名' || secondKey === '值' || secondKey === 'value' || thirdKey === '标签名' || thirdKey === 'label';
+        var startIndex = explicitKeyValueHeader ? 1 : 0;
+        var candidateRows = rows.slice(startIndex);
+        var keyValueRows = [];
+        candidateRows.forEach(function (cols) {
+            var field = mapProductHeader(cols[0]);
+            if (!field) return;
+            var item = emptyProductData();
+            var labels = {};
+            var label = cols.length >= 3 ? cols[2] : (field === 'qr' || field === 'copies' ? '' : cols[0]);
+            var config = getProductPasteFieldConfig()[field];
+            if (!config) return;
+            item[config.dataKey || config.valueId] = String(cols[1] || '').trim();
+            if (field !== 'qr' && field !== 'copies') {
+                labels[field] = String(label || cols[0] || '').trim();
+            }
+            keyValueRows.push({
+                data: item,
+                visibleFields: field === 'qr' || field === 'copies' ? [] : [field],
+                fieldLabels: labels
+            });
+        });
+
+        var looksLikeKeyValueTable = explicitKeyValueHeader || (
+            candidateRows.length > 0
+            && candidateRows.every(function (cols) { return cols.length <= 3; })
+            && keyValueRows.length >= 2
+            && keyValueRows.length >= Math.ceil(candidateRows.length * 0.6)
+        );
+
+        if (looksLikeKeyValueTable && keyValueRows.length) {
+            var merged = { data: emptyProductData(), visibleFields: [], fieldLabels: {} };
+            keyValueRows.forEach(function (rowState) {
+                Object.keys(rowState.data).forEach(function (key) {
+                    if (rowState.data[key]) merged.data[key] = rowState.data[key];
+                });
+                rowState.visibleFields.forEach(function (key) {
+                    if (merged.visibleFields.indexOf(key) === -1) merged.visibleFields.push(key);
+                });
+                Object.keys(rowState.fieldLabels).forEach(function (key) {
+                    merged.fieldLabels[key] = rowState.fieldLabels[key];
+                });
+            });
+            if (!merged.data.productQrValue) {
+                merged.data.productQrValue = calcQrValueFromData(merged.data);
+            }
+            window.__productRowsData = [merged];
+            window.__activeProductPage = 0;
+            syncProductPageState();
+            renderFallbackPreviews();
+            return;
+        }
+
+        var headers = rows[0];
+        var columnAssignments = assignProductColumns(headers);
+        var validCount = columnAssignments.filter(Boolean).length;
+        if (!validCount) {
+            window.alert('未识别到可用的产品表格，请确认粘贴的是“字段/值/标签名”或“表头 + 数据”格式');
+            return;
+        }
+        var result = [];
+        rows.slice(1).forEach(function (cols) {
+            if (!cols.some(function (value) { return String(value || '').trim(); })) return;
+            var item = emptyProductData();
+            var visibleFields = [];
+            var fieldLabels = {};
+            columnAssignments.forEach(function (assignment, index) {
+                if (!assignment) return;
+                var config = getProductPasteFieldConfig()[assignment.field];
+                if (!config) return;
+                item[config.dataKey || config.valueId] = String(cols[index] || '').trim();
+                if (assignment.field !== 'qr' && assignment.field !== 'copies' && visibleFields.indexOf(assignment.field) === -1) {
+                    visibleFields.push(assignment.field);
+                    fieldLabels[assignment.field] = assignment.label;
+                }
+            });
+            if (!item.productQrValue) {
+                item.productQrValue = calcQrValueFromData(item);
+            }
+            if (!item.productCopies) {
+                item.productCopies = '1';
+            }
+            result.push({
+                data: item,
+                visibleFields: visibleFields,
+                fieldLabels: fieldLabels
+            });
+        });
+
+        if (!result.length) {
+            window.alert('表格里没有识别到有效数据行');
+            return;
+        }
+        window.__productRowsData = result;
+        window.__activeProductPage = 0;
+        syncProductPageState();
+        renderFallbackPreviews();
+    }
+
+    function clearProductPasteTable() {
+        var textarea = document.getElementById('productPasteTable');
+        if (textarea) {
+            textarea.value = '';
+        }
+    }
+
+    function parseMaterialPasteTable() {
+        var textarea = document.getElementById('materialPasteTable');
+        var wrap = document.getElementById('materialRows');
+        var pager = document.getElementById('materialRowPager');
+        if (!textarea || !wrap) return;
+
+        var rows = splitPasteTable(textarea.value);
+        if (!rows.length) {
+            window.alert('请先粘贴 Excel 物料表格');
+            return;
+        }
+
+        var headers = rows[0];
+        var fields = headers.map(mapMaterialHeaderNormalized);
+        var parsedVisibleFields = [];
+        var parsedFieldLabels = {};
+        fields.forEach(function (field, index) {
+            if (!field || field === 'qrValue' || field === 'copies' || parsedVisibleFields.indexOf(field) !== -1) return;
+            parsedVisibleFields.push(field);
+            parsedFieldLabels[field] = String(headers[index] || '').trim() || '';
+        });
+        var sharedColumns = headers.map(function (header, index) {
+            var title = String(header || '').trim();
+            if (!title || fields[index]) return null;
+            return {
+                index: index,
+                label: title,
+                id: upsertMaterialSharedField(title, null, { removable: false })
+            };
+        }).filter(Boolean);
+        var validCount = fields.filter(Boolean).length;
+        if (!validCount && !sharedColumns.length) {
+            window.alert('未识别到可用的物料表头，请确认第一行包含工单号、产品名称、物料编码、规格型号等列名');
+            return;
+        }
+        renderMaterialSharedFieldList();
+
+        syncMaterialFieldLabelEditor(parsedVisibleFields, parsedFieldLabels);
+        var result = [];
+        rows.slice(1).forEach(function (cols) {
+            if (!cols.some(function (v) { return String(v || '').trim(); })) return;
+            var item = emptyMaterialRowData();
+            var visibleFields = [];
+            var fieldLabels = {};
+            var sharedFieldValues = {};
+            var sharedFieldOrder = [];
+            fields.forEach(function (field, index) {
+                if (!field) return;
+                if (field !== 'qrValue' && field !== 'copies' && visibleFields.indexOf(field) === -1) {
+                    visibleFields.push(field);
+                    fieldLabels[field] = String(headers[index] || '').trim() || '';
+                }
+                item[field] = String(cols[index] || '').trim();
+            });
+            sharedColumns.forEach(function (column) {
+                sharedFieldValues[column.id] = String(cols[column.index] || '').trim();
+                sharedFieldOrder.push(column.id);
+            });
+            if (!item.qrValue) {
+                item.qrValue = item.materialCode;
+            }
+            if (!item.copies) {
+                item.copies = '1';
+            }
+            result.push({
+                data: item,
+                meta: {
+                    visibleFields: visibleFields,
+                    fieldLabels: fieldLabels,
+                    sharedFieldValues: sharedFieldValues,
+                    sharedFieldOrder: sharedFieldOrder,
+                    autoLayout: true
+                }
+            });
+        });
+
+        if (!result.length) {
+            window.alert('表格里没有识别到有效数据行');
+            return;
+        }
+
+        wrap.innerHTML = '';
+        result.forEach(function (item) {
+            addMaterialRow(item.data, item.meta);
+        });
+        window.__activeMaterialPage = 0;
+        syncMaterialPageState();
+        renderFallbackPreviews();
+        if (pager) pager.hidden = false;
+    }
+
+    function clearMaterialPasteTable() {
+        var textarea = document.getElementById('materialPasteTable');
+        if (textarea) {
+            textarea.value = '';
+        }
+    }
+
+    function normalizeImportedProductLabels(fieldLabels) {
+        var raw = fieldLabels || {};
+        var normalized = {};
+        var legacyLabelMap = {
+            productProject: 'projectName',
+            productName: 'productName',
+            productMaterialCode: 'productCode',
+            productSerialNumber: 'productSerialNumber',
+            productQuantity: 'workOrderQuantity',
+            productWorkOrderNumber: 'workOrderNumber',
+            productProcess: 'processName'
+        };
+        Object.keys(raw).forEach(function (key) {
+            var nextValue = String(raw[key] || '').trim();
+            if (!nextValue) return;
+            var dataKey = legacyLabelMap[key] || key;
+            var def = getProductFieldDefByDataKey(dataKey);
+            if (!def) return;
+            normalized[def.key] = nextValue;
+        });
+        return normalized;
+    }
+
+    function applyImportedProductData(product) {
+        var incoming = product || {};
+        var data = emptyProductData();
+        defaultProductFieldDefs().forEach(function (def) {
+            data[def.dataKey] = String(incoming[def.dataKey] || '').trim();
+        });
+        data.productQrValue = String(incoming.productQrValue || '').trim();
+        data.productCopies = String(incoming.copies || incoming.productCopies || '1').trim() || '1';
+        if (!data.productQrValue) {
+            data.productQrValue = calcQrValueFromData(data);
+        }
+
+        var labels = normalizeImportedProductLabels(incoming.fieldLabels);
+        var visibleFields = defaultProductFieldDefs()
+            .map(function (def) { return def.key; })
+            .filter(function (key) {
+                var def = getProductFieldDef(key);
+                return def && (String(data[def.dataKey] || '').trim() || String(labels[key] || '').trim());
+            });
+        if (!visibleFields.length) {
+            visibleFields = defaultProductFieldDefs().map(function (def) { return def.key; });
+        }
+
+        clearProductFieldEditor();
+        window.__productRowsData = [{
+            data: data,
+            visibleFields: visibleFields,
+            fieldLabels: labels
+        }];
+        window.__activeProductPage = 0;
+        syncProductPageState();
+        renderFallbackPreviews();
+    }
+
+    function applyImportedMaterialData(materials) {
+        var rows = Array.isArray(materials) ? materials : [];
+        if (!rows.length) {
+            window.alert('Excel 里没有识别到可用的物料数据');
+            return;
+        }
+
+        var wrap = document.getElementById('materialRows');
+        var pager = document.getElementById('materialRowPager');
+        if (!wrap) return;
+
+        clearMaterialFieldEditor();
+        wrap.innerHTML = '';
+
+        var fieldDefs = defaultMaterialFieldDefs();
+        var labelDefaults = {};
+        fieldDefs.forEach(function (def) {
+            labelDefaults[def.key] = def.defaultLabel;
+        });
+
+        var visibleFields = fieldDefs
+            .map(function (def) { return def.key; })
+            .filter(function (key) {
+                return rows.some(function (item) {
+                    return String((item || {})[key] || '').trim();
+                });
+            });
+        if (!visibleFields.length) {
+            visibleFields = fieldDefs.map(function (def) { return def.key; });
+        }
+
+        var sharedOrder = [];
+        rows.forEach(function (item) {
+            (item.customFields || []).forEach(function (field) {
+                var label = String((field || {}).label || '').trim();
+                if (!label) return;
+                var fieldId = upsertMaterialSharedField(label, null, { removable: false });
+                if (fieldId && sharedOrder.indexOf(fieldId) === -1) {
+                    sharedOrder.push(fieldId);
+                }
+            });
+        });
+
+        syncMaterialFieldLabelEditor(visibleFields, labelDefaults);
+        renderMaterialSharedFieldList();
+
+        rows.forEach(function (item) {
+            var rowData = emptyMaterialRowData();
+            rowData.ticketNo = String(item.ticketNo || '').trim();
+            rowData.itemName = String(item.itemName || '').trim();
+            rowData.materialCode = String(item.materialCode || '').trim();
+            rowData.materialName = String(item.materialName || '').trim();
+            rowData.materialSpec = String(item.materialSpec || '').trim();
+            rowData.quantity = String(item.quantity || '').trim();
+            rowData.batchNo = String(item.batchNo || '').trim();
+            rowData.projectName = String(item.projectName || '').trim();
+            rowData.qrValue = String(item.qrValue || '').trim() || rowData.materialCode;
+            rowData.copies = String(item.copies || '1').trim() || '1';
+
+            var sharedFieldValues = {};
+            (item.customFields || []).forEach(function (field) {
+                var label = String((field || {}).label || '').trim();
+                if (!label) return;
+                var fieldId = upsertMaterialSharedField(label, null, { removable: false });
+                if (!fieldId) return;
+                sharedFieldValues[fieldId] = String(field.value || '').trim();
+            });
+
+            addMaterialRow(rowData, {
+                visibleFields: visibleFields.slice(),
+                fieldLabels: cloneJson(labelDefaults),
+                sharedFieldValues: sharedFieldValues,
+                sharedFieldOrder: sharedOrder.slice(),
+                autoLayout: true
+            });
+        });
+
+        window.__activeMaterialPage = 0;
+        syncMaterialPageState();
+        renderFallbackPreviews();
+        if (pager) pager.hidden = false;
+    }
+
+    function setExcelImportButtonsBusy(isBusy) {
+        ['importExcelButton', 'importMaterialExcelButton'].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.disabled = !!isBusy;
+        });
+    }
+
+    function triggerExcelImport(mode) {
+        var input = document.getElementById('zebraExcelImportInput');
+        if (!input) {
+            window.alert('未找到 Excel 导入控件');
+            return;
+        }
+        input.value = '';
+        input.setAttribute('data-import-mode', mode || 'product');
+        input.click();
+    }
+
+    async function handleExcelImportSelection(event) {
+        var input = event && event.target;
+        if (!input || !input.files || !input.files.length) return;
+
+        var file = input.files[0];
+        var importMode = input.getAttribute('data-import-mode') || 'product';
+        var page = document.getElementById('zebraPrintPage');
+        var importEndpoint = page ? (page.dataset.importEndpoint || '') : '';
+        if (!importEndpoint) {
+            window.alert('未找到 Excel 导入接口');
+            input.value = '';
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('mode', importMode);
+
+        setExcelImportButtonsBusy(true);
+        try {
+            var response = await fetch(importEndpoint, {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            });
+            var result = await response.json().catch(function () {
+                return { message: 'Excel 导入失败，服务器返回了无法识别的内容' };
+            });
+            if (!response.ok || !result.success) {
+                window.alert((result && result.message) || 'Excel 导入失败');
+                return;
+            }
+
+            var data = result.data || {};
+            if (importMode === 'material') {
+                applyImportedMaterialData(data.materials || []);
+                setWorkbenchView('data', { skipScroll: true });
+                scrollToSection('materialPrintSection');
+            } else {
+                applyImportedProductData(data.product || {});
+                setWorkbenchView('data', { skipScroll: true });
+                scrollToSection('productPrintSection');
+            }
+        } catch (error) {
+            window.alert('Excel 导入失败：' + (error && error.message ? error.message : error));
+        } finally {
+            setExcelImportButtonsBusy(false);
+            input.value = '';
+        }
+    }
+
+    function addMaterialRow(data, meta) {
+        var wrap = document.getElementById('materialRows');
+        var tpl = document.getElementById('materialRowTemplate');
+        if (!wrap || !tpl) return;
+        var frag = tpl.content.cloneNode(true);
+        var row = frag.querySelector('.material-row');
+        fillMaterialRow(row, data || emptyMaterialRowData(), meta);
+        wrap.appendChild(frag);
+        window.__activeMaterialPage = wrap.querySelectorAll('.material-row').length - 1;
+        syncMaterialPageState();
+        renderFallbackPreviews();
+    }
+
+    function clearAllPrintData() {
+        defaultProductFieldDefs().map(function (def) {
+            return def.valueInputId;
+        }).concat(['productQrValue', 'productPasteTable', 'materialPasteTable']).forEach(function (id) {
+            setValue(id, '');
+        });
+        setValue('productCopies', '1');
+        window.__productRowsData = [];
+        window.__activeProductPage = 0;
+        clearProductFieldEditor();
+        syncProductPageState();
+        var wrap = document.getElementById('materialRows');
+        if (wrap) wrap.innerHTML = '';
+        var pager = document.getElementById('materialRowPager');
+        if (pager) {
+            pager.hidden = true;
+            pager.style.display = 'none';
+            pager.innerHTML = '';
+        }
+        clearMaterialFieldEditor();
+        window.__activeMaterialPage = 0;
+        syncMaterialPageState();
+        renderFallbackPreviews();
+    }
+
+    function scrollToSection(id) {
+        var el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function setWorkbenchView(view, options) {
+        var page = document.getElementById('zebraPrintPage');
+        var tabs = document.getElementById('zebraViewTabs');
+        if (!page) return;
+        var safeView = view === 'preview' ? 'preview' : 'data';
+        page.classList.remove('view-data', 'view-preview');
+        page.classList.add('view-' + safeView);
+        page.setAttribute('data-active-view', safeView);
+        if (tabs) {
+            Array.prototype.slice.call(tabs.querySelectorAll('[data-workbench-view]')).forEach(function (button) {
+                button.classList.toggle('is-active', button.getAttribute('data-workbench-view') === safeView);
+            });
+        }
+        if (options && options.skipScroll) return;
+        var targetId = safeView === 'preview' ? ((options && options.targetId) || 'previewSection') : ((document.getElementById('zebraPrintPage').getAttribute('data-print-mode') || 'product') === 'material' ? 'materialPrintSection' : 'productPrintSection');
+        var target = document.getElementById(targetId);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function bindWorkbenchTabs() {
+        if (window.__zebraWorkbenchTabsBound) return;
+        window.__zebraWorkbenchTabsBound = true;
+        var tabs = document.getElementById('zebraViewTabs');
+        if (!tabs) return;
+        tabs.addEventListener('click', function (event) {
+            var button = event.target.closest('[data-workbench-view]');
+            if (!button) return;
+            setWorkbenchView(button.getAttribute('data-workbench-view'));
+        });
+    }
+
+    function openPrintPreview(title, nodes, pageCss) {
+        var popup = window.open('', '_blank', 'width=980,height=720');
+        if (!popup) return;
+        var html = '<!doctype html><html><head><meta charset=\"utf-8\"><title>' + title + '</title><style>' +
+            '@page{' + pageCss + ';margin:0}html,body{width:100%;height:100%}body{margin:0;padding:0;font-family:Arial,\"Microsoft YaHei\",sans-serif;background:#fff;color:#111}' +
+            '.print-stack{display:flex;flex-direction:column;gap:0;align-items:flex-start}.zebra-label{box-sizing:border-box;border:1px solid #334155;border-radius:6px;background:#fff;color:#0f172a;overflow:hidden;break-after:page;page-break-after:always;box-shadow:none}.zebra-label:last-child{break-after:auto;page-break-after:auto}' +
+            '.product-label{width:60mm;height:80mm}.material-label{width:80mm;height:60mm}.zebra-label-content{box-sizing:border-box;width:100%;height:100%}' +
+            '.product-label-photo{padding:5mm 4.5mm 4.5mm}.material-label-photo{padding:2.2mm 3mm 2.6mm}.product-layout-photo,.material-layout-photo{position:relative;overflow:hidden}' +
+            '.product-layout-photo{height:70mm}.material-layout-photo{height:54.6mm}.layout-field{position:absolute;box-sizing:border-box;border:0;padding:.3mm .5mm;background:transparent}' +
+            '.layout-field-text{width:100%;height:100%;display:flex;align-items:flex-start;gap:1.1mm;line-height:1.18;word-break:break-word}.layout-field-text.is-centered{justify-content:center;text-align:center}.layout-field-text strong{font-weight:800;flex:0 0 auto}.layout-field-text span{min-width:0}' +
+            '.layout-field-qr{padding:0;display:flex;align-items:center;justify-content:center}.layout-field-qr img{width:100%;height:100%;object-fit:contain;display:block}' +
+            '</style></head><body><div class=\"print-stack\"></div></body></html>';
+        popup.document.open();
+        popup.document.write(html);
+        popup.document.close();
+        var stack = popup.document.querySelector('.print-stack');
+        nodes.forEach(function (node) { stack.appendChild(popup.document.importNode(node, true)); });
+        setTimeout(function () { popup.focus(); popup.print(); }, 300);
+    }
+
+    function printProductFallback() {
+        syncActiveProductPageData();
+        var rows = Array.isArray(window.__productRowsData) ? window.__productRowsData : [];
+        var nodes = rows.length ? rows.map(function (row) {
+            return buildProductPreviewNode(row);
+        }) : [buildProductPreviewNode()];
+        openPrintPreview(PRODUCT_UI_TEXT.printPreviewTitle, nodes, 'size:60mm 80mm');
+    }
+
+    function printMaterialsFallback() {
+        var rows = Array.prototype.slice.call(document.querySelectorAll('#materialRows .material-row'));
+        var nodes = rows.length ? rows.map(buildMaterialPreviewNode) : [buildMaterialPreviewNode((function () {
+            var frag = document.getElementById('materialRowTemplate').content.cloneNode(true);
+            var row = frag.querySelector('.material-row');
+            fillMaterialRow(row, emptyMaterialRowData());
+            return row;
+        })())];
+        openPrintPreview('物料码打印', nodes, 'size:80mm 60mm');
+    }
+
+    function printAllFallback() {
+        var nodes = [buildProductPreviewNode()];
+        Array.prototype.slice.call(document.querySelectorAll('#materialRows .material-row')).forEach(function (row) {
+            nodes.push(buildMaterialPreviewNode(row));
+        });
+        if (nodes.length === 1) {
+            var frag = document.getElementById('materialRowTemplate').content.cloneNode(true);
+            var row = frag.querySelector('.material-row');
+            fillMaterialRow(row, emptyMaterialRowData());
+            nodes.push(buildMaterialPreviewNode(row));
+        }
+        openPrintPreview('全部打印', nodes, 'size:auto');
+    }
+
+    function bindFallbackActions() {
+        if (window.__zebraFallbackActionsBound) return;
+        window.__zebraFallbackActionsBound = true;
+
+        var actionMap = {
+            newSampleButton: applySampleData,
+            loadSampleButton: applySampleData,
+            importExcelButton: function () { triggerExcelImport('product'); },
+            importMaterialExcelButton: function () { triggerExcelImport('material'); },
+            clearPrintDataButton: clearAllPrintData,
+            clearDraftButton: clearAllPrintData,
+            clearProductPrintDataInlineButton: clearAllPrintData,
+            clearPrintDataInlineButton: clearAllPrintData,
+            parseProductPasteButton: parseProductPasteTable,
+            clearProductPasteButton: clearProductPasteTable,
+            printSettingsQuickButton: function () { setWorkbenchView('preview', { targetId: 'printSettingsSection' }); },
+            topPrintProductButton: printProductFallback,
+            printProductButton: printProductFallback,
+            topPrintMaterialsButton: printMaterialsFallback,
+            printMaterialsButton: printMaterialsFallback,
+            printAllButton: printAllFallback,
+            addMaterialButton: function () { addMaterialSharedField(); },
+            addMaterialSharedFieldButton: function () { addMaterialSharedField(); },
+            parseMaterialPasteButton: parseMaterialPasteTable,
+            clearMaterialPasteButton: clearMaterialPasteTable,
+            resetMaterialLayoutButton: renderFallbackPreviews,
+            resetProductLayoutButton: renderFallbackPreviews
+        };
+
+        Object.keys(actionMap).forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) el.addEventListener('click', actionMap[id]);
+        });
+    }
+
+    function bootFallbackUi() {
+        var newSampleButton = document.getElementById('newSampleButton');
+        var loadSampleButton = document.getElementById('loadSampleButton');
+        bindFallbackPreviewZoom();
+        bindWorkbenchTabs();
+        bindFallbackActions();
+        bindLayoutEditorControls();
+        bindProductFieldEditorActions();
+        bindMaterialFieldEditorActions();
+        var excelImportInput = document.getElementById('zebraExcelImportInput');
+        if (excelImportInput && !excelImportInput.dataset.bound) {
+            excelImportInput.addEventListener('change', handleExcelImportSelection);
+            excelImportInput.dataset.bound = '1';
+        }
+        syncProductFieldEditor();
+        renderMaterialSharedFieldList();
+        syncMaterialFieldLabelEditor();
+        if (newSampleButton) {
+            newSampleButton.addEventListener('click', function () {
+                applySampleData();
+            });
+        }
+        if (loadSampleButton) {
+            loadSampleButton.addEventListener('click', function () {
+                applySampleData();
+            });
+        }
+        if (!hasVisibleContent()) {
+            applySampleData();
+        }
+        if (window.location.hash === '#previewSection' || window.location.hash === '#printSettingsSection') {
+            setWorkbenchView('preview', { skipScroll: true });
+        } else {
+            setWorkbenchView('data', { skipScroll: true });
+        }
+        document.addEventListener('input', function (event) {
+            if (isProductFieldLabelEditorInput(event.target) || isProductValueEditorInput(event.target)) {
+                if (event.target && event.target.id === 'productQrValue') {
+                    event.target.dataset.lastGenerated = String(event.target.value || '').trim();
+                } else {
+                    syncProductQrValue(false);
+                }
+                syncActiveProductPageData();
+            } else if (isMaterialFieldLabelEditorInput(event.target)) {
+                syncMaterialStandardFieldLabelValue(event.target);
+                syncAllMaterialRowFieldLayouts();
+            } else if (isMaterialFieldValueEditorInput(event.target)) {
+                syncMaterialStandardFieldValue(event.target);
+            } else if (event.target && event.target.classList && event.target.classList.contains('material-shared-field-value')) {
+                syncMaterialSharedFieldValue(event.target);
+            } else if (event.target && event.target.closest && event.target.closest('#materialRows .material-row')) {
+                syncMaterialEditorFieldValues(getActiveMaterialRow());
+            }
+            renderFallbackPreviews();
+        }, true);
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.layout-field') && !event.target.closest('.layout-editor-panel')) {
+                window.__selectedLayoutField = null;
+                updateSelectedFieldControls();
+                renderFallbackPreviews();
+            }
+        }, true);
+        try {
+            repairZebraTexts();
+            renderFallbackPreviews();
+            setTimeout(repairZebraTexts, 300);
+            setTimeout(renderFallbackPreviews, 300);
+            setTimeout(repairZebraTexts, 1200);
+            setTimeout(renderFallbackPreviews, 1200);
+            setTimeout(renderFallbackPreviews, 2500);
+            if (!window.__zebraRepairObserverBound) {
+                var observer = new MutationObserver(repairZebraTexts);
+                observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+                var previewObserver = new MutationObserver(renderFallbackPreviews);
+                var materialRows = document.getElementById('materialRows');
+                if (materialRows) {
+                    previewObserver.observe(materialRows, { childList: true, subtree: true });
+                }
+                window.__zebraRepairObserverBound = true;
+            }
+        } catch (err) {
+            console.error('fallback preview error', err);
+            var productWrap = document.getElementById('productPreview');
+            var materialsWrap = document.getElementById('materialsPreview');
+            if (productWrap && !productWrap.innerHTML.trim()) {
+                productWrap.innerHTML = '<div class="preview-empty">产品预览加载失败，正在重试…</div>';
+            }
+            if (materialsWrap && !materialsWrap.innerHTML.trim()) {
+                materialsWrap.innerHTML = '<div class="preview-empty">物料预览加载失败，正在重试…</div>';
+            }
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootFallbackUi);
+    } else {
+        bootFallbackUi();
+    }
+    window.addEventListener('load', bootFallbackUi);
+})();
+</script>
+{% endblock %}

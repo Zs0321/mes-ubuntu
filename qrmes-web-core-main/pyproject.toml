@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qrmes-web-core"
+version = "0.1.0"
+description = "Core MES web backend split from mes_ubuntu"
+readme = "README.md"
+requires-python = ">=3.10"

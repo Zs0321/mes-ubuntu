@@ -1,0 +1,13 @@
+[Unit]
+Description=qrmes-dingtalk-bot
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/qrmes-dingtalk-bot
+ExecStart=%h/qrmes-dingtalk-bot/.venv/bin/python -m dingtalk_mes_bot.bot_app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

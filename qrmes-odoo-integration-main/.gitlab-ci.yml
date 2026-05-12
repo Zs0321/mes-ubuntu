@@ -1,0 +1,10 @@
+stages:
+  - verify
+
+verify-odoo-integration:
+  stage: verify
+  tags:
+    - linux
+  script:
+    - test -f odoo/docker-compose.yml
+    - test -f odoo/README.md

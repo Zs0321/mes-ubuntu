@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="?attr/colorSurface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <!-- 工序标题行 - 压缩高度 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp"
+            android:minHeight="28dp">
+
+            <TextView
+                android:id="@+id/tvStepOrder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="步骤 1"
+                android:textSize="11sp"
+                android:textColor="?attr/colorPrimary"
+                android:background="@drawable/status_background"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:layout_marginEnd="6dp"/>
+
+            <TextView
+                android:id="@+id/tvStepName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="热套工序"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"/>
+
+            <!-- QC 状态指示器 -->
+            <TextView
+                android:id="@+id/tvQcStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <!-- 工序描述 - 压缩间距 -->
+        <TextView
+            android:id="@+id/tvStepDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="热套装配工序"
+            android:textSize="12sp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:layout_marginBottom="6dp"/>
+
+        <!-- 操作区域 - 压缩高度 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:minHeight="36dp">
+
+            <!-- 相机按钮 - 压缩尺寸 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCamera"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="拍照"
+                android:textSize="12sp"
+                app:icon="@drawable/ic_camera_alt"
+                app:iconSize="16dp"
+                app:iconGravity="textStart"
+                app:cornerRadius="6dp"
+                android:minHeight="48dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <!-- 照片预览 - 压缩尺寸 -->
+            <ImageView
+                android:id="@+id/ivPhotoPreview"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/status_background"
+                android:visibility="gone"
+                android:contentDescription="工序照片预览"
+                app:cornerRadius="4dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

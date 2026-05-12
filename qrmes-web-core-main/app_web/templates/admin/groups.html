@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+
+{% block title %}群组管理 - MESAPP 管理平台{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+        <div>
+            <h2 style="margin:0;">👥 群组管理</h2>
+            <p class="text-muted" style="margin:0.25rem 0 0; color:#4a5568; font-size:0.9rem;">管理本地群组与成员，配合权限管理实现按群组授权</p>
+        </div>
+        <div>
+            <button class="btn btn-primary" type="button" onclick="openCreateGroupModal()">+ 新建本地群组</button>
+        </div>
+    </div>
+    <div class="card-body" style="display:grid; grid-template-columns: minmax(260px, 1fr) 2fr; gap:1.5rem;">
+        <div>
+            <h5 style="margin-bottom:0.75rem;">群组列表</h5>
+            <div id="groupList" style="max-height:480px; overflow-y:auto; border:1px solid #1e293b; border-radius:0.5rem;">
+                <!-- 群组列表由JS渲染 -->
+            </div>
+        </div>
+        <div>
+            <h5 style="margin-bottom:0.75rem;">群组详情</h5>
+            <div id="groupDetails" class="empty-state">
+                请选择左侧群组查看详情
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 新建群组模态框 -->
+<div class="modal" id="createGroupModal" tabindex="-1">
+    <div class="modal-content" style="max-width:480px;">
+        <div class="modal-header">
+            <h5>新建本地群组</h5>
+            <span class="close" onclick="closeModal('createGroupModal')">&times;</span>
+        </div>
+        <div style="padding:1rem 0;">
+            <div class="form-group">
+                <label for="groupNameInput">群组标识（英文名）</label>
+                <input type="text" id="groupNameInput" class="form-control" placeholder="例如: qa_team">
+                <small style="color:#718096;">用于内部标识，创建后不建议修改，需唯一。</small>
+            </div>
+            <div class="form-group">
+                <label for="groupDisplayNameInput">显示名称</label>
+                <input type="text" id="groupDisplayNameInput" class="form-control" placeholder="例如: 质量检验组">
+            </div>
+            <div class="form-group">
+                <label for="groupDescriptionInput">描述</label>
+                <textarea id="groupDescriptionInput" class="form-control" rows="3" placeholder="可选，说明该群组用途"></textarea>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:0.5rem; margin-top:0.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('createGroupModal')">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitCreateGroup()">创建</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑群组模态框 -->
+<div class="modal" id="editGroupModal" tabindex="-1">
+    <div class="modal-content" style="max-width:480px;">
+        <div class="modal-header">
+            <h5>编辑群组</h5>
+            <span class="close" onclick="closeModal('editGroupModal')">&times;</span>
+        </div>
+        <div style="padding:1rem 0;">
+            <div class="form-group">
+                <label>群组标识（只读）</label>
+                <input type="text" id="editGroupName" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="editGroupDisplayName">显示名称</label>
+                <input type="text" id="editGroupDisplayName" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="editGroupDescription">描述</label>
+                <textarea id="editGroupDescription" class="form-control" rows="3"></textarea>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:0.5rem; margin-top:0.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editGroupModal')">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitEditGroup()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 管理成员模态框 -->
+<div class="modal" id="groupMembersModal" tabindex="-1">
+    <div class="modal-content" style="max-width:640px;">
+        <div class="modal-header">
+            <h5>管理群组成员</h5>
+            <span class="close" onclick="closeModal('groupMembersModal')">&times;</span>
+        </div>
+        <div style="padding:1rem 0; max-height:60vh; overflow-y:auto;">
+            <div id="groupMembersHint" style="margin-bottom:0.75rem; color:#4a5568; font-size:0.9rem;"></div>
+            <div id="groupMembersList" style="display:flex; flex-direction:column; gap:0.35rem;">
+                <!-- 成员复选框列表由JS渲染 -->
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:0.5rem; margin-top:0.75rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('groupMembersModal')">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitGroupMembers()">保存成员</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const groupsDataScript = document.getElementById('initialGroupsData');
+    const allUsersDataScript = document.getElementById('allUsersData');
+    const groupsData = groupsDataScript ? JSON.parse(groupsDataScript.textContent || '[]') : [];
+    const allUsers = allUsersDataScript ? JSON.parse(allUsersDataScript.textContent || '[]') : [];
+
+    let groups = groupsData || [];
+    let currentGroupId = null;
+    let currentGroupMembers = [];
+
+    function renderGroupList() {
+        const container = document.getElementById('groupList');
+        if (!container) return;
+        if (!groups || groups.length === 0) {
+            container.innerHTML = '<div class="empty-state">当前没有任何群组，可以点击右上角“新建本地群组”。</div>';
+            document.getElementById('groupDetails').innerHTML = '<div class="empty-state">当前没有群组，请先创建。</div>';
+            currentGroupId = null;
+            return;
+        }
+        let html = '';
+        groups.forEach(g => {
+            const isActive = g.id === currentGroupId;
+            const memberCount = (g.member_count != null ? g.member_count : g.memberCount) || 0;
+            const sourceLabel = g.synology_group_id != null ? '同步群组' : '本地群组';
+            html += `
+                <div onclick="selectGroup('${g.id}')" style="padding:0.6rem 0.75rem; border-bottom:1px solid #edf2f7; cursor:pointer; background:${isActive ? '#ebf4ff' : '#fff'};">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-weight:600; color:#2d3748;">${(g.display_name || g.name || '').trim()}</div>
+                            <div style="font-size:0.8rem; color:#718096;">${g.name}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:0.8rem; color:#4a5568;">成员：<strong>${memberCount}</strong></div>
+                            <div style="font-size:0.75rem; color:${g.synology_group_id != null ? '#2b6cb0' : '#38a169'};">${sourceLabel}</div>
+                        </div>
+                    </div>
+                </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    async function selectGroup(groupId) {
+        currentGroupId = groupId;
+        renderGroupList();
+        await loadGroupDetails(groupId);
+    }
+
+    async function loadGroupDetails(groupId) {
+        const target = document.getElementById('groupDetails');
+        if (!target) return;
+        const group = groups.find(g => g.id === groupId);
+        if (!group) {
+            target.innerHTML = '<div class="empty-state">未找到群组。</div>';
+            return;
+        }
+        const resp = await apiRequest(`/admin/api/groups/${groupId}/members`, 'GET');
+        if (!resp || !resp.success) {
+            target.innerHTML = `<div class="alert alert-error">加载群组详情失败：${resp && resp.message ? resp.message : '未知错误'}</div>`;
+            return;
+        }
+        currentGroupMembers = resp.members || [];
+        const memberCount = currentGroupMembers.length;
+        const sourceLabel = group.synology_group_id != null
+            ? '同步自群晖（已作为本地配置导入，可在此调整成员与权限）'
+            : '本地群组（仅在 MES 内使用，可自由配置）';
+        target.innerHTML = `
+            <div>
+                <h4 style="margin-bottom:0.5rem;">${(group.display_name || group.name || '').trim()}</h4>
+                <p style="color:#4a5568; font-size:0.9rem; margin-bottom:0.5rem;">标识：<code>${group.name}</code></p>
+                <p style="color:#4a5568; font-size:0.9rem; margin-bottom:0.5rem;">来源：${sourceLabel}</p>
+                <p style="color:#4a5568; font-size:0.9rem; margin-bottom:0.5rem;">描述：${(group.description || '').trim() || '<span style="color:#a0aec0;">暂无</span>'}</p>
+                <p style="color:#4a5568; font-size:0.9rem; margin-bottom:0.75rem;">成员数量：<strong>${memberCount}</strong></p>
+                <div style="display:flex; gap:0.5rem; margin-bottom:0.75rem;">
+                    <button type="button" class="btn btn-primary" onclick="openEditGroupModal()">编辑群组</button>
+                    <button type="button" class="btn btn-secondary" onclick="openManageMembersModal()">管理成员</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDeleteGroup()">删除群组</button>
+                </div>
+                <h6>成员列表</h6>
+                ${renderMembersTable(currentGroupMembers)}
+            </div>`;
+    }
+
+    function renderMembersTable(members) {
+        if (!members || members.length === 0) {
+            return '<div class="empty-state">当前群组暂无成员。</div>';
+        }
+        let rows = members.map(m => {
+            const roleLabel = m.role === 'admin' ? '管理员' : '普通用户';
+            return `<tr>
+                <td>${m.display_name || m.synology_username}</td>
+                <td>${m.synology_username}</td>
+                <td>${roleLabel}</td>
+                <td>${m.email || '-'}</td>
+            </tr>`;
+        }).join('');
+        return `<div class="table-responsive">
+            <table class="table">
+                <thead><tr><th>显示名</th><th>用户名</th><th>角色</th><th>邮箱</th></tr></thead>
+                <tbody>${rows}</tbody>
+            </table>
+        </div>`;
+    }
+
+    function openCreateGroupModal() {
+        document.getElementById('groupNameInput').value = '';
+        document.getElementById('groupDisplayNameInput').value = '';
+        document.getElementById('groupDescriptionInput').value = '';
+        openModal('createGroupModal');
+    }
+
+    async function submitCreateGroup() {
+        const name = document.getElementById('groupNameInput').value.trim();
+        const displayName = document.getElementById('groupDisplayNameInput').value.trim();
+        const description = document.getElementById('groupDescriptionInput').value.trim();
+        if (!name) {
+            alert('群组标识不能为空');
+            return;
+        }
+        const resp = await apiRequest('/admin/api/groups', {
+            method: 'POST',
+            body: JSON.stringify({ name, display_name: displayName || null, description })
+        });
+        if (!resp || !resp.success) {
+            alert('创建群组失败：' + (resp && resp.message ? resp.message : '未知错误'));
+            return;
+        }
+        closeModal('createGroupModal');
+        await reloadGroups(resp.group && resp.group.id);
+        showMessage('群组创建成功', 'success');
+    }
+
+    function openEditGroupModal() {
+        if (!currentGroupId) return;
+        const group = groups.find(g => g.id === currentGroupId);
+        if (!group) return;
+        document.getElementById('editGroupName').value = group.name;
+        document.getElementById('editGroupDisplayName').value = group.display_name || group.name;
+        document.getElementById('editGroupDescription').value = group.description || '';
+        openModal('editGroupModal');
+    }
+
+    async function submitEditGroup() {
+        if (!currentGroupId) return;
+        const displayName = document.getElementById('editGroupDisplayName').value.trim();
+        const description = document.getElementById('editGroupDescription').value.trim();
+        const resp = await apiRequest(`/admin/api/groups/${currentGroupId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ display_name: displayName, description })
+        });
+        if (!resp || !resp.success) {
+            alert('更新群组失败：' + (resp && resp.message ? resp.message : '未知错误'));
+            return;
+        }
+        closeModal('editGroupModal');
+        await reloadGroups(currentGroupId);
+        showMessage('群组信息已更新', 'success');
+    }
+
+    async function confirmDeleteGroup() {
+        if (!currentGroupId) return;
+        const group = groups.find(g => g.id === currentGroupId);
+        if (!group) return;
+        if (!confirm(`确定要删除群组 "${group.display_name || group.name}" 吗？\n此操作不可撤销。`)) return;
+        const resp = await apiRequest(`/admin/api/groups/${currentGroupId}`, {
+            method: 'DELETE'
+        });
+        if (!resp || !resp.success) {
+            alert('删除群组失败：' + (resp && resp.message ? resp.message : '未知错误'));
+            return;
+        }
+        await reloadGroups(null);
+        showMessage('群组已删除', 'success');
+    }
+
+    function openManageMembersModal() {
+        if (!currentGroupId) return;
+        const group = groups.find(g => g.id === currentGroupId);
+        if (!group) return;
+        const hint = document.getElementById('groupMembersHint');
+        const list = document.getElementById('groupMembersList');
+        const currentMemberIds = new Set((currentGroupMembers || []).map(m => m.id));
+        hint.textContent = `为群组 "${group.display_name || group.name}" 选择成员。`; 
+        let html = '';
+        allUsers.forEach(u => {
+            const checked = currentMemberIds.has(u.id) ? 'checked' : '';
+            const roleLabel = u.role === 'admin' ? '管理员' : '普通用户';
+            html += `<label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem;">
+                <input type="checkbox" value="${u.id}" ${checked}>
+                <span>${u.display_name || u.synology_username}</span>
+                <span style="color:#718096; font-size:0.8rem;">(${u.synology_username} / ${roleLabel})</span>
+            </label>`;
+        });
+        list.innerHTML = html || '<div class="empty-state">当前没有任何用户。</div>';
+        openModal('groupMembersModal');
+    }
+
+    async function submitGroupMembers() {
+        if (!currentGroupId) return;
+        const list = document.getElementById('groupMembersList');
+        const checkboxes = list.querySelectorAll('input[type="checkbox"]');
+        const selected = new Set();
+        checkboxes.forEach(cb => { if (cb.checked) selected.add(cb.value); });
+        const currentIds = new Set((currentGroupMembers || []).map(m => m.id));
+        const add = [];
+        const remove = [];
+        selected.forEach(id => {
+            if (!currentIds.has(id)) add.push(id);
+        });
+        currentIds.forEach(id => {
+            if (!selected.has(id)) remove.push(id);
+        });
+        const resp = await apiRequest(`/admin/api/groups/${currentGroupId}/members`, {
+            method: 'PUT',
+            body: JSON.stringify({ add, remove })
+        });
+        if (!resp || !resp.success) {
+            alert('更新成员失败：' + (resp && resp.message ? resp.message : '未知错误'));
+            return;
+        }
+        currentGroupMembers = resp.members || [];
+        await reloadGroups(currentGroupId);
+        closeModal('groupMembersModal');
+        showMessage('群组成员已更新', 'success');
+    }
+
+    async function reloadGroups(selectId) {
+        const resp = await apiRequest('/admin/api/groups', 'GET');
+        if (resp && resp.success) {
+            groups = resp.groups || [];
+            currentGroupId = selectId && groups.some(g => g.id === selectId) ? selectId : (groups[0] && groups[0].id);
+            renderGroupList();
+            if (currentGroupId) {
+                await loadGroupDetails(currentGroupId);
+            } else {
+                const target = document.getElementById('groupDetails');
+                if (target) target.innerHTML = '<div class="empty-state">当前没有群组，请先创建。</div>';
+            }
+        }
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        if (groups && groups.length > 0) {
+            currentGroupId = groups[0].id;
+            renderGroupList();
+            loadGroupDetails(currentGroupId);
+        } else {
+            renderGroupList();
+        }
+    });
+</script>
+<script id="initialGroupsData" type="application/json">{{ groups|tojson|safe }}</script>
+<script id="allUsersData" type="application/json">{{ all_users|tojson|safe }}</script>
+{% endblock %}

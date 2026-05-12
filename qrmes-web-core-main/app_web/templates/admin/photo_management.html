@@ -1,0 +1,493 @@
+{% extends "base.html" %}
+
+{% block title %}工序照片管理{% endblock %}
+
+{% block extra_css %}
+<style>
+.photo-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.photo-card {
+    background: #141d2e;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.photo-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.photo-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.photo-info {
+    padding: 1rem;
+}
+
+.photo-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    color: #e8edf5;
+    word-break: break-all;
+}
+
+.photo-meta {
+    font-size: 0.75rem;
+    color: #5a6f85;
+    margin-bottom: 0.25rem;
+}
+
+.photo-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.btn-small {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+.search-section {
+    margin-bottom: 1.5rem;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+    color: #e8edf5;
+    font-size: 0.9rem;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 0.5rem;
+    border: 1px solid #1e2d3d;
+    border-radius: 3px;
+    font-size: 0.9rem;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.stats-grid-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card-photo {
+    background: #141d2e;
+    padding: 1.5rem;
+    border-radius: 4px;
+    border: 2px solid #1e2d3d;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.stat-card-photo:hover {
+    border-color: #00b0ff;
+    box-shadow: 0 4px 12px rgba(0, 176, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+.stat-number {
+    font-size: 2em;
+    font-weight: bold;
+    color: #00b0ff;
+    margin-bottom: 0.3rem;
+}
+
+.stat-label {
+    color: #5a6f85;
+    font-size: 0.9rem;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+}
+
+.modal-content-large {
+    background: #141d2e;
+    margin: 2% auto;
+    padding: 0;
+    width: 90%;
+    max-width: 900px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 1rem 1.5rem;
+    background: #0f1a2a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1e2d3d;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #e8edf5;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-body-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    background: #0f1a2a;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    border-top: 1px solid #1e2d3d;
+}
+
+.preview-img {
+    max-width: 100%;
+    max-height: 500px;
+    border-radius: 4px;
+}
+
+.info-table {
+    width: 100%;
+    font-size: 0.85rem;
+}
+
+.info-table td {
+    padding: 0.4rem 0;
+    vertical-align: top;
+}
+
+.info-table td:first-child {
+    color: #5a6f85;
+    font-weight: 500;
+    width: 40%;
+}
+
+.info-table td:last-child {
+    color: #e8edf5;
+}
+
+.metadata-box {
+    background: #0f1a2a;
+    padding: 0.8rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.loading {
+    text-align: center;
+    padding: 3rem;
+    color: #5a6f85;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #5a6f85;
+}
+
+.close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #5a6f85;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close:hover {
+    color: #e8edf5;
+}
+
+.upload-status {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.upload-status.uploaded {
+    background: #0f2e1a;
+    color: #4ade80;
+    border: 1px solid #1a4d2e;
+}
+
+.upload-status.pending {
+    background: #2a1f00;
+    color: #f59e0b;
+    border: 1px solid #5c4000;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #1e2d3d;
+    background: #141d2e;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: #00b0ff;
+    color: white;
+    border-color: #00b0ff;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination button.active {
+    background: #00b0ff;
+    color: white;
+    border-color: #00b0ff;
+}
+
+input[type="text"],
+input[type="date"],
+select,
+textarea {
+    background: #0f1a2a !important;
+    color: #e8edf5 !important;
+    border: 1px solid #1e2d3d !important;
+    border-radius: 3px !important;
+}
+input[type="text"]::placeholder,
+input[type="date"]::placeholder,
+select::placeholder,
+textarea::placeholder {
+    color: #5a6f85 !important;
+}
+select option {
+    background: #0f1a2a !important;
+    color: #e8edf5 !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>📷 工序照片管理</h2>
+        <p style="margin: 0.5rem 0 0 0; color: #5a6f85;">查看、管理和删除工序记录照片</p>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stats-grid-photos" id="statsCards">
+        <div class="stat-card-photo">
+            <div class="stat-number" id="totalPhotos">0</div>
+            <div class="stat-label">总照片数</div>
+        </div>
+        <div class="stat-card-photo">
+            <div class="stat-number" id="uploadedPhotos">1</div>
+            <div class="stat-label">工序数量</div>
+        </div>
+        <div class="stat-card-photo">
+            <div class="stat-number" id="pendingPhotos">0</div>
+            <div class="stat-label">已上传</div>
+        </div>
+        <div class="stat-card-photo">
+            <div class="stat-number" id="totalSize">0 B</div>
+            <div class="stat-label">总大小</div>
+        </div>
+    </div>
+
+    <!-- 搜索过滤器 -->
+    <div class="search-section">
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label for="productSerialFilter">产品序列号</label>
+                <input type="text" id="productSerialFilter" placeholder="输入产品序列号">
+            </div>
+            <div class="filter-group">
+                <label for="processStepFilter">工序步骤</label>
+                <select id="processStepFilter">
+                    <option value="">全部工序</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="dateFromFilter">开始日期</label>
+                <input type="date" id="dateFromFilter">
+            </div>
+            <div class="filter-group">
+                <label for="dateToFilter">结束日期</label>
+                <input type="date" id="dateToFilter">
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button type="button" class="btn btn-primary" onclick="searchPhotos()">
+                🔍 搜索
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="clearFilters()">
+                ✖ 清空
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="refreshPhotos()" style="margin-left: auto;">
+                🔄 刷新
+            </button>
+        </div>
+    </div>
+
+    <!-- 照片网格 -->
+    <div id="photoGrid" class="photo-container">
+        <div class="loading">
+            <p>🔄 正在加载照片...</p>
+        </div>
+    </div>
+
+    <!-- 空状态 -->
+    <div id="emptyState" class="empty-state" style="display: none;">
+        <p>📷 暂无照片数据</p>
+    </div>
+
+    <!-- 分页 -->
+    <nav aria-label="照片分页">
+        <ul class="pagination" id="pagination"></ul>
+    </nav>
+</div>
+
+<!-- 照片详情模态框 -->
+<div class="modal" id="photoModal">
+    <div class="modal-content-large">
+        <div class="modal-header">
+            <h3 id="photoModalTitle">照片详情</h3>
+            <button class="close" onclick="closeModal('photoModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-body-grid">
+                <div style="text-align: center;">
+                    <img id="photoModalImage" src="" alt="照片" class="preview-img">
+                </div>
+                <div>
+                    <h6 style="margin-bottom: 1rem; color: #e8edf5;">基本信息</h6>
+                    <table class="info-table">
+                        <tr>
+                            <td>产品序列号:</td>
+                            <td id="modalProductSerial">-</td>
+                        </tr>
+                        <tr>
+                            <td>工序步骤:</td>
+                            <td id="modalProcessStep">-</td>
+                        </tr>
+                        <tr>
+                            <td>拍摄时间:</td>
+                            <td id="modalCapturedAt">-</td>
+                        </tr>
+                        <tr>
+                            <td>拍摄用户:</td>
+                            <td id="modalCapturedBy">-</td>
+                        </tr>
+                        <tr>
+                            <td>文件大小:</td>
+                            <td id="modalFileSize">-</td>
+                        </tr>
+                        <tr>
+                            <td>上传状态:</td>
+                            <td id="modalUploadStatus">-</td>
+                        </tr>
+                    </table>
+                    
+                    <h6 style="margin: 1.5rem 0 0.5rem 0; color: #e8edf5;">元数据</h6>
+                    <div id="modalMetadata" class="metadata-box">-</div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" onclick="deletePhoto()" id="deletePhotoBtn">
+                🗑️ 删除照片
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="closeModal('photoModal')">关闭</button>
+        </div>
+    </div>
+</div>
+
+<!-- 删除确认模态框 -->
+<div class="modal" id="deleteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>确认删除</h3>
+            <button class="close" onclick="closeModal('deleteModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>确定要删除这张照片吗？</p>
+            <p style="color: #f56565;">⚠️ 此操作不可撤销！</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('deleteModal')">取消</button>
+            <button class="btn btn-danger" onclick="confirmDeletePhoto()">确认删除</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/photo-management.js"></script>
+{% endblock %}

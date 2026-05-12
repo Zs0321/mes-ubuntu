@@ -1,0 +1,119 @@
+{% extends "motor_qc/base.html" %}
+
+{% block breadcrumb %}
+<a href="{{ url_for('motor_qc.index') }}">项目列表</a>
+<span> / </span>
+<span id="breadcrumb-project">{{ project_name or project_id }}</span>
+<span> / </span>
+<span>人工确认</span>
+{% endblock %}
+
+{% block motor_qc_content %}
+<div class="qc-page task-page">
+    <div class="card qc-header">
+        <div class="qc-header-main">
+            <div>
+                <h2>AI识别人工确认</h2>
+                <div class="muted">项目：{{ project_name or project_id }}（{{ project_id }}）</div>
+            </div>
+            <div class="qc-header-actions">
+                <a class="btn btn-secondary" href="{{ url_for('motor_qc.inspect_tasks', project_id=project_id) }}">返回任务中心</a>
+                <a class="btn btn-secondary" href="{{ url_for('motor_qc.storage_check_page', project_id=project_id) }}">存储自检</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card task-filters">
+        <div class="control-row" style="display:none;">
+            <label for="task-filter-status">状态</label>
+            <select id="task-filter-status">
+                <option value="review" selected>待确认</option>
+            </select>
+        </div>
+        <div class="control-row">
+            <label for="task-filter-serial">序列号</label>
+            <input id="task-filter-serial" list="task-serial-options" placeholder="输入或选择序列号">
+        </div>
+        <div class="control-row">
+            <label for="task-filter-process">工序</label>
+            <input id="task-filter-process" list="task-process-options" placeholder="输入或选择工序">
+        </div>
+        <div class="control-row">
+            <label for="task-filter-product-type">产品类型</label>
+            <input id="task-filter-product-type" list="task-product-type-options" placeholder="输入或选择产品类型">
+        </div>
+        <div class="control-row">
+            <label for="task-filter-ai">AI结论</label>
+            <select id="task-filter-ai">
+                <option value="">全部</option>
+                <option value="pass">识别正确(合格)</option>
+                <option value="fail">识别错误(不合格/待复核)</option>
+            </select>
+        </div>
+        <div class="control-row">
+            <label for="task-filter-date-from">开始日期</label>
+            <input id="task-filter-date-from" type="date">
+        </div>
+        <div class="control-row">
+            <label for="task-filter-date-to">结束日期</label>
+            <input id="task-filter-date-to" type="date">
+        </div>
+        <div class="control-row">
+            <label for="task-filter-overdue">超时提醒</label>
+            <select id="task-filter-overdue">
+                <option value="">全部</option>
+                <option value="warning">仅黄色(>10分钟)</option>
+                <option value="danger">仅红色(>30分钟)</option>
+            </select>
+        </div>
+        <div class="control-actions">
+            <button type="button" id="task-search-btn" class="btn btn-primary">查询</button>
+            <button type="button" id="task-reset-btn" class="btn btn-secondary">重置</button>
+            <button type="button" id="task-refresh-btn" class="btn btn-success">刷新</button>
+            <button type="button" id="task-auto-refresh-btn" class="btn btn-secondary">自动刷新: 开</button>
+        </div>
+        <div id="task-page-hint" class="muted small"></div>
+    </div>
+
+    <div class="task-summary-grid">
+        <section class="card task-summary-card">
+            <div class="task-summary-title">待确认任务</div>
+            <div id="count-review" class="task-summary-value">0</div>
+        </section>
+        <section class="card task-summary-card">
+            <div class="task-summary-title">AI识别正确</div>
+            <div id="count-ai-pass" class="task-summary-value">0</div>
+        </section>
+        <section class="card task-summary-card">
+            <div class="task-summary-title">AI识别错误</div>
+            <div id="count-ai-fail" class="task-summary-value">0</div>
+        </section>
+        <section class="card task-summary-card">
+            <div class="task-summary-title">已确认</div>
+            <div id="count-confirmed" class="task-summary-value">0</div>
+        </section>
+    </div>
+
+    <div id="task-groups" class="task-groups"></div>
+
+    <datalist id="task-serial-options"></datalist>
+    <datalist id="task-process-options"></datalist>
+    <datalist id="task-product-type-options"></datalist>
+
+    <div id="task-photo-preview-modal" class="photo-preview-modal hidden">
+        <div class="photo-preview-dialog">
+            <button type="button" class="photo-preview-close" data-close-photo-modal aria-label="关闭">×</button>
+            <img id="task-photo-preview-image" src="" alt="工序照片预览">
+            <div id="task-photo-preview-caption" class="small muted"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block motor_qc_js %}
+<script>
+window.MOTOR_QC_TASK_PROJECT_ID = {{ project_id|tojson }};
+window.MOTOR_QC_TASK_PAGE_MODE = "manual_review";
+</script>
+<script src="{{ url_for('motor_qc.static', filename='js/motor_qc/tasks.js', v='20260227_3') }}"></script>
+{% endblock %}

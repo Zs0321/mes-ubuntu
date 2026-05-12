@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_manage_people"
+        android:icon="@drawable/ic_person"
+        android:title="人员"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_manual_input"
+        android:icon="@drawable/ic_edit"
+        android:title="手动输入"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_filter_by_tester"
+        android:title="按人员查询"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_clear_filter"
+        android:title="清除筛选"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_manage_projects"
+        android:title="项目管理"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_project_config"
+        android:title="项目管理配置"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_network_settings"
+        android:title="网络设置"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_sync_config"
+        android:icon="@drawable/ic_sync"
+        android:title="同步当前项目配置"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_batch_sync_configs"
+        android:title="批量同步当前所有项目"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_quality_workbench"
+        android:title="质量工作台"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_inspection_report"
+        android:title="电机检测报告"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_check_update"
+        android:title="检查更新"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_share_logs"
+        android:title="日志操作"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_logout"
+        android:icon="@drawable/ic_logout"
+        android:title="退出登录"
+        app:showAsAction="never" />
+
+</menu>

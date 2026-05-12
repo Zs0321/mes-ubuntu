@@ -1,0 +1,1225 @@
+{% extends "base.html" %}
+
+{% block title %}测试工作台 - 测试报告{% endblock %}
+
+{% block content %}
+<style>
+    .vr-shell { display: grid; gap: 1.5rem; min-width: 0; }
+    .vr-hero { background: linear-gradient(135deg, rgba(102, 126, 234, 0.16), rgba(118, 75, 162, 0.12)); border: 1px solid rgba(102, 126, 234, 0.14); border-radius: 18px; padding: 1.75rem; display: flex; justify-content: space-between; gap: 1.5rem; align-items: flex-start; min-width: 0; }
+    .vr-hero > div,
+    .vr-card,
+    .vr-template-host { min-width: 0; }
+    .vr-hero h2 { margin: 0 0 0.75rem; font-size: 1.8rem; color: #2d3748; }
+    .vr-hero p { margin: 0; max-width: 760px; color: #4a5568; line-height: 1.7; }
+    .vr-hero-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .vr-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+    .vr-card { background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(10,15,26,0.98) 100%); border-radius: 18px; border: 1px solid rgba(30,41,59,0.5); box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4); padding: 1.5rem; }
+    .vr-card-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.1rem; }
+    .vr-card-head h3 { margin: 0; font-size: 1.15rem; color: #2d3748; }
+    .vr-card-head span { color: #718096; font-size: 0.88rem; }
+    .vr-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 1.1rem; }
+    .vr-form-block { margin-bottom: 1rem; }
+    .vr-form-block label { display: block; margin-bottom: 0.45rem; font-weight: 600; color: #4a5568; }
+    .vr-form-span-2 { grid-column: 1 / -1; }
+    .vr-auto-fill-panel { background: linear-gradient(135deg, #f8faff 0%, #eef2ff 100%); border: 1px solid rgba(30,41,59,0.5); border-radius: 16px; padding: 1rem 1.1rem; margin-bottom: 1.15rem; }
+    .vr-auto-fill-panel strong { display: block; margin-bottom: 0.35rem; color: #2d3748; }
+    .vr-auto-fill-panel p { margin: 0 0 0.85rem; color: #94a3b8; font-size: 0.9rem; line-height: 1.7; }
+    .vr-auto-fill-status { margin-top: 0.55rem; color: #4c51bf; font-size: 0.86rem; }
+    .vr-note { margin-top: 0.55rem; color: #718096; font-size: 0.85rem; }
+    .vr-scan-entry-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.75rem; align-items: end; }
+    .vr-camera-button { min-width: 132px; display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; }
+    .vr-scan-button-icon { width: 1.15rem; height: 1.15rem; border: 2px solid currentColor; border-radius: 5px; position: relative; box-sizing: border-box; }
+    .vr-scan-button-icon::before, .vr-scan-button-icon::after { content: ''; position: absolute; background: currentColor; }
+    .vr-scan-button-icon::before { left: 50%; top: -5px; width: 2px; height: 6px; transform: translateX(-50%); }
+    .vr-scan-button-icon::after { top: 50%; left: -5px; width: 6px; height: 2px; transform: translateY(-50%); }
+    .vr-camera-panel { display: none; margin-top: 0.85rem; padding: 0.9rem; border-radius: 16px; border: 1px solid #dbe4ff; background: rgba(255, 255, 255, 0.92); }
+    .vr-camera-panel.is-active { display: grid; gap: 0.8rem; }
+    .vr-camera-panel.is-file-mode .vr-scan-stage { display: none; }
+    .vr-scan-stage { position: relative; width: 100%; min-height: 320px; overflow: hidden; border-radius: 16px; background: #0f172a; }
+    .vr-camera-preview { width: 100%; height: min(62vh, 430px); min-height: 320px; display: block; background: #0f172a; object-fit: cover; }
+    .vr-scan-frame { position: absolute; left: 50%; top: 50%; width: min(66vw, 260px); height: min(66vw, 260px); max-height: 72%; transform: translate(-50%, -50%); border: 1px solid rgba(255,255,255,.45); border-radius: 18px; box-shadow: 0 0 0 999px rgba(15,23,42,.36); pointer-events: none; }
+    .vr-scan-frame span { position: absolute; width: 28px; height: 28px; border-color: #38bdf8; border-style: solid; }
+    .vr-scan-corner-tl { left: -2px; top: -2px; border-width: 4px 0 0 4px; border-top-left-radius: 18px; }
+    .vr-scan-corner-tr { right: -2px; top: -2px; border-width: 4px 4px 0 0; border-top-right-radius: 18px; }
+    .vr-scan-corner-bl { left: -2px; bottom: -2px; border-width: 0 0 4px 4px; border-bottom-left-radius: 18px; }
+    .vr-scan-corner-br { right: -2px; bottom: -2px; border-width: 0 4px 4px 0; border-bottom-right-radius: 18px; }
+    .vr-scan-line { position: absolute; left: 50%; top: calc(50% - 125px); width: min(58vw, 226px); height: 2px; transform: translateX(-50%); background: linear-gradient(90deg, transparent, #38bdf8, transparent); box-shadow: 0 0 12px rgba(56,189,248,.9); animation: vrScanLine 1.8s ease-in-out infinite; pointer-events: none; }
+    @keyframes vrScanLine { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 248px); } }
+    .vr-camera-file-button { justify-self: start; }
+    .vr-camera-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; flex-wrap: wrap; }
+    .vr-camera-panel-head strong { color: #243b53; }
+    .vr-camera-panel-head span { color: #94a3b8; font-size: 0.85rem; }
+    .vr-camera-status { color: #4c51bf; font-size: 0.86rem; line-height: 1.7; }
+    .vr-dropzone { border: 1.5px dashed #a3bffa; border-radius: 16px; background: #f7f9ff; padding: 1.1rem 1.2rem; }
+    .vr-dropzone strong { display: block; color: #2d3748; margin-bottom: 0.35rem; }
+    .vr-dropzone p { margin: 0; color: #718096; font-size: 0.92rem; line-height: 1.6; }
+    .vr-file-row { display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap; }
+    .vr-status-inline { color: #718096; font-size: 0.88rem; }
+    .vr-template-meta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.8rem; margin-top: 1rem; }
+    .vr-template-meta-item { background: #111827; border: 1px solid #1e293b; border-radius: 14px; padding: 0.85rem 0.95rem; }
+    .vr-template-meta-item span { display: block; color: #718096; font-size: 0.8rem; margin-bottom: 0.35rem; }
+    .vr-template-meta-item strong { color: #1f2937; font-size: 0.95rem; }
+    .vr-template-host { display: grid; gap: 1rem; }
+    .vr-template-tabs { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .vr-template-tab { border: 1px solid rgba(30,41,59,0.5); background: #f8faff; color: #4c51bf; padding: 0.6rem 1rem; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    .vr-template-tab.is-active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border-color: transparent; box-shadow: 0 8px 18px rgba(102, 126, 234, 0.2); }
+    .vr-template-sheet { display: none; }
+    .vr-template-sheet.is-active { display: block; }
+    .vr-excel-wrap { overflow: auto; border: 1px solid rgba(30,41,59,0.5); border-radius: 16px; background: #fff; }
+    .vr-excel-table { width: max-content; min-width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .vr-excel-table td { min-width: 110px; padding: 0.55rem 0.65rem; border: 1px solid #334155; color: #1f2937; font-size: 0.9rem; vertical-align: middle; white-space: pre-wrap; }
+    .vr-excel-table td.is-editable { background: #fffef5; outline: none; }
+    .vr-excel-table td.is-editable:focus { box-shadow: inset 0 0 0 2px #667eea; }
+    .vr-empty { text-align: center; color: #718096; padding: 2rem 1rem; }
+    .vr-emergency-bar { margin-top: 1rem; }
+    .vr-emergency-button { width: 100%; border: 0; border-radius: 18px; background: linear-gradient(135deg, #dc2626 0%, #be123c 100%); color: #fff; font-weight: 700; font-size: 1.05rem; padding: 1.15rem 1.35rem; box-shadow: 0 14px 28px rgba(220, 38, 38, 0.22); cursor: pointer; white-space: nowrap; }
+    .vr-emergency-button:hover { filter: brightness(1.04); transform: translateY(-1px); }
+    .vr-emergency-button:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+    /* 2026-04-27 readability pass for dark MES shell */
+    .vr-hero { background: linear-gradient(135deg, rgba(15,23,42,0.96), rgba(30,41,59,0.84)); border-color: rgba(56,189,248,0.22); box-shadow: 0 18px 54px rgba(0,0,0,0.34); }
+    .vr-hero h2 { color: #e5f2ff; }
+    .vr-hero p { color: #c7d7ea; }
+    .vr-card { border-color: rgba(56,189,248,0.18); }
+    .vr-card-head h3 { color: #dbeafe; }
+    .vr-card-head span,
+    .vr-status-inline,
+    .vr-empty { color: #c7d7ea; }
+    .vr-form-block label { color: #dbeafe; }
+    .vr-auto-fill-panel,
+    .vr-camera-panel,
+    .vr-dropzone {
+        background: linear-gradient(180deg, #f8fbff 0%, #edf4ff 100%);
+        border-color: rgba(148,163,184,0.42);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.72), 0 14px 28px rgba(0,0,0,0.12);
+        color: #0f172a;
+    }
+    .vr-auto-fill-panel strong,
+    .vr-camera-panel-head strong,
+    .vr-dropzone strong { color: #0f172a; }
+    .vr-auto-fill-panel p,
+    .vr-camera-panel-head span,
+    .vr-dropzone p,
+    .vr-note { color: #334155; }
+    .vr-auto-fill-status,
+    .vr-camera-status { color: #1d4ed8; font-weight: 700; }
+    .vr-template-meta-item {
+        background: rgba(15,23,42,0.88);
+        border-color: rgba(56,189,248,0.18);
+    }
+    .vr-template-meta-item span { color: #93c5fd; }
+    .vr-template-meta-item strong { color: #e5f2ff; }
+    .vr-template-tab { background: rgba(219,234,254,0.98); color: #1d4ed8; border-color: rgba(147,197,253,0.5); }
+    .vr-template-host { min-height: 0; }
+    .vr-editor-toolbar { display: none; align-items: center; justify-content: space-between; gap: 0.85rem; padding: 0.85rem 1rem; border: 1px solid rgba(56,189,248,0.22); border-radius: 14px; background: rgba(15,23,42,0.96); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32); }
+    .vr-editor-toolbar-main { min-width: 0; }
+    .vr-editor-toolbar-title { font-size: 1rem; font-weight: 800; color: #e5f2ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .vr-editor-toolbar-subtitle { margin-top: 0.2rem; color: #93c5fd; font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .vr-editor-toolbar-actions { display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; justify-content: flex-end; }
+    .vr-editor-toolbar .btn, .vr-editor-toolbar .vr-emergency-button { width: auto; min-height: 40px; border-radius: 10px; padding: 0.65rem 0.9rem; font-size: 0.9rem; box-shadow: none; }
+    .vr-editor-toolbar .vr-emergency-button { min-width: 78px; }
+    .vr-excel-table td.is-editable:focus, .vr-excel-table td.is-editing { box-shadow: inset 0 0 0 2px #667eea, 0 0 0 3px rgba(102, 126, 234, 0.16); background: #ffffff; }
+    .vr-shell.is-template-editor-mode { --vr-editor-vh: 100dvh; --vr-keyboard-inset: 0px; --vr-manual-keyboard-spacer: clamp(520px, 58dvh, 720px); position: fixed; inset: 0; z-index: 1100; height: var(--vr-editor-vh); overflow: hidden; padding: 0.75rem; background: #020617; gap: 0; }
+    .vr-shell.is-template-editor-mode .vr-hero, .vr-shell.is-template-editor-mode .vr-scan-card { display: none; }
+    .vr-shell.is-template-editor-mode .vr-grid { display: none; }
+    .vr-shell.is-template-editor-mode .vr-template-card { height: calc(var(--vr-editor-vh) - 1.5rem); display: flex; flex-direction: column; padding: 0.75rem; border-radius: 14px; box-shadow: none; overflow: hidden; }
+    .vr-shell.is-template-editor-mode .vr-template-card > .vr-card-head { display: none; }
+    .vr-shell.is-template-editor-mode .vr-editor-toolbar { display: flex; flex: 0 0 auto; }
+    .vr-shell.is-template-editor-mode .vr-template-host { flex: 1 1 auto; display: flex; flex-direction: column; gap: 0.65rem; min-height: 0; margin-top: 0.7rem; }
+    .vr-shell.is-template-editor-mode .vr-template-meta { display: none !important; }
+    .vr-shell.is-template-editor-mode .vr-template-tabs { flex: 0 0 auto; position: sticky; top: 0; z-index: 3; padding: 0.4rem 0; background: #020617; overflow-x: auto; flex-wrap: nowrap; }
+    .vr-shell.is-template-editor-mode #vr-template-sheets { flex: 1 1 auto; min-height: 0; }
+    .vr-shell.is-template-editor-mode .vr-template-sheet.is-active { height: 100%; min-height: 0; }
+    .vr-shell.is-template-editor-mode .vr-excel-wrap { height: 100%; max-height: none; overflow: auto; border-radius: 12px; padding-bottom: var(--vr-manual-keyboard-spacer); box-sizing: border-box; scroll-padding: 96px 32px calc(var(--vr-manual-keyboard-spacer) + 24px) 32px; }
+    .vr-shell.is-template-editor-mode .vr-excel-table td { font-size: 0.86rem; min-width: 104px; }
+    .vr-shell.is-template-editor-mode .vr-emergency-bar { display: none; }
+    .vr-shell.is-template-return-mode .vr-template-card { display: none; }
+    body.vr-editor-active { overflow: hidden; }
+    @media (max-width: 1100px) { .vr-grid, .vr-hero { grid-template-columns: 1fr; flex-direction: column; } }
+    @media (max-width: 760px) { .vr-form-grid, .vr-template-meta, .vr-scan-entry-row { grid-template-columns: 1fr; } .vr-camera-button { width: 100%; } }
+    @media (min-width: 761px) and (max-width: 1180px) {
+        .vr-shell { gap: 1.15rem; }
+        .vr-hero, .vr-card { padding: 1.25rem; border-radius: 14px; }
+        .vr-scan-entry-row { grid-template-columns: minmax(0, 1fr) 132px; align-items: end; }
+        .vr-camera-preview { height: min(58vh, 460px); min-height: 340px; }
+        .vr-scan-stage { min-height: 340px; }
+        .vr-scan-frame { width: min(48vw, 300px); height: min(48vw, 300px); }
+        .vr-scan-line { width: min(42vw, 266px); }
+    }
+    @media (max-width: 760px) {
+        .vr-shell { gap: 1rem; }
+        .vr-hero, .vr-card { padding: 1rem; border-radius: 12px; }
+        .vr-hero h2 { font-size: 1.35rem; }
+        .vr-auto-fill-panel { padding: .9rem; border-radius: 12px; }
+        .vr-scan-entry-row { grid-template-columns: 1fr; gap: .65rem; }
+        .vr-camera-button { width: 100%; min-height: 46px; }
+        .vr-camera-panel { margin-left: -.35rem; margin-right: -.35rem; padding: .65rem; border-radius: 12px; }
+        .vr-camera-panel-head { align-items: center; }
+        .vr-camera-panel-head span { display: block; margin-top: .25rem; }
+        .vr-scan-stage { min-height: min(72vh, 520px); border-radius: 12px; }
+        .vr-camera-preview { height: min(72vh, 520px); min-height: 360px; }
+        .vr-scan-frame { width: min(72vw, 270px); height: min(72vw, 270px); border-radius: 16px; }
+        .vr-scan-line { width: min(62vw, 236px); }
+        .vr-camera-file-button { width: 100%; min-height: 44px; }
+        .vr-template-meta { grid-template-columns: 1fr; }
+        .vr-excel-wrap { max-width: 100%; }
+        .vr-shell.is-template-editor-mode { padding: 0; }
+        .vr-shell.is-template-editor-mode .vr-template-card { height: var(--vr-editor-vh); border-radius: 0; border: 0; padding: 0.65rem; padding-bottom: max(0.65rem, env(safe-area-inset-bottom)); }
+        .vr-shell.is-template-editor-mode .vr-editor-toolbar { align-items: flex-start; border-radius: 12px; padding: 0.7rem; gap: 0.6rem; }
+        .vr-editor-toolbar-actions { width: 100%; justify-content: stretch; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .vr-editor-toolbar .btn, .vr-editor-toolbar .vr-emergency-button { width: 100%; min-width: 0; padding-left: 0.55rem; padding-right: 0.55rem; white-space: nowrap; }
+        .vr-shell.is-template-editor-mode .vr-template-tabs { gap: 0.45rem; padding-top: 0.25rem; }
+        .vr-shell.is-template-editor-mode .vr-template-tab { flex: 0 0 auto; padding: 0.55rem 0.75rem; }
+        .vr-shell.is-template-editor-mode .vr-excel-wrap { padding-bottom: var(--vr-manual-keyboard-spacer); scroll-padding: 112px 24px calc(var(--vr-manual-keyboard-spacer) + 24px) 24px; }
+    }
+    @media (max-width: 420px) {
+        .vr-camera-preview { height: min(68vh, 460px); min-height: 320px; }
+        .vr-scan-stage { min-height: 320px; }
+        .vr-scan-frame { width: min(76vw, 238px); height: min(76vw, 238px); }
+        .vr-scan-line { width: min(66vw, 210px); }
+    }
+</style>
+
+<div class="vr-shell" id="vr-shell">
+    <section class="vr-hero">
+        <div>
+            <h2>测试工作台</h2>
+            <p>这里负责扫码识别、模板匹配、测试表格填写、普通保存和故障即时存档。质量查询已经拆分到独立页面，当前页面只保留测试填报流程。</p>
+        </div>
+        <div class="vr-hero-actions">
+            <a href="{{ url_for('visual_reports_page') }}" class="btn btn-secondary">返回测试报告</a>
+            <a href="{{ url_for('visual_reports_quality_page') }}" class="btn btn-primary">前往质量工作台</a>
+        </div>
+    </section>
+
+    <div class="vr-grid">
+        <div class="vr-card vr-scan-card">
+            <div class="vr-card-head">
+                <div>
+                    <h3>扫码与基础信息</h3>
+                    <span>扫码传入产品型号和产品序列号后，系统会自动匹配模板并回填序列号</span>
+                </div>
+            </div>
+
+            <div class="vr-auto-fill-panel">
+                <strong>扫码自动填充</strong>
+                <p>把扫码枪或识别结果直接输入到下面，系统会自动解析产品型号和产品序列号，并调用模板匹配接口加载 Excel 表格。</p>
+                <div class="vr-form-block" style="margin-bottom: 0;">
+                    <label for="vr-scan-input">扫码内容</label>
+                    <div class="vr-scan-entry-row">
+                        <input id="vr-scan-input" class="form-control" type="text" placeholder="示例：产品型号=Leviticus-2In1-LiGFL-WP17-B;产品序列号=SN202604090001">
+                        <button type="button" class="btn btn-secondary vr-camera-button" id="vr-camera-scan-button"><span class="vr-scan-button-icon" aria-hidden="true"></span><span>扫一扫</span></button>
+                    </div>
+                    <input id="vr-camera-scan-file" type="file" accept="image/*" capture="environment" style="display:none;">
+                    <div class="vr-camera-panel" id="vr-camera-scan-panel">
+                        <div class="vr-camera-panel-head">
+                            <div>
+                                <strong>扫一扫</strong>
+                                <span>将二维码放入取景框，识别成功后会自动回填并匹配模板。</span>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-secondary" id="vr-camera-scan-close">关闭</button>
+                        </div>
+                        <div class="vr-scan-stage">
+                            <video id="vr-camera-scan-video" class="vr-camera-preview" playsinline muted></video>
+                            <div class="vr-scan-frame" aria-hidden="true"><span class="vr-scan-corner-tl"></span><span class="vr-scan-corner-tr"></span><span class="vr-scan-corner-bl"></span><span class="vr-scan-corner-br"></span></div>
+                            <div class="vr-scan-line" aria-hidden="true"></div>
+                        </div>
+                        <button type="button" class="btn btn-secondary vr-camera-file-button" id="vr-camera-scan-file-button">拍照识别</button>
+                        <div class="vr-camera-status" id="vr-camera-scan-status">点击“扫一扫”后开始识别，成功后会自动填充产品序列号并匹配模板。</div>
+                    </div>
+                </div>
+                <div class="vr-note">支持格式：产品型号=...;产品序列号=...，也支持按顺序用逗号、分号、竖线分隔。平板上也可以直接点右侧“扫一扫”。</div>
+                <div class="vr-auto-fill-status" id="vr-auto-fill-status">等待扫码输入，识别成功后会自动填充下方字段并加载模板。</div>
+            </div>
+
+            <div class="vr-form-grid">
+                <div class="vr-form-block">
+                    <label for="vr-product-name">产品名称</label>
+                    <input id="vr-product-name" class="form-control" type="text" placeholder="模板匹配成功后自动带出，也可手动输入">
+                </div>
+                <div class="vr-form-block">
+                    <label for="vr-product-serial">产品序列号</label>
+                    <input id="vr-product-serial" class="form-control" type="text" placeholder="如：SN202604090001">
+                </div>
+                <div class="vr-form-block vr-form-span-2">
+                    <label for="vr-product-model">产品型号</label>
+                    <input id="vr-product-model" class="form-control" type="text" placeholder="如：Leviticus-2In1-LiGFL-WP17-B">
+                </div>
+            </div>
+
+            <div class="vr-form-block">
+                <label for="vr-title">报告标题</label>
+                <input id="vr-title" class="form-control" type="text" value="测试报告">
+            </div>
+            <div class="vr-form-block">
+                <label for="vr-desc">报告说明</label>
+                <textarea id="vr-desc" class="form-control" rows="4">在匹配模板并回填序列号后，由人工继续填写其余测试内容。</textarea>
+            </div>
+
+            <div class="vr-form-block">
+                <label>模板匹配状态</label>
+                <div class="vr-dropzone">
+                    <strong id="vr-template-match-title">尚未匹配模板</strong>
+                    <p id="vr-template-match-detail">扫码录入产品型号和产品序列号后，系统会在 `test-report-template` 目录中查找匹配模板，并把序列号自动写入对应 sheet。</p>
+                </div>
+            </div>
+
+            <div class="vr-file-row">
+                <button type="button" class="btn btn-secondary" id="vr-rematch-button">重新匹配模板</button>
+                <button type="button" class="btn btn-primary" id="vr-save-report-button">保存当前表格</button>
+                <span class="vr-status-inline" id="vr-save-status">填写完成后，保存结果会写入 `QRMES/test-report`。</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="vr-card vr-template-card">
+        <div class="vr-card-head">
+            <div>
+                <h3>模板预览编辑区</h3>
+                <span id="vr-template-summary">模板匹配成功后，会在这里展示所有 sheet。序列号已自动回填，其余内容可继续人工填写。</span>
+            </div>
+        </div>
+        <div class="vr-editor-toolbar" id="vr-editor-toolbar" aria-live="polite">
+            <div class="vr-editor-toolbar-main">
+                <div class="vr-editor-toolbar-title">测试报告填报</div>
+                <div class="vr-editor-toolbar-subtitle" id="vr-editor-toolbar-subtitle">模板匹配成功后进入编辑模式。</div>
+            </div>
+            <div class="vr-editor-toolbar-actions">
+                <button type="button" class="btn btn-secondary" id="vr-editor-back-button">返回扫码</button>
+                <button type="button" class="btn btn-primary" id="vr-editor-save-button">保存</button>
+                <button type="button" class="vr-emergency-button" id="vr-editor-fault-button">故障</button>
+            </div>
+        </div>
+        <div class="vr-template-host">
+            <div class="vr-empty" id="vr-template-empty">等待扫码并匹配模板。</div>
+            <div class="vr-template-meta" id="vr-template-meta" style="display: none;"></div>
+            <div class="vr-template-tabs" id="vr-template-tabs"></div>
+            <div id="vr-template-sheets"></div>
+        </div>
+
+        <div class="vr-emergency-bar">
+            <button type="button" class="vr-emergency-button" id="vr-fault-report-button">故障</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(() => {
+    const shell = document.getElementById('vr-shell');
+    const scanInput = document.getElementById('vr-scan-input');
+    const cameraScanButton = document.getElementById('vr-camera-scan-button');
+    const cameraScanFileInput = document.getElementById('vr-camera-scan-file');
+    const cameraScanPanel = document.getElementById('vr-camera-scan-panel');
+    const cameraScanVideo = document.getElementById('vr-camera-scan-video');
+    const cameraScanStatus = document.getElementById('vr-camera-scan-status');
+    const cameraScanCloseButton = document.getElementById('vr-camera-scan-close');
+    const cameraScanFileButton = document.getElementById('vr-camera-scan-file-button');
+    const autoFillStatus = document.getElementById('vr-auto-fill-status');
+    const productNameInput = document.getElementById('vr-product-name');
+    const productSerialInput = document.getElementById('vr-product-serial');
+    const productModelInput = document.getElementById('vr-product-model');
+    const reportTitleInput = document.getElementById('vr-title');
+    const reportDescInput = document.getElementById('vr-desc');
+    const templateMatchTitle = document.getElementById('vr-template-match-title');
+    const templateMatchDetail = document.getElementById('vr-template-match-detail');
+    const rematchButton = document.getElementById('vr-rematch-button');
+    const saveButton = document.getElementById('vr-save-report-button');
+    const saveStatus = document.getElementById('vr-save-status');
+    const faultButton = document.getElementById('vr-fault-report-button');
+    const editorToolbar = document.getElementById('vr-editor-toolbar');
+    const editorToolbarSubtitle = document.getElementById('vr-editor-toolbar-subtitle');
+    const editorBackButton = document.getElementById('vr-editor-back-button');
+    const editorSaveButton = document.getElementById('vr-editor-save-button');
+    const editorFaultButton = document.getElementById('vr-editor-fault-button');
+    const templateEmpty = document.getElementById('vr-template-empty');
+    const templateMeta = document.getElementById('vr-template-meta');
+    const templateTabs = document.getElementById('vr-template-tabs');
+    const templateSheets = document.getElementById('vr-template-sheets');
+    const templateSummary = document.getElementById('vr-template-summary');
+
+    let currentTemplateData = null;
+    let lastTemplateKey = '';
+    let templateLoadTimer = null;
+    let cameraScanStream = null;
+    let cameraScanLoopTimer = null;
+    let cameraDetector = null;
+    let cameraDetecting = false;
+    let cameraScanCompleted = false;
+    let cameraScanSession = 0;
+    let activeEditableCell = null;
+    let viewportAdjustTimer = null;
+    let lastEditableFocusAt = 0;
+    let viewportKeyboardWasOpen = false;
+    let templateRequestSeq = 0;
+    let templatePreviewController = null;
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function camelToKebab(name) {
+        return String(name).replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);
+    }
+
+    function styleObjectToText(style) {
+        return Object.entries(style || {})
+            .map(([key, value]) => `${camelToKebab(key)}:${value}`)
+            .join(';');
+    }
+
+    function setAutoFillStatus(message, isSuccess = false) {
+        if (!autoFillStatus) return;
+        autoFillStatus.textContent = message;
+        autoFillStatus.style.color = isSuccess ? '#2f855a' : '#4c51bf';
+    }
+
+    function setCameraScanStatus(message, isSuccess = false, isError = false) {
+        if (!cameraScanStatus) return;
+        cameraScanStatus.textContent = message;
+        if (isError) {
+            cameraScanStatus.style.color = '#c53030';
+        } else if (isSuccess) {
+            cameraScanStatus.style.color = '#2f855a';
+        } else {
+            cameraScanStatus.style.color = '#4c51bf';
+        }
+    }
+
+    function showCameraScanPanel(fileMode = false) {
+        if (!cameraScanPanel) return;
+        cameraScanPanel.classList.add('is-active');
+        cameraScanPanel.classList.toggle('is-file-mode', !!fileMode);
+    }
+
+    function setSaveStatus(message, isSuccess = false) {
+        if (!saveStatus) return;
+        saveStatus.textContent = message;
+        saveStatus.style.color = isSuccess ? '#2f855a' : '#718096';
+    }
+
+    function setTemplateMatchState(title, detail) {
+        if (templateMatchTitle) templateMatchTitle.textContent = title;
+        if (templateMatchDetail) templateMatchDetail.textContent = detail;
+    }
+
+    function clearWorkbookHost(options) {
+        const { emptyEl, metaEl, tabsEl, sheetsEl, summaryEl, message, summaryText } = options;
+        if (emptyEl) {
+            emptyEl.style.display = 'block';
+            emptyEl.textContent = message;
+        }
+        if (metaEl) {
+            metaEl.style.display = 'none';
+            metaEl.innerHTML = '';
+        }
+        if (tabsEl) tabsEl.innerHTML = '';
+        if (sheetsEl) sheetsEl.innerHTML = '';
+        if (summaryEl && summaryText) summaryEl.textContent = summaryText;
+    }
+
+    function attachWorkbookTabEvents(tabsEl, sheetsEl) {
+        if (!tabsEl || !sheetsEl) return;
+        tabsEl.querySelectorAll('[data-sheet-index]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const targetIndex = button.dataset.sheetIndex;
+                tabsEl.querySelectorAll('[data-sheet-index]').forEach((tab) => {
+                    tab.classList.toggle('is-active', tab.dataset.sheetIndex === targetIndex);
+                });
+                sheetsEl.querySelectorAll('[data-sheet-index]').forEach((sheet) => {
+                    sheet.classList.toggle('is-active', sheet.dataset.sheetIndex === targetIndex);
+                });
+            });
+        });
+    }
+
+    function renderWorkbookHost(result, options = {}) {
+        const { emptyEl, metaEl, tabsEl, sheetsEl, summaryEl, readOnly = false, summaryText = '' } = options;
+        if (!emptyEl || !tabsEl || !sheetsEl) return;
+
+        emptyEl.style.display = 'none';
+        if (metaEl) {
+            metaEl.style.display = 'grid';
+            metaEl.innerHTML = [
+                `<div class="vr-template-meta-item"><span>模板/文件</span><strong>${escapeHtml(result.template_name || result.file_name || '')}</strong></div>`,
+                `<div class="vr-template-meta-item"><span>命中工作表</span><strong>${escapeHtml(result.matched_sheet || '已保存报告')}</strong></div>`,
+                `<div class="vr-template-meta-item"><span>产品型号</span><strong>${escapeHtml(result.product_model || '')}</strong></div>`,
+                `<div class="vr-template-meta-item"><span>产品序列号</span><strong>${escapeHtml(result.product_serial || '')}</strong></div>`
+            ].join('');
+        }
+        if (summaryEl && summaryText) summaryEl.textContent = summaryText;
+
+        tabsEl.innerHTML = (result.sheets || []).map((sheet, index) => (
+            `<button type="button" class="vr-template-tab ${index === 0 ? 'is-active' : ''}" data-sheet-index="${index}">${escapeHtml(sheet.name)}</button>`
+        )).join('');
+
+        sheetsEl.innerHTML = (result.sheets || []).map((sheet, index) => {
+            const rowsHtml = (sheet.rows || []).map((row) => {
+                const cellsHtml = row
+                    .filter((cell) => !cell.hidden)
+                    .map((cell) => {
+                        const attrs = [];
+                        if (cell.rowspan && cell.rowspan > 1) attrs.push(`rowspan="${cell.rowspan}"`);
+                        if (cell.colspan && cell.colspan > 1) attrs.push(`colspan="${cell.colspan}"`);
+                        if (!readOnly && cell.editable) attrs.push('contenteditable="true"');
+                        attrs.push(`data-coord="${escapeHtml(cell.coord)}"`);
+                        const className = !readOnly && cell.editable ? 'is-editable' : '';
+                        const styleText = styleObjectToText(cell.style);
+                        return `<td class="${className}" ${attrs.join(' ')} style="${styleText}">${escapeHtml(cell.value)}</td>`;
+                    })
+                    .join('');
+                return `<tr>${cellsHtml}</tr>`;
+            }).join('');
+
+            return `
+                <section class="vr-template-sheet ${index === 0 ? 'is-active' : ''}" data-sheet-index="${index}" data-sheet-name="${escapeHtml(sheet.name)}">
+                    <div class="vr-excel-wrap">
+                        <table class="vr-excel-table">
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>
+                </section>
+            `;
+        }).join('');
+
+        attachWorkbookTabEvents(tabsEl, sheetsEl);
+    }
+
+    function parseCellCoord(coord) {
+        const match = String(coord || '').match(/^([A-Z]+)(\d+)$/i);
+        if (!match) return { col: '', row: 0 };
+        return { col: match[1].toUpperCase(), row: Number(match[2]) || 0 };
+    }
+
+    function getActiveTemplateSheet(cell) {
+        return cell?.closest?.('.vr-template-sheet.is-active') || cell?.closest?.('.vr-template-sheet');
+    }
+
+    function getEditableCellsInSheet(sheet) {
+        if (!sheet) return [];
+        return Array.from(sheet.querySelectorAll('td.is-editable[contenteditable="true"][data-coord]'));
+    }
+
+    function findNextEditableCellInSameColumn(cell) {
+        const current = parseCellCoord(cell?.dataset?.coord);
+        if (!current.col || !current.row) return null;
+        const sheet = getActiveTemplateSheet(cell);
+        return getEditableCellsInSheet(sheet)
+            .map((candidate) => ({ cell: candidate, coord: parseCellCoord(candidate.dataset.coord) }))
+            .filter((item) => item.coord.col === current.col && item.coord.row > current.row)
+            .sort((a, b) => a.coord.row - b.coord.row)[0]?.cell || null;
+    }
+
+    function getViewportKeyboardInset(viewport) {
+        const layoutHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+        if (!viewport || !layoutHeight) return 0;
+        return Math.max(0, layoutHeight - viewport.height - viewport.offsetTop);
+    }
+
+    function blurCellWhenKeyboardClosed(actualInset) {
+        if (actualInset >= 80) {
+            viewportKeyboardWasOpen = true;
+            return false;
+        }
+        if (!viewportKeyboardWasOpen || !activeEditableCell) return false;
+        viewportKeyboardWasOpen = false;
+        window.setTimeout(() => {
+            if (activeEditableCell && getViewportKeyboardInset(window.visualViewport) < 80) {
+                blurActiveEditableCell();
+            }
+        }, 0);
+        return true;
+    }
+
+    function blurActiveEditableCell() {
+        if (activeEditableCell) {
+            activeEditableCell.classList.remove('is-editing');
+        }
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+        }
+        activeEditableCell = null;
+        lastEditableFocusAt = 0;
+    }
+
+    function updateEditorViewportLayout() {
+        if (!shell) return;
+        if (!shell.classList.contains('is-template-editor-mode')) {
+            resetEditorViewportLayout();
+            return;
+        }
+        const viewport = window.visualViewport;
+        const viewportHeight = viewport?.height || window.innerHeight || document.documentElement.clientHeight || 0;
+        const viewportOffsetTop = viewport?.offsetTop || 0;
+        const actualKeyboardInset = getViewportKeyboardInset(viewport);
+        if (blurCellWhenKeyboardClosed(actualKeyboardInset)) return;
+
+        if (viewportHeight > 0) {
+            shell.style.setProperty('--vr-editor-vh', `${Math.max(320, Math.floor(viewportHeight))}px`);
+        }
+        shell.style.transform = viewportOffsetTop ? `translateY(${Math.floor(viewportOffsetTop)}px)` : '';
+    }
+
+    function resetEditorViewportLayout() {
+        if (!shell) return;
+        if (viewportAdjustTimer) {
+            clearTimeout(viewportAdjustTimer);
+            viewportAdjustTimer = null;
+        }
+        shell.style.removeProperty('--vr-editor-vh');
+        shell.style.transform = '';
+    }
+
+    function focusEditableCell(cell) {
+        if (!cell) return;
+        cell.focus({ preventScroll: true });
+    }
+
+    function handleEditableCellKeydown(event) {
+        if (event.key !== 'Enter' || event.shiftKey) return;
+        event.preventDefault();
+
+        const currentCell = event.currentTarget;
+        const nextCell = findNextEditableCellInSameColumn(currentCell);
+        if (nextCell) {
+            focusEditableCell(nextCell);
+        } else {
+            setSaveStatus('当前列已经是最后一个可填写单元格。');
+        }
+    }
+
+    function bindEditableCellEvents(root) {
+        if (!root) return;
+        root.querySelectorAll('td.is-editable[contenteditable="true"]').forEach((cell) => {
+            if (cell.dataset.vrEditableBound === '1') return;
+            cell.dataset.vrEditableBound = '1';
+            cell.addEventListener('keydown', handleEditableCellKeydown);
+            cell.addEventListener('focus', () => {
+                activeEditableCell = cell;
+                lastEditableFocusAt = Date.now();
+                updateEditorViewportLayout();
+                cell.classList.add('is-editing');
+            });
+            cell.addEventListener('blur', () => {
+                cell.classList.remove('is-editing');
+                if (activeEditableCell === cell) activeEditableCell = null;
+            });
+        });
+    }
+
+    function updateEditorToolbar(result = currentTemplateData || {}) {
+        if (!editorToolbarSubtitle) return;
+        const pieces = [];
+        if (result.template_name) pieces.push(result.template_name);
+        if (result.matched_sheet) pieces.push(`工作表：${result.matched_sheet}`);
+        if (result.product_serial) pieces.push(`序列号：${result.product_serial}`);
+        editorToolbarSubtitle.textContent = pieces.join(' / ') || '模板已进入全屏填报模式。';
+    }
+
+    function enterTemplateEditorMode() {
+        if (!shell) return;
+        updateEditorToolbar();
+        shell.classList.remove('is-template-return-mode');
+        shell.classList.add('is-template-editor-mode');
+        document.body.classList.add('vr-editor-active');
+        updateEditorViewportLayout();
+    }
+
+    function exitTemplateEditorMode(options = {}) {
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+        }
+        shell?.classList.remove('is-template-editor-mode');
+        shell?.classList.toggle('is-template-return-mode', Boolean(options.hideTemplate));
+        document.body.classList.remove('vr-editor-active');
+        activeEditableCell = null;
+        resetEditorViewportLayout();
+        window.requestAnimationFrame(() => {
+            scanInput?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        });
+    }
+    function clearTemplateViewer(message = '等待扫码并匹配模板。') {
+        currentTemplateData = null;
+        exitTemplateEditorMode();
+        clearWorkbookHost({
+            emptyEl: templateEmpty,
+            metaEl: templateMeta,
+            tabsEl: templateTabs,
+            sheetsEl: templateSheets,
+            summaryEl: templateSummary,
+            message,
+            summaryText: '模板匹配成功后，会在这里展示所有 sheet。序列号已自动回填，其余内容可继续人工填写。'
+        });
+    }
+
+    function renderTemplateWorkbook(result) {
+        currentTemplateData = result;
+        renderWorkbookHost(result, {
+            emptyEl: templateEmpty,
+            metaEl: templateMeta,
+            tabsEl: templateTabs,
+            sheetsEl: templateSheets,
+            summaryEl: templateSummary,
+            summaryText: `已匹配模板 ${result.template_name}，命中工作表 ${result.matched_sheet}，序列号已自动写入 ${result.serial_cell}。`
+        });
+        bindEditableCellEvents(templateSheets);
+        updateEditorToolbar(result);
+        enterTemplateEditorMode();
+    }
+
+    function collectWorkbookPayload(container) {
+        if (!container) return [];
+        return Array.from(container.querySelectorAll('.vr-template-sheet')).map((section) => ({
+            name: section.dataset.sheetName || '',
+            cells: Array.from(section.querySelectorAll('td[data-coord]')).map((cell) => ({
+                coord: cell.dataset.coord || '',
+                value: (cell.innerText || cell.textContent || '').replace(/\u00a0/g, ' ')
+            }))
+        }));
+    }
+
+    function parseScanInput(text) {
+        const raw = String(text || '').trim();
+        if (!raw) return { productModel: '', productSerial: '' };
+
+        const result = { productModel: '', productSerial: '' };
+        const patterns = [
+            { key: 'productModel', regex: /(产品型号|型号)\s*[:=：]\s*([^;；,，|\n\r]+)/i },
+            { key: 'productSerial', regex: /(产品序列号|序列号)\s*[:=：]\s*([^;；,，|\n\r]+)/i }
+        ];
+
+        patterns.forEach(({ key, regex }) => {
+            const match = raw.match(regex);
+            if (match && match[2]) result[key] = match[2].trim();
+        });
+
+        if (!result.productModel || !result.productSerial) {
+            const parts = raw.split(/[;；,，|+＋\n\r]+/).map((item) => item.trim()).filter(Boolean);
+            if (parts.length >= 3) {
+                if (!result.productModel) result.productModel = parts[1];
+                if (!result.productSerial) result.productSerial = parts[2];
+            } else if (parts.length === 2) {
+                if (!result.productModel) result.productModel = parts[0];
+                if (!result.productSerial) result.productSerial = parts[1];
+            } else if (parts.length === 1) {
+                if (!result.productSerial) result.productSerial = parts[0];
+            }
+        }
+
+        return result;
+    }
+
+    async function getCameraBarcodeDetector() {
+        if (cameraDetector) return cameraDetector;
+        if (!('BarcodeDetector' in window)) return null;
+
+        const requestedFormats = [
+            'qr_code', 'code_128', 'code_39', 'code_93', 'codabar', 'ean_13',
+            'ean_8', 'upc_a', 'upc_e', 'itf', 'data_matrix', 'pdf417', 'aztec'
+        ];
+
+        try {
+            const supportedFormats = typeof BarcodeDetector.getSupportedFormats === 'function'
+                ? await BarcodeDetector.getSupportedFormats()
+                : [];
+            const formats = supportedFormats.length
+                ? requestedFormats.filter((item) => supportedFormats.includes(item))
+                : requestedFormats;
+            cameraDetector = formats.length ? new BarcodeDetector({ formats }) : new BarcodeDetector();
+        } catch (error) {
+            cameraDetector = new BarcodeDetector();
+        }
+        return cameraDetector;
+    }
+
+    function stopCameraScan() {
+        cameraScanSession += 1;
+        if (cameraScanLoopTimer) {
+            window.clearInterval(cameraScanLoopTimer);
+            cameraScanLoopTimer = null;
+        }
+        cameraDetecting = false;
+
+        if (cameraScanStream) {
+            cameraScanStream.getTracks().forEach((track) => track.stop());
+            cameraScanStream = null;
+        }
+        if (cameraScanVideo) {
+            cameraScanVideo.pause();
+            cameraScanVideo.srcObject = null;
+        }
+        if (cameraScanPanel) {
+            cameraScanPanel.classList.remove('is-active');
+            cameraScanPanel.classList.remove('is-file-mode');
+        }
+        if (cameraScanButton) {
+            cameraScanButton.innerHTML = '<span class="vr-scan-button-icon" aria-hidden="true"></span><span>扫一扫</span>';
+            cameraScanButton.classList.remove('btn-danger');
+            cameraScanButton.classList.add('btn-secondary');
+            cameraScanButton.disabled = false;
+        }
+    }
+
+    function cancelPendingTemplateMatch() {
+        if (templateLoadTimer) {
+            clearTimeout(templateLoadTimer);
+            templateLoadTimer = null;
+        }
+        if (templatePreviewController) {
+            templatePreviewController.abort();
+            templatePreviewController = null;
+        }
+        templateRequestSeq += 1;
+        lastTemplateKey = '';
+    }
+
+    function resetScanEntryState(message = '请扫描下一张产品标签。') {
+        if (scanInput) scanInput.value = '';
+        stopCameraScan();
+        cameraScanCompleted = false;
+        setCameraScanStatus(message);
+        setAutoFillStatus(message);
+        setTemplateMatchState('等待扫码', '扫码识别后会自动匹配模板。');
+    }
+
+    function returnToScanMode(message = '请扫描下一张产品标签。') {
+        cancelPendingTemplateMatch();
+        blurActiveEditableCell();
+        exitTemplateEditorMode({ hideTemplate: true });
+        resetScanEntryState(message);
+        window.requestAnimationFrame(() => {
+            scanInput?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        });
+    }
+
+    async function applyCameraScanResult(rawValue) {
+        const text = String(rawValue || '').trim();
+        if (!text || !scanInput) return false;
+        if (cameraScanCompleted) return true;
+        cameraScanCompleted = true;
+        cancelPendingTemplateMatch();
+        stopCameraScan();
+        scanInput.value = text;
+        setCameraScanStatus(`识别成功：${text}`, true, false);
+        setAutoFillStatus('已通过相机识别扫码内容，正在自动填充并匹配模板...');
+        applyScanInput();
+        return true;
+    }
+
+    async function detectCodeFromSource(source) {
+        const detector = await getCameraBarcodeDetector();
+        if (!detector) return '';
+        const codes = await detector.detect(source);
+        if (!Array.isArray(codes) || !codes.length) return '';
+        const first = codes.find((item) => item && (item.rawValue || item.raw_value));
+        return first ? String(first.rawValue || first.raw_value || '').trim() : '';
+    }
+
+    async function startLiveCameraScan() {
+        if (!cameraScanVideo || !cameraScanPanel) return false;
+        const detector = await getCameraBarcodeDetector();
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return false;
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: { ideal: 'environment' },
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            },
+            audio: false
+        });
+
+        cameraScanStream = stream;
+        cameraScanVideo.srcObject = stream;
+        showCameraScanPanel(false);
+        await cameraScanVideo.play();
+        setCameraScanStatus(detector ? '扫一扫已开启，请将二维码/条码放入取景框中央。' : '扫一扫已开启，正在通过服务器辅助识别，请将二维码放入取景框中央。');
+
+        if (cameraScanButton) {
+            cameraScanButton.textContent = '关闭扫码';
+            cameraScanButton.classList.remove('btn-secondary');
+            cameraScanButton.classList.add('btn-danger');
+        }
+
+        cameraScanLoopTimer = window.setInterval(async () => {
+            if (cameraDetecting || !cameraScanVideo || cameraScanVideo.readyState < 2) return;
+            cameraDetecting = true;
+            try {
+                const detectedText = detector ? await detectCodeFromSource(cameraScanVideo) : await detectCodeFromVideoFrameOnServer(cameraScanVideo);
+                if (detectedText) {
+                    await applyCameraScanResult(detectedText);
+                }
+            } catch (error) {
+                if (detector || String(error.message || error).includes('缺少') || String(error.message || error).includes('失败')) {
+                    setCameraScanStatus(`扫一扫识别中：${error.message || error}`, false, !detector);
+                }
+            } finally {
+                cameraDetecting = false;
+            }
+        }, detector ? 380 : 1000);
+
+        return true;
+    }
+
+    async function detectCodeOnServer(file) {
+        const formData = new FormData();
+        formData.append('file', file, file.name || 'camera-scan.jpg');
+        const response = await fetch('/api/visual-reports/decode-scan-image', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || '服务器未识别出二维码或条码');
+        }
+        return String(result.raw_value || '').trim();
+    }
+
+    function canvasToBlob(canvas, type = 'image/jpeg', quality = 0.72) {
+        return new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+    }
+
+    async function detectCodeFromVideoFrameOnServer(video) {
+        if (!video || video.readyState < 2 || !video.videoWidth || !video.videoHeight) return '';
+        const canvas = document.createElement('canvas');
+        const maxWidth = 960;
+        const scale = Math.min(1, maxWidth / video.videoWidth);
+        canvas.width = Math.max(1, Math.round(video.videoWidth * scale));
+        canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return '';
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const blob = await canvasToBlob(canvas);
+        if (!blob) return '';
+        return await detectCodeOnServer(blob);
+    }
+
+    async function detectCodeFromCapturedFile(file) {
+        if (!file) return '';
+        let objectUrl = '';
+        let imageBitmap = null;
+        try {
+            const detector = await getCameraBarcodeDetector();
+            if (detector) {
+                if ('createImageBitmap' in window) {
+                    imageBitmap = await createImageBitmap(file);
+                    const detectedText = await detectCodeFromSource(imageBitmap);
+                    if (detectedText) return detectedText;
+                } else {
+                    objectUrl = URL.createObjectURL(file);
+                    const image = await new Promise((resolve, reject) => {
+                        const img = new Image();
+                        img.onload = () => resolve(img);
+                        img.onerror = () => reject(new Error('图片加载失败'));
+                        img.src = objectUrl;
+                    });
+                    const detectedText = await detectCodeFromSource(image);
+                    if (detectedText) return detectedText;
+                }
+            }
+
+            setCameraScanStatus('浏览器本地识别不可用，正在上传照片到服务器识别...');
+            setAutoFillStatus('浏览器本地识别不可用，正在上传照片到服务器识别...');
+            return await detectCodeOnServer(file);
+        } finally {
+            if (imageBitmap && typeof imageBitmap.close === 'function') {
+                imageBitmap.close();
+            }
+            if (objectUrl) {
+                URL.revokeObjectURL(objectUrl);
+            }
+        }
+    }
+
+    async function openCameraScanner() {
+        if (cameraScanStream) {
+            stopCameraScan();
+            return;
+        }
+
+        setCameraScanStatus('正在准备扫一扫...');
+        try {
+            const started = await startLiveCameraScan();
+            if (started) return;
+
+            if (cameraScanFileInput) {
+                const fallbackMessage = window.isSecureContext
+                    ? '当前环境不支持实时扫一扫，已切换为拍照识别模式。拍照后会自动识别二维码/条码。'
+                    : '当前页面通过 HTTP 打开，手机浏览器不会进入网页实时扫码，已切换为系统拍照识别模式。';
+                showCameraScanPanel(true);
+                setCameraScanStatus(fallbackMessage);
+                setAutoFillStatus(fallbackMessage);
+                cameraScanFileInput.click();
+                return;
+            }
+        } catch (error) {
+            if (cameraScanFileInput) {
+                const fallbackMessage = window.isSecureContext
+                    ? '实时扫一扫不可用，已切换为拍照识别模式。拍照后会自动识别二维码/条码。'
+                    : '当前页面通过 HTTP 打开，手机浏览器不会进入网页实时扫码，已切换为系统拍照识别模式。';
+                showCameraScanPanel(true);
+                setCameraScanStatus(fallbackMessage, false, false);
+                setAutoFillStatus(fallbackMessage);
+                cameraScanFileInput.click();
+                return;
+            }
+            setCameraScanStatus(`无法开启相机：${error.message || error}`, false, true);
+        }
+    }
+
+    function applyScanInput() {
+        const parsed = parseScanInput(scanInput?.value || '');
+        let touched = false;
+
+        if (parsed.productModel && productModelInput && productModelInput.value !== parsed.productModel) {
+            productModelInput.value = parsed.productModel;
+            touched = true;
+        }
+        if (parsed.productSerial && productSerialInput && productSerialInput.value !== parsed.productSerial) {
+            productSerialInput.value = parsed.productSerial;
+            touched = true;
+        }
+
+        if (parsed.productModel || parsed.productSerial) {
+            setAutoFillStatus('已识别扫码内容，正在准备匹配模板...');
+        } else {
+            setAutoFillStatus('等待扫码输入，识别成功后会自动填充下方字段并加载模板。');
+        }
+
+        if (touched || (parsed.productModel && parsed.productSerial)) scheduleTemplateLoad();
+    }
+
+    async function loadTemplatePreview(force = false) {
+        const productModel = String(productModelInput?.value || '').trim();
+        const productSerial = String(productSerialInput?.value || '').trim();
+
+        if (!productModel && !productSerial) {
+            lastTemplateKey = '';
+            clearTemplateViewer('等待产品型号或产品序列号补全后再匹配模板。');
+            return;
+        }
+        if (!productSerial) {
+            lastTemplateKey = '';
+            clearTemplateViewer('等待产品序列号补全后再匹配模板。');
+            return;
+        }
+
+        const requestKey = `${productModel}__${productSerial}`;
+        if (!force && requestKey === lastTemplateKey) return;
+
+        setAutoFillStatus(productModel ? '已识别到产品型号和序列号，正在匹配模板并回填序列号...' : '已识别到产品序列号，正在反查产品型号并匹配模板...');
+        setTemplateMatchState('正在匹配模板', productModel ? `正在根据产品型号 ${productModel} 检索模板，请稍候。` : `正在根据产品序列号 ${productSerial} 反查产品型号并检索模板，请稍候。`);
+
+        const requestSeq = ++templateRequestSeq;
+        if (templatePreviewController) {
+            templatePreviewController.abort();
+        }
+        templatePreviewController = typeof AbortController !== 'undefined' ? new AbortController() : null;
+
+        try {
+            const response = await fetch('/api/visual-reports/template-preview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                signal: templatePreviewController?.signal,
+                body: JSON.stringify({
+                    product_model: productModel,
+                    product_serial: productSerial
+                })
+            });
+            const result = await response.json();
+            if (requestSeq !== templateRequestSeq) return;
+            if (!response.ok || !result.success) {
+                lastTemplateKey = '';
+                setAutoFillStatus(result.message || '模板匹配失败，请检查扫码信息。');
+                setTemplateMatchState('模板匹配失败', result.message || '未找到匹配模板。');
+                clearTemplateViewer(result.message || '未找到匹配模板。');
+                return;
+            }
+
+            lastTemplateKey = requestKey;
+            if (result.product_name && productNameInput) productNameInput.value = result.product_name;
+            if (result.product_model && productModelInput) productModelInput.value = result.product_model;
+            if (result.product_serial && productSerialInput) productSerialInput.value = result.product_serial;
+            setAutoFillStatus('模板匹配成功，已自动填充产品字段并回填序列号。', true);
+            setSaveStatus('模板已就绪，人工填写完成后可直接保存。');
+            setTemplateMatchState(`已匹配模板：${result.template_name}`, `命中工作表：${result.matched_sheet}，序列号已写入单元格 ${result.serial_cell}。`);
+            renderTemplateWorkbook(result);
+        } catch (error) {
+            if (error?.name === 'AbortError') return;
+            if (requestSeq !== templateRequestSeq) return;
+            lastTemplateKey = '';
+            setAutoFillStatus(`模板加载失败：${error.message || error}`);
+            setTemplateMatchState('模板加载失败', '请稍后重试或检查服务日志。');
+            clearTemplateViewer('模板加载失败，请稍后重试。');
+        } finally {
+            if (requestSeq === templateRequestSeq) {
+                templatePreviewController = null;
+            }
+        }
+    }
+
+    function scheduleTemplateLoad() {
+        if (templateLoadTimer) clearTimeout(templateLoadTimer);
+        templateLoadTimer = setTimeout(() => {
+            loadTemplatePreview();
+        }, 220);
+    }
+
+    async function saveCurrentReport(saveMode = 'manual') {
+        if (!currentTemplateData || !currentTemplateData.workbook_id) {
+            setSaveStatus('请先扫码匹配模板，再填写并保存表格。');
+            return;
+        }
+
+        const payload = {
+            workbook_id: currentTemplateData.workbook_id,
+            template_name: currentTemplateData.template_name || '',
+            report_title: String(reportTitleInput?.value || '').trim(),
+            report_description: String(reportDescInput?.value || '').trim(),
+            product_name: String(productNameInput?.value || '').trim(),
+            product_model: String(productModelInput?.value || '').trim(),
+            product_serial: String(productSerialInput?.value || '').trim(),
+            save_mode: saveMode,
+            matched_sheet: currentTemplateData.matched_sheet || '',
+            serial_cell: currentTemplateData.serial_cell || '',
+            sheets: collectWorkbookPayload(templateSheets)
+        };
+
+        if (!payload.product_model || !payload.product_serial) {
+            setSaveStatus('保存前请确认产品型号和产品序列号都已填写。');
+            return;
+        }
+
+        [saveButton, faultButton, editorSaveButton, editorFaultButton].forEach((button) => {
+            if (button) button.disabled = true;
+        });
+        setSaveStatus(saveMode === 'fault' ? '正在执行故障存档，请稍候...' : '正在保存当前表格，请稍候...');
+
+        try {
+            const response = await fetch('/api/visual-reports/save-report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                setSaveStatus(result.message || '保存失败，请稍后重试。');
+                return;
+            }
+            const successMessage = `${saveMode === 'fault' ? '故障报告已存档：' : '已保存成功：'}${result.file_name}`;
+            setSaveStatus(successMessage, true);
+            returnToScanMode(successMessage + '。请扫描下一张产品标签。');
+        } catch (error) {
+            setSaveStatus(`保存失败：${error.message || error}`);
+        } finally {
+            [saveButton, faultButton, editorSaveButton, editorFaultButton].forEach((button) => {
+                if (button) button.disabled = false;
+            });
+        }
+    }
+
+    if (scanInput) {
+        scanInput.addEventListener('input', applyScanInput);
+        scanInput.addEventListener('change', applyScanInput);
+        scanInput.addEventListener('blur', applyScanInput);
+        scanInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                applyScanInput();
+            }
+        });
+    }
+
+    if (cameraScanButton) {
+        cameraScanButton.addEventListener('click', () => {
+            openCameraScanner();
+        });
+    }
+
+    if (editorBackButton) {
+        editorBackButton.addEventListener('click', () => {
+            returnToScanMode('已返回扫码界面，请扫描下一张产品标签。');
+        });
+    }
+
+    if (editorSaveButton) {
+        editorSaveButton.addEventListener('click', () => {
+            saveCurrentReport('manual');
+        });
+    }
+
+    if (editorFaultButton) {
+        editorFaultButton.addEventListener('click', () => {
+            saveCurrentReport('fault');
+        });
+    }
+
+    if (cameraScanCloseButton) {
+        cameraScanCloseButton.addEventListener('click', () => {
+            stopCameraScan();
+        });
+    }
+
+    if (cameraScanFileButton && cameraScanFileInput) {
+        cameraScanFileButton.addEventListener('click', () => {
+            showCameraScanPanel(true);
+            cameraScanFileInput.click();
+        });
+    }
+
+    if (cameraScanFileInput) {
+        cameraScanFileInput.addEventListener('change', async () => {
+            const file = cameraScanFileInput.files && cameraScanFileInput.files[0];
+            if (!file) return;
+            showCameraScanPanel(true);
+            setCameraScanStatus('正在识别拍照内容...');
+            setAutoFillStatus('正在识别拍照内容...');
+            try {
+                const detectedText = await detectCodeFromCapturedFile(file);
+                if (detectedText) {
+                    await applyCameraScanResult(detectedText);
+                    return;
+                }
+                setCameraScanStatus('未能识别出二维码或条码，请调整拍摄角度后重试。', false, true);
+                setAutoFillStatus('未能识别出二维码或条码，请调整拍摄角度后重试。');
+            } catch (error) {
+                setCameraScanStatus(`拍照识别失败：${error.message || error}`, false, true);
+                setAutoFillStatus(`拍照识别失败：${error.message || error}`);
+            } finally {
+                cameraScanFileInput.value = '';
+            }
+        });
+    }
+
+    [productModelInput, productSerialInput].forEach((input) => {
+        if (!input) return;
+        input.addEventListener('input', scheduleTemplateLoad);
+        input.addEventListener('change', scheduleTemplateLoad);
+    });
+
+    if (rematchButton) {
+        rematchButton.addEventListener('click', () => {
+            lastTemplateKey = '';
+            loadTemplatePreview(true);
+        });
+    }
+    if (saveButton) saveButton.addEventListener('click', () => saveCurrentReport('manual'));
+    if (faultButton) faultButton.addEventListener('click', () => saveCurrentReport('fault'));
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', updateEditorViewportLayout);
+        window.visualViewport.addEventListener('scroll', updateEditorViewportLayout);
+    }
+    window.addEventListener('resize', updateEditorViewportLayout);
+    window.addEventListener('orientationchange', () => {
+        setTimeout(updateEditorViewportLayout, 260);
+    });
+    window.addEventListener('beforeunload', stopCameraScan);
+
+    clearTemplateViewer();
+})();
+</script>
+{% endblock %}

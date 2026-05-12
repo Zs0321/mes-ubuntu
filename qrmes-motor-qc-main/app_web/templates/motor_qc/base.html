@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}电机质检 - {{ super() }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('motor_qc.static', filename='css/motor_qc/styles.css', v='20260424_layout_readability') }}">
+<style>
+    body:has(.motor-qc-container) .container {
+        max-width: 1680px;
+        margin-left: 1.25rem;
+        margin-right: 1.25rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="motor-qc-container">
+    <nav class="breadcrumb">
+        <a href="{{ url_for('motor_qc.index') }}">电机质检</a>
+        {% block breadcrumb %}{% endblock %}
+    </nav>
+
+    {% block motor_qc_content %}{% endblock %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('motor_qc.static', filename='js/motor_qc/api-client.js', v='20260227_4') }}"></script>
+{% block motor_qc_js %}{% endblock %}
+{% endblock %}

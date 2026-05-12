@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+
+{% block title %}SOP可视化管理 - MES系统{% endblock %}
+
+{% block head %}
+<style>
+/* SOP全屏页面样式 */
+.sop-page {
+    display: grid;
+    gap: 1.5rem;
+    color: var(--text-primary);
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1.5rem !important;
+}
+
+/* 覆盖.container的宽度限制 */
+.container .sop-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.sop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.sop-header h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sop-header-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: all var(--transition-base);
+}
+
+.stat-card:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-glow);
+}
+
+.stat-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card-icon.total { background: rgba(56, 189, 248, 0.16); }
+.stat-card-icon.approved { background: rgba(34, 197, 94, 0.16); }
+.stat-card-icon.pending { background: rgba(251, 191, 36, 0.16); }
+.stat-card-icon.recycled { background: rgba(239, 68, 68, 0.16); }
+
+.stat-card-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.stat-card-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.quick-action-card {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-decoration: none;
+    display: block;
+}
+
+.quick-action-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.quick-action-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.quick-action-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.quick-action-desc {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.recent-section {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.recent-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.recent-item:hover {
+    background: var(--surface-glass);
+}
+
+.recent-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.recent-item-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.recent-item-meta {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.recent-item-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-badge.draft { background: rgba(148, 163, 184, 0.16); color: #94a3b8; }
+.status-badge.pending { background: rgba(251, 191, 36, 0.16); color: #fbbf24; }
+.status-badge.approved { background: rgba(34, 197, 94, 0.16); color: #22c55e; }
+.status-badge.rejected { background: rgba(239, 68, 68, 0.16); color: #ef4444; }
+.status-badge.recycled { background: rgba(148, 163, 184, 0.08); color: #64748b; }
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #0a0a0a;
+}
+
+.btn-primary:hover {
+    background: var(--primary-light);
+}
+
+.btn-secondary {
+    background: var(--surface-elevated);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+    border-color: var(--border-strong);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary);
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sop-page">
+    <div class="sop-header">
+        <h1>
+            <span>📋</span>
+            SOP可视化管理
+        </h1>
+        <div class="sop-header-actions">
+            <a href="{{ url_for('sop.sop_upload_page') }}" class="btn btn-primary">
+                <span>📤</span>
+                上传SOP
+            </a>
+            <a href="{{ url_for('sop.sop_search_page') }}" class="btn btn-secondary">
+                <span>🔍</span>
+                查询SOP
+            </a>
+        </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-card-icon total">📊</div>
+            <div class="stat-card-value" id="stat-total">--</div>
+            <div class="stat-card-label">总SOP数</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon approved">✅</div>
+            <div class="stat-card-value" id="stat-approved">--</div>
+            <div class="stat-card-label">已批准</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon pending">⏳</div>
+            <div class="stat-card-value" id="stat-pending">--</div>
+            <div class="stat-card-label">待审批</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon recycled">🗑️</div>
+            <div class="stat-card-value" id="stat-recycled">--</div>
+            <div class="stat-card-label">回收站</div>
+        </div>
+    </div>
+
+    <!-- 快速操作 -->
+    <div class="quick-actions">
+        <a href="{{ url_for('sop.sop_upload_page') }}" class="quick-action-card">
+            <div class="quick-action-icon">📤</div>
+            <div class="quick-action-title">上传新SOP</div>
+            <div class="quick-action-desc">上传并提交新的标准作业程序</div>
+        </a>
+        <a href="{{ url_for('sop.sop_search_page') }}" class="quick-action-card">
+            <div class="quick-action-icon">🔍</div>
+            <div class="quick-action-title">扫码查询</div>
+            <div class="quick-action-desc">扫描产品或工序二维码</div>
+        </a>
+        <a href="{{ url_for('sop.sop_approval_page') }}" class="quick-action-card">
+            <div class="quick-action-icon">📋</div>
+            <div class="quick-action-title">待我审批</div>
+            <div class="quick-action-desc">查看需要审批的SOP</div>
+        </a>
+        <a href="{{ url_for('sop.sop_workstation_page') }}" class="quick-action-card">
+            <div class="quick-action-icon">🏭</div>
+            <div class="quick-action-title">工位显示</div>
+            <div class="quick-action-desc">适合产线工位大屏显示</div>
+        </a>
+    </div>
+
+    <!-- 最近活动 -->
+    <div class="recent-section">
+        <div class="section-header">
+            <h2 class="section-title">最近活动</h2>
+            <a href="{{ url_for('sop.sop_search_page') }}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">
+                查看全部
+            </a>
+        </div>
+        <div class="recent-list" id="recent-list">
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <div>暂无最近活动</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 加载统计数据
+async function loadStatistics() {
+    try {
+        const response = await fetch('/sop/api/statistics');
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('stat-total').textContent = result.data.total;
+            document.getElementById('stat-approved').textContent = result.data.approved;
+            document.getElementById('stat-pending').textContent = result.data.pending;
+            document.getElementById('stat-recycled').textContent = result.data.recycled;
+        }
+    } catch (error) {
+        console.error('加载统计数据失败:', error);
+    }
+}
+
+// 加载最近活动
+async function loadRecentActivities() {
+    try {
+        const response = await fetch('/sop/api/list?limit=5');
+        const result = await response.json();
+        
+        if (result.success && result.data.length > 0) {
+            const listEl = document.getElementById('recent-list');
+            listEl.innerHTML = result.data.map(sop => `
+                <div class="recent-item" onclick="window.location.href='/sop/preview/${sop.id}'">
+                    <div class="recent-item-info">
+                        <div class="recent-item-title">${sop.file_number || sop.title}</div>
+                        <div class="recent-item-meta">${sop.product_name || '未知产品'} · ${sop.creator}</div>
+                    </div>
+                    <div>
+                        <span class="status-badge ${sop.status}">${getStatusText(sop.status)}</span>
+                        <div class="recent-item-time" style="margin-top: 0.25rem; text-align: right;">
+                            ${formatTime(sop.create_time)}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (error) {
+        console.error('加载最近活动失败:', error);
+    }
+}
+
+function getStatusText(status) {
+    const statusMap = {
+        'draft': '草稿',
+        'pending_review': '待审核',
+        'under_review': '审核中',
+        'pending_approval': '待批准',
+        'approved': '已批准',
+        'rejected': '已拒绝',
+        'archived': '已归档',
+        'recycled': '已回收'
+    };
+    return statusMap[status] || status;
+}
+
+function formatTime(timeStr) {
+    if (!timeStr) return '';
+    const date = new Date(timeStr);
+    const now = new Date();
+    const diff = now - date;
+    
+    if (diff < 60000) return '刚刚';
+    if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`;
+    if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`;
+    return `${Math.floor(diff / 86400000)}天前`;
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+    loadStatistics();
+    loadRecentActivities();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/md_surfaceContainerLow">
+
+    <!-- 标题 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="H2数据库测试"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        android:gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <!-- 状态显示 -->
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="就绪"
+        android:textSize="16sp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:background="?attr/colorSurface"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"
+        android:elevation="2dp" />
+
+    <!-- 测试按钮组 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/btnTestConnection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试数据库连接"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/button_primary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnTestLocalDb"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="本地H2测试"
+                android:textSize="14sp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/button_secondary" />
+
+            <Button
+                android:id="@+id/btnTestRemoteApi"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="远程API测试"
+                android:textSize="14sp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/button_secondary" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/btnInsertTestData"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="插入测试数据"
+                android:textSize="14sp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/button_accent" />
+
+            <Button
+                android:id="@+id/btnQueryTestData"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="查询测试数据"
+                android:textSize="14sp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/button_accent" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnClearResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="清除结果"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/button_clear" />
+
+    </LinearLayout>
+
+    <!-- 结果显示区域 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="测试结果"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        android:layout_marginBottom="8dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="?attr/colorSurface"
+        android:elevation="2dp">
+
+        <TextView
+            android:id="@+id/tvResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:textColor="?attr/colorOnSurface"
+            android:padding="12dp"
+            android:lineSpacingExtra="2dp" />
+
+    </ScrollView>
+
+</LinearLayout>

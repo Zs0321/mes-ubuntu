@@ -1,0 +1,3274 @@
+﻿{% extends "base.html" %}
+
+{% block title %}用户管理 - MESAPP 管理平台{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    .user-admin-shell {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .page-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding: 1.25rem 1.4rem;
+        border-radius: 4px;
+        background: #0f1a2a;
+        border: 1px solid #1e2d3d;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.55);
+    }
+
+    .page-hero h2 {
+        margin: 0;
+        font-size: 1.7rem;
+        font-weight: 700;
+        color: #e8edf5;
+    }
+
+    .page-hero p {
+        margin: 0.35rem 0 0;
+        color: #94a3b8;
+    }
+
+    .hero-note {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 3px;
+        background: rgba(0, 176, 255, 0.08);
+        color: #94a3b8;
+        font-size: 0.82rem;
+        font-weight: 600;
+        border: 1px solid rgba(0, 176, 255, 0.15);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.9rem;
+    }
+
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+        min-height: 108px;
+        border-radius: 4px;
+        padding: 1rem 1.1rem;
+        background: #141d2e;
+        border: 1px solid #1e2d3d;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .stat-card::after {
+        content: "";
+        position: absolute;
+        inset: auto -28px -28px auto;
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: rgba(0, 176, 255, 0.08);
+    }
+
+    .stat-card h3 {
+        margin: 0 0 0.55rem;
+        font-size: 0.82rem;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    .stat-card .value {
+        position: relative;
+        z-index: 1;
+        font-size: 1.55rem;
+        font-weight: 700;
+        color: #e8edf5;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1a3a52, #0d1f33);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+    }
+
+    .role-badge {
+        font-size: 0.75rem;
+    }
+
+    .action-buttons .btn {
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+
+    .last-login {
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+
+    .tab-switch {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 0;
+        padding: 0.35rem;
+        border-radius: 3px;
+        background: #1a2335;
+        border: 1px solid #3d516b;
+        width: fit-content;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    .tab-switch button {
+        padding: 0.55rem 1.1rem;
+        border: 0;
+        background: transparent;
+        border-radius: 3px;
+        color: #94a3b8;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .tab-switch button.active {
+        background: #141d2e;
+        color: #e8edf5;
+        box-shadow: 0 10px 18px rgba(234, 88, 12, 0.22);
+    }
+
+    .tab-switch button:focus {
+        outline: none;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .card {
+        border: 0;
+        border-radius: 4px;
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.10);
+        overflow: hidden;
+        background: #141d2e;
+    }
+
+    .card-header {
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid #0f1a2a;
+        background: #141d2e;
+    }
+
+    .card-body {
+        padding: 1rem 1.1rem;
+    }
+
+    .users-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.85rem;
+    }
+
+    .users-toolbar-title {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .users-toolbar-title h5 {
+        margin: 0;
+    }
+
+    .users-toolbar-title small {
+        color: #94a3b8;
+        font-size: 0.8rem;
+    }
+
+    .users-toolbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .users-toolbar .input-group {
+        border-radius: 3px;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px #1e2d3d;
+        background: #141d2e;
+    }
+
+    .users-toolbar .input-group .form-control {
+        border: 0;
+        min-width: 240px;
+        box-shadow: none;
+    }
+
+    .users-toolbar .input-group .btn {
+        border: 0;
+        background: #1a2335;
+        color: #94a3b8;
+    }
+
+    .users-toolbar .btn,
+    .users-toolbar .dropdown-toggle {
+        border-radius: 3px;
+    }
+
+    .table-responsive {
+        border: 1px solid #0f1a2a;
+        border-radius: 4px;
+        overflow: auto;
+        background: #141d2e;
+    }
+
+    .permission-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(10,15,26,0.98) 100%);
+        border: 1px solid #1e2d3d;
+        border-radius: 4px;
+        padding: 1.5rem;
+    }
+
+    .permission-selector {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .permission-selector > div {
+        background: #141d2e;
+        border: 1px solid #1e2d3d;
+        border-radius: 4px;
+        padding: 1rem;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    }
+
+    .permission-selector > div label {
+        display: block;
+        margin-bottom: 0.45rem;
+        font-weight: 600;
+        color: #e8edf5;
+    }
+
+    .selector-row {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .selector-row .btn {
+        border-radius: 3px;
+        padding: 0.4rem 0.9rem;
+    }
+
+    .permission-panels {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .permission-panel {
+        border: 1px solid #1e2d3d;
+        border-radius: 4px;
+        padding: 1rem;
+        background: #141d2e;
+        box-shadow: 0 12px 24px rgba(37, 99, 235, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .permission-panel:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 32px rgba(37, 99, 235, 0.12);
+    }
+
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .panel-header h6 {
+        font-size: 1rem;
+        color: #e8edf5;
+        margin-bottom: 0.25rem;
+    }
+
+    .summary-label {
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+
+    .permission-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .permission-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .permission-table th,
+    .permission-table td {
+        border: 1px solid #1e2d3d;
+        padding: 0.6rem;
+        text-align: left;
+        font-size: 0.9rem;
+    }
+
+    .permission-table th {
+        background: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9));
+        font-weight: 600;
+        color: #e8edf5;
+    }
+
+    .permission-table tr:nth-child(even) {
+        background: rgba(15,23,42,0.4);
+    }
+
+    .permission-table tbody tr:hover {
+        background: rgba(14,165,233,0.08);
+    }
+
+    .permission-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .state-allow {
+        color: #2f855a;
+        font-weight: 600;
+    }
+
+    .state-deny {
+        color: #c53030;
+        font-weight: 600;
+    }
+
+    .state-inherit {
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    .placeholder {
+        text-align: center;
+        color: #94a3b8;
+    }
+
+    /* 缁熶竴闄愬埗妯℃€佹楂樺害锛屽唴瀹硅秴鍑烘椂鍐呴儴婊氬姩锛岄伩鍏嶅簳閮ㄨ閬尅 */
+    .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    /* 鐢ㄦ埛璇︽儏妯℃€佹鍐呯殑淇℃伅琛ㄦ牸鍜屾爣绛惧尯鍩熷帇缂╀竴浜涢珮搴︼紝閬垮厤鍗犵敤杩囧绌洪棿 */
+    .info-table {
+        margin-bottom: 0.5rem;
+    }
+
+    #detailPermissionsList,
+    #detailGroupsList {
+        max-height: 120px;
+        overflow-y: auto;
+        border: 1px solid #1e2d3d;
+        border-radius: 0.25rem;
+        padding: 0.5rem;
+        background: #0f1a2a;
+    }
+
+    #detailPermissionsList .badge,
+    #detailGroupsList .badge {
+        margin-bottom: 0.25rem;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .radio-group label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        cursor: pointer;
+        padding: 0.25rem 0.6rem;
+        border-radius: 3px;
+        background: #0f1a2a;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+    }
+
+    .radio-group input[type="radio"] {
+        accent-color: #2b6cb0;
+    }
+
+    .radio-group label:hover {
+        border-color: #94a3b8;
+        background: #141d2e;
+    }
+
+    .badge-muted {
+        background: #141d2e;
+        color: #e8edf5;
+        border-radius: 0.25rem;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .permission-actions .btn {
+        min-width: 120px;
+    }
+
+    .compact-user-table {
+        font-size: 0.78rem;
+        line-height: 1.2;
+        margin-bottom: 0;
+    }
+    .compact-user-table th,
+    .compact-user-table td {
+        padding: 0.32rem 0.4rem;
+        vertical-align: middle;
+    }
+    .compact-user-table th {
+        font-size: 0.76rem;
+        white-space: nowrap;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: #141d2e;
+        color: #94a3b8;
+        border-bottom: 1px solid #1e2d3d;
+    }
+    .compact-user-table tbody tr:nth-child(even) {
+        background: #0f1a2a;
+    }
+    .compact-user-table tbody tr:hover {
+        background: #1a2335;
+    }
+    .compact-user-table .user-avatar {
+        width: 26px;
+        height: 26px;
+        font-size: 0.78rem;
+        margin-right: 0.5rem !important;
+    }
+    .compact-user-table .user-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        min-width: 0;
+    }
+    .compact-user-table .user-meta {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        gap: 0.08rem;
+    }
+    .compact-user-table .user-name {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #e8edf5;
+        line-height: 1.15;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .compact-user-table .user-id {
+        font-size: 0.68rem;
+        color: #94a3b8;
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .compact-user-table .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.2rem;
+    }
+    .compact-user-table .action-buttons .btn {
+        font-size: 0.68rem !important;
+        padding: 0.2rem 0.42rem !important;
+        margin-right: 0 !important;
+        margin-bottom: 0 !important;
+    }
+    .compact-user-table .badge {
+        font-size: 0.66rem;
+        padding: 0.28rem 0.38rem;
+    }
+    .compact-user-table small,
+    .compact-user-table .last-login,
+    .compact-user-table code {
+        font-size: 0.7rem;
+    }
+    .compact-user-table .password-value {
+        min-width: 76px;
+        padding: 0.14rem 0.35rem;
+    }
+    .compact-user-table .password-chip {
+        gap: 0.28rem;
+        flex-wrap: nowrap;
+    }
+    .compact-user-table .password-toggle {
+        padding: 0.16rem 0.42rem !important;
+        font-size: 0.68rem !important;
+        line-height: 1.1;
+    }
+    .compact-user-table td:first-child {
+        min-width: 200px;
+    }
+    .password-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        flex-wrap: wrap;
+    }
+    .password-value {
+        display: inline-flex;
+        align-items: center;
+        min-width: 92px;
+        padding: 0.18rem 0.45rem;
+        border-radius: 3px;
+        background: #1a2335;
+        color: #94a3b8;
+        font-size: 0.78rem;
+        line-height: 1.2;
+    }
+    .password-value.masked {
+        letter-spacing: 0.14em;
+    }
+    .password-toggle {
+        white-space: nowrap;
+        background: linear-gradient(135deg, rgba(14,165,233,0.15), rgba(37,99,235,0.1)) !important;
+        border: 1px solid rgba(14,165,233,0.3) !important;
+        color: #38bdf8 !important;
+        padding: 0.25rem 0.6rem !important;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .password-toggle:hover {
+        background: linear-gradient(135deg, rgba(14,165,233,0.25), rgba(37,99,235,0.2)) !important;
+        border-color: rgba(14,165,233,0.5) !important;
+        box-shadow: 0 0 8px rgba(14,165,233,0.15);
+    }
+
+    @media (max-width: 992px) {
+        .page-hero,
+        .users-toolbar {
+            align-items: stretch;
+        }
+
+        .users-toolbar-actions {
+            width: 100%;
+        }
+
+        .users-toolbar .input-group {
+            flex: 1 1 100%;
+            max-width: none !important;
+        }
+    }
+
+    #permissionSubjectSelect {
+        width: 100%;
+    }
+
+    .placeholder {
+        text-align: center;
+        color: #94a3b8;
+    }
+
+
+/* Transitions */
+.card { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.card:hover { box-shadow: 0 10px 24px rgba(0,0,0,0.35); }
+.tab-content { transition: opacity 0.25s ease; }
+table tbody tr { transition: background 0.15s ease; }
+.permission-panel { transition: all 0.25s ease; }
+.permission-panel:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
+.stat-card { transition: all 0.3s ease; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="user-admin-shell">
+<!-- 椤甸潰鏍囬 -->
+<div class="page-hero">
+    <div>
+        <h2><i class="bi bi-people"></i> 用户管理</h2>
+        <p class="text-muted">管理系统用户、角色、群组和权限配置</p>
+    </div>
+    <div class="hero-note">
+        <i class="bi bi-shield-check"></i>
+        管理账号、密码、群组和权限
+    </div>
+</div>
+
+<!-- 缁熻鍗＄墖 -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>总用户数</h3>
+        <div class="value">{{ stats.total_users }}</div>
+    </div>
+    <div class="stat-card" style="border-left-color: #f56565;">
+        <h3>管理员</h3>
+        <div class="value">{{ stats.admin_users }}</div>
+    </div>
+    <div class="stat-card" style="border-left-color: #48bb78;">
+        <h3>普通用户</h3>
+        <div class="value">{{ stats.regular_users }}</div>
+    </div>
+    <div class="stat-card" style="border-left-color: #ed8936;">
+        <h3>活跃用户</h3>
+        <div class="value">{{ stats.recent_active_users }}</div>
+    </div>
+    <div class="stat-card" style="border-left-color: #63b3ed;">
+        <h3>群组总数</h3>
+        <div class="value">{{ stats.group_total }}</div>
+    </div>
+</div>
+
+<div class="tab-switch" id="adminTabSwitch">
+    <button type="button" class="active" data-target="tab-users">用户列表</button>
+    <button type="button" data-target="tab-groups">群组管理</button>
+    <button type="button" data-target="tab-permissions">权限管理</button>
+</div>
+
+<div class="tab-content active" id="tab-users">
+    <div class="card">
+        <div class="card-header">
+            <div class="users-toolbar">
+                <div class="users-toolbar-title">
+                    <h5><i class="bi bi-table"></i> 用户列表</h5>
+                    <small>支持搜索、筛选、密码查看和账号操作</small>
+                </div>
+                <div class="users-toolbar-actions">
+                    <div class="input-group" style="max-width: 300px;">
+                        <input type="text" class="form-control" id="searchInput" placeholder="搜索用户名或显示名称...">
+                        <button class="btn btn-secondary" type="button" onclick="searchUsers()">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown"
+                            data-bs-toggle="dropdown">
+                            <i class="bi bi-funnel"></i> 筛选
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="filterUsers('all')">所有用户</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="filterUsers('admin')">管理员</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="filterUsers('user')">普通用户</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="filterUsers('active')">活跃用户</a></li>
+                        </ul>
+                    </div>
+                    <button class="btn btn-primary" onclick="refreshUserList()">
+                        <i class="bi bi-arrow-clockwise"></i> 刷新
+                    </button>
+                    <button type="button" class="btn" onclick="showCreateUserModal()" style="background:linear-gradient(135deg,#00b0ff,#1d4ed8) !important;color:#141d2e !important;border:1px solid #00b0ff !important;box-shadow:0 10px 20px rgba(37,99,235,0.24);padding:0.65rem 1.1rem;border-radius:10px;">
+                        <i class="bi bi-person-plus"></i> 新增用户
+                    </button>
+<button class="btn btn-success" onclick="showSyncUsersModal()">
+                        <i class="bi bi-cloud-download"></i> 同步用户
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover compact-user-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>&#29992;&#25143;</th>
+                            <th>&#35282;&#33394;</th>
+                            <th>&#37038;&#31665;</th>
+                            <th>&#30331;&#24405;&#23494;&#30721;</th>
+                            <th>&#25152;&#23646;&#32676;&#32452;</th>
+                            <th>&#26435;&#38480;&#25968;</th>
+                            <th>&#26368;&#21518;&#30331;&#24405;</th>
+                            <th>&#25805;&#20316;</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        {% for user in users %}
+                        <tr data-user-id="{{ user.id }}">
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">
+                                        {{ user.display_name[0] if user.display_name else user.username[0] }}
+                                    </div>
+                                    <div class="user-meta">
+                                        <div class="user-name">{{ user.display_name or user.username }}</div>
+                                        <div class="user-id">{{ user.username }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if user.role == 'admin' %}
+                                <span class="badge bg-danger role-badge">
+                                    <i class="bi bi-shield-check"></i> 管理员</span>
+                                {% else %}
+                                <span class="badge bg-secondary role-badge">
+                                    <i class="bi bi-person"></i> 普通用户</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user.email or '-' }}</td>
+                            <td>
+                                <div class="password-chip">
+                                    <code class="password-value masked" data-password="{{ user.local_password or 'Ab123###' }}">********</code>
+                                    <button class="btn btn-sm btn-outline-secondary password-toggle" type="button" onclick="togglePasswordVisibility(this)">
+                                        <i class="bi bi-eye"></i> &#26174;&#31034;
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                {% if user.groups and user.groups|length > 0 %}
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; max-width: 300px;">
+                                    {% for group in user.groups[:3] %}
+                                    <span class="badge" style="background: rgba(14,165,233,0.12); color: #38bdf8; border: 1px solid rgba(14,165,233,0.25); font-size: 0.7rem;">
+                                        {{ group.display_name or group.name }}
+                                    </span>
+                                    {% endfor %}
+                                    {% if user.groups|length > 3 %}
+                                    <span class="badge" style="background: rgba(30,41,59,0.4); color: #94a3b8; font-size: 0.7rem;">
+                                        +{{ user.groups|length - 3 }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                {% else %}
+                                <span style="color: #94a3b8; font-size: 0.85rem;">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ user.permissions }}</span>
+                            </td>
+                            <td>
+                                {% if user.last_login_at %}
+                                <div class="last-login" data-timestamp="{{ user.last_login_at }}">
+                                    {{ user.last_login_at }}
+                                </div>
+                                {% else %}
+                                <span style="color: #64748b;">从未登录</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;"
+                                        onclick="showUserDetails('{{ user.id }}')">
+                                        <i class="bi bi-eye"></i> 详情
+                                    </button>
+
+                                    {% if user.role == 'admin' %}
+                                    <button class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;"
+                                        onclick="demoteUser('{{ user.id }}', '{{ user.display_name or user.username }}')" {% if user.id==session.user_id %}disabled title="不能降级自己" {% endif %}>
+                                        <i class="bi bi-arrow-down-circle"></i> 降级
+                                    </button>
+                                    {% else %}
+                                    <button class="btn btn-success" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;"
+                                        onclick="promoteUser('{{ user.id }}', '{{ user.display_name or user.username }}')">
+                                        <i class="bi bi-arrow-up-circle"></i> 提升
+                                    </button>
+                                    {% endif %}
+
+                                    <button class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;"
+                                        onclick="testUserAccess('{{ user.id }}', '{{ user.username }}')">
+                                        <i class="bi bi-wifi"></i> 测试
+                                    </button>
+
+                                    <button class="btn btn-danger" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;"
+                                        onclick="deleteUser('{{ user.id }}', '{{ user.display_name or user.username }}')" {% if user.id==session.user_id %}disabled title="不能删除自己" {% endif %}>
+                                        <i class="bi bi-trash"></i> 删除
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 群组管理 Tab -->
+<div class="tab-content" id="tab-groups">
+    <div class="card">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+            <div>
+                <h5 style="margin:0;"><i class="bi bi-people"></i> 群组管理</h5>
+                <p class="text-muted" style="margin:0.25rem 0 0; color:#8a9bb0; font-size:0.9rem;">管理本地群组与同步群组，并配合权限管理实现按群组授权</p>
+            </div>
+            <div>
+                <button class="btn btn-primary" type="button" onclick="openCreateGroupModal()">+ 新建本地群组</button>
+            </div>
+        </div>
+        <div class="card-body" style="display:grid; grid-template-columns: minmax(260px, 1fr) 2fr; gap:1.5rem;">
+            <div>
+                <h6 style="margin-bottom:0.75rem;">群组列表</h6>
+                <div id="groupList" style="max-height:480px; overflow-y:auto; border:1px solid #1e2d3d; border-radius:0.5rem;">
+                    <!-- 群组列表由 JS 渲染 -->
+                </div>
+            </div>
+            <div>
+                <h6 style="margin-bottom:0.75rem;">群组详情</h6>
+                <div id="groupDetails" class="empty-state" style="color:#94a3b8; text-align:center; padding:2rem;">
+                    请选择左侧群组查看详情
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 新建群组模态框 -->
+<div class="modal" id="createGroupModal" tabindex="-1">
+    <div class="modal-content" style="max-width:480px;">
+        <div class="modal-header">
+            <h5>新建本地群组</h5>
+            <span class="close" onclick="closeModal('createGroupModal')">&times;</span>
+        </div>
+        <div style="padding:1rem 0;">
+            <div class="form-group">
+                <label for="groupNameInput">群组标识（英文名）</label>
+                <input type="text" id="groupNameInput" class="form-control" placeholder="例如：qa_team">
+                <small style="color:#94a3b8;">用于内部标识，创建后不建议修改，且必须唯一。</small>
+            </div>
+            <div class="form-group">
+                <label for="groupDisplayNameInput">显示名称</label>
+                <input type="text" id="groupDisplayNameInput" class="form-control" placeholder="例如：质量检验组">
+            </div>
+            <div class="form-group">
+                <label for="groupDescriptionInput">描述</label>
+                <textarea id="groupDescriptionInput" class="form-control" rows="3" placeholder="可选，用于说明该群组用途"></textarea>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:0.5rem; margin-top:0.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('createGroupModal')">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitCreateGroup()">创建</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑群组模态框 -->
+<div class="modal" id="editGroupModal" tabindex="-1">
+    <div class="modal-content" style="max-width:480px;">
+        <div class="modal-header">
+            <h5>编辑群组</h5>
+            <span class="close" onclick="closeModal('editGroupModal')">&times;</span>
+        </div>
+        <div style="padding:1rem 0;">
+            <div class="form-group">
+                <label>群组标识（只读）</label>
+                <input type="text" id="editGroupName" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="editGroupDisplayName">显示名称</label>
+                <input type="text" id="editGroupDisplayName" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="editGroupDescription">描述</label>
+                <textarea id="editGroupDescription" class="form-control" rows="3"></textarea>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:0.5rem; margin-top:0.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editGroupModal')">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitEditGroup()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 管理成员模态框 -->
+<div class="modal" id="groupMembersModal" tabindex="-1">
+    <div class="modal-content" style="max-width:640px;">
+        <div class="modal-header">
+            <h5>管理群组成员</h5>
+            <span class="close" onclick="closeModal('groupMembersModal')">&times;</span>
+        </div>
+        <div style="padding:1rem 0; max-height:60vh; overflow-y:auto;">
+            <div id="groupMembersHint" style="margin-bottom:0.75rem; color:#8a9bb0; font-size:0.9rem;"></div>
+            <div id="groupMembersList" style="display:flex; flex-direction:column; gap:0.35rem;">
+                <!-- 成员复选框列表由 JS 渲染 -->
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:0.5rem; margin-top:0.75rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('groupMembersModal')">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitGroupMembers()">保存成员</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="tab-content" id="tab-permissions">
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h5 style="margin: 0;"><i class="bi bi-shield-lock"></i> 权限管理</h5>
+                <div style="font-size: 0.85rem; color: #94a3b8;">按用户或群组配置页面级权限</div>
+            </div>
+            <div class="card-body">
+                <div class="permission-section">
+                    <div class="permission-selector">
+                        <div>
+                            <label style="font-weight: 600; color: #e8edf5;">选择主体类型</label>
+                            <div class="selector-row">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="permissionSubjectType" id="subjectUser" value="user" checked>
+                                    <label class="form-check-label" for="subjectUser">按用户配置</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="permissionSubjectType" id="subjectGroup" value="group">
+                                    <label class="form-check-label" for="subjectGroup">按群组配置</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-weight: 600; color: #e8edf5;" id="subjectSelectLabel">选择用户</label>
+                            <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
+                                <input type="text" class="form-control form-control-sm" id="permissionSubjectSearch"
+                                    placeholder="搜索用户或群组，回车可直接定位...">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="searchPermissionSubject()">
+                                    搜索
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearPermissionSubjectSearch()">
+                                    清空
+                                </button>
+                            </div>
+                            <select class="form-select" id="permissionSubjectSelect">
+                                <option value="" selected>请选择用户...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-weight: 600; color: #e8edf5;">快捷操作</label>
+                            <div class="selector-row">
+                                <button class="btn btn-outline-primary btn-sm" type="button" onclick="applyPermissionTemplate('admin')">管理员默认</button>
+                                <button class="btn btn-outline-secondary btn-sm" type="button" onclick="applyPermissionTemplate('user')">普通用户默认</button>
+                                <button class="btn btn-outline-danger btn-sm" type="button" onclick="resetPermissionOverrides()">重置覆盖</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-weight: 600; color: #e8edf5;">筛选权限</label>
+                            <input type="text" class="form-control form-control-sm" id="permissionSearchInput"
+                                placeholder="按权限标识或名称搜索..." style="margin-bottom: 0.5rem;">
+                            <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
+                                <label style="display:inline-flex; gap:0.35rem; align-items:center; margin:0; font-size:0.85rem; color:#8a9bb0;">
+                                    <input type="checkbox" id="permFilterConfigured"> 仅显示已配置
+                                </label>
+                                <label style="display:inline-flex; gap:0.35rem; align-items:center; margin:0; font-size:0.85rem; color:#8a9bb0;">
+                                    <input type="checkbox" id="permFilterAllowed"> 仅显示最终允许
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="permission-panels">
+                        <div class="permission-panel">
+                            <div class="panel-header">
+                                <div>
+                                    <h6 style="margin: 0;">后台页面权限</h6>
+                                    <div class="summary-label">控制 Web 后台页面的读取、修改与删除能力</div>
+                                </div>
+                                <div class="badge badge-muted" id="panelSummaryWeb">-</div>
+                            </div>
+                            <div class="permission-table-wrapper">
+                                <table class="permission-table" id="webPermissionTable">
+                                    <thead>
+                                        <tr>
+                                            <th>权限标识</th>
+                                            <th>操作</th>
+                                            <th>状态</th>
+                                            <th>来源</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="4" class="placeholder">请选择左侧主体加载权限数据</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="permission-panel">
+                            <div class="panel-header">
+                                <div>
+                                    <h6 style="margin: 0;">API 权限</h6>
+                                    <div class="summary-label">控制 API 读取、写入与删除能力</div>
+                                </div>
+                                <div class="badge badge-muted" id="panelSummaryApi">-</div>
+                            </div>
+                            <div class="permission-table-wrapper">
+                                <table class="permission-table" id="apiPermissionTable">
+                                    <thead>
+                                        <tr>
+                                            <th>权限标识</th>
+                                            <th>操作</th>
+                                            <th>状态</th>
+                                            <th>来源</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="4" class="placeholder">请选择左侧主体加载权限数据</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="permission-panel">
+                            <div class="panel-header">
+                                <div>
+                                    <h6 style="margin: 0;">移动端 / 其他权限</h6>
+                                    <div class="summary-label">控制移动端与其他功能访问能力</div>
+                                </div>
+                                <div class="badge badge-muted" id="panelSummaryOther">-</div>
+                            </div>
+                            <div class="permission-table-wrapper">
+                                <table class="permission-table" id="otherPermissionTable">
+                                    <thead>
+                                        <tr>
+                                            <th>权限标识</th>
+                                            <th>操作</th>
+                                            <th>状态</th>
+                                            <th>来源</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="4" class="placeholder">请选择左侧主体加载权限数据</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="permission-actions">
+                        <button class="btn btn-outline-secondary" type="button" onclick="refreshPermissionData()">
+                            <i class="bi bi-arrow-clockwise"></i> 重新加载
+                        </button>
+                        <button class="btn btn-primary" type="button" onclick="submitPermissionChanges()">
+                            <i class="bi bi-save"></i> 保存权限设置
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+    <!-- 用户详情模态框 -->
+    <div class="modal" id="userDetailsModal" tabindex="-1">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h5>用户详情</h5>
+                <span class="close" onclick="closeModal('userDetailsModal')">&times;</span>
+            </div>
+            <div style="padding: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+                    <div style="text-align: center;">
+                        <div class="user-avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 1rem;"
+                            id="detailAvatar">
+                            U
+                        </div>
+                        <h5 id="detailDisplayName">用户名称</h5>
+                        <p style="color: #94a3b8;" id="detailUsername">@username</p>
+                        <span class="badge" id="detailRole">角色</span>
+                    </div>
+                    <div>
+                        <h6>基本信息</h6>
+                        <table class="table">
+                            <tr>
+                                <td><strong>用户ID:</strong></td>
+                                <td id="detailUserId">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>邮箱:</strong></td>
+                                <td id="detailEmail">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>权限数量:</strong></td>
+                                <td id="detailPermissions">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>创建时间:</strong></td>
+                                <td id="detailCreatedAt">-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>最后登录:</strong></td>
+                                <td id="detailLastLogin">-</td>
+                            </tr>
+                        </table>
+
+                        <h6 style="margin-top: 1.5rem;">权限列表</h6>
+                        <div id="detailPermissionsList" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            <!-- 权限标签将在这里动态生成 -->
+                        </div>
+
+                        <h6 style="margin-top: 1.5rem;">所属群组</h6>
+                        <div id="detailGroupsList" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            <!-- 群组标签将在这里动态生成 -->
+                        </div>
+
+                        <!-- 编辑模式表单 -->
+                        <div id="editUserForm" style="margin-top: 2rem; display: none; border-top: 1px solid #1e2d3d; padding-top: 1rem;">
+                            <h6>编辑用户信息</h6>
+                            <div class="mb-2">
+                                <label class="form-label">显示名</label>
+                                <input type="text" class="form-control" id="editDisplayName">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">邮箱</label>
+                                <input type="email" class="form-control" id="editEmail">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">角色</label>
+                                <select class="form-control" id="editRole">
+                                    <option value="user">普通用户</option>
+                                    <option value="admin">管理员</option>
+                                </select>
+                            </div>
+                            <div class="mb-2" style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
+                                <label style="display:flex; align-items:center; gap:0.4rem; margin:0; font-weight:500;">
+                                    <input type="checkbox" id="editMustChangePassword">
+                                    下次登录强制修改密码
+                                </label>
+                                <label style="display:flex; align-items:center; gap:0.4rem; margin:0; font-weight:500;">
+                                    <input type="checkbox" id="editIsActive" checked>
+                                    账号启用
+                                </label>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">所属群组</label>
+                                <div id="editGroupsContainer" style="max-height: 200px; overflow-y: auto; border: 1px solid #1e2d3d; border-radius: 0.25rem; padding: 0.5rem;">
+                                    <!-- 群组复选框列表 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-outline-primary" onclick="openPermissionForCurrentUser()">打开权限管理</button>
+                    <button type="button" class="btn btn-secondary" onclick="cancelEditUser()" id="btnCancelEdit" style="display:none;">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveUserDetails()" id="btnSaveUser" style="display:none;">保存</button>
+                    <button type="button" class="btn btn-primary" onclick="editUserDetails()" id="btnEditUser">编辑用户</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('userDetailsModal')">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认删除模态框 -->
+    <div class="modal" id="deleteConfirmModal" tabindex="-1">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>确认删除</h5>
+                <span class="close" onclick="closeModal('deleteConfirmModal')">&times;</span>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p>确定要删除用户 <strong id="deleteUsername"></strong> 吗？</p>
+                <p style="color: #f56565;">此操作不可撤销。</p>
+                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('deleteConfirmModal')">取消</button>
+                    <button type="button" class="btn btn-danger" onclick="executeDeleteUser()">确认删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增用户模态框 -->
+    <div class="modal" id="createUserModal" tabindex="-1">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5><i class="bi bi-person-plus"></i> 新增用户</h5>
+                <span class="close" onclick="closeCreateUserModal()">&times;</span>
+            </div>
+            <div style="padding: 1.5rem;">
+                <div class="alert alert-info" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; padding: 1rem; border-radius: 3px; margin-bottom: 1rem;">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>说明：</strong>新用户默认密码为 <code>Ab123###</code>，并将在首次登录时强制修改密码。
+                </div>
+
+                <div style="display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="createUsername">用户名 <span style="color:#dc2626;">*</span></label>
+                        <input type="text" class="form-control" id="createUsername" placeholder="输入登录用户名">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="createDisplayName">显示名称</label>
+                        <input type="text" class="form-control" id="createDisplayName" placeholder="输入显示名称，可留空">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="createEmail">邮箱</label>
+                        <input type="email" class="form-control" id="createEmail" placeholder="输入邮箱，可留空">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="createRole">角色</label>
+                        <select class="form-control" id="createRole">
+                            <option value="user">普通用户</option>
+                            <option value="admin">管理员</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem; display:flex; align-items:center; gap:0.5rem;">
+                    <input type="checkbox" id="createIsActive" checked>
+                    <label for="createIsActive" style="margin: 0; cursor: pointer;">创建后立即启用账号</label>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem; margin-bottom: 0;">
+                    <label for="createGroupsContainer">所属群组</label>
+                    <div id="createGroupsContainer" style="max-height: 220px; overflow-y: auto; border: 1px solid #dbe3f0; border-radius: 3px; padding: 0.75rem; background: #0f1a2a;">
+                        <!-- 群组复选框列表 -->
+                    </div>
+                    <small style="color: #94a3b8; display:block; margin-top: 0.35rem;">可选，创建后也可以在“编辑用户”里调整。</small>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeCreateUserModal()">取消</button>
+                    <button type="button" class="btn btn-primary" id="btnCreateUser" onclick="executeCreateUser()">
+                        <i class="bi bi-person-plus"></i> 创建用户
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 同步用户模态框 -->
+    <div class="modal" id="syncUsersModal" tabindex="-1">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5><i class="bi bi-cloud-download"></i> 从群晖同步用户</h5>
+                <span class="close" onclick="closeSyncUsersModal()">&times;</span>
+            </div>
+            <div style="padding: 1.5rem;">
+                <div class="alert alert-info" style="background: #e6f7ff; border: 1px solid #91d5ff; color: #0050b3; padding: 1rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+                    <i class="bi bi-info-circle"></i> 
+                    <strong>说明：</strong>此操作将从群晖 NAS 批量同步所有用户到本地数据库，需要提供管理员账号凭据。
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="syncSynologyUsername">群晖管理员用户名</label>
+                    <input type="text" class="form-control" id="syncSynologyUsername" placeholder="输入群晖 NAS 的管理员用户名">
+                    <small style="color: #94a3b8; display: block; margin-top: 0.25rem;">此账号用于连接群晖 NAS，区别于当前 Web 后台账号。</small>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="syncAdminPassword">群晖管理员密码</label>
+                    <input type="password" class="form-control" id="syncAdminPassword" placeholder="输入群晖 NAS 的管理员密码">
+                    <small style="color: #94a3b8; display: block; margin-top: 0.25rem;">密码仅用于本次同步，不会被保存。</small>
+                </div>
+                
+                <!-- 同步选项 -->
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                        <input type="checkbox" id="syncGroups" checked style="margin-right: 0.5rem;">
+                        <label for="syncGroups" style="margin: 0; cursor: pointer;">同步群组关系（管理员权限）</label>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <input type="checkbox" id="syncEmails" checked style="margin-right: 0.5rem;">
+                        <label for="syncEmails" style="margin: 0; cursor: pointer;">同步邮箱地址</label>
+                    </div>
+                </div>
+                
+                <!-- 同步进度 -->
+                <div id="syncProgress" style="display: none; margin-top: 1rem;">
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 0.25rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span id="syncStatus">正在同步...</span>
+                            <span id="syncCount">0/0</span>
+                        </div>
+                        <div style="background: #e9ecef; height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div id="syncProgressBar" style="background: linear-gradient(90deg, #667eea, #764ba2); width: 0%; height: 100%; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 同步结果 -->
+                <div id="syncResult" style="display: none; margin-top: 1rem;">
+                    <h6>同步结果</h6>
+                    <div id="syncResultSummary" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
+                        <!-- 统计信息 -->
+                    </div>
+                    <div id="syncResultDetails" style="max-height: 200px; overflow-y: auto; background: #f8f9fa; padding: 0.5rem; border-radius: 0.25rem;">
+                        <!-- 详细信息 -->
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeSyncUsersModal()">取消</button>
+                    <button type="button" class="btn btn-success" id="btnStartSync" onclick="executeSyncUsers()">
+                        <i class="bi bi-cloud-download"></i> 开始同步
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+<script id="permissionUserOptionsData" type="application/json">{{ permission_user_options|tojson|safe }}</script>
+<script id="permissionGroupOptionsData" type="application/json">{{ permission_group_options|tojson|safe }}</script>
+{% endblock %}
+
+{% block extra_js %}
+<script id="initialGroupsData" type="application/json">{{ groups|tojson|safe if groups else '[]' }}</script>
+<script id="allUsersData" type="application/json">{{ all_users|tojson|safe if all_users else '[]' }}</script>
+<script>
+    let currentUserId = null;
+    let currentUsername = null;
+    let permissionMode = 'user';
+    let permissionResources = {};
+    let currentPermissionData = null;
+    let pendingChanges = {};
+
+    const permissionUserOptionsScript = document.getElementById('permissionUserOptionsData');
+    const permissionGroupOptionsScript = document.getElementById('permissionGroupOptionsData');
+    const permissionUserOptionsData = permissionUserOptionsScript ? JSON.parse(permissionUserOptionsScript.textContent || '[]') : [];
+    const permissionGroupOptionsData = permissionGroupOptionsScript ? JSON.parse(permissionGroupOptionsScript.textContent || '[]') : [];
+
+    if (typeof window.showMessage !== 'function') {
+        window.showMessage = function (message, type) {
+            console.log(`[${type || 'info'}] ${message}`);
+        };
+    }
+
+    // 格式化时间戳
+    function formatTimestamp(timestamp) {
+        if (!timestamp) return '-';
+        const date = new Date(timestamp);
+        return date.toLocaleString('zh-CN');
+    }
+
+    // 提升用户权限
+    function promoteUser(userId, username) {
+        if (confirm(`确定要将用户 "${username}" 提升为管理员吗？`)) {
+            fetch(`/admin/api/users/${userId}/promote`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(data.message, 'success');
+                        refreshUserList();
+                    } else {
+                        showMessage(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showMessage('操作失败: ' + error.message, 'error');
+                });
+        }
+    }
+
+    // 降级用户权限
+    function demoteUser(userId, username) {
+        if (confirm(`确定要将管理员 "${username}" 降级为普通用户吗？`)) {
+            fetch(`/admin/api/users/${userId}/demote`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(data.message, 'success');
+                        refreshUserList();
+                    } else {
+                        showMessage(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showMessage('操作失败: ' + error.message, 'error');
+                });
+        }
+    }
+
+    // 删除用户
+    function deleteUser(userId, username) {
+        currentUserId = userId;
+        document.getElementById('deleteUsername').textContent = username;
+        openModal('deleteConfirmModal');
+    }
+
+    // 显示用户详情
+    function showUserDetails(userId) {
+        currentUserId = userId;
+        fetch(`/admin/api/users/${userId}/details`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const user = data.user;
+
+                    // 更新模态框内容
+                    document.getElementById('detailAvatar').textContent =
+                        (user.display_name || user.username).charAt(0).toUpperCase();
+                    document.getElementById('detailDisplayName').textContent =
+                        user.display_name || user.username;
+                    document.getElementById('detailUsername').textContent = '@' + user.username;
+
+                    const roleElement = document.getElementById('detailRole');
+                    if (user.role === 'admin') {
+                        roleElement.className = 'badge bg-danger';
+                        roleElement.innerHTML = '<i class="bi bi-shield-check"></i> 管理员';
+                    } else {
+                        roleElement.className = 'badge bg-secondary';
+                        roleElement.innerHTML = '<i class="bi bi-person"></i> 普通用户';
+                    }
+
+                    document.getElementById('detailUserId').textContent = user.id;
+                    document.getElementById('detailEmail').textContent = user.email || '-';
+                    document.getElementById('detailPermissions').textContent = user.permissions || 0;
+                    document.getElementById('detailCreatedAt').textContent =
+                        user.created_at ? new Date(user.created_at).toLocaleString('zh-CN') : '-';
+                    document.getElementById('detailLastLogin').textContent =
+                        user.last_login_at ? new Date(user.last_login_at).toLocaleString('zh-CN') : '从未登录';
+
+                    // 显示权限列表
+                    const permissionsList = document.getElementById('detailPermissionsList');
+                    if (data.permissions && data.permissions.length > 0) {
+                        permissionsList.innerHTML = data.permissions.map(perm =>
+                            `<span class="badge" style="background: #1e2d3d; color: #e8edf5; border: 1px solid #1e2d3d;">${perm}</span>`
+                        ).join(' ');
+                    } else {
+                        permissionsList.innerHTML = '<span style="color: #94a3b8;">暂无权限信息</span>';
+                    }
+
+                    // 显示群组列表
+                    const groupsList = document.getElementById('detailGroupsList');
+                    if (user.groups && user.groups.length > 0) {
+                        groupsList.innerHTML = user.groups.map(group =>
+                            `<span class="badge" style="background: #c3dafb; color: #1a365d; border: 1px solid #90cdf4;">${group.display_name || group.name}</span>`
+                        ).join(' ');
+                    } else {
+                        groupsList.innerHTML = '<span style="color: #94a3b8;">暂无群组信息</span>';
+                    }
+
+                    // 预填编辑表单
+                    document.getElementById('editDisplayName').value = user.display_name || user.username || '';
+                    document.getElementById('editEmail').value = user.email || '';
+                    document.getElementById('editRole').value = user.role || 'user';
+                    document.getElementById('editMustChangePassword').checked = !!user.must_change_password;
+                    document.getElementById('editIsActive').checked = user.is_active !== false;
+                    buildEditGroupsCheckboxes(user.groups || []);
+
+                    // 显示模态框
+                    openModal('userDetailsModal');
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('获取用户详情失败: ' + error.message, 'error');
+            });
+    }
+
+    // 构建编辑模式下的群组复选框
+    function buildEditGroupsCheckboxes(userGroups) {
+        const container = document.getElementById('editGroupsContainer');
+        if (!container) return;
+
+        const selectedIds = new Set((userGroups || []).map(g => g.id));
+
+        let html = '';
+        (permissionGroupOptionsData || []).forEach(g => {
+            const checked = selectedIds.has(g.id) ? 'checked' : '';
+            const label = g.name || g.id;
+            html += `
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="${g.id}" id="editGroup_${g.id}" ${checked}>
+                    <label class="form-check-label" for="editGroup_${g.id}">${label}</label>
+                </div>
+            `;
+        });
+        if (!html) {
+            html = '<span style="color:#94a3b8;">当前没有可用群组，请先在群组管理中创建群组。</span>';
+        }
+        container.innerHTML = html;
+    }
+
+    // 进入编辑模式
+    function editUserDetails() {
+        const form = document.getElementById('editUserForm');
+        const btnEdit = document.getElementById('btnEditUser');
+        const btnSave = document.getElementById('btnSaveUser');
+        const btnCancel = document.getElementById('btnCancelEdit');
+        if (!form) return;
+
+        form.style.display = 'block';
+        btnEdit.style.display = 'none';
+        btnSave.style.display = 'inline-block';
+        btnCancel.style.display = 'inline-block';
+    }
+
+    // 取消编辑
+    function cancelEditUser() {
+        const form = document.getElementById('editUserForm');
+        const btnEdit = document.getElementById('btnEditUser');
+        const btnSave = document.getElementById('btnSaveUser');
+        const btnCancel = document.getElementById('btnCancelEdit');
+        if (!form) return;
+
+        form.style.display = 'none';
+        btnEdit.style.display = 'inline-block';
+        btnSave.style.display = 'none';
+        btnCancel.style.display = 'none';
+    }
+
+    // 保存编辑后的用户信息
+    function saveUserDetails() {
+        if (!currentUserId) {
+            showMessage('当前用户信息缺失', 'error');
+            return;
+        }
+
+        const displayName = document.getElementById('editDisplayName').value.trim();
+        const email = document.getElementById('editEmail').value.trim();
+        const role = document.getElementById('editRole').value;
+        const mustChangePassword = document.getElementById('editMustChangePassword').checked;
+        const isActive = document.getElementById('editIsActive').checked;
+
+        const groupIds = [];
+        document.querySelectorAll('#editGroupsContainer input[type="checkbox"]:checked').forEach(cb => {
+            groupIds.push(cb.value);
+        });
+
+        const payload = {
+            display_name: displayName,
+            email: email,
+            role: role,
+            must_change_password: mustChangePassword,
+            is_active: isActive,
+            group_ids: groupIds
+        };
+
+        fetch(`/admin/api/users/${currentUserId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    showMessage(data.message || '保存用户信息失败', 'error');
+                    return;
+                }
+
+                showMessage('用户信息已保存', 'success');
+                cancelEditUser();
+                closeModal('userDetailsModal');
+                refreshUserList();
+            })
+            .catch(error => {
+                showMessage('保存用户信息失败: ' + error.message, 'error');
+            });
+    }
+
+    // 从详情弹窗跳转到权限管理 Tab
+    function openPermissionForCurrentUser() {
+        if (!currentUserId) {
+            showMessage('当前用户信息缺失', 'error');
+            return;
+        }
+
+        closeModal('userDetailsModal');
+
+        // 切换到“权限管理”Tab
+        const tabButtons = document.querySelectorAll('#adminTabSwitch button');
+        tabButtons.forEach(btn => {
+            if (btn.getAttribute('data-target') === 'tab-permissions') {
+                btn.click();
+            }
+        });
+
+        // 设置主体类型为“按用户配置”
+        const subjectUserRadio = document.getElementById('subjectUser');
+        if (subjectUserRadio && !subjectUserRadio.checked) {
+            subjectUserRadio.checked = true;
+            onPermissionSubjectTypeChange({ target: subjectUserRadio });
+        }
+
+        // 在下拉框中选中当前用户
+        const select = document.getElementById('permissionSubjectSelect');
+        if (select) {
+            select.value = currentUserId;
+            loadPermissionDetails();
+        }
+    }
+
+    // 执行删除用户
+    function executeDeleteUser() {
+        fetch(`/admin/api/users/${currentUserId}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                closeModal('deleteConfirmModal');
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    refreshUserList();
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                closeModal('deleteConfirmModal');
+                showMessage('删除失败: ' + error.message, 'error');
+            });
+    }
+
+    // 测试用户登录与权限
+    function testUserAccess(userId, username) {
+        currentUserId = userId;
+        currentUsername = username;
+        document.getElementById('testUsername').textContent = username;
+        document.getElementById('testPassword').value = '';
+        document.getElementById('testResult').style.display = 'none';
+        openModal('testAccessModal');
+    }
+
+    // 执行登录与权限测试
+    function executeAccessTest() {
+        const password = document.getElementById('testPassword').value;
+        if (!password) {
+            showMessage('请输入密码', 'info');
+            return;
+        }
+
+        const button = event.target;
+        button.disabled = true;
+        button.innerHTML = '<span style="display: inline-block; width: 1rem; height: 1rem; border: 2px solid #141d2e; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite;"></span> 测试中...';
+
+        fetch(`/admin/api/users/${currentUserId}/test-access`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ password: password })
+        })
+            .then(response => response.json())
+            .then(data => {
+                button.disabled = false;
+                button.innerHTML = '开始测试';
+
+                if (data.success) {
+                    const result = data.access_result;
+                    const resultList = document.getElementById('testResultList');
+                    resultList.innerHTML = `
+                    <li>密码校验: ${result.password_valid ? '<span style="color: #48bb78;">通过</span>' : '<span style="color: #f56565;">失败</span>'}</li>
+                    <li>允许登录: ${result.can_login ? '<span style="color: #48bb78;">是</span>' : '<span style="color: #f56565;">否</span>'}</li>
+                    <li>账号状态: ${result.is_active ? '<span style="color: #48bb78;">启用</span>' : '<span style="color: #f56565;">停用</span>'}</li>
+                    <li>角色: <span style="color: #e8edf5;">${result.role === 'admin' ? '管理员' : '普通用户'}</span></li>
+                    <li>下次登录强制改密: ${result.must_change_password ? '<span style="color: #ffb300;">是</span>' : '<span style="color: #48bb78;">否</span>'}</li>
+                    <li>所属群组数: <span style="color: #e8edf5;">${result.group_count ?? 0}</span></li>
+                    <li>有效权限数: <span style="color: #e8edf5;">${result.effective_permission_count ?? 0}</span></li>
+                    <li>角色默认权限数: <span style="color: #e8edf5;">${result.role_permission_count ?? 0}</span></li>
+                    <li>用户单独权限数: <span style="color: #e8edf5;">${result.direct_permission_count ?? 0}</span></li>
+                    ${result.error ? '<li style="color: #f56565;">错误: ' + result.error + '</li>' : ''}
+                `;
+                    document.getElementById('testResult').style.display = 'block';
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                button.disabled = false;
+                button.innerHTML = '开始测试';
+                showMessage('测试失败: ' + error.message, 'error');
+            });
+    }
+
+    // 搜索用户
+    function searchUsers() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#userTableBody tr');
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const username = cells[0].textContent.toLowerCase();
+
+            if (username.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // 筛选用户
+    function filterUsers(type) {
+        const rows = document.querySelectorAll('#userTableBody tr');
+
+        rows.forEach(row => {
+            const roleElement = row.querySelector('.role-badge');
+            const lastLoginElement = row.querySelector('.last-login');
+
+            let show = true;
+
+            switch (type) {
+                case 'admin':
+                    show = roleElement.textContent.includes('管理员');
+                    break;
+                case 'user':
+                    show = roleElement.textContent.includes('普通用户');
+                    break;
+                case 'active':
+                    show = lastLoginElement && !lastLoginElement.textContent.includes('从未登录');
+                    break;
+                case 'all':
+                default:
+                    show = true;
+                    break;
+            }
+
+            row.style.display = show ? '' : 'none';
+        });
+    }
+
+    // 刷新用户列表
+    function refreshUserList() {
+        location.reload();
+    }
+
+    function togglePasswordVisibility(button) {
+        const chip = button.closest('.password-chip');
+        if (!chip) {
+            return;
+        }
+
+        const passwordValue = chip.querySelector('.password-value');
+        if (!passwordValue) {
+            return;
+        }
+
+        const actualPassword = passwordValue.dataset.password || 'Ab123###';
+        const isMasked = passwordValue.classList.contains('masked');
+
+        if (isMasked) {
+            passwordValue.textContent = actualPassword;
+            passwordValue.classList.remove('masked');
+            button.innerHTML = '<i class="bi bi-eye-slash"></i> &#38544;&#34255;';
+        } else {
+            passwordValue.textContent = '********';
+            passwordValue.classList.add('masked');
+            button.innerHTML = '<i class="bi bi-eye"></i> &#26174;&#31034;';
+        }
+    }
+
+    // ==================== 权限管理 ====================
+
+    function initializePermissionTab() {
+        console.log('Initializing permission tab...');
+        
+        const tabs = document.querySelectorAll('#adminTabSwitch button');
+        if (tabs.length === 0) {
+            console.warn('No tab buttons found');
+            return;
+        }
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => switchTab(tab));
+        });
+
+        const subjectRadios = document.getElementsByName('permissionSubjectType');
+        subjectRadios.forEach(radio => {
+            radio.addEventListener('change', onPermissionSubjectTypeChange);
+        });
+
+        const permissionSubjectSelect = document.getElementById('permissionSubjectSelect');
+        if (permissionSubjectSelect) {
+            permissionSubjectSelect.addEventListener('change', loadPermissionDetails);
+        }
+
+        const permissionSubjectSearch = document.getElementById('permissionSubjectSearch');
+        if (permissionSubjectSearch) {
+            permissionSubjectSearch.addEventListener('input', () => populatePermissionSubjectOptions({ preserveSelection: true, resetTables: false }));
+            permissionSubjectSearch.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    searchPermissionSubject();
+                }
+            });
+        }
+
+        const permissionSearchInput = document.getElementById('permissionSearchInput');
+        const permFilterConfigured = document.getElementById('permFilterConfigured');
+        const permFilterAllowed = document.getElementById('permFilterAllowed');
+        [permissionSearchInput, permFilterConfigured, permFilterAllowed].forEach(el => {
+            if (!el) return;
+            el.addEventListener('input', () => {
+                if (currentPermissionData && currentPermissionData.permissions) {
+                    renderPermissionTables();
+                }
+            });
+            el.addEventListener('change', () => {
+                if (currentPermissionData && currentPermissionData.permissions) {
+                    renderPermissionTables();
+                }
+            });
+        });
+
+        populatePermissionSubjectOptions();
+        fetchPermissionResources();
+        
+        console.log('Permission tab initialized');
+    }
+
+    function switchTab(tabButtonOrId) {
+        let tabButton = tabButtonOrId;
+        let targetId;
+        
+        // 鏀寔浼犲叆 Tab ID 瀛楃涓叉垨 Tab 鎸夐挳鍏冪礌
+        if (typeof tabButtonOrId === 'string') {
+            targetId = tabButtonOrId;
+            tabButton = document.querySelector(`#adminTabSwitch button[data-target="${targetId}"]`);
+        } else {
+            targetId = tabButton.getAttribute('data-target');
+        }
+
+        document.querySelectorAll('#adminTabSwitch button').forEach(btn => btn.classList.remove('active'));
+        if (tabButton) {
+            tabButton.classList.add('active');
+        }
+
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        const targetContent = document.getElementById(targetId);
+        if (targetContent) {
+            targetContent.classList.add('active');
+        }
+    }
+
+    function onPermissionSubjectTypeChange(event) {
+        permissionMode = event.target.value;
+        const label = document.getElementById('subjectSelectLabel');
+        if (label) {
+            label.textContent = permissionMode === 'group' ? '选择群组' : '选择用户';
+        }
+        const searchInput = document.getElementById('permissionSubjectSearch');
+        if (searchInput) {
+            searchInput.placeholder = permissionMode === 'group'
+                ? '搜索群组名，回车可直接定位...'
+                : '搜索用户名或显示名，回车可直接定位...';
+        }
+
+        populatePermissionSubjectOptions();
+    }
+
+    // 兼容历史调用名，避免函数未定义导致切换逻辑中断
+    function updatePermissionSubjectOptions(options = {}) {
+        populatePermissionSubjectOptions(options);
+    }
+
+    function populatePermissionSubjectOptions({ preserveSelection = false, resetTables = true } = {}) {
+        const select = document.getElementById('permissionSubjectSelect');
+        if (!select) return;
+
+        const prev = preserveSelection ? select.value : '';
+        const q = (document.getElementById('permissionSubjectSearch')?.value || '').trim().toLowerCase();
+
+        if (permissionMode === 'group') {
+            select.innerHTML = '<option value="" selected>请选择群组...</option>';
+            renderGroupOptions(select, q);
+        } else {
+            select.innerHTML = '<option value="" selected>请选择用户...</option>';
+            renderUserOptions(select, q);
+        }
+
+        if (prev) {
+            select.value = prev;
+        }
+
+        if (resetTables) {
+            pendingChanges = {};
+            resetPermissionTables();
+        } else {
+            // 仅用于搜索过滤下拉：如果过滤后当前选中项不存在，则清空并重置表格
+            if (prev && select.value !== prev) {
+                pendingChanges = {};
+                resetPermissionTables();
+            }
+        }
+    }
+
+    function renderUserOptions(select, q) {
+        (permissionUserOptionsData || []).forEach(option => {
+            const text = `${option.display_name} ${option.username}`.toLowerCase();
+            if (q && !text.includes(q)) return;
+            const opt = document.createElement('option');
+            opt.value = option.id;
+            opt.textContent = `${option.display_name} (${option.username})`;
+            select.appendChild(opt);
+        });
+    }
+
+    function renderGroupOptions(select, q) {
+        (permissionGroupOptionsData || []).forEach(option => {
+            const text = `${option.name || ''} ${option.description || ''}`.toLowerCase();
+            if (q && !text.includes(q)) return;
+            const opt = document.createElement('option');
+            opt.value = option.id;
+            opt.textContent = option.name || option.id;
+            select.appendChild(opt);
+        });
+    }
+
+    function getPermissionSubjectOptions() {
+        if (permissionMode === 'group') {
+            return (permissionGroupOptionsData || []).map(item => ({
+                id: item.id,
+                text: `${item.name || ''} ${item.description || ''}`.toLowerCase(),
+                label: item.name || item.id
+            }));
+        }
+        return (permissionUserOptionsData || []).map(item => ({
+            id: item.id,
+            text: `${item.display_name || ''} ${item.username || ''}`.toLowerCase(),
+            label: `${item.display_name || ''} (${item.username || ''})`
+        }));
+    }
+
+    function searchPermissionSubject() {
+        const input = document.getElementById('permissionSubjectSearch');
+        const select = document.getElementById('permissionSubjectSelect');
+        if (!input || !select) return;
+
+        const keyword = (input.value || '').trim().toLowerCase();
+        if (!keyword) {
+            showMessage('请输入搜索关键词', 'warning');
+            return;
+        }
+
+        const options = getPermissionSubjectOptions();
+        const matched = options.filter(item => item.text.includes(keyword));
+        if (matched.length === 0) {
+            showMessage(`未找到匹配的${permissionMode === 'group' ? '群组' : '用户'}`, 'warning');
+            return;
+        }
+
+        populatePermissionSubjectOptions({ preserveSelection: false, resetTables: false });
+        select.value = matched[0].id;
+        loadPermissionDetails();
+
+        if (matched.length > 1) {
+            showMessage(`找到 ${matched.length} 个匹配项，已定位到第一个：${matched[0].label}`, 'info');
+        }
+    }
+
+    function clearPermissionSubjectSearch() {
+        const input = document.getElementById('permissionSubjectSearch');
+        if (!input) return;
+        input.value = '';
+        populatePermissionSubjectOptions({ preserveSelection: true, resetTables: false });
+    }
+
+    function fetchPermissionResources() {
+        fetch('/admin/api/permissions/resources')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    permissionResources = data.resources || {};
+                }
+            })
+            .catch(error => console.error('加载权限资源失败:', error));
+    }
+
+    function loadPermissionDetails() {
+        const subjectId = document.getElementById('permissionSubjectSelect').value;
+        if (!subjectId) {
+            resetPermissionTables();
+            return;
+        }
+
+        const url = permissionMode === 'group'
+            ? `/admin/api/permissions/groups/${subjectId}`
+            : `/admin/api/permissions/users/${subjectId}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    if (typeof showMessage === 'function') {
+                        showMessage(data.message || '加载权限失败', 'error');
+                    }
+                    resetPermissionTables();
+                    return;
+                }
+
+                currentPermissionData = data;
+                pendingChanges = {};
+                renderPermissionTables();
+            })
+            .catch(error => {
+                console.error('加载权限详情失败:', error);
+                if (typeof showMessage === 'function') {
+                    showMessage('加载权限失败: ' + error.message, 'error');
+                }
+                resetPermissionTables();
+            });
+    }
+
+    function renderPermissionTables() {
+        console.log('Rendering permission tables...');
+        
+        if (!currentPermissionData || !currentPermissionData.permissions) {
+            console.warn('No permission data to render');
+            return;
+        }
+
+        const searchText = (document.getElementById('permissionSearchInput')?.value || '').trim().toLowerCase();
+        const configuredOnly = !!document.getElementById('permFilterConfigured')?.checked;
+        const allowedOnly = !!document.getElementById('permFilterAllowed')?.checked;
+
+        let permissions = currentPermissionData.permissions;
+        if (searchText) {
+            permissions = permissions.filter(p => {
+                const t = `${p.value || ''} ${p.label || ''}`.toLowerCase();
+                return t.includes(searchText);
+            });
+        }
+
+        if (configuredOnly) {
+            permissions = permissions.filter(p => {
+                if (permissionMode === 'group') {
+                    const eff = resolvePermissionState(p).effect;
+                    return eff === 'allow' || eff === 'deny';
+                }
+                if (p.user_override === 'allow' || p.user_override === 'deny') return true;
+                const gs = p.group_sources || {};
+                const keys = ['synology_groups_allow', 'synology_groups_deny', 'local_groups_allow', 'local_groups_deny'];
+                return keys.some(k => Array.isArray(gs[k]) && gs[k].length > 0);
+            });
+        }
+
+        if (allowedOnly) {
+            permissions = permissions.filter(p => resolvePermissionState(p).allowed);
+        }
+
+        const webPerms = permissions.filter(p => p.value.startsWith('web:'));
+        const apiPerms = permissions.filter(p => p.value.startsWith('api:'));
+        const otherPerms = permissions.filter(p => !p.value.startsWith('web:') && !p.value.startsWith('api:'));
+
+        renderPermissionCategory('webPermissionTable', webPerms, 'panelSummaryWeb');
+        renderPermissionCategory('apiPermissionTable', apiPerms, 'panelSummaryApi');
+        renderPermissionCategory('otherPermissionTable', otherPerms, 'panelSummaryOther');
+    }
+
+    function buildPermissionSourceInfo(perm) {
+        if (permissionMode !== 'user') {
+            return { label: perm.effect ? '群组配置' : '无配置', detail: '' };
+        }
+
+        const eff = perm.effective_source || '';
+        const labelMap = {
+            user_override: '用户覆盖',
+            local_group: '本地群组',
+            synology_group: '同步群组',
+            role_default: '角色默认',
+            none: '无',
+        };
+        const label = labelMap[eff] || (perm.source === 'group' ? '群组继承' : '角色继承');
+
+        const gs = perm.group_sources || {};
+        const pickNames = (arr) => (arr || []).map(g => g.display_name || g.name || g.id).filter(Boolean).join(', ');
+        const lines = [];
+        lines.push(`role_default: ${perm.role_default ? 'true' : 'false'}`);
+        if (perm.user_override) lines.push(`user_override: ${perm.user_override}`);
+
+        const la = pickNames(gs.local_groups_allow);
+        const ld = pickNames(gs.local_groups_deny);
+        const da = pickNames(gs.synology_groups_allow);
+        const dd = pickNames(gs.synology_groups_deny);
+        if (la) lines.push(`local allow: ${la}`);
+        if (ld) lines.push(`local deny: ${ld}`);
+        if (da) lines.push(`synology allow: ${da}`);
+        if (dd) lines.push(`synology deny: ${dd}`);
+
+        return { label, detail: lines.join('\\n') };
+    }
+
+    function computeInheritedPermissionAllowed(perm) {
+        if (permissionMode !== 'user') {
+            return false;
+        }
+
+        let allowed = !!perm.role_default;
+        const gs = perm.group_sources || {};
+        const hasAny = (key) => Array.isArray(gs[key]) && gs[key].length > 0;
+
+        if (hasAny('synology_groups_deny')) {
+            allowed = false;
+        } else if (hasAny('synology_groups_allow')) {
+            allowed = true;
+        }
+
+        if (hasAny('local_groups_deny')) {
+            allowed = false;
+        } else if (hasAny('local_groups_allow')) {
+            allowed = true;
+        }
+
+        return allowed;
+    }
+
+    function getBasePermissionEffect(perm) {
+        if (permissionMode === 'group') {
+            return perm.effect || '';
+        }
+        return perm.user_override || '';
+    }
+
+    function resolvePermissionState(perm) {
+        const hasPending = Object.prototype.hasOwnProperty.call(pendingChanges, perm.value);
+        let pendingValue = hasPending ? pendingChanges[perm.value] : null;
+
+        if (permissionMode === 'user') {
+            let allowed = !!perm.has_permission;
+            let baseEffect = perm.user_override || null;
+            const srcInfo = buildPermissionSourceInfo(perm);
+            let source = srcInfo.label;
+            let sourceDetail = srcInfo.detail;
+
+            if (baseEffect === 'allow') {
+                allowed = true;
+                source = '用户覆盖';
+            } else if (baseEffect === 'deny') {
+                allowed = false;
+                source = '用户覆盖';
+            }
+
+            if (hasPending) {
+                if (pendingValue === 'allow') {
+                    allowed = true;
+                } else if (pendingValue === 'deny') {
+                    allowed = false;
+                } else {
+                    allowed = computeInheritedPermissionAllowed(perm);
+                    source = srcInfo.label;
+                    sourceDetail = srcInfo.detail;
+                }
+                source = '未保存调整';
+                if (pendingValue === 'allow' || pendingValue === 'deny') {
+                    sourceDetail = '';
+                }
+            }
+
+            return {
+                effect: hasPending ? pendingValue : baseEffect,
+                allowed,
+                source,
+                sourceDetail
+            };
+        }
+
+        // permissionMode === 'group'
+        let baseEffect = perm.effect || null;
+        let allowed = baseEffect === 'allow';
+        let source = baseEffect ? '群组配置' : '无配置';
+        let sourceDetail = '';
+
+        if (hasPending) {
+            if (pendingValue === 'allow') {
+                allowed = true;
+                source = '未保存调整';
+            } else if (pendingValue === 'deny') {
+                allowed = false;
+                source = '未保存调整';
+            } else {
+                allowed = false;
+                source = '无配置';
+            }
+        }
+
+        return {
+            effect: hasPending ? pendingValue : baseEffect,
+            allowed,
+            source,
+            sourceDetail
+        };
+    }
+
+    function buildPermissionSavePayload() {
+        const changes = {};
+        if (!currentPermissionData || !Array.isArray(currentPermissionData.permissions)) {
+            return changes;
+        }
+
+        currentPermissionData.permissions.forEach(perm => {
+            const effect = resolvePermissionState(perm).effect;
+            if (effect === 'allow' || effect === 'deny') {
+                changes[perm.value] = effect;
+            }
+        });
+
+        return changes;
+    }
+
+    function renderPermissionCategory(tableId, permissions, summaryId) {
+        const table = document.getElementById(tableId);
+        if (!table) return;
+        
+        const tbody = table.querySelector('tbody');
+        if (!tbody) return;
+        
+        if (permissions.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="placeholder">该类别无权限配置</td></tr>';
+            updateSummaryBadge(summaryId, 0, 0);
+            return;
+        }
+        
+        tbody.innerHTML = '';
+        let allowedCount = 0;
+        
+        permissions.forEach(perm => {
+            const row = document.createElement('tr');
+            const state = resolvePermissionState(perm);
+            if (state.allowed) allowedCount++;
+
+            // 权限标识
+            const idCell = document.createElement('td');
+            idCell.innerHTML = `
+                <div style="font-weight: 500;">${perm.label || perm.value}</div>
+                <small style="color: #94a3b8;">${perm.value}</small>
+            `;
+            row.appendChild(idCell);
+            
+            // 操作选择
+            const actionCell = document.createElement('td');
+            const currentEffect = state.effect || '';
+            actionCell.innerHTML = `
+                <select class="form-select form-select-sm" onchange="onPermissionChange('${perm.value}', this.value)">
+                    <option value="" ${currentEffect === '' || currentEffect === null ? 'selected' : ''}>继承</option>
+                    <option value="allow" ${currentEffect === 'allow' ? 'selected' : ''}>允许</option>
+                    <option value="deny" ${currentEffect === 'deny' ? 'selected' : ''}>拒绝</option>
+                </select>
+            `;
+            row.appendChild(actionCell);
+            
+            // 状态
+            const statusCell = document.createElement('td');
+            statusCell.innerHTML = state.allowed
+                ? '<span class="badge" style="background: #00e676;">允许</span>'
+                : '<span class="badge" style="background: #ff3d3d;">拒绝</span>';
+            row.appendChild(statusCell);
+            
+            // 来源
+            const sourceCell = document.createElement('td');
+            const small = document.createElement('small');
+            small.style.color = '#666';
+            small.textContent = state.source || '';
+            if (state.sourceDetail) {
+                small.title = state.sourceDetail;
+            }
+            sourceCell.appendChild(small);
+            row.appendChild(sourceCell);
+            
+            tbody.appendChild(row);
+        });
+        
+        updateSummaryBadge(summaryId, allowedCount, permissions.length);
+    }
+
+    function getEffectivePermission(perm) {
+        return resolvePermissionState(perm).allowed;
+    }
+
+    function getPermissionSource(perm) {
+        return resolvePermissionState(perm).source;
+    }
+
+    function updateSummaryBadge(badgeId, allowed, total) {
+        const badge = document.getElementById(badgeId);
+        if (badge) {
+            badge.textContent = `${allowed}/${total}`;
+            badge.className = 'badge';
+            badge.style.background = allowed === total ? '#10b981' : allowed === 0 ? '#ef4444' : '#f59e0b';
+        }
+    }
+
+    function onPermissionChange(permValue, effect) {
+        const perm = currentPermissionData?.permissions?.find(item => item.value === permValue);
+        const baseEffect = perm ? getBasePermissionEffect(perm) : '';
+
+        if (effect === baseEffect) {
+            delete pendingChanges[permValue];
+        } else {
+            pendingChanges[permValue] = effect;
+        }
+
+        // 更新保存按钮状态
+        const hasChanges = Object.keys(pendingChanges).length > 0;
+        const saveBtn = document.querySelector('button[onclick="submitPermissionChanges()"]');
+        if (saveBtn) {
+            saveBtn.disabled = !hasChanges;
+            saveBtn.style.opacity = hasChanges ? '1' : '0.6';
+        }
+
+        if (currentPermissionData && currentPermissionData.permissions) {
+            renderPermissionTables();
+        }
+    }
+
+    function resetPermissionTables() {
+        ['webPermissionTable', 'apiPermissionTable', 'otherPermissionTable'].forEach(tableId => {
+            const table = document.getElementById(tableId);
+            if (!table) return;
+            const tbody = table.querySelector('tbody');
+            if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="4" class="placeholder">请选择左侧主体加载权限数据</td></tr>';
+            }
+        });
+
+        ['panelSummaryWeb', 'panelSummaryApi', 'panelSummaryOther'].forEach(id => {
+            const badge = document.getElementById(id);
+            if (badge) badge.textContent = '-';
+        });
+
+        currentPermissionData = null;
+        pendingChanges = {};
+    }
+
+    function refreshPermissionData() {
+        const subjectId = document.getElementById('permissionSubjectSelect').value;
+        if (!subjectId) {
+            if (typeof showMessage === 'function') {
+                showMessage('请先选择主体', 'info');
+            }
+            return;
+        }
+        loadPermissionDetails();
+    }
+
+    function submitPermissionChanges() {
+        const subjectId = document.getElementById('permissionSubjectSelect').value;
+        if (!subjectId) {
+            showMessage('请先选择主体', 'warning');
+            return;
+        }
+
+        if (Object.keys(pendingChanges).length === 0) {
+            showMessage('没有需要保存的更改', 'info');
+            return;
+        }
+
+        const changes = buildPermissionSavePayload();
+        const url = permissionMode === 'group'
+            ? `/admin/api/permissions/groups/${subjectId}`
+            : `/admin/api/permissions/users/${subjectId}`;
+
+        const saveBtn = document.querySelector('button[onclick="submitPermissionChanges()"]');
+        if (saveBtn) {
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> 保存中...';
+        }
+
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ changes })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('权限保存成功', 'success');
+                    pendingChanges = {};
+                    loadPermissionDetails();  // 重新加载以显示最新状态
+                } else {
+                    showMessage(data.message || '权限保存失败', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('保存权限失败:', error);
+                showMessage('权限保存失败: ' + error.message, 'error');
+            })
+            .finally(() => {
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> 保存权限设置';
+                }
+            });
+    }
+
+    function applyPermissionTemplate(template) {
+        if (!currentPermissionData || !currentPermissionData.permissions) {
+            showMessage('请先选择主体', 'warning');
+            return;
+        }
+
+        pendingChanges = {};
+        
+        if (template === 'admin') {
+            // 管理员模板：所有权限允许
+            currentPermissionData.permissions.forEach(perm => {
+                pendingChanges[perm.value] = 'allow';
+            });
+            showMessage('已应用管理员模板（所有权限），请点击保存', 'info');
+        } else if (template === 'user') {
+            // 普通用户模板：仅基础权限
+            const basicPerms = [
+                'web:view_records',
+                'mobile:material_record',
+                'mobile:process_record',
+                'mobile:camera_access',
+                'api:records_read',
+                'api:projects_read'
+            ];
+            currentPermissionData.permissions.forEach(perm => {
+                if (basicPerms.includes(perm.value)) {
+                    pendingChanges[perm.value] = 'allow';
+                } else {
+                    pendingChanges[perm.value] = 'deny';
+                }
+            });
+            showMessage('已应用普通用户模板（基础权限），请点击保存', 'info');
+        }
+
+        renderPermissionTables();
+    }
+
+    function resetPermissionOverrides() {
+        const subjectId = document.getElementById('permissionSubjectSelect').value;
+        if (!subjectId) {
+            showMessage('请先选择主体', 'warning');
+            return;
+        }
+
+        if (!confirm('确定要重置所有覆盖配置吗？将恢复为默认继承权限。')) {
+            return;
+        }
+
+        pendingChanges = {};
+        submitPermissionChanges();
+    }
+
+    // 瀹炴椂鎼滅储
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function () {
+            searchUsers();
+        });
+
+        // 鏍煎紡鍖栨墍鏈夋椂闂存埑
+        document.querySelectorAll('.last-login').forEach(element => {
+            const timestamp = element.getAttribute('data-timestamp');
+            if (timestamp) {
+                element.textContent = formatTimestamp(parseInt(timestamp));
+            }
+        });
+
+        initializePermissionTab();
+    });
+
+    // 娣诲姞鏃嬭浆鍔ㄧ敾
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .badge {
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+            font-weight: 700;
+            line-height: 1;
+            color: #141d2e;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+        }
+        .bg-danger { background-color: #f56565 !important; }
+        .bg-secondary { background-color: #5a6f85 !important; }
+        .bg-info { background-color: #4299e1 !important; }
+        .dropdown-menu {
+            position: absolute;
+            z-index: 1000;
+            display: none;
+            min-width: 10rem;
+            padding: 0.5rem 0;
+            margin: 0;
+            font-size: 1rem;
+            color: #212529;
+            text-align: left;
+            list-style: none;
+            background-color: #141d2e;
+            background-clip: padding-box;
+            border: 1px solid rgba(0,0,0,.15);
+            border-radius: 0.25rem;
+        }
+        .dropdown-menu.show {
+            display: block;
+        }
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.25rem 1rem;
+            clear: both;
+            font-weight: 400;
+            color: #212529;
+            text-align: inherit;
+            text-decoration: none;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        .dropdown-divider {
+            height: 0;
+            margin: 0.5rem 0;
+            overflow: hidden;
+            border-top: 1px solid #e9ecef;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // 绠€鍗曠殑涓嬫媺鑿滃崟瀹炵幇
+    document.addEventListener('click', function (e) {
+        if (e.target.matches('[data-bs-toggle="dropdown"]') || e.target.closest('[data-bs-toggle="dropdown"]')) {
+            e.preventDefault();
+            const button = e.target.matches('[data-bs-toggle="dropdown"]') ? e.target : e.target.closest('[data-bs-toggle="dropdown"]');
+            const dropdown = button.nextElementSibling;
+            dropdown.classList.toggle('show');
+        } else {
+            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                menu.classList.remove('show');
+            });
+        }
+    });
+
+    // ==================== 用户同步功能 ====================
+
+    // 显示同步用户模态框
+    function quickCreateUser() {
+        showCreateUserModal();
+    }
+
+    function buildCreateGroupsCheckboxes() {
+        const container = document.getElementById('createGroupsContainer');
+        if (!container) return;
+
+        let html = '';
+        (permissionGroupOptionsData || []).forEach(g => {
+            const label = g.name || g.id;
+            html += `
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="${g.id}" id="createGroup_${g.id}">
+                    <label class="form-check-label" for="createGroup_${g.id}">${label}</label>
+                </div>
+            `;
+        });
+
+        if (!html) {
+            html = '<span style="color:#94a3b8;">当前没有可用群组，请先在群组管理中创建群组。</span>';
+        }
+
+        container.innerHTML = html;
+    }
+
+    function showCreateUserModal() {
+        document.getElementById('createUsername').value = '';
+        document.getElementById('createDisplayName').value = '';
+        document.getElementById('createEmail').value = '';
+        document.getElementById('createRole').value = 'user';
+        document.getElementById('createIsActive').checked = true;
+        document.getElementById('btnCreateUser').disabled = false;
+        buildCreateGroupsCheckboxes();
+        openModal('createUserModal');
+        setTimeout(() => {
+            const input = document.getElementById('createUsername');
+            if (input) input.focus();
+        }, 50);
+    }
+
+    function closeCreateUserModal() {
+        closeModal('createUserModal');
+    }
+
+    function executeCreateUser() {
+        const username = document.getElementById('createUsername').value.trim();
+        const displayName = document.getElementById('createDisplayName').value.trim();
+        const email = document.getElementById('createEmail').value.trim();
+        const role = document.getElementById('createRole').value;
+        const enabled = document.getElementById('createIsActive').checked;
+        const btn = document.getElementById('btnCreateUser');
+        const groupIds = [];
+
+        document.querySelectorAll('#createGroupsContainer input[type="checkbox"]:checked').forEach(cb => {
+            groupIds.push(cb.value);
+        });
+
+        if (!username) {
+            showMessage('请输入用户名', 'warning');
+            document.getElementById('createUsername').focus();
+            return;
+        }
+
+        btn.disabled = true;
+
+        fetch('/admin/api/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username,
+                display_name: displayName,
+                email,
+                role,
+                is_active: enabled,
+                must_change_password: true,
+                group_ids: groupIds
+            })
+        })
+        .then(async response => {
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || '\u521b\u5efa\u7528\u6237\u5931\u8d25');
+            }
+            return data;
+        })
+        .then(data => {
+            showMessage(`${data.message || '创建成功'}，默认密码：${data.default_password || 'Ab123###'}`, 'success');
+            closeCreateUserModal();
+            refreshUserList();
+        })
+        .catch(error => {
+            showMessage('创建用户失败：' + error.message, 'error');
+        })
+        .finally(() => {
+            btn.disabled = false;
+        });
+    }
+
+    function showSyncUsersModal() {
+        document.getElementById('syncProgress').style.display = 'none';
+        document.getElementById('syncResult').style.display = 'none';
+        document.getElementById('syncSynologyUsername').value = '';
+        document.getElementById('syncAdminPassword').value = '';
+        document.getElementById('btnStartSync').disabled = false;
+        openModal('syncUsersModal');
+    }
+
+    // 关闭同步用户模态框
+    function closeSyncUsersModal() {
+        closeModal('syncUsersModal');
+    }
+
+    // 执行用户同步
+    function executeSyncUsers() {
+        const synologyUsername = document.getElementById('syncSynologyUsername').value.trim();
+        const password = document.getElementById('syncAdminPassword').value;
+        const syncGroups = document.getElementById('syncGroups').checked;
+        const syncEmails = document.getElementById('syncEmails').checked;
+
+        if (!synologyUsername) {
+            showMessage('请输入群晖管理员用户名', 'warning');
+            return;
+        }
+
+        if (!password) {
+            showMessage('请输入群晖管理员密码', 'warning');
+            return;
+        }
+
+        // 显示进度
+        document.getElementById('syncProgress').style.display = 'block';
+        document.getElementById('syncResult').style.display = 'none';
+        document.getElementById('syncStatus').textContent = '正在连接群晖服务器...';
+        document.getElementById('syncCount').textContent = '0/0';
+        document.getElementById('syncProgressBar').style.width = '10%';
+
+        // 禁用按钮
+        const btnSync = document.getElementById('btnStartSync');
+        btnSync.disabled = true;
+        btnSync.innerHTML = '<span style="display: inline-block; width: 1rem; height: 1rem; border: 2px solid #141d2e; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite;"></span> 同步中...';
+
+        // 发送同步请求
+        fetch('/admin/api/sync-users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                synology_admin_username: synologyUsername,
+                admin_password: password,
+                sync_groups: syncGroups,
+                sync_emails: syncEmails
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            btnSync.disabled = false;
+            btnSync.innerHTML = '<i class="bi bi-cloud-download"></i> 开始同步';
+
+            if (data.success) {
+                // 更新进度条
+                document.getElementById('syncProgressBar').style.width = '100%';
+                document.getElementById('syncStatus').textContent = '同步完成';
+                document.getElementById('syncCount').textContent = `${data.total}/${data.total}`;
+
+                // 显示结果
+                setTimeout(() => {
+                    displaySyncResult(data);
+                }, 500);
+            } else {
+                document.getElementById('syncProgress').style.display = 'none';
+                const detail = data.error || '未知错误';
+                const friendlyMessage = detail.includes('访问被拒绝')
+                    ? `同步失败：DSM 管理员账号 [${synologyUsername}] 没有 .2 上 DSM 用户管理接口权限（DSM 返回 402 访问被拒绝）。请改用具备用户管理权限的 DSM 管理员账号。`
+                    : ('同步失败: ' + detail);
+                showMessage(friendlyMessage, 'error');
+            }
+        })
+        .catch(error => {
+            btnSync.disabled = false;
+            btnSync.innerHTML = '<i class="bi bi-cloud-download"></i> 开始同步';
+            document.getElementById('syncProgress').style.display = 'none';
+            showMessage('同步失败: ' + error.message, 'error');
+        });
+    }
+
+    // 显示同步结果
+    function displaySyncResult(result) {
+        document.getElementById('syncProgress').style.display = 'none';
+        document.getElementById('syncResult').style.display = 'block';
+
+        // 统计信息
+        const summary = document.getElementById('syncResultSummary');
+        summary.innerHTML = `
+            <div style="background: #e6f7ff; padding: 0.75rem; border-radius: 0.25rem; border-left: 3px solid #1890ff;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #1890ff;">${result.total}</div>
+                <div style="font-size: 0.85rem; color: #666;">总用户数</div>
+            </div>
+            <div style="background: #f6ffed; padding: 0.75rem; border-radius: 0.25rem; border-left: 3px solid #52c41a;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #52c41a;">${result.created}</div>
+                <div style="font-size: 0.85rem; color: #666;">新创建</div>
+            </div>
+            <div style="background: #fff7e6; padding: 0.75rem; border-radius: 0.25rem; border-left: 3px solid #fa8c16;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #fa8c16;">${result.updated}</div>
+                <div style="font-size: 0.85rem; color: #666;">已更新</div>
+            </div>
+            <div style="background: #fff1f0; padding: 0.75rem; border-radius: 0.25rem; border-left: 3px solid #ff4d4f;">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #ff4d4f;">${result.failed}</div>
+                <div style="font-size: 0.85rem; color: #666;">失败</div>
+            </div>
+        `;
+
+        // 详细信息
+        const details = document.getElementById('syncResultDetails');
+        if (result.details && result.details.length > 0) {
+            details.innerHTML = result.details.map(detail => {
+                let icon = '';
+                let color = '';
+                let text = '';
+                
+                switch (detail.status) {
+                    case 'created':
+                        icon = '✓';
+                        color = '#52c41a';
+                        text = '新创建';
+                        break;
+                    case 'updated':
+                        icon = '↻';
+                        color = '#fa8c16';
+                        text = '已更新';
+                        break;
+                    case 'skipped':
+                        icon = '•';
+                        color = '#999';
+                        text = '跳过';
+                        break;
+                    case 'failed':
+                        icon = '✕';
+                        color = '#ff4d4f';
+                        text = '失败';
+                        break;
+                }
+                
+                return `
+                    <div style="padding: 0.5rem; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="color: ${color}; font-weight: bold; margin-right: 0.5rem;">${icon}</span>
+                            <strong>${detail.username}</strong>
+                            ${detail.role ? `<span class="badge" style="background: ${detail.role === 'admin' ? '#f56565' : '#718096'}; margin-left: 0.5rem;">${detail.role === 'admin' ? '管理员' : '普通用户'}</span>` : ''}
+                        </div>
+                        <span style="color: ${color}; font-size: 0.85rem;">${text}</span>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            details.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 1rem;">无详细信息</p>';
+        }
+
+        // 群组同步结果
+        if (result.groups_total !== undefined) {
+            summary.innerHTML += `
+                <div style="background: #f0f5ff; padding: 0.75rem; border-radius: 0.25rem; border-left: 3px solid #597ef7;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #2f54eb;">${result.groups_total}</div>
+                    <div style="font-size: 0.85rem; color: #666;">群组总数</div>
+                </div>
+                <div style="background: #fcffe6; padding: 0.75rem; border-radius: 0.25rem; border-left: 3px solid #fadb14;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #ad8b00;">${result.groups_created}</div>
+                    <div style="font-size: 0.85rem; color: #666;">群组新建</div>
+                </div>
+                <div style="background: #fff7e6; padding: 0.75rem; border-radius: 0.25rem; border-left: 3px solid #faad14;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #d46b08;">${result.groups_updated}</div>
+                    <div style="font-size: 0.85rem; color: #666;">群组更新</div>
+                </div>
+                <div style="background: #fff1f0; padding: 0.75rem; border-radius: 0.25rem; border-left: 3px solid #ff7875;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #cf1322;">${result.groups_failed}</div>
+                    <div style="font-size: 0.85rem; color: #666;">群组失败</div>
+                </div>
+            `;
+
+            if (result.group_details && result.group_details.length > 0) {
+                details.innerHTML += result.group_details.map(group => {
+                    let icon = '';
+                    let color = '';
+                    let text = '';
+
+                    switch (group.status) {
+                        case 'created':
+                            icon = '＋';
+                            color = '#faad14';
+                            text = '群组新建';
+                            break;
+                        case 'updated':
+                            icon = '↻';
+                            color = '#597ef7';
+                            text = '群组更新';
+                            break;
+                        case 'failed':
+                            icon = '✕';
+                            color = '#f5222d';
+                            text = `群组失败${group.reason ? ': ' + group.reason : ''}`;
+                            break;
+                        default:
+                            icon = '•';
+                            color = '#999';
+                            text = group.status;
+                    }
+
+                    return `
+                        <div style="padding: 0.5rem; border-bottom: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="color: ${color}; font-weight: bold; margin-right: 0.5rem;">${icon}</span>
+                                <strong>${group.name}</strong>
+                                <span style="color: #94a3b8; margin-left: 0.5rem; font-size: 0.85rem;">成员: ${group.members_synced}/${group.members_total}</span>
+                            </div>
+                            <span style="color: ${color}; font-size: 0.85rem;">${text}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // 显示成功消息
+        showMessage(`同步完成，创建 ${result.created} 个，更新 ${result.updated} 个，失败 ${result.failed} 个`, 'success');
+        
+        // 5 秒后自动刷新页面
+        setTimeout(() => {
+            refreshUserList();
+        }, 5000);
+    }
+
+    // ==================== 群组管理功能 ====================
+
+    // 从页面数据初始化群组
+    const groupsDataScript = document.getElementById('initialGroupsData');
+    const allUsersDataScript = document.getElementById('allUsersData');
+    let groups = groupsDataScript ? JSON.parse(groupsDataScript.textContent || '[]') : [];
+    const allUsers = allUsersDataScript ? JSON.parse(allUsersDataScript.textContent || '[]') : [];
+    let currentGroupId = null;
+    let currentGroupMembers = [];
+    let currentGroupPermissions = {};
+
+    function renderGroupList() {
+        const container = document.getElementById('groupList');
+        if (!container) return;
+        if (!groups || groups.length === 0) {
+            container.innerHTML = '<div class="empty-state" style="padding:1rem; text-align:center; color:#94a3b8;">当前没有任何群组，可以点击右上角“新建本地群组”。</div>';
+            document.getElementById('groupDetails').innerHTML = '<div class="empty-state" style="color:#94a3b8; text-align:center; padding:2rem;">当前没有群组，请先创建群组。</div>';
+            currentGroupId = null;
+            return;
+        }
+        let html = '';
+        groups.forEach(g => {
+            const isActive = g.id === currentGroupId;
+            const memberCount = (g.member_count != null ? g.member_count : g.memberCount) || 0;
+            const sourceLabel = g.synology_group_id != null ? '同步群组' : '本地群组';
+            html += `
+                <div onclick="selectGroup('${g.id}')" style="padding:0.6rem 0.75rem; border-bottom:1px solid #141d2e; cursor:pointer; background:${isActive ? 'rgba(14,165,233,0.12)' : 'transparent'};">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-weight:600; color:#e8edf5;">${(g.display_name || g.name || '').trim()}</div>
+                            <div style="font-size:0.8rem; color:#94a3b8;">${g.name}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:0.8rem; color:#8a9bb0;">成员：<strong>${memberCount}</strong></div>
+                            <div style="font-size:0.75rem; color:${g.synology_group_id != null ? '#60a5fa' : '#4ade80'};">${sourceLabel}</div>
+                        </div>
+                    </div>
+                </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    async function selectGroup(groupId) {
+        currentGroupId = groupId;
+        renderGroupList();
+        await loadGroupDetails(groupId);
+    }
+
+    async function loadGroupDetails(groupId) {
+        const target = document.getElementById('groupDetails');
+        if (!target) return;
+        const group = groups.find(g => g.id === groupId);
+        if (!group) {
+            target.innerHTML = '<div class="empty-state" style="color:#94a3b8; text-align:center; padding:2rem;">未找到群组。</div>';
+            return;
+        }
+
+        // 加载成员
+        const membersResp = await apiRequest(`/admin/api/groups/${groupId}/members`, 'GET');
+        if (!membersResp || !membersResp.success) {
+            target.innerHTML = `<div class="alert alert-error">加载群组详情失败：${membersResp && membersResp.message ? membersResp.message : '未知错误'}</div>`;
+            return;
+        }
+        currentGroupMembers = membersResp.members || [];
+
+        // 加载群组权限
+        let permissionsHtml = '<div style="color:#94a3b8; font-size:0.9rem;">加载中...</div>';
+        try {
+            const permResp = await apiRequest(`/admin/api/permissions/groups/${groupId}`, 'GET');
+            if (permResp && permResp.success) {
+                currentGroupPermissions = permResp.permissions || {};
+                permissionsHtml = renderGroupPermissionsTable(currentGroupPermissions);
+            } else {
+                permissionsHtml = '<div style="color:#94a3b8; font-size:0.9rem;">暂无权限配置</div>';
+            }
+        } catch (e) {
+            permissionsHtml = '<div style="color:#94a3b8; font-size:0.9rem;">权限加载失败</div>';
+        }
+
+        const memberCount = currentGroupMembers.length;
+        const sourceLabel = group.synology_group_id != null
+            ? '同步自群晖（已作为本地配置导入，可在此调整成员与权限）'
+            : '本地群组（仅在 MES 内使用，可自由配置）';
+
+        target.innerHTML = `
+            <div>
+                <h5 style="margin-bottom:0.5rem;">${(group.display_name || group.name || '').trim()}</h5>
+                <p style="color:#8a9bb0; font-size:0.9rem; margin-bottom:0.5rem;">标识：<code>${group.name}</code></p>
+                <p style="color:#8a9bb0; font-size:0.9rem; margin-bottom:0.5rem;">来源：${sourceLabel}</p>
+                <p style="color:#8a9bb0; font-size:0.9rem; margin-bottom:0.5rem;">描述：${(group.description || '').trim() || '<span style="color:#94a3b8;">暂无</span>'}</p>
+                <p style="color:#8a9bb0; font-size:0.9rem; margin-bottom:0.75rem;">成员数量：<strong>${memberCount}</strong></p>
+                <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+                    <button type="button" class="btn btn-primary" onclick="openEditGroupModal()">编辑群组</button>
+                    <button type="button" class="btn btn-secondary" onclick="openManageMembersModal()">管理成员</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDeleteGroup()">删除群组</button>
+                </div>
+
+                <h6 style="margin-top:1.5rem; margin-bottom:0.5rem;"><i class="bi bi-shield-lock"></i> 群组默认权限</h6>
+                <p style="color:#94a3b8; font-size:0.8rem; margin-bottom:0.5rem;">说明：显示该群组显式配置的权限。最终生效权限 = 角色默认 &lt; 同步群组 &lt; 本地群组 &lt; 用户覆盖。</p>
+                ${permissionsHtml}
+                <div style="margin-top:0.5rem;">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="editGroupPermissions('${groupId}')">
+                        <i class="bi bi-pencil"></i> 编辑权限
+                    </button>
+                </div>
+
+                <h6 style="margin-top:1.5rem; margin-bottom:0.5rem;">成员列表</h6>
+                ${renderMembersTable(currentGroupMembers)}
+            </div>`;
+    }
+
+    function renderGroupPermissionsTable(permissions) {
+        // permissions 可能是数组格式 [{value, label, effect}] 或对象格式 {permission: effect}
+        if (!permissions) {
+            return '<div style="color:#94a3b8; font-size:0.9rem; padding:0.5rem 0;">该群组暂时没有显式权限配置（将继承角色默认权限）。</div>';
+        }
+
+        // 转换为统一格式并过滤出有显式配置的权限
+        let permList = [];
+        if (Array.isArray(permissions)) {
+            // 数组格式：只显示有显式配置（allow/deny）的权限
+            permList = permissions.filter(p => p.effect === 'allow' || p.effect === 'deny')
+                .map(p => ({ perm: p.value, label: p.label, effect: p.effect }));
+        } else if (typeof permissions === 'object') {
+            // 对象格式
+            for (const [perm, effect] of Object.entries(permissions)) {
+                if (effect === 'allow' || effect === 'deny') {
+                    permList.push({ perm, label: perm, effect });
+                }
+            }
+        }
+
+        if (permList.length === 0) {
+            return '<div style="color:#94a3b8; font-size:0.9rem; padding:0.5rem 0;">该群组暂时没有显式权限配置（将继承角色默认权限）。</div>';
+        }
+
+        // 按分类整理
+        const categories = { web: [], mobile: [], api: [], other: [] };
+        permList.forEach(({ perm, label, effect }) => {
+            const parts = perm.split(':');
+            const cat = parts[0] || 'other';
+            if (categories[cat]) {
+                categories[cat].push({ perm, label, effect });
+            } else {
+                categories.other.push({ perm, label, effect });
+            }
+        });
+
+        let html = '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.75rem;">';
+        const catNames = { web: 'Web 后台', mobile: '移动端', api: 'API', other: '其他' };
+        for (const [cat, items] of Object.entries(categories)) {
+            if (items.length === 0) continue;
+            html += `<div style="border:1px solid #1e2d3d; border-radius:0.5rem; padding:0.5rem;">
+                <div style="font-weight:600; font-size:0.85rem; color:#e8edf5; margin-bottom:0.25rem;">${catNames[cat] || cat}</div>`;
+            items.forEach(({ perm, label, effect }) => {
+                const stateClass = effect === 'allow' ? 'state-allow' : (effect === 'deny' ? 'state-deny' : 'state-inherit');
+                const stateText = effect === 'allow' ? '允许' : (effect === 'deny' ? '拒绝' : '继承');
+                const displayName = label || perm.split(':')[1] || perm;
+                html += `<div style="display:flex; justify-content:space-between; font-size:0.8rem; padding:0.15rem 0;">
+                    <span style="color:#8a9bb0;">${displayName}</span>
+                    <span class="${stateClass}">${stateText}</span>
+                </div>`;
+            });
+            html += '</div>';
+        }
+        html += '</div>';
+        return html;
+    }
+
+    function editGroupPermissions(groupId) {
+        // 切换到权限 Tab，并选中该群组
+        switchTab('tab-permissions');
+        const subjectGroupRadio = document.getElementById('subjectGroup');
+        if (subjectGroupRadio) {
+            subjectGroupRadio.checked = true;
+            onPermissionSubjectTypeChange({ target: subjectGroupRadio });
+        } else {
+            updatePermissionSubjectOptions();
+        }
+        setTimeout(() => {
+            const select = document.getElementById('permissionSubjectSelect');
+            if (select) {
+                select.value = groupId;
+                loadPermissionDetails();
+            }
+        }, 100);
+    }
+
+    function renderMembersTable(members) {
+        if (!members || members.length === 0) {
+            return '<div style="color:#94a3b8; font-size:0.9rem; padding:0.5rem 0;">当前群组暂无成员。</div>';
+        }
+        let rows = members.map(m => {
+            const roleLabel = m.role === 'admin' ? '管理员' : '普通用户';
+            return `<tr>
+                <td>${m.display_name || m.synology_username}</td>
+                <td>${m.synology_username}</td>
+                <td>${roleLabel}</td>
+                <td>${m.email || '-'}</td>
+            </tr>`;
+        }).join('');
+        return `<div class="table-responsive">
+            <table class="table" style="font-size:0.9rem;">
+                <thead><tr><th>显示名</th><th>用户名</th><th>角色</th><th>邮箱</th></tr></thead>
+                <tbody>${rows}</tbody>
+            </table>
+        </div>`;
+    }
+
+    function openCreateGroupModal() {
+        document.getElementById('groupNameInput').value = '';
+        document.getElementById('groupDisplayNameInput').value = '';
+        document.getElementById('groupDescriptionInput').value = '';
+        openModal('createGroupModal');
+    }
+
+    async function submitCreateGroup() {
+        const name = document.getElementById('groupNameInput').value.trim();
+        const displayName = document.getElementById('groupDisplayNameInput').value.trim();
+        const description = document.getElementById('groupDescriptionInput').value.trim();
+        if (!name) {
+            showMessage('群组标识不能为空', 'warning');
+            return;
+        }
+        const resp = await apiRequest('/admin/api/groups', {
+            method: 'POST',
+            body: JSON.stringify({ name, display_name: displayName || null, description })
+        });
+        if (!resp || !resp.success) {
+            showMessage('创建群组失败：' + (resp && resp.message ? resp.message : '未知错误'), 'error');
+            return;
+        }
+        closeModal('createGroupModal');
+        await reloadGroups(resp.group && resp.group.id);
+        showMessage('群组创建成功', 'success');
+    }
+
+    function openEditGroupModal() {
+        if (!currentGroupId) return;
+        const group = groups.find(g => g.id === currentGroupId);
+        if (!group) return;
+        document.getElementById('editGroupName').value = group.name;
+        document.getElementById('editGroupDisplayName').value = group.display_name || group.name;
+        document.getElementById('editGroupDescription').value = group.description || '';
+        openModal('editGroupModal');
+    }
+
+    async function submitEditGroup() {
+        if (!currentGroupId) return;
+        const displayName = document.getElementById('editGroupDisplayName').value.trim();
+        const description = document.getElementById('editGroupDescription').value.trim();
+        const resp = await apiRequest(`/admin/api/groups/${currentGroupId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ display_name: displayName, description })
+        });
+        if (!resp || !resp.success) {
+            showMessage('更新群组失败：' + (resp && resp.message ? resp.message : '未知错误'), 'error');
+            return;
+        }
+        closeModal('editGroupModal');
+        await reloadGroups(currentGroupId);
+        showMessage('群组信息已更新', 'success');
+    }
+
+    async function confirmDeleteGroup() {
+        if (!currentGroupId) return;
+        const group = groups.find(g => g.id === currentGroupId);
+        if (!group) return;
+        if (!confirm(`确定要删除群组 "${group.display_name || group.name}" 吗？\n此操作不可撤销。`)) return;
+        const resp = await apiRequest(`/admin/api/groups/${currentGroupId}`, {
+            method: 'DELETE'
+        });
+        if (!resp || !resp.success) {
+            showMessage('删除群组失败：' + (resp && resp.message ? resp.message : '未知错误'), 'error');
+            return;
+        }
+        await reloadGroups(null);
+        showMessage('群组已删除', 'success');
+    }
+
+    function openManageMembersModal() {
+        if (!currentGroupId) return;
+        const group = groups.find(g => g.id === currentGroupId);
+        if (!group) return;
+        const hint = document.getElementById('groupMembersHint');
+        const list = document.getElementById('groupMembersList');
+        const currentMemberIds = new Set((currentGroupMembers || []).map(m => m.id));
+        hint.textContent = `为群组 "${group.display_name || group.name}" 选择成员。`;
+        let html = '';
+        allUsers.forEach(u => {
+            const checked = currentMemberIds.has(u.id) ? 'checked' : '';
+            const roleLabel = u.role === 'admin' ? '管理员' : '普通用户';
+            html += `<label style="display:flex; align-items:center; gap:0.5rem; font-size:0.9rem;">
+                <input type="checkbox" value="${u.id}" ${checked}>
+                <span>${u.display_name || u.synology_username}</span>
+                <span style="color:#94a3b8; font-size:0.8rem;">(${u.synology_username} / ${roleLabel})</span>
+            </label>`;
+        });
+        list.innerHTML = html || '<div style="color:#94a3b8; text-align:center; padding:1rem;">当前没有任何用户。</div>';
+        openModal('groupMembersModal');
+    }
+
+    async function submitGroupMembers() {
+        if (!currentGroupId) return;
+        const list = document.getElementById('groupMembersList');
+        const checkboxes = list.querySelectorAll('input[type="checkbox"]');
+        const selected = new Set();
+        checkboxes.forEach(cb => { if (cb.checked) selected.add(cb.value); });
+        const currentIds = new Set((currentGroupMembers || []).map(m => m.id));
+        const add = [];
+        const remove = [];
+        selected.forEach(id => {
+            if (!currentIds.has(id)) add.push(id);
+        });
+        currentIds.forEach(id => {
+            if (!selected.has(id)) remove.push(id);
+        });
+        const resp = await apiRequest(`/admin/api/groups/${currentGroupId}/members`, {
+            method: 'PUT',
+            body: JSON.stringify({ add, remove })
+        });
+        if (!resp || !resp.success) {
+            showMessage('更新成员失败：' + (resp && resp.message ? resp.message : '未知错误'), 'error');
+            return;
+        }
+        currentGroupMembers = resp.members || [];
+        await reloadGroups(currentGroupId);
+        closeModal('groupMembersModal');
+        showMessage('群组成员已更新', 'success');
+    }
+
+    async function reloadGroups(selectId) {
+        const resp = await apiRequest('/admin/api/groups', 'GET');
+        if (resp && resp.success) {
+            groups = resp.groups || [];
+            currentGroupId = selectId && groups.some(g => g.id === selectId) ? selectId : (groups[0] && groups[0].id);
+            renderGroupList();
+            if (currentGroupId) {
+                await loadGroupDetails(currentGroupId);
+            } else {
+                const target = document.getElementById('groupDetails');
+                if (target) target.innerHTML = '<div class="empty-state" style="color:#94a3b8; text-align:center; padding:2rem;">当前没有群组，请先创建群组。</div>';
+            }
+        }
+    }
+
+    // 初始化群组列表
+    document.addEventListener('DOMContentLoaded', function() {
+        if (groups && groups.length > 0) {
+            currentGroupId = groups[0].id;
+            renderGroupList();
+            // 延迟加载详情，避免阻塞页面
+            setTimeout(() => {
+                if (currentGroupId) loadGroupDetails(currentGroupId);
+            }, 100);
+        } else {
+            renderGroupList();
+        }
+    });
+</script>
+{% endblock %}
+
+
+
+

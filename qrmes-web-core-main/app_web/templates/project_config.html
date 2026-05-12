@@ -1,0 +1,2265 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project_name }} - 项目配置{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* 工序弹窗表单较长，限制可视高度并启用内部滚动，避免底部区域被裁切 */
+    #addProcessModal,
+    #editProcessModal,
+    #departmentAssignmentModal {
+        padding: 12px;
+    }
+
+    #addProcessModal .modal-content,
+    #editProcessModal .modal-content,
+    #departmentAssignmentModal .modal-content {
+        margin: 0 auto;
+        max-width: 640px !important;
+        max-height: calc(100dvh - 24px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    #addProcessModal form,
+    #editProcessModal form,
+    #departmentAssignmentModal form {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    @supports not (height: 100dvh) {
+        #addProcessModal .modal-content,
+        #editProcessModal .modal-content,
+        #departmentAssignmentModal .modal-content {
+            max-height: calc(100vh - 24px);
+        }
+    }
+
+    .department-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .department-summary-card {
+        background: #f7fafc;
+        border: 1px solid #1e293b;
+        border-radius: 10px;
+        padding: 0.9rem;
+    }
+
+    .department-summary-card.is-unassigned {
+        border-style: dashed;
+    }
+
+    .department-summary-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .department-summary-title strong {
+        color: #2d3748;
+    }
+
+    .department-summary-count {
+        color: #718096;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    .department-summary-processes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .department-summary-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.2rem 0.55rem;
+        background: #edf2f7;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        color: #4a5568;
+    }
+
+    .department-checklist {
+        display: grid;
+        gap: 0.65rem;
+        margin-top: 1rem;
+    }
+
+    .department-checklist-item {
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+        padding: 0.75rem;
+        border: 1px solid #1e293b;
+        border-radius: 8px;
+        background: #111827;
+    }
+
+    .department-checklist-item small {
+        display: block;
+        color: #718096;
+        margin-top: 0.2rem;
+    }
+
+    .project-config-page.card,
+    .project-config-page .card {
+        background: linear-gradient(180deg, #111827 0%, #0f172a 100%) !important;
+        border-color: #253348 !important;
+        color: #e5edf7 !important;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+    }
+
+    .project-config-page .card-header {
+        background: #162235 !important;
+        border-bottom: 1px solid #253348 !important;
+        color: #f8fafc !important;
+    }
+
+    .project-config-page h3,
+    .project-config-page h4,
+    .project-config-page h5,
+    .project-config-page label,
+    .project-config-page strong,
+    .project-config-page span {
+        color: #eef5ff !important;
+    }
+
+    .project-config-page p,
+    .project-config-page small,
+    .project-config-page td,
+    .project-config-page .department-summary-count,
+    .project-config-page [style*="color:#2d3748"],
+    .project-config-page [style*="color: #2d3748"],
+    .project-config-page [style*="color:#4a5568"],
+    .project-config-page [style*="color: #4a5568"],
+    .project-config-page [style*="color:#6b46c1"],
+    .project-config-page [style*="color: #6b46c1"],
+    .project-config-page [style*="color:#718096"],
+    .project-config-page [style*="color: #718096"],
+    .project-config-page [style*="color:#9c4221"],
+    .project-config-page [style*="color: #9c4221"],
+    .project-config-page [style*="color:#a0aec0"],
+    .project-config-page [style*="color: #a0aec0"],
+    .project-config-page [style*="color:#c05621"],
+    .project-config-page [style*="color: #c05621"],
+    .project-config-page div[style*="color:#718096"],
+    .project-config-page div[style*="color: #4a5568"] {
+        color: #9fb0c5 !important;
+    }
+
+    .project-config-page h4[style*="border-bottom"] {
+        border-bottom-color: #334155 !important;
+        color: #f8fafc !important;
+        font-size: 1.08rem;
+        letter-spacing: 0;
+    }
+
+    .project-config-page .table {
+        background: #0b1220 !important;
+        border: 1px solid #253348 !important;
+        border-radius: 8px;
+        color: #e5edf7 !important;
+        overflow: hidden;
+    }
+
+    .project-config-page .table thead,
+    .project-config-page .table th {
+        background: #162235 !important;
+        border-color: #253348 !important;
+        color: #f8fafc !important;
+    }
+
+    .project-config-page .table td {
+        background: #0f172a !important;
+        border-color: #253348 !important;
+        color: #dbe7f5 !important;
+    }
+
+    .project-config-page .table tbody tr:hover td {
+        background: #142238 !important;
+    }
+
+    .project-config-page .card-header h3,
+    .project-config-page .card-header h4 {
+        color: #f8fafc !important;
+    }
+
+    .project-config-page .card-header p {
+        color: #cbd5e1 !important;
+    }
+
+    .project-config-page .empty-state {
+        background: #0b1220 !important;
+        border: 1px dashed #334155;
+        color: #9fb0c5 !important;
+    }
+
+    #addProductTypeModal .modal-content,
+    #editProductTypeModal .modal-content,
+    #addMaterialModal .modal-content,
+    #editMaterialModal .modal-content,
+    #addProcessModal .modal-content,
+    #editProcessModal .modal-content,
+    #departmentAssignmentModal .modal-content {
+        background: #111827 !important;
+        border: 1px solid #253348 !important;
+        color: #e5edf7 !important;
+    }
+
+    #addProductTypeModal label,
+    #editProductTypeModal label,
+    #addMaterialModal label,
+    #editMaterialModal label,
+    #addProcessModal label,
+    #editProcessModal label,
+    #departmentAssignmentModal label,
+    #addProductTypeModal h2,
+    #editProductTypeModal h2,
+    #addMaterialModal h2,
+    #editMaterialModal h2,
+    #addProcessModal h2,
+    #editProcessModal h2,
+    #departmentAssignmentModal h2 {
+        color: #f8fafc !important;
+    }
+
+    #addProductTypeModal small,
+    #editProductTypeModal small,
+    #addMaterialModal small,
+    #editMaterialModal small,
+    #addProcessModal small,
+    #editProcessModal small,
+    #departmentAssignmentModal small {
+        color: #9fb0c5 !important;
+    }
+
+    #addProductTypeModal .form-control,
+    #editProductTypeModal .form-control,
+    #addMaterialModal .form-control,
+    #editMaterialModal .form-control,
+    #addProcessModal .form-control,
+    #editProcessModal .form-control,
+    #departmentAssignmentModal .form-control {
+        background: #0b1220 !important;
+        border-color: #334155 !important;
+        color: #e5edf7 !important;
+    }
+
+    .project-config-page a {
+        color: #7dd3fc !important;
+    }
+
+    .project-config-page code {
+        background: #0b1220 !important;
+        border: 1px solid #26364d;
+        border-radius: 6px;
+        color: #93c5fd !important;
+        padding: 0.12rem 0.35rem;
+    }
+
+    .project-config-page .department-summary-card,
+    .project-config-page .department-checklist-item,
+    .project-config-page .department-summary-tag {
+        background: #0b1220 !important;
+        border-color: #2f415a !important;
+        color: #dbeafe !important;
+    }
+
+    .project-config-page .form-control,
+    .project-config-page input[type="text"],
+    .project-config-page input[type="number"],
+    .project-config-page select,
+    .project-config-page textarea {
+        background: #0b1220 !important;
+        border-color: #334155 !important;
+        color: #e5edf7 !important;
+    }
+
+    .project-config-page input[type="checkbox"] {
+        accent-color: #38bdf8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card project-config-page">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <a href="{{ url_for('projects') }}" style="color: #667eea; text-decoration: none; margin-right: 1rem;">←
+                返回</a>
+            <span style="font-size: 1.5rem; font-weight: 600;">{{ project_name }}</span>
+        </div>
+        <button onclick="openAddProductTypeModal()" class="btn btn-primary">➕ 添加产品类型</button>
+    </div>
+
+    <div id="productTypesContainer">
+        <div class="card" style="margin-bottom: 1.5rem; border: 2px solid #1e293b;">
+            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; background:#f7fafc;">
+                <h3 style="margin:0;">QC策略配置</h3>
+            </div>
+            <div style="padding: 1rem;">
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+                    <div class="form-group" style="margin:0;">
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" id="qcEnabled" checked>
+                            <span>启用QC识别</span>
+                        </label>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" id="qcRealtimeEnabled" checked>
+                            <span>启用实时QC（拍照后自动识别）</span>
+                        </label>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" id="qcCheckPreviousPhotos" checked>
+                            <span>检查前序工序拍照</span>
+                        </label>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label for="qcEnforcementMode">拦截策略</label>
+                        <select class="form-control" id="qcEnforcementMode">
+                            <option value="warn">告警（不拦截）</option>
+                            <option value="block">拦截（不通过禁止提交）</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label for="qcConfidenceThreshold">置信度阈值 (0~1)</label>
+                        <input type="number" class="form-control" id="qcConfidenceThreshold" min="0" max="1" step="0.01" value="0.8">
+                    </div>
+                </div>
+                <div style="margin-top: 0.75rem; color: #4a5568; font-size: 0.9rem;">
+                    当前全局视觉模型：<code id="qcGlobalVisionModel">加载中...</code>
+                    <span style="margin-left: 0.5rem; color: #718096;">（模型选择入口统一在系统设置）</span>
+                    <a href="/settings" style="margin-left: 0.75rem;">去“设置”页修改</a>
+                </div>
+                <div style="margin-top: 1rem; display:flex; gap: 1rem;">
+                    <button id="saveQcPolicyBtn" type="button" onclick="saveQcPolicy()" class="btn btn-primary">💾 保存QC策略</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 1.5rem; border: 2px solid #d6bcfa; border-radius: 16px; overflow: hidden;">
+            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);">
+                <div>
+                    <h3 style="margin:0; color:#2d3748;">质量放行规则</h3>
+                    <p style="margin:0.5rem 0 0 0; color:#6b46c1; font-size:0.95rem;">配置项目默认规则严重度，产品类型可在下方单独覆盖。</p>
+                </div>
+                <button id="saveQualityRulesBtn" type="button" onclick="saveQualityReleaseRules()" class="btn btn-primary">💾 保存质量规则</button>
+            </div>
+            <div style="padding:1.25rem 1.5rem 1.5rem 1.5rem;">
+                <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer; font-size:1rem; margin-bottom:0.85rem;">
+                    <input type="checkbox" id="qualityWorkbenchEnabled" checked>
+                    <span>启用质量工作台规则</span>
+                </label>
+                <div style="color:#718096; font-size:0.92rem; margin-bottom:1.25rem;">
+                    关闭后质量工作台仅展示数据，不输出规则化放行结论。
+                </div>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+                    <div class="form-group" style="margin:0;">
+                        <label for="ruleRecordRequired">产品记录存在</label>
+                        <select class="form-control" id="ruleRecordRequired"><option value="ignore">忽略</option><option value="review">评审</option><option value="block">阻断</option></select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label for="ruleMaterialComplete">必需物料完整</label>
+                        <select class="form-control" id="ruleMaterialComplete"><option value="ignore">忽略</option><option value="review">评审</option><option value="block">阻断</option></select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label for="rulePhotoCoverage">必需工序照片覆盖</label>
+                        <select class="form-control" id="rulePhotoCoverage"><option value="ignore">忽略</option><option value="review">评审</option><option value="block">阻断</option></select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label for="ruleQcPassRequired">工序QC必须通过</label>
+                        <select class="form-control" id="ruleQcPassRequired"><option value="ignore">忽略</option><option value="review">评审</option><option value="block">阻断</option></select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label for="ruleHilReportRequired">HIL报告必须存在</label>
+                        <select class="form-control" id="ruleHilReportRequired"><option value="ignore">忽略</option><option value="review">评审</option><option value="block">阻断</option></select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label for="ruleBemfReportRequired">反电势报告必须存在</label>
+                        <select class="form-control" id="ruleBemfReportRequired"><option value="ignore">忽略</option><option value="review">评审</option><option value="block">阻断</option></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% for product_type in config.productTypes %}
+        <div class="card" style="margin-bottom: 1.5rem; border: 2px solid #1e293b;">
+            <div class="card-header"
+                style="display: flex; justify-content: space-between; align-items: center; background: #f7fafc;">
+                <div>
+                    <h3>{{ product_type.typeName }}</h3>
+                    {% if product_type.modelNumber %}
+                    <p style="margin: 0.25rem 0 0 0; color: #718096; font-size: 0.9rem;">📊 产品型号: <code>{{ product_type.modelNumber }}</code></p>
+                    {% endif %}
+                    {% set serial_rules = product_type.serialRules or product_type.serial_rules or product_type.serialPrefixes or product_type.serial_prefixes or [] %}
+                    {% set force_version_check = product_type.forceVersionCheck or product_type.force_version_check or false %}
+                    {% if serial_rules is string %}
+                    <p style="margin: 0.25rem 0 0 0; color: #4a5568; font-size: 0.9rem;">
+                        🔎 二维码前缀规则:
+                        <code title="{{ serial_rules }}">{{ serial_rules }}</code>
+                    </p>
+                    {% elif serial_rules %}
+                    <p style="margin: 0.25rem 0 0 0; color: #4a5568; font-size: 0.9rem;">
+                        🔎 二维码前缀规则:
+                        <code title="{{ serial_rules|join(' / ') }}">{{ serial_rules|join('、') }}</code>
+                    </p>
+                    {% else %}
+                    <p style="margin: 0.25rem 0 0 0; color: #a0aec0; font-size: 0.9rem;">🔎 二维码前缀规则: 未配置</p>
+                    {% endif %}
+                    <p style="margin: 0.25rem 0 0 0; color: {{ '#c05621' if force_version_check else '#718096' }}; font-size: 0.9rem;">
+                        🛡️ 版本校验: {{ '强制检查' if force_version_check else '按物料配置检查' }}
+                    </p>
+                </div>
+                <div>
+                    <button
+                        onclick="openEditProductTypeModal({{ product_type.typeName|tojson|forceescape }}, {{ (product_type.modelNumber or '')|tojson|forceescape }}, {{ serial_rules|tojson|forceescape }}, {{ force_version_check|tojson|forceescape }})"
+                        class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem;">✏️ 编辑类型</button>
+                    <button onclick="openAddMaterialModal({{ product_type.typeName|tojson|forceescape }}, {{ force_version_check|tojson|forceescape }})" class="btn btn-success"
+                        style="padding: 0.4rem 1rem; font-size: 0.85rem;">➕ 添加物料</button>
+                    <button onclick="deleteProductType({{ product_type.typeName|tojson|forceescape }})" class="btn btn-danger"
+                        style="padding: 0.4rem 1rem; font-size: 0.85rem;">🗑️ 删除</button>
+                </div>
+            </div>
+
+            <div style="padding: 1rem;">
+                {% set product_quality_rules = product_type.qualityRules or {} %}
+                <div class="card" style="margin-bottom: 1.5rem; border: 2px solid #f6ad55; border-radius: 14px; overflow: hidden;">
+                    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg, #fffaf0 0%, #fef3c7 100%);">
+                        <div>
+                            <h4 style="margin:0; color:#2d3748;">质量放行规则</h4>
+                            <p style="margin:0.35rem 0 0 0; color:#9c4221; font-size:0.9rem;">当前产品类型可单独覆盖项目默认质量规则。</p>
+                        </div>
+                        <button type="button" class="btn btn-primary" style="padding:0.45rem 1rem; font-size:0.85rem;" onclick="saveProductTypeQualityRules({{ product_type.typeName|tojson|forceescape }}, {{ loop.index0 }})">💾 保存规则</button>
+                    </div>
+                    <div style="padding:1rem 1.25rem 1.25rem 1.25rem;">
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1rem;">
+                            <div class="form-group" style="margin:0;">
+                                <label for="ptRuleRecordRequired-{{ loop.index0 }}">产品记录存在</label>
+                                <select class="form-control" id="ptRuleRecordRequired-{{ loop.index0 }}"><option value="ignore" {% if (product_quality_rules.recordRequired or '') == 'ignore' %}selected{% endif %}>忽略</option><option value="review" {% if (product_quality_rules.recordRequired or '') == 'review' %}selected{% endif %}>评审</option><option value="block" {% if (product_quality_rules.recordRequired or 'block') == 'block' %}selected{% endif %}>阻断</option></select>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label for="ptRuleMaterialComplete-{{ loop.index0 }}">必需物料完整</label>
+                                <select class="form-control" id="ptRuleMaterialComplete-{{ loop.index0 }}"><option value="ignore" {% if (product_quality_rules.materialComplete or '') == 'ignore' %}selected{% endif %}>忽略</option><option value="review" {% if (product_quality_rules.materialComplete or '') == 'review' %}selected{% endif %}>评审</option><option value="block" {% if (product_quality_rules.materialComplete or 'block') == 'block' %}selected{% endif %}>阻断</option></select>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label for="ptRulePhotoCoverage-{{ loop.index0 }}">必需工序照片覆盖</label>
+                                <select class="form-control" id="ptRulePhotoCoverage-{{ loop.index0 }}"><option value="ignore" {% if (product_quality_rules.photoCoverage or '') == 'ignore' %}selected{% endif %}>忽略</option><option value="review" {% if (product_quality_rules.photoCoverage or 'review') == 'review' %}selected{% endif %}>评审</option><option value="block" {% if (product_quality_rules.photoCoverage or '') == 'block' %}selected{% endif %}>阻断</option></select>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label for="ptRuleQcPassRequired-{{ loop.index0 }}">工序QC必须通过</label>
+                                <select class="form-control" id="ptRuleQcPassRequired-{{ loop.index0 }}"><option value="ignore" {% if (product_quality_rules.qcPassRequired or '') == 'ignore' %}selected{% endif %}>忽略</option><option value="review" {% if (product_quality_rules.qcPassRequired or '') == 'review' %}selected{% endif %}>评审</option><option value="block" {% if (product_quality_rules.qcPassRequired or 'block') == 'block' %}selected{% endif %}>阻断</option></select>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label for="ptRuleHilReportRequired-{{ loop.index0 }}">HIL报告必须存在</label>
+                                <select class="form-control" id="ptRuleHilReportRequired-{{ loop.index0 }}"><option value="ignore" {% if (product_quality_rules.hilReportRequired or 'ignore') == 'ignore' %}selected{% endif %}>忽略</option><option value="review" {% if (product_quality_rules.hilReportRequired or '') == 'review' %}selected{% endif %}>评审</option><option value="block" {% if (product_quality_rules.hilReportRequired or '') == 'block' %}selected{% endif %}>阻断</option></select>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label for="ptRuleBemfReportRequired-{{ loop.index0 }}">反电势报告必须存在</label>
+                                <select class="form-control" id="ptRuleBemfReportRequired-{{ loop.index0 }}"><option value="ignore" {% if (product_quality_rules.bemfReportRequired or 'ignore') == 'ignore' %}selected{% endif %}>忽略</option><option value="review" {% if (product_quality_rules.bemfReportRequired or '') == 'review' %}selected{% endif %}>评审</option><option value="block" {% if (product_quality_rules.bemfReportRequired or '') == 'block' %}selected{% endif %}>阻断</option></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 物料配置部分 -->
+                <h4
+                    style="margin-bottom: 1rem; color: #4a5568; border-bottom: 2px solid #1e293b; padding-bottom: 0.5rem;">
+                    物料配置</h4>
+                {% if product_type.materials %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>物料名称</th>
+                            <th>物料编号</th>
+                            <th>二维码规则</th>
+                            <th>版本号</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for material in product_type.materials %}
+                        {% set qr_rule_type = material.qrRuleType or material.qr_rule_type or 'motor' %}
+                        {% set expected_version = material.expectedVersion or material.expected_version or '' %}
+                        <tr data-type="{{ product_type.typeName }}" data-material="{{ material.name }}">
+                            <td>{{ material.name }}</td>
+                            <td><code>{{ material.partNumber }}</code></td>
+                            <td>{{ 'PCB' if qr_rule_type == 'pcb' else '电机' }}</td>
+                            <td>{% if expected_version %}<code>{{ expected_version }}</code>{% else %}<span style="color: #a0aec0;">未配置</span>{% endif %}</td>
+                            <td>
+                                <button
+                                    onclick="editMaterial({{ product_type.typeName|tojson|forceescape }}, {{ material.name|tojson|forceescape }}, {{ material.partNumber|tojson|forceescape }}, {{ qr_rule_type|tojson|forceescape }}, {{ expected_version|tojson|forceescape }})"
+                                    class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">✏️
+                                    编辑</button>
+                                <button onclick="deleteMaterial({{ product_type.typeName|tojson|forceescape }}, {{ material.name|tojson|forceescape }})"
+                                    class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">🗑️
+                                    删除</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state" style="padding: 1rem; background: #f7fafc; border-radius: 5px;">
+                    <p style="margin: 0; color: #718096;">暂无物料，请添加物料</p>
+                </div>
+                {% endif %}
+
+                <h4
+                    style="margin: 2rem 0 1rem 0; color: #4a5568; border-bottom: 2px solid #1e293b; padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <span>责任部门视图</span>
+                    <button
+                        onclick="openDepartmentAssignmentModal({{ product_type.typeName|tojson|forceescape }})"
+                        class="btn btn-secondary"
+                        style="padding: 0.4rem 1rem; font-size: 0.85rem;">🗂️ 批量配置责任部门</button>
+                </h4>
+                <div
+                    id="departmentSummary-{{ loop.index0 }}"
+                    class="department-summary-grid"
+                    data-product-type="{{ product_type.typeName }}"></div>
+
+                <!-- 工序配置部分 -->
+                <h4
+                    style="margin: 2rem 0 1rem 0; color: #4a5568; border-bottom: 2px solid #1e293b; padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <span>工序配置</span>
+                    <button onclick="openAddProcessModal({{ product_type.typeName|tojson|forceescape }})" class="btn btn-success"
+                        style="padding: 0.4rem 1rem; font-size: 0.85rem;">➕ 添加工序</button>
+                </h4>
+                {% if product_type.processSteps %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">顺序</th>
+                            <th>工序名称</th>
+                            <th>描述</th>
+                            <th style="width: 100px;">预计耗时</th>
+                            <th style="width: 80px;">必需</th>
+                            <th style="width: 100px;">需要拍照</th>
+                            <th style="width: 120px;">附件类型</th>
+                            <th style="width: 110px;">子项模板</th>
+                            <th style="width: 180px;">责任部门</th>
+                            <th style="width: 220px;">预Prompt规则</th>
+                            <th style="width: 150px;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for process in product_type.processSteps|sort(attribute='order') %}
+                        <tr data-type="{{ product_type.typeName }}" data-process="{{ process.id }}">
+                            <td><span
+                                    style="background: #667eea; color: white; padding: 0.2rem 0.6rem; border-radius: 50%; font-weight: bold;">{{
+                                    process.order }}</span></td>
+                            <td><strong>{{ process.name }}</strong></td>
+                            <td>{{ process.description or '-' }}</td>
+                            <td>{{ process.estimatedDuration or 300 }}秒</td>
+                            <td>{% if process.required %}✅{% else %}❌{% endif %}</td>
+                            <td>{% if process.photoRequired %}✅{% else %}❌{% endif %}</td>
+                            <td>
+                                {% if (process.attachmentType or 'photo') == 'pdf' %}
+                                PDF
+                                {% elif (process.attachmentType or 'photo') == 'both' %}
+                                拍照+PDF
+                                {% else %}
+                                拍照
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% set sub_checks = process.subChecks or [] %}
+                                {% if sub_checks %}
+                                {{ sub_checks|length }}项
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% set responsible_departments = process.responsibleDepartments or process.responsible_departments or [] %}
+                                {% if responsible_departments is string %}
+                                {{ responsible_departments }}
+                                {% elif responsible_departments %}
+                                {{ responsible_departments|join('、') }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% set screw_count = process.expectedScrewCount or process.expected_screw_count or 0 %}
+                                {% set pre_prompt = process.prePrompt or process.pre_prompt or '' %}
+                                {% if screw_count %}
+                                螺钉 {{ screw_count }} 个<br>
+                                {% endif %}
+                                {% if pre_prompt %}
+                                <span title="{{ pre_prompt }}">已配置预Prompt</span>
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button onclick="editProcess({{ product_type.typeName|tojson|forceescape }}, {{ process|tojson|forceescape }})"
+                                    class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">✏️
+                                    编辑</button>
+                                <button onclick="deleteProcess({{ product_type.typeName|tojson|forceescape }}, {{ process.id|tojson|forceescape }})"
+                                    class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">🗑️
+                                    删除</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state" style="padding: 1rem; background: #f7fafc; border-radius: 5px;">
+                    <p style="margin: 0; color: #718096;">暂无工序，请添加工序</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 添加产品类型模态框 -->
+<div id="addProductTypeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>添加产品类型</h2>
+            <span class="close" onclick="closeModal('addProductTypeModal')">&times;</span>
+        </div>
+        <form id="addProductTypeForm" onsubmit="addProductType(event)">
+            <div class="form-group">
+                <label for="productTypeName">产品类型名称 <span style="color: #e53e3e;">*</span></label>
+                <input type="text" id="productTypeName" class="form-control" required placeholder="例如：电机控制器">
+            </div>
+            <div class="form-group">
+                <label for="productTypeCopySourceProject">从其他项目复制配置 <span style="color: #718096; font-size: 0.85rem;">(可选)</span></label>
+                <select id="productTypeCopySourceProject" class="form-control">
+                    <option value="">-- 不复制，创建空白产品 --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="productTypeCopySourceType">源产品类型 <span style="color: #718096; font-size: 0.85rem;">(可选)</span></label>
+                <select id="productTypeCopySourceType" class="form-control" disabled>
+                    <option value="">-- 先选择来源项目 --</option>
+                </select>
+                <small id="productTypeCopyHelp" style="color: #718096; margin-top: 0.5rem; display: block;">
+                    💡 复制时会沿用源产品的型号、二维码规则、版本检查、物料配置和工序配置；当前只需要填写新的产品类型名称。
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="productTypeModelNumber">产品型号 <span style="color: #718096; font-size: 0.85rem;">(可选)</span></label>
+                <input type="text" id="productTypeModelNumber" class="form-control" placeholder="例如：MCU-V3.2">
+                <small style="color: #718096; margin-top: 0.5rem; display: block;">
+                    💡 产品的具体型号或版本号，用于区分同类型的不同型号
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="productTypeSerialRules">二维码前缀规则 <span style="color: #718096; font-size: 0.85rem;">(可选)</span></label>
+                <textarea id="productTypeSerialRules" class="form-control" rows="4"
+                    placeholder="每行一个前缀，例如：&#10;TZ2000127&#10;TZ2000131"></textarea>
+                <small style="color: #718096; margin-top: 0.5rem; display: block;">
+                    💡 扫码时按“最长前缀优先”匹配产品类型；不填则保持原有推荐逻辑。
+                </small>
+            </div>
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" id="productTypeForceVersionCheck">
+                    <span>启用强制版本检查</span>
+                </label>
+                <small style="color: #718096; margin-top: 0.5rem; display: block;">
+                    💡 启用后，该产品类型下所有物料都必须配置版本号，且扫码结果必须能解析出匹配版本。
+                </small>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">✅ 添加</button>
+                <button type="button" onclick="closeModal('addProductTypeModal')" class="btn btn-secondary">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 编辑产品类型模态框 -->
+<div id="editProductTypeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>编辑产品类型</h2>
+            <span class="close" onclick="closeModal('editProductTypeModal')">&times;</span>
+        </div>
+        <form id="editProductTypeForm" onsubmit="updateProductType(event)">
+            <input type="hidden" id="editProductTypeName">
+            <div class="form-group">
+                <label for="editProductTypeDisplayName">产品类型名称</label>
+                <input type="text" id="editProductTypeDisplayName" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="editProductTypeModelNumber">产品型号 <span style="color: #718096; font-size: 0.85rem;">(可选)</span></label>
+                <input type="text" id="editProductTypeModelNumber" class="form-control" placeholder="例如：MCU-V3.2">
+            </div>
+            <div class="form-group">
+                <label for="editProductTypeSerialRules">二维码前缀规则 <span style="color: #718096; font-size: 0.85rem;">(可选)</span></label>
+                <textarea id="editProductTypeSerialRules" class="form-control" rows="4"
+                    placeholder="每行一个前缀，例如：&#10;TZ2000127&#10;TZ2000131"></textarea>
+            </div>
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" id="editProductTypeForceVersionCheck">
+                    <span>启用强制版本检查</span>
+                </label>
+                <small style="color: #718096; margin-top: 0.5rem; display: block;">
+                    💡 启用后，该产品类型下所有物料都必须配置版本号，且扫码结果必须能解析出匹配版本。
+                </small>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">✅ 保存</button>
+                <button type="button" onclick="closeModal('editProductTypeModal')" class="btn btn-secondary">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 添加物料模态框 -->
+<div id="addMaterialModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>添加物料</h2>
+            <span class="close" onclick="closeModal('addMaterialModal')">&times;</span>
+        </div>
+        <form id="addMaterialForm" onsubmit="addMaterial(event)">
+            <input type="hidden" id="targetProductType">
+            <div class="form-group">
+                <label for="materialName">物料名称</label>
+                <input type="text" id="materialName" class="form-control" required placeholder="例如：控制板">
+            </div>
+            <div class="form-group">
+                <label for="partNumber">物料编号</label>
+                <input type="text" id="partNumber" class="form-control" required placeholder="例如：U12020034.A0">
+            </div>
+            <div class="form-group">
+                <label for="materialQrRuleType">二维码规则</label>
+                <select id="materialQrRuleType" class="form-control">
+                    <option value="motor">电机</option>
+                    <option value="pcb">PCB</option>
+                </select>
+                <small id="materialQrRuleTypeHelp" style="color: #718096; margin-top: 0.5rem; display: block;">
+                    💡 电机规则当前仅做兼容，不支持版本号检查；PCB规则支持版本号校验。
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="materialExpectedVersion">版本号 <span style="color: #718096; font-size: 0.85rem;">(可选)</span></label>
+                <input type="text" id="materialExpectedVersion" class="form-control" placeholder="例如：A0">
+                <small style="color: #718096; margin-top: 0.5rem; display: block;">
+                    💡 留空时默认不做版本比对；如果产品类型启用了强制检查，则留空会导致扫码报错。
+                </small>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">✅ 添加</button>
+                <button type="button" onclick="closeModal('addMaterialModal')" class="btn btn-secondary">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 编辑物料模态框 -->
+<div id="editMaterialModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>编辑物料</h2>
+            <span class="close" onclick="closeModal('editMaterialModal')">&times;</span>
+        </div>
+        <form id="editMaterialForm" onsubmit="updateMaterial(event)">
+            <input type="hidden" id="editTargetProductType">
+            <input type="hidden" id="editOriginalMaterialName">
+            <div class="form-group">
+                <label for="editMaterialName">物料名称</label>
+                <input type="text" id="editMaterialName" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="editPartNumber">物料编号</label>
+                <input type="text" id="editPartNumber" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="editMaterialQrRuleType">二维码规则</label>
+                <select id="editMaterialQrRuleType" class="form-control">
+                    <option value="motor">电机</option>
+                    <option value="pcb">PCB</option>
+                </select>
+                <small id="editMaterialQrRuleTypeHelp" style="color: #718096; margin-top: 0.5rem; display: block;">
+                    💡 电机规则当前仅做兼容，不支持版本号检查；PCB规则支持版本号校验。
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="editMaterialExpectedVersion">版本号 <span style="color: #718096; font-size: 0.85rem;">(可选)</span></label>
+                <input type="text" id="editMaterialExpectedVersion" class="form-control" placeholder="例如：A0">
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">✅ 保存</button>
+                <button type="button" onclick="closeModal('editMaterialModal')" class="btn btn-secondary">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 添加工序模态框 -->
+<div id="addProcessModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2>添加工序</h2>
+            <span class="close" onclick="closeModal('addProcessModal')">&times;</span>
+        </div>
+        <form id="addProcessForm" onsubmit="addProcess(event)">
+            <input type="hidden" id="processTargetProductType">
+            <div class="form-group">
+                <label for="processName">工序名称 *</label>
+                <input type="text" id="processName" class="form-control" required placeholder="例如：热套工序">
+            </div>
+            <div class="form-group">
+                <label for="processDescription">工序描述</label>
+                <textarea id="processDescription" class="form-control" rows="3" placeholder="描述工序的具体内容和要求"></textarea>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="processOrder">执行顺序 *</label>
+                    <input type="number" id="processOrder" class="form-control" required min="1" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="processEstimatedDuration">预计耗时(秒)</label>
+                    <input type="number" id="processEstimatedDuration" class="form-control" min="0" value="300">
+                </div>
+            </div>
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" id="processRequired" checked>
+                    <span>必需工序</span>
+                </label>
+            </div>
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" id="processPhotoRequired" checked>
+                    <span>需要拍照记录</span>
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="processAttachmentType">附件类型</label>
+                <select class="form-control" id="processAttachmentType" name="attachmentType">
+                    <option value="photo">拍照（默认）</option>
+                    <option value="pdf">PDF文档</option>
+                    <option value="both">拍照+PDF</option>
+                </select>
+                <small class="form-text text-muted">选择该工序支持的附件类型</small>
+            </div>
+            <div class="form-group">
+                <label for="processSubChecks">电性能子项模板 <span style="color: #718096; font-size: 0.85rem;">(可选)</span></label>
+                <textarea id="processSubChecks" class="form-control" rows="5"
+                    placeholder="每行一个子项，例如：&#10;加油量&#10;放油量&#10;左电机反电势500rpm"></textarea>
+                <small class="form-text text-muted">用于QC细项确认，老数据不受影响；留空则沿用“工序整体”模式。</small>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="processExpectedScrewCount">应装螺钉数量</label>
+                    <input type="number" id="processExpectedScrewCount" class="form-control" min="0" placeholder="例如：12">
+                </div>
+                <div class="form-group">
+                    <label for="processSpecialProcesses">特殊工艺</label>
+                    <input type="text" id="processSpecialProcesses" class="form-control" placeholder="例如：点胶、扭矩复检">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="processSpecialParts">关键零部件</label>
+                    <input type="text" id="processSpecialParts" class="form-control" placeholder="例如：电容板、定位支架">
+                </div>
+                <div class="form-group">
+                    <label for="processExtraFocus">检测关注点</label>
+                    <input type="text" id="processExtraFocus" class="form-control" placeholder="例如：螺钉头部朝向、胶路连续性">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="processPrePrompt">工序预Prompt</label>
+                <textarea id="processPrePrompt" class="form-control" rows="3"
+                    placeholder="可选。留空也可正常识别；配置后会在AI识别时作为该工序的额外规则。"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="processResponsibleDepartments">责任部门 <span style="color: #718096; font-size: 0.85rem;">(可多选)</span></label>
+                <select id="processResponsibleDepartments" class="form-control" multiple size="6"></select>
+                <small class="form-text text-muted">不选择表示所有账号可见；选择后移动端仅显示与当前账号群组匹配的工序。</small>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">✅ 添加</button>
+                <button type="button" onclick="closeModal('addProcessModal')" class="btn btn-secondary">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 编辑工序模态框 -->
+<div id="editProcessModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2>编辑工序</h2>
+            <span class="close" onclick="closeModal('editProcessModal')">&times;</span>
+        </div>
+        <form id="editProcessForm" onsubmit="updateProcess(event)">
+            <input type="hidden" id="editProcessTargetProductType">
+            <input type="hidden" id="editProcessId">
+            <div class="form-group">
+                <label for="editProcessName">工序名称 *</label>
+                <input type="text" id="editProcessName" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="editProcessDescription">工序描述</label>
+                <textarea id="editProcessDescription" class="form-control" rows="3"></textarea>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="editProcessOrder">执行顺序 *</label>
+                    <input type="number" id="editProcessOrder" class="form-control" required min="1">
+                </div>
+                <div class="form-group">
+                    <label for="editProcessEstimatedDuration">预计耗时(秒)</label>
+                    <input type="number" id="editProcessEstimatedDuration" class="form-control" min="0">
+                </div>
+            </div>
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" id="editProcessRequired">
+                    <span>必需工序</span>
+                </label>
+            </div>
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" id="editProcessPhotoRequired">
+                    <span>需要拍照记录</span>
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="editProcessAttachmentType">附件类型</label>
+                <select class="form-control" id="editProcessAttachmentType" name="attachmentType">
+                    <option value="photo">拍照（默认）</option>
+                    <option value="pdf">PDF文档</option>
+                    <option value="both">拍照+PDF</option>
+                </select>
+                <small class="form-text text-muted">选择该工序支持的附件类型</small>
+            </div>
+            <div class="form-group">
+                <label for="editProcessSubChecks">电性能子项模板 <span style="color: #718096; font-size: 0.85rem;">(可选)</span></label>
+                <textarea id="editProcessSubChecks" class="form-control" rows="5"
+                    placeholder="每行一个子项，例如：&#10;加油量&#10;放油量&#10;左电机反电势500rpm"></textarea>
+                <small class="form-text text-muted">用于QC细项确认，老数据不受影响；留空则沿用“工序整体”模式。</small>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="editProcessExpectedScrewCount">应装螺钉数量</label>
+                    <input type="number" id="editProcessExpectedScrewCount" class="form-control" min="0" placeholder="例如：12">
+                </div>
+                <div class="form-group">
+                    <label for="editProcessSpecialProcesses">特殊工艺</label>
+                    <input type="text" id="editProcessSpecialProcesses" class="form-control" placeholder="例如：点胶、扭矩复检">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="editProcessSpecialParts">关键零部件</label>
+                    <input type="text" id="editProcessSpecialParts" class="form-control" placeholder="例如：电容板、定位支架">
+                </div>
+                <div class="form-group">
+                    <label for="editProcessExtraFocus">检测关注点</label>
+                    <input type="text" id="editProcessExtraFocus" class="form-control" placeholder="例如：螺钉头部朝向、胶路连续性">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="editProcessPrePrompt">工序预Prompt</label>
+                <textarea id="editProcessPrePrompt" class="form-control" rows="3"
+                    placeholder="可选。留空也可正常识别；配置后会在AI识别时作为该工序的额外规则。"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="editProcessResponsibleDepartments">责任部门 <span style="color: #718096; font-size: 0.85rem;">(可多选)</span></label>
+                <select id="editProcessResponsibleDepartments" class="form-control" multiple size="6"></select>
+                <small class="form-text text-muted">不选择表示所有账号可见；选择后移动端仅显示与当前账号群组匹配的工序。</small>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">✅ 保存</button>
+                <button type="button" onclick="closeModal('editProcessModal')" class="btn btn-secondary">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="departmentAssignmentModal" class="modal">
+    <div class="modal-content" style="max-width: 720px;">
+        <div class="modal-header">
+            <h2>按责任部门批量配置工序</h2>
+            <span class="close" onclick="closeModal('departmentAssignmentModal')">&times;</span>
+        </div>
+        <form id="departmentAssignmentForm" onsubmit="saveDepartmentAssignment(event)">
+            <input type="hidden" id="departmentAssignmentProductType">
+            <div class="form-group">
+                <label for="departmentAssignmentDepartment">责任部门 *</label>
+                <select id="departmentAssignmentDepartment" class="form-control" required></select>
+                <small class="form-text text-muted">这里选的是部门维度；保存时系统会自动把该部门回填到勾选工序的责任部门里。</small>
+            </div>
+            <div class="form-group">
+                <label>当前部门负责的工序</label>
+                <div id="departmentAssignmentChecklist" class="department-checklist"></div>
+                <small class="form-text text-muted">勾选表示该工序属于当前责任部门；取消勾选则会从该工序中移除这个责任部门，其它部门配置保持不变。</small>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">💾 保存分组</button>
+                <button type="button" onclick="closeModal('departmentAssignmentModal')" class="btn btn-secondary">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const projectName = {{ project_name|tojson }};
+    const projectConfigData = {{ config|tojson }};
+    const COPY_SOURCE_REQUEST_TIMEOUT_MS = 10000;
+    let responsibleDepartmentGroups = [];
+    let copySourceProjectsLoaded = false;
+    let latestCopySourceProductTypeRequestId = 0;
+    const copySourceProductTypeCache = new Map();
+
+    function normalizeDepartmentKey(raw) {
+        return String(raw || '').trim().toLowerCase();
+    }
+
+    function getProductTypes() {
+        return Array.isArray(projectConfigData?.productTypes) ? projectConfigData.productTypes : [];
+    }
+
+    function getProductTypeConfig(productTypeName) {
+        return getProductTypes().find((item) => String(item?.typeName || '') === String(productTypeName || '')) || null;
+    }
+
+    function escapeHtml(raw) {
+        return String(raw ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
+    function coerceDepartmentValues(raw) {
+        if (Array.isArray(raw)) {
+            return raw.map((item) => String(item || '').trim()).filter(Boolean);
+        }
+        if (typeof raw === 'string') {
+            return raw
+                .split(/\r?\n|,|，|;|；/)
+                .map((item) => item.trim())
+                .filter(Boolean);
+        }
+        return [];
+    }
+
+    function getDepartmentOptionLabel(group) {
+        if (!group || typeof group !== 'object') return '';
+        const displayName = String(group.display_name || '').trim();
+        const name = String(group.name || '').trim();
+        return displayName || name;
+    }
+
+    function getDepartmentOptionValue(group) {
+        if (!group || typeof group !== 'object') return '';
+        return String(group.name || '').trim();
+    }
+
+    function getDepartmentLabelByValue(raw) {
+        const valueKey = normalizeDepartmentKey(raw);
+        if (!valueKey) return '';
+        const matched = responsibleDepartmentGroups.find((item) => {
+            const itemValue = normalizeDepartmentKey(getDepartmentOptionValue(item));
+            const itemLabel = normalizeDepartmentKey(getDepartmentOptionLabel(item));
+            return itemValue === valueKey || itemLabel === valueKey;
+        });
+        if (matched) {
+            return getDepartmentOptionLabel(matched) || String(raw || '').trim();
+        }
+        return String(raw || '').trim();
+    }
+
+    function getProcessResponsibleDepartments(process) {
+        return coerceDepartmentValues(process?.responsibleDepartments || process?.responsible_departments || []);
+    }
+
+    function buildDepartmentSummary(productTypeName) {
+        const productType = getProductTypeConfig(productTypeName);
+        const summary = [];
+        const unassigned = [];
+        const grouped = new Map();
+        const steps = Array.isArray(productType?.processSteps) ? [...productType.processSteps] : [];
+        steps.sort((a, b) => Number(a?.order || 0) - Number(b?.order || 0));
+
+        for (const step of steps) {
+            const departments = getProcessResponsibleDepartments(step);
+            if (departments.length === 0) {
+                unassigned.push(step);
+                continue;
+            }
+            for (const department of departments) {
+                const key = normalizeDepartmentKey(department);
+                if (!key) continue;
+                if (!grouped.has(key)) {
+                    grouped.set(key, {
+                        name: department,
+                        label: getDepartmentLabelByValue(department) || department,
+                        processes: [],
+                    });
+                }
+                grouped.get(key).processes.push(step);
+            }
+        }
+
+        const orderedGroups = Array.from(grouped.values()).sort((a, b) => {
+            return normalizeDepartmentKey(a.label).localeCompare(normalizeDepartmentKey(b.label), 'zh-CN');
+        });
+        summary.push(...orderedGroups);
+        if (unassigned.length > 0) {
+            summary.push({
+                name: '',
+                label: '未分配责任部门',
+                processes: unassigned,
+                unassigned: true,
+            });
+        }
+        return summary;
+    }
+
+    function renderDepartmentSummaries() {
+        const containers = document.querySelectorAll('[id^="departmentSummary-"][data-product-type]');
+        containers.forEach((container) => {
+            const productTypeName = container.getAttribute('data-product-type') || '';
+            const summary = buildDepartmentSummary(productTypeName);
+            if (summary.length === 0) {
+                container.innerHTML = '<div class="department-summary-card is-unassigned"><div class="department-summary-title"><strong>暂未配置责任部门</strong></div><div style="color:#718096;font-size:0.9rem;">当前产品类型还没有工序，或所有工序尚未配置责任部门。</div></div>';
+                return;
+            }
+
+            container.innerHTML = summary.map((group) => {
+                const processTags = (group.processes || []).map((step) => {
+                    const order = Number(step?.order || 0);
+                    const name = String(step?.name || '').trim() || '未命名工序';
+                    return `<span class="department-summary-tag">${order ? `${order}.` : ''}${escapeHtml(name)}</span>`;
+                }).join('');
+                const action = group.unassigned
+                    ? `<button type="button" class="btn btn-secondary js-open-department-assignment" style="padding:0.25rem 0.7rem; font-size:0.8rem;" data-product-type="${escapeHtml(productTypeName)}">去分配</button>`
+                    : `<button type="button" class="btn btn-secondary js-open-department-assignment" style="padding:0.25rem 0.7rem; font-size:0.8rem;" data-product-type="${escapeHtml(productTypeName)}" data-department-name="${escapeHtml(group.name)}">批量调整</button>`;
+                return `
+                    <div class="department-summary-card${group.unassigned ? ' is-unassigned' : ''}">
+                        <div class="department-summary-title">
+                            <strong>${escapeHtml(group.label)}</strong>
+                            <span class="department-summary-count">${(group.processes || []).length} 个工序</span>
+                        </div>
+                        <div class="department-summary-processes">${processTags || '<span style="color:#a0aec0;">暂无工序</span>'}</div>
+                        <div>${action}</div>
+                    </div>
+                `;
+            }).join('');
+        });
+    }
+
+    function renderResponsibleDepartmentSelect(selectId, selectedValues = []) {
+        const select = document.getElementById(selectId);
+        if (!select) return;
+
+        const selectedSet = new Set(
+            coerceDepartmentValues(selectedValues)
+                .map((item) => normalizeDepartmentKey(item))
+                .filter(Boolean)
+        );
+
+        select.innerHTML = '';
+        for (const group of responsibleDepartmentGroups) {
+            const value = getDepartmentOptionValue(group);
+            const label = getDepartmentOptionLabel(group);
+            if (!value || !label) continue;
+
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = label;
+            if (selectedSet.has(normalizeDepartmentKey(value)) || selectedSet.has(normalizeDepartmentKey(label))) {
+                option.selected = true;
+            }
+            select.appendChild(option);
+        }
+    }
+
+    function getSelectedResponsibleDepartments(selectId) {
+        const select = document.getElementById(selectId);
+        if (!select) return [];
+
+        const rows = Array.from(select.selectedOptions || [])
+            .map((item) => String(item.value || '').trim())
+            .filter(Boolean);
+        const deduped = [];
+        const seen = new Set();
+        for (const name of rows) {
+            const key = normalizeDepartmentKey(name);
+            if (seen.has(key)) continue;
+            seen.add(key);
+            deduped.push(name);
+        }
+        return deduped;
+    }
+
+    async function loadResponsibleDepartmentOptions() {
+        try {
+            const result = await apiRequest('/api/process-config/groups/options');
+            if (!result || result.success !== true) {
+                throw new Error(result?.error || result?.message || '群组拉取失败');
+            }
+            const groups = Array.isArray(result.data?.groups) ? result.data.groups : [];
+            const normalized = [];
+            const seen = new Set();
+            for (const group of groups) {
+                const value = getDepartmentOptionValue(group);
+                if (!value) continue;
+                const key = normalizeDepartmentKey(value);
+                if (!key || seen.has(key)) continue;
+                seen.add(key);
+                normalized.push(group);
+            }
+            responsibleDepartmentGroups = normalized.sort((a, b) => {
+                const aLabel = normalizeDepartmentKey(getDepartmentOptionLabel(a));
+                const bLabel = normalizeDepartmentKey(getDepartmentOptionLabel(b));
+                return aLabel.localeCompare(bLabel, 'zh-CN');
+            });
+        } catch (error) {
+            console.warn('加载责任部门选项失败:', error);
+            responsibleDepartmentGroups = [];
+        }
+
+        renderResponsibleDepartmentSelect('processResponsibleDepartments', []);
+        renderResponsibleDepartmentSelect('editProcessResponsibleDepartments', []);
+        renderDepartmentSummaries();
+    }
+
+    function getDepartmentOptionsForProductType(productTypeName) {
+        const productType = getProductTypeConfig(productTypeName);
+        const merged = [];
+        const seen = new Set();
+
+        const pushOption = (name, label = '') => {
+            const value = String(name || '').trim();
+            if (!value) return;
+            const key = normalizeDepartmentKey(value);
+            if (!key || seen.has(key)) return;
+            seen.add(key);
+            merged.push({
+                name: value,
+                display_name: String(label || '').trim() || value,
+            });
+        };
+
+        for (const group of responsibleDepartmentGroups) {
+            pushOption(getDepartmentOptionValue(group), getDepartmentOptionLabel(group));
+        }
+
+        const steps = Array.isArray(productType?.processSteps) ? productType.processSteps : [];
+        for (const step of steps) {
+            for (const department of getProcessResponsibleDepartments(step)) {
+                pushOption(department, getDepartmentLabelByValue(department));
+            }
+        }
+
+        return merged.sort((a, b) => {
+            return normalizeDepartmentKey(a.display_name).localeCompare(normalizeDepartmentKey(b.display_name), 'zh-CN');
+        });
+    }
+
+    function renderDepartmentAssignmentDepartmentOptions(productTypeName, selectedDepartment = '') {
+        const select = document.getElementById('departmentAssignmentDepartment');
+        if (!select) return;
+
+        const selectedKey = normalizeDepartmentKey(selectedDepartment);
+        const options = getDepartmentOptionsForProductType(productTypeName);
+        select.innerHTML = '<option value="">-- 请选择责任部门 --</option>';
+        for (const optionData of options) {
+            const option = document.createElement('option');
+            option.value = optionData.name;
+            option.textContent = optionData.display_name || optionData.name;
+            if (selectedKey && normalizeDepartmentKey(optionData.name) === selectedKey) {
+                option.selected = true;
+            }
+            select.appendChild(option);
+        }
+    }
+
+    function renderDepartmentAssignmentChecklist(productTypeName, selectedDepartment = '') {
+        const checklist = document.getElementById('departmentAssignmentChecklist');
+        if (!checklist) return;
+
+        const productType = getProductTypeConfig(productTypeName);
+        const steps = Array.isArray(productType?.processSteps) ? [...productType.processSteps] : [];
+        steps.sort((a, b) => Number(a?.order || 0) - Number(b?.order || 0));
+
+        const departmentKey = normalizeDepartmentKey(selectedDepartment);
+        if (steps.length === 0) {
+            checklist.innerHTML = '<div style="color:#718096;">当前产品类型暂无工序。</div>';
+            return;
+        }
+
+        checklist.innerHTML = steps.map((step) => {
+            const departments = getProcessResponsibleDepartments(step);
+            const checked = departmentKey && departments.some((item) => normalizeDepartmentKey(item) === departmentKey);
+            const otherDepartments = departments
+                .filter((item) => normalizeDepartmentKey(item) !== departmentKey)
+                .map((item) => getDepartmentLabelByValue(item) || item);
+            const metaText = otherDepartments.length > 0
+                ? `其它责任部门：${otherDepartments.join('、')}`
+                : '当前没有其它责任部门';
+            return `
+                <label class="department-checklist-item">
+                    <input type="checkbox" value="${escapeHtml(String(step.id || ''))}" ${checked ? 'checked' : ''}>
+                    <div>
+                        <strong>${Number(step.order || 0) ? `${Number(step.order || 0)}. ` : ''}${escapeHtml(String(step.name || '').trim() || '未命名工序')}</strong>
+                        <small>${escapeHtml(metaText)}</small>
+                    </div>
+                </label>
+            `;
+        }).join('');
+    }
+
+    function openDepartmentAssignmentModal(productTypeName, initialDepartment = '') {
+        document.getElementById('departmentAssignmentProductType').value = productTypeName;
+        renderDepartmentAssignmentDepartmentOptions(productTypeName, initialDepartment);
+        renderDepartmentAssignmentChecklist(productTypeName, initialDepartment);
+        openModal('departmentAssignmentModal');
+    }
+
+    async function saveDepartmentAssignment(event) {
+        event.preventDefault();
+
+        const productTypeName = document.getElementById('departmentAssignmentProductType')?.value.trim() || '';
+        const departmentName = document.getElementById('departmentAssignmentDepartment')?.value.trim() || '';
+        if (!productTypeName || !departmentName) {
+            showMessage('请先选择责任部门', 'error');
+            return;
+        }
+
+        const checklist = document.getElementById('departmentAssignmentChecklist');
+        const processIds = Array.from(checklist?.querySelectorAll('input[type="checkbox"]:checked') || [])
+            .map((item) => String(item.value || '').trim())
+            .filter(Boolean);
+
+        const result = await apiRequest(
+            `/api/process-config/projects/${encodeURIComponent(projectName)}/product-types/${encodeURIComponent(productTypeName)}/responsibility-departments/${encodeURIComponent(departmentName)}`,
+            {
+                method: 'PUT',
+                body: JSON.stringify({ processIds }),
+            }
+        );
+
+        if (result.success) {
+            showMessage(result.message || '责任部门批量配置成功', 'success');
+            closeModal('departmentAssignmentModal');
+            location.reload();
+        } else {
+            showMessage(result.message || result.error || '责任部门批量配置失败', 'error');
+        }
+    }
+
+    function resetCopySourceTypeOptions(placeholder = '-- 先选择来源项目 --') {
+        const sourceTypeSelect = document.getElementById('productTypeCopySourceType');
+        if (!sourceTypeSelect) return;
+        sourceTypeSelect.innerHTML = `<option value="">${placeholder}</option>`;
+        sourceTypeSelect.disabled = true;
+    }
+
+    function populateSelectOptions(selectElement, options, placeholder) {
+        if (!selectElement) return;
+        selectElement.innerHTML = '';
+
+        const placeholderOption = document.createElement('option');
+        placeholderOption.value = '';
+        placeholderOption.textContent = placeholder;
+        selectElement.appendChild(placeholderOption);
+
+        for (const option of options) {
+            if (!option || !String(option.value || '').trim()) continue;
+            const optionElement = document.createElement('option');
+            optionElement.value = String(option.value || '').trim();
+            optionElement.textContent = String(option.label || option.value || '').trim();
+            selectElement.appendChild(optionElement);
+        }
+    }
+
+    async function apiRequestWithTimeout(url, options = {}, timeoutMs = COPY_SOURCE_REQUEST_TIMEOUT_MS) {
+        const requestOptions = { ...(options || {}) };
+        const canAbort =
+            !requestOptions.signal
+            && typeof AbortController === 'function'
+            && Number.isFinite(timeoutMs)
+            && timeoutMs > 0;
+        const abortController = canAbort ? new AbortController() : null;
+        let timeoutId = null;
+
+        if (abortController) {
+            requestOptions.signal = abortController.signal;
+            timeoutId = window.setTimeout(() => {
+                abortController.abort();
+            }, timeoutMs);
+        }
+
+        try {
+            const result = await apiRequest(url, requestOptions);
+            if (result?.aborted && abortController?.signal?.aborted) {
+                throw new Error('请求超时，请重试');
+            }
+            return result;
+        } finally {
+            if (timeoutId !== null) {
+                window.clearTimeout(timeoutId);
+            }
+        }
+    }
+
+    function syncAddProductTypeCopyMode() {
+        const sourceProjectName = document.getElementById('productTypeCopySourceProject')?.value.trim() || '';
+        const sourceTypeName = document.getElementById('productTypeCopySourceType')?.value.trim() || '';
+        const isCopyMode = Boolean(sourceProjectName && sourceTypeName);
+
+        const modelInput = document.getElementById('productTypeModelNumber');
+        const serialRulesInput = document.getElementById('productTypeSerialRules');
+        const forceVersionCheckInput = document.getElementById('productTypeForceVersionCheck');
+        const help = document.getElementById('productTypeCopyHelp');
+
+        if (modelInput) modelInput.disabled = isCopyMode;
+        if (serialRulesInput) serialRulesInput.disabled = isCopyMode;
+        if (forceVersionCheckInput) forceVersionCheckInput.disabled = isCopyMode;
+
+        if (help) {
+            help.textContent = isCopyMode
+                ? '💡 当前将复制源产品的完整配置；产品型号、二维码规则和版本检查会自动沿用源配置。'
+                : '💡 复制时会沿用源产品的型号、二维码规则、版本检查、物料配置和工序配置；当前只需要填写新的产品类型名称。';
+        }
+    }
+
+    async function loadCopySourceProjects(forceReload = false) {
+        if (copySourceProjectsLoaded && !forceReload) {
+            return;
+        }
+
+        const sourceProjectSelect = document.getElementById('productTypeCopySourceProject');
+        if (!sourceProjectSelect) return;
+
+        try {
+            const result = await apiRequestWithTimeout('/api/projects');
+            if (!result || result.success !== true) {
+                throw new Error(result?.message || '项目列表加载失败');
+            }
+
+            const previousValue = sourceProjectSelect.value;
+            const projects = Array.isArray(result.projects) ? result.projects : [];
+            const options = [];
+            for (const rawProjectName of projects) {
+                const name = String(rawProjectName || '').trim();
+                if (!name || name === projectName) continue;
+                options.push({ value: name, label: name });
+            }
+
+            populateSelectOptions(sourceProjectSelect, options, '-- 不复制，创建空白产品 --');
+            if (previousValue && projects.includes(previousValue) && previousValue !== projectName) {
+                sourceProjectSelect.value = previousValue;
+            }
+            copySourceProjectsLoaded = true;
+        } catch (error) {
+            console.warn('加载可复制项目失败:', error);
+            sourceProjectSelect.innerHTML = '<option value="">-- 项目加载失败，请稍后重试 --</option>';
+        }
+    }
+
+    async function loadCopySourceProductTypes(sourceProjectName) {
+        const sourceTypeSelect = document.getElementById('productTypeCopySourceType');
+        if (!sourceTypeSelect) return;
+        const requestId = ++latestCopySourceProductTypeRequestId;
+
+        if (!sourceProjectName) {
+            resetCopySourceTypeOptions();
+            syncAddProductTypeCopyMode();
+            return;
+        }
+
+        sourceTypeSelect.innerHTML = '<option value="">-- 正在加载源产品类型 --</option>';
+        sourceTypeSelect.disabled = true;
+
+        try {
+            let config = copySourceProductTypeCache.get(sourceProjectName);
+            if (!config) {
+                const result = await apiRequestWithTimeout(`/api/projects/${encodeURIComponent(sourceProjectName)}/config`);
+                if (!result || result.success !== true) {
+                    throw new Error(result?.message || '项目配置加载失败');
+                }
+                if (requestId !== latestCopySourceProductTypeRequestId) {
+                    return;
+                }
+                config = result.config || {};
+                copySourceProductTypeCache.set(sourceProjectName, config);
+            }
+
+            if (requestId !== latestCopySourceProductTypeRequestId) {
+                return;
+            }
+
+            const productTypes = Array.isArray(config.productTypes) ? config.productTypes : [];
+            if (productTypes.length === 0) {
+                resetCopySourceTypeOptions('-- 来源项目没有可复制的产品类型 --');
+                syncAddProductTypeCopyMode();
+                return;
+            }
+
+            const options = [];
+            for (const productType of productTypes) {
+                const typeName = String(productType?.typeName || '').trim();
+                if (!typeName) continue;
+                const modelNumber = String(productType?.modelNumber || '').trim();
+                const label = modelNumber ? `${typeName} (${modelNumber})` : typeName;
+                options.push({ value: typeName, label: label });
+            }
+
+            populateSelectOptions(sourceTypeSelect, options, '-- 请选择源产品类型 --');
+            sourceTypeSelect.disabled = false;
+        } catch (error) {
+            if (requestId !== latestCopySourceProductTypeRequestId) {
+                return;
+            }
+            console.warn('加载源产品类型失败:', error);
+            const errorMessage = String(error?.message || '').trim();
+            const placeholder = errorMessage.includes('超时')
+                ? '-- 源产品类型加载超时，请重试 --'
+                : '-- 源产品类型加载失败，请重试 --';
+            resetCopySourceTypeOptions(placeholder);
+            showMessage(`加载源产品类型失败：${errorMessage || '请稍后重试'}`, 'error');
+        }
+
+        if (requestId === latestCopySourceProductTypeRequestId) {
+            syncAddProductTypeCopyMode();
+        }
+    }
+
+    function openAddProductTypeModal() {
+        openModal('addProductTypeModal');
+        syncAddProductTypeCopyMode();
+        loadCopySourceProjects();
+    }
+
+    function applyQcPolicyToForm(policy) {
+        const current = policy || {};
+        document.getElementById('qcEnabled').checked = current.qc_enabled !== false;
+        document.getElementById('qcRealtimeEnabled').checked = current.realtime_qc_enabled !== false;
+        document.getElementById('qcCheckPreviousPhotos').checked = current.check_previous_photos !== false;
+        document.getElementById('qcEnforcementMode').value = current.enforcement_mode === 'block' ? 'block' : 'warn';
+        document.getElementById('qcConfidenceThreshold').value = Number.isFinite(Number(current.confidence_threshold))
+            ? Number(current.confidence_threshold)
+            : 0.8;
+        document.getElementById('qcGlobalVisionModel').textContent = (current.vision_model || 'qwen3-vl-flash').trim();
+    }
+
+    function collectQcPolicyFromForm() {
+        let threshold = Number(document.getElementById('qcConfidenceThreshold').value);
+        if (!Number.isFinite(threshold)) {
+            threshold = 0.8;
+        }
+        threshold = Math.max(0, Math.min(1, threshold));
+        document.getElementById('qcConfidenceThreshold').value = threshold;
+
+        return {
+            qc_enabled: document.getElementById('qcEnabled').checked,
+            realtime_qc_enabled: document.getElementById('qcRealtimeEnabled').checked,
+            check_previous_photos: document.getElementById('qcCheckPreviousPhotos').checked,
+            enforcement_mode: document.getElementById('qcEnforcementMode').value === 'block' ? 'block' : 'warn',
+            confidence_threshold: threshold,
+        };
+    }
+
+    async function loadQcPolicy() {
+        try {
+            const result = await apiRequest(`/api/qc/config/${encodeURIComponent(projectName)}`);
+            if (!result.success) {
+                throw new Error(result.message || '读取QC策略失败');
+            }
+            const policy = result.data || {};
+            applyQcPolicyToForm(policy);
+        } catch (error) {
+            showMessage(`读取QC策略失败：${error.message}`, 'error');
+        }
+    }
+
+    async function saveQcPolicy() {
+        const saveBtn = document.getElementById('saveQcPolicyBtn');
+        if (saveBtn) saveBtn.disabled = true;
+        try {
+            const payload = collectQcPolicyFromForm();
+            const result = await apiRequest(`/api/qc/config/${encodeURIComponent(projectName)}`, {
+                method: 'PUT',
+                body: JSON.stringify(payload),
+            });
+
+            if (!result.success) {
+                throw new Error(result.message || '保存QC策略失败');
+            }
+            applyQcPolicyToForm(result.data || payload);
+            showMessage(result.message || 'QC策略保存成功', 'success');
+        } catch (error) {
+            showMessage(`保存QC策略失败：${error.message}`, 'error');
+        } finally {
+            if (saveBtn) saveBtn.disabled = false;
+        }
+    }
+
+    function applyQualityReleaseRulesToForm(data) {
+        const current = data || {};
+        const rules = current.defaultRules || {};
+        document.getElementById('qualityWorkbenchEnabled').checked = current.enabled !== false;
+        document.getElementById('ruleRecordRequired').value = rules.recordRequired || 'block';
+        document.getElementById('ruleMaterialComplete').value = rules.materialComplete || 'block';
+        document.getElementById('rulePhotoCoverage').value = rules.photoCoverage || 'review';
+        document.getElementById('ruleQcPassRequired').value = rules.qcPassRequired || 'block';
+        document.getElementById('ruleHilReportRequired').value = rules.hilReportRequired || 'ignore';
+        document.getElementById('ruleBemfReportRequired').value = rules.bemfReportRequired || 'ignore';
+    }
+
+    function collectQualityReleaseRulesFromForm() {
+        return {
+            enabled: document.getElementById('qualityWorkbenchEnabled').checked,
+            defaultRules: {
+                recordRequired: document.getElementById('ruleRecordRequired').value || 'block',
+                materialComplete: document.getElementById('ruleMaterialComplete').value || 'block',
+                photoCoverage: document.getElementById('rulePhotoCoverage').value || 'review',
+                qcPassRequired: document.getElementById('ruleQcPassRequired').value || 'block',
+                hilReportRequired: document.getElementById('ruleHilReportRequired').value || 'ignore',
+                bemfReportRequired: document.getElementById('ruleBemfReportRequired').value || 'ignore',
+            }
+        };
+    }
+
+    async function loadQualityReleaseRules() {
+        try {
+            const result = await apiRequest(`/api/qc/release-rules/${encodeURIComponent(projectName)}`);
+            if (!result.success) {
+                throw new Error(result.message || '读取质量放行规则失败');
+            }
+            applyQualityReleaseRulesToForm(result.data || {});
+        } catch (error) {
+            showMessage(`读取质量放行规则失败：${error.message}`, 'error');
+        }
+    }
+
+    async function saveQualityReleaseRules() {
+        const saveBtn = document.getElementById('saveQualityRulesBtn');
+        if (saveBtn) saveBtn.disabled = true;
+        try {
+            const payload = collectQualityReleaseRulesFromForm();
+            const result = await apiRequest(`/api/qc/release-rules/${encodeURIComponent(projectName)}`, {
+                method: 'PUT',
+                body: JSON.stringify(payload),
+            });
+            if (!result.success) {
+                throw new Error(result.message || '保存质量放行规则失败');
+            }
+            applyQualityReleaseRulesToForm(result.data || payload);
+            showMessage(result.message || '质量放行规则保存成功', 'success');
+            window.location.reload();
+        } catch (error) {
+            showMessage(`保存质量放行规则失败：${error.message}`, 'error');
+        } finally {
+            if (saveBtn) saveBtn.disabled = false;
+        }
+    }
+
+
+
+    function collectProductTypeQualityRules(index) {
+        return {
+            qualityRules: {
+                recordRequired: document.getElementById(`ptRuleRecordRequired-${index}`)?.value || 'block',
+                materialComplete: document.getElementById(`ptRuleMaterialComplete-${index}`)?.value || 'block',
+                photoCoverage: document.getElementById(`ptRulePhotoCoverage-${index}`)?.value || 'review',
+                qcPassRequired: document.getElementById(`ptRuleQcPassRequired-${index}`)?.value || 'block',
+                hilReportRequired: document.getElementById(`ptRuleHilReportRequired-${index}`)?.value || 'ignore',
+                bemfReportRequired: document.getElementById(`ptRuleBemfReportRequired-${index}`)?.value || 'ignore',
+            }
+        };
+    }
+
+    function applyProductTypeQualityRules(index, data) {
+        const rules = data?.qualityRules || {};
+        const defaults = data?.defaultRules || {};
+        const merged = {
+            recordRequired: rules.recordRequired || defaults.recordRequired || 'block',
+            materialComplete: rules.materialComplete || defaults.materialComplete || 'block',
+            photoCoverage: rules.photoCoverage || defaults.photoCoverage || 'review',
+            qcPassRequired: rules.qcPassRequired || defaults.qcPassRequired || 'block',
+            hilReportRequired: rules.hilReportRequired || defaults.hilReportRequired || 'ignore',
+            bemfReportRequired: rules.bemfReportRequired || defaults.bemfReportRequired || 'ignore',
+        };
+        const mapping = {
+            [`ptRuleRecordRequired-${index}`]: merged.recordRequired,
+            [`ptRuleMaterialComplete-${index}`]: merged.materialComplete,
+            [`ptRulePhotoCoverage-${index}`]: merged.photoCoverage,
+            [`ptRuleQcPassRequired-${index}`]: merged.qcPassRequired,
+            [`ptRuleHilReportRequired-${index}`]: merged.hilReportRequired,
+            [`ptRuleBemfReportRequired-${index}`]: merged.bemfReportRequired,
+        };
+        Object.entries(mapping).forEach(([id, value]) => {
+            const el = document.getElementById(id);
+            if (el) el.value = value;
+        });
+    }
+
+    async function saveProductTypeQualityRules(productTypeName, index, button = null) {
+        const originalText = button ? button.innerHTML : '';
+        if (button) {
+            button.disabled = true;
+            button.dataset.loading = '1';
+            button.innerHTML = '\u23f3 \u4fdd\u5b58\u4e2d...';
+        }
+        try {
+            const result = await apiRequest(`/api/qc/release-rules/${encodeURIComponent(projectName)}/product-types/${encodeURIComponent(productTypeName)}`, {
+                method: 'PUT',
+                body: JSON.stringify(collectProductTypeQualityRules(index)),
+            });
+            if (!result.success) {
+                throw new Error(result.message || '\u4fdd\u5b58\u4ea7\u54c1\u7c7b\u578b\u8d28\u91cf\u89c4\u5219\u5931\u8d25');
+            }
+            applyProductTypeQualityRules(index, result.data || {});
+            showMessage(result.message || '\u4ea7\u54c1\u7c7b\u578b\u8d28\u91cf\u89c4\u5219\u5df2\u4fdd\u5b58', 'success');
+            window.location.reload();
+        } catch (error) {
+            showMessage(`\u4fdd\u5b58\u4ea7\u54c1\u7c7b\u578b\u8d28\u91cf\u89c4\u5219\u5931\u8d25\uff1a${error.message}`, 'error');
+        } finally {
+            if (button) {
+                button.disabled = false;
+                button.dataset.loading = '0';
+                button.innerHTML = originalText || '\ud83d\udcbe \u4fdd\u5b58\u89c4\u5219';
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadQcPolicy();
+        loadQualityReleaseRules();
+        renderDepartmentSummaries();
+        loadResponsibleDepartmentOptions();
+        loadCopySourceProjects();
+        document.addEventListener('click', (event) => {
+            const trigger = event.target?.closest?.('.js-save-product-quality-rules');
+            if (!trigger) return;
+            const productTypeName = trigger.getAttribute('data-product-type') || '';
+            const index = Number(trigger.getAttribute('data-rule-index') || '-1');
+            if (!productTypeName || Number.isNaN(index) || index < 0) {
+                showMessage('\u65e0\u6cd5\u8bc6\u522b\u5f53\u524d\u4ea7\u54c1\u7c7b\u578b\u89c4\u5219', 'error');
+                return;
+            }
+            if (trigger.dataset.loading === '1') return;
+            saveProductTypeQualityRules(productTypeName, index, trigger);
+        });
+
+        document.addEventListener('click', (event) => {
+            const trigger = event.target?.closest?.('.js-open-department-assignment');
+            if (!trigger) return;
+            const productTypeName = trigger.getAttribute('data-product-type') || '';
+            const departmentName = trigger.getAttribute('data-department-name') || '';
+            openDepartmentAssignmentModal(productTypeName, departmentName);
+        });
+        document.getElementById('departmentAssignmentDepartment')?.addEventListener('change', (event) => {
+            const productTypeName = document.getElementById('departmentAssignmentProductType')?.value.trim() || '';
+            renderDepartmentAssignmentChecklist(productTypeName, event.target?.value || '');
+        });
+        document.getElementById('materialQrRuleType')?.addEventListener('change', () => {
+            syncMaterialVersionField('materialQrRuleType', 'materialExpectedVersion', 'materialQrRuleTypeHelp');
+        });
+        document.getElementById('editMaterialQrRuleType')?.addEventListener('change', () => {
+            syncMaterialVersionField('editMaterialQrRuleType', 'editMaterialExpectedVersion', 'editMaterialQrRuleTypeHelp');
+        });
+        document.getElementById('productTypeCopySourceProject')?.addEventListener('change', async () => {
+            await loadCopySourceProductTypes(
+                document.getElementById('productTypeCopySourceProject')?.value.trim() || ''
+            );
+        });
+        document.getElementById('productTypeCopySourceType')?.addEventListener('change', () => {
+            syncAddProductTypeCopyMode();
+        });
+        syncMaterialVersionField('materialQrRuleType', 'materialExpectedVersion', 'materialQrRuleTypeHelp');
+        syncMaterialVersionField('editMaterialQrRuleType', 'editMaterialExpectedVersion', 'editMaterialQrRuleTypeHelp');
+        resetCopySourceTypeOptions();
+        syncAddProductTypeCopyMode();
+    });
+
+    function parseSerialRulesFromTextarea(raw) {
+        const text = String(raw || '').trim();
+        if (!text) return [];
+        const rows = text
+            .split(/\r?\n|,|，|;|；/)
+            .map(item => item.trim())
+            .filter(Boolean);
+        const deduped = [];
+        const seen = new Set();
+        for (const prefix of rows) {
+            const key = prefix.toLowerCase();
+            if (seen.has(key)) continue;
+            seen.add(key);
+            deduped.push(prefix);
+        }
+        return deduped;
+    }
+
+    function formatSerialRulesToTextarea(rawRules) {
+        if (typeof rawRules === 'string') {
+            return rawRules
+                .split(/\r?\n|,|，|;|；/)
+                .map(item => item.trim())
+                .filter(Boolean)
+                .join('\n');
+        }
+        if (!Array.isArray(rawRules) || rawRules.length === 0) return '';
+        const rows = [];
+        for (const item of rawRules) {
+            if (typeof item === 'string') {
+                const prefix = item.trim();
+                if (prefix) rows.push(prefix);
+                continue;
+            }
+            if (item && typeof item === 'object') {
+                const prefix = String(item.prefix || item.value || item.rule || item.serialPrefix || '').trim();
+                if (prefix) rows.push(prefix);
+            }
+        }
+        return rows.join('\n');
+    }
+
+    function syncMaterialVersionField(ruleTypeElementId, versionElementId, helpElementId) {
+        const ruleTypeElement = document.getElementById(ruleTypeElementId);
+        const versionElement = document.getElementById(versionElementId);
+        const helpElement = document.getElementById(helpElementId);
+        if (!ruleTypeElement || !versionElement) return;
+
+        const isPcb = String(ruleTypeElement.value || '').toLowerCase() === 'pcb';
+        versionElement.disabled = !isPcb;
+        if (!isPcb) {
+            versionElement.value = '';
+            versionElement.placeholder = '电机规则暂不支持版本号检查';
+        } else {
+            versionElement.placeholder = '例如：A0';
+        }
+
+        if (helpElement) {
+            helpElement.textContent = isPcb
+                ? '💡 PCB规则支持版本号校验。'
+                : '💡 电机规则当前仅做兼容，不支持版本号检查。';
+        }
+    }
+
+    async function addProductType(event) {
+        event.preventDefault();
+
+        const typeName = document.getElementById('productTypeName').value.trim();
+        const modelNumber = document.getElementById('productTypeModelNumber').value.trim();
+        const copyFromProject = document.getElementById('productTypeCopySourceProject').value.trim();
+        const copyFromType = document.getElementById('productTypeCopySourceType').value.trim();
+        const serialRules = parseSerialRulesFromTextarea(
+            document.getElementById('productTypeSerialRules').value
+        );
+        const forceVersionCheck = document.getElementById('productTypeForceVersionCheck').checked;
+
+        if ((copyFromProject && !copyFromType) || (!copyFromProject && copyFromType)) {
+            showMessage('请选择完整的复制来源项目和源产品类型', 'error');
+            return;
+        }
+
+        const result = await apiRequest(`/api/projects/${encodeURIComponent(projectName)}/product-types`, {
+            method: 'POST',
+            body: JSON.stringify({ 
+                typeName: typeName,
+                modelNumber: modelNumber,
+                serialRules: serialRules,
+                forceVersionCheck: forceVersionCheck,
+                copyFromProject: copyFromProject,
+                copyFromType: copyFromType
+            })
+        });
+
+        if (result.success) {
+            showMessage(result.message, 'success');
+            closeModal('addProductTypeModal');
+            document.getElementById('addProductTypeForm').reset();
+            resetCopySourceTypeOptions();
+            syncAddProductTypeCopyMode();
+            location.reload();
+        } else {
+            showMessage(result.message, 'error');
+        }
+    }
+
+    function openEditProductTypeModal(typeName, modelNumber, serialRules, forceVersionCheck) {
+        document.getElementById('editProductTypeName').value = typeName;
+        document.getElementById('editProductTypeDisplayName').value = typeName;
+        document.getElementById('editProductTypeModelNumber').value = String(modelNumber || '').trim();
+        document.getElementById('editProductTypeSerialRules').value = formatSerialRulesToTextarea(serialRules);
+        document.getElementById('editProductTypeForceVersionCheck').checked = Boolean(forceVersionCheck);
+        openModal('editProductTypeModal');
+    }
+
+    async function updateProductType(event) {
+        event.preventDefault();
+
+        const typeName = document.getElementById('editProductTypeName').value;
+        const modelNumber = document.getElementById('editProductTypeModelNumber').value.trim();
+        const serialRules = parseSerialRulesFromTextarea(
+            document.getElementById('editProductTypeSerialRules').value
+        );
+        const forceVersionCheck = document.getElementById('editProductTypeForceVersionCheck').checked;
+
+        const result = await apiRequest(
+            `/api/projects/${encodeURIComponent(projectName)}/product-types/${encodeURIComponent(typeName)}`,
+            {
+                method: 'PUT',
+                body: JSON.stringify({
+                    modelNumber: modelNumber,
+                    serialRules: serialRules,
+                    forceVersionCheck: forceVersionCheck
+                })
+            }
+        );
+
+        if (result.success) {
+            showMessage(result.message, 'success');
+            closeModal('editProductTypeModal');
+            location.reload();
+        } else {
+            showMessage(result.message, 'error');
+        }
+    }
+
+    async function deleteProductType(typeName) {
+        if (!confirmAction(`确定要删除产品类型 "${typeName}" 吗？\n\n该类型下的所有物料配置也将被删除！`)) {
+            return;
+        }
+
+        const result = await apiRequest(`/api/projects/${encodeURIComponent(projectName)}/product-types/${encodeURIComponent(typeName)}`, {
+            method: 'DELETE'
+        });
+
+        if (result.success) {
+            showMessage(result.message, 'success');
+            location.reload();
+        } else {
+            showMessage(result.message, 'error');
+        }
+    }
+
+    function openAddMaterialModal(productTypeName, forceVersionCheck = false) {
+        document.getElementById('targetProductType').value = productTypeName;
+        document.getElementById('materialQrRuleType').value = forceVersionCheck ? 'pcb' : 'motor';
+        document.getElementById('materialExpectedVersion').value = '';
+        syncMaterialVersionField('materialQrRuleType', 'materialExpectedVersion', 'materialQrRuleTypeHelp');
+        openModal('addMaterialModal');
+    }
+
+    async function addMaterial(event) {
+        event.preventDefault();
+
+        const productTypeName = document.getElementById('targetProductType').value;
+        const materialName = document.getElementById('materialName').value.trim();
+        const partNumber = document.getElementById('partNumber').value.trim();
+        const qrRuleType = document.getElementById('materialQrRuleType').value;
+        const expectedVersion = qrRuleType === 'pcb'
+            ? document.getElementById('materialExpectedVersion').value.trim()
+            : '';
+
+        const result = await apiRequest(`/api/projects/${encodeURIComponent(projectName)}/product-types/${encodeURIComponent(productTypeName)}/materials`, {
+            method: 'POST',
+            body: JSON.stringify({ name: materialName, partNumber, qrRuleType, expectedVersion })
+        });
+
+        if (result.success) {
+            showMessage(result.message, 'success');
+            closeModal('addMaterialModal');
+            document.getElementById('addMaterialForm').reset();
+            location.reload();
+        } else {
+            showMessage(result.message, 'error');
+        }
+    }
+
+    function buildMaterialApiUrl(productTypeName, materialName) {
+        return `/api/projects/${encodeURIComponent(projectName)}/product-types/${encodeURIComponent(productTypeName)}/materials/${encodeURIComponent(materialName)}`;
+    }
+
+    function editMaterial(productTypeName, materialName, partNumber, qrRuleType, expectedVersion) {
+        document.getElementById('editTargetProductType').value = productTypeName;
+        document.getElementById('editOriginalMaterialName').value = materialName;
+        document.getElementById('editMaterialName').value = materialName;
+        document.getElementById('editPartNumber').value = partNumber;
+        document.getElementById('editMaterialQrRuleType').value = String(qrRuleType || 'motor').toLowerCase();
+        document.getElementById('editMaterialExpectedVersion').value = String(expectedVersion || '').trim();
+        syncMaterialVersionField('editMaterialQrRuleType', 'editMaterialExpectedVersion', 'editMaterialQrRuleTypeHelp');
+        openModal('editMaterialModal');
+    }
+
+    async function updateMaterial(event) {
+        event.preventDefault();
+
+        const productTypeName = document.getElementById('editTargetProductType').value;
+        const originalName = document.getElementById('editOriginalMaterialName').value;
+        const newName = document.getElementById('editMaterialName').value.trim();
+        const newPartNumber = document.getElementById('editPartNumber').value.trim();
+        const newQrRuleType = document.getElementById('editMaterialQrRuleType').value;
+        const newExpectedVersion = newQrRuleType === 'pcb'
+            ? document.getElementById('editMaterialExpectedVersion').value.trim()
+            : '';
+
+        const result = await apiRequest(buildMaterialApiUrl(productTypeName, originalName), {
+            method: 'PUT',
+            body: JSON.stringify({ name: newName, partNumber: newPartNumber, qrRuleType: newQrRuleType, expectedVersion: newExpectedVersion })
+        });
+
+        if (result.success) {
+            showMessage(result.message, 'success');
+            closeModal('editMaterialModal');
+            location.reload();
+        } else {
+            showMessage(result.message, 'error');
+        }
+    }
+
+    async function deleteMaterial(productTypeName, materialName) {
+        if (!confirmAction(`确定要删除物料 "${materialName}" 吗？`)) {
+            return;
+        }
+
+        const result = await apiRequest(buildMaterialApiUrl(productTypeName, materialName), {
+            method: 'DELETE'
+        });
+
+        if (result.success) {
+            showMessage(result.message, 'success');
+
+            // 移除表格行
+            const row = document.querySelector(`tr[data-type="${productTypeName}"][data-material="${materialName}"]`);
+            if (row) {
+                row.remove();
+            }
+        } else {
+            showMessage(result.message, 'error');
+        }
+    }
+
+    // ==================== 工序管理函数 ====================
+
+    function parseSubChecksFromTextarea(raw) {
+        const text = String(raw || '').trim();
+        if (!text) return [];
+        const rows = text
+            .split(/\r?\n|,|，|;|；/)
+            .map(item => item.trim())
+            .filter(Boolean);
+        const seen = new Set();
+        const result = [];
+        for (const name of rows) {
+            const key = name.toLowerCase().replace(/[\s._-]+/g, '_').replace(/[^\w\u4e00-\u9fff]+/g, '').replace(/^_+|_+$/g, '');
+            if (!key || seen.has(key)) continue;
+            seen.add(key);
+            result.push({ key, name, required: true, aliases: [] });
+        }
+        return result;
+    }
+
+    function formatSubChecksToTextarea(rawSubChecks) {
+        if (!Array.isArray(rawSubChecks) || rawSubChecks.length === 0) return '';
+        const names = [];
+        for (const row of rawSubChecks) {
+            if (typeof row === 'string') {
+                const val = row.trim();
+                if (val) names.push(val);
+                continue;
+            }
+            if (row && typeof row === 'object') {
+                const val = String(row.name || row.label || row.detailLabel || row.detail_label || row.key || '').trim();
+                if (val) names.push(val);
+            }
+        }
+        return names.join('\n');
+    }
+
+    function parseNonNegativeInt(raw, defaultValue = 0) {
+        const parsed = Number(raw);
+        if (!Number.isFinite(parsed) || parsed < 0) {
+            return defaultValue;
+        }
+        return Math.round(parsed);
+    }
+
+    function normalizePromptText(raw) {
+        return String(raw || '').trim();
+    }
+
+    function openAddProcessModal(productTypeName) {
+        document.getElementById('processTargetProductType').value = productTypeName;
+        // 重置表单
+        document.getElementById('addProcessForm').reset();
+        document.getElementById('processOrder').value = 1;
+        document.getElementById('processEstimatedDuration').value = 300;
+        document.getElementById('processRequired').checked = true;
+        document.getElementById('processPhotoRequired').checked = true;
+        document.getElementById('processAttachmentType').value = 'photo';
+        document.getElementById('processSubChecks').value = '';
+        document.getElementById('processExpectedScrewCount').value = '';
+        document.getElementById('processSpecialProcesses').value = '';
+        document.getElementById('processSpecialParts').value = '';
+        document.getElementById('processExtraFocus').value = '';
+        document.getElementById('processPrePrompt').value = '';
+        renderResponsibleDepartmentSelect('processResponsibleDepartments', []);
+        openModal('addProcessModal');
+    }
+
+    async function addProcess(event) {
+        event.preventDefault();
+
+        const productTypeName = document.getElementById('processTargetProductType').value;
+        const processData = {
+            name: document.getElementById('processName').value.trim(),
+            description: document.getElementById('processDescription').value.trim(),
+            order: parseInt(document.getElementById('processOrder').value),
+            estimatedDuration: parseInt(document.getElementById('processEstimatedDuration').value),
+            required: document.getElementById('processRequired').checked,
+            photoRequired: document.getElementById('processPhotoRequired').checked,
+            attachmentType: document.getElementById('processAttachmentType').value,
+            subChecks: parseSubChecksFromTextarea(document.getElementById('processSubChecks').value),
+            expectedScrewCount: parseNonNegativeInt(document.getElementById('processExpectedScrewCount').value, 0),
+            specialProcesses: normalizePromptText(document.getElementById('processSpecialProcesses').value),
+            specialParts: normalizePromptText(document.getElementById('processSpecialParts').value),
+            extraFocus: normalizePromptText(document.getElementById('processExtraFocus').value),
+            prePrompt: normalizePromptText(document.getElementById('processPrePrompt').value),
+            responsibleDepartments: getSelectedResponsibleDepartments('processResponsibleDepartments'),
+        };
+
+        // 添加productType字段
+        processData.productType = productTypeName;
+
+        const result = await apiRequest(`/api/process-config/projects/${encodeURIComponent(projectName)}/processes`, {
+            method: 'POST',
+            body: JSON.stringify(processData)
+        });
+
+        if (result.success) {
+            showMessage(result.message, 'success');
+            closeModal('addProcessModal');
+            document.getElementById('addProcessForm').reset();
+            location.reload();
+        } else {
+            showMessage(result.message, 'error');
+        }
+    }
+
+    function editProcess(productTypeName, process) {
+        document.getElementById('editProcessTargetProductType').value = productTypeName;
+        document.getElementById('editProcessId').value = process.id;
+        document.getElementById('editProcessName').value = process.name;
+        document.getElementById('editProcessDescription').value = process.description || '';
+        document.getElementById('editProcessOrder').value = process.order;
+        document.getElementById('editProcessEstimatedDuration').value = process.estimatedDuration || 300;
+        document.getElementById('editProcessRequired').checked = process.required !== false;
+        document.getElementById('editProcessPhotoRequired').checked = process.photoRequired !== false;
+        document.getElementById('editProcessAttachmentType').value = process.attachmentType || 'photo';
+        document.getElementById('editProcessSubChecks').value = formatSubChecksToTextarea(process.subChecks || process.subchecks || []);
+        document.getElementById('editProcessExpectedScrewCount').value = parseNonNegativeInt(
+            process.expectedScrewCount ?? process.expected_screw_count ?? 0,
+            0
+        ) || '';
+        document.getElementById('editProcessSpecialProcesses').value = normalizePromptText(
+            process.specialProcesses || process.special_processes || ''
+        );
+        document.getElementById('editProcessSpecialParts').value = normalizePromptText(
+            process.specialParts || process.special_parts || ''
+        );
+        document.getElementById('editProcessExtraFocus').value = normalizePromptText(
+            process.extraFocus || process.extra_focus || ''
+        );
+        document.getElementById('editProcessPrePrompt').value = normalizePromptText(
+            process.prePrompt || process.pre_prompt || ''
+        );
+        renderResponsibleDepartmentSelect(
+            'editProcessResponsibleDepartments',
+            process.responsibleDepartments || process.responsible_departments || []
+        );
+        openModal('editProcessModal');
+    }
+
+    async function updateProcess(event) {
+        event.preventDefault();
+
+        const productTypeName = document.getElementById('editProcessTargetProductType').value;
+        const processId = document.getElementById('editProcessId').value;
+        const processData = {
+            name: document.getElementById('editProcessName').value.trim(),
+            description: document.getElementById('editProcessDescription').value.trim(),
+            order: parseInt(document.getElementById('editProcessOrder').value),
+            estimatedDuration: parseInt(document.getElementById('editProcessEstimatedDuration').value),
+            required: document.getElementById('editProcessRequired').checked,
+            photoRequired: document.getElementById('editProcessPhotoRequired').checked,
+            attachmentType: document.getElementById('editProcessAttachmentType').value,
+            subChecks: parseSubChecksFromTextarea(document.getElementById('editProcessSubChecks').value),
+            expectedScrewCount: parseNonNegativeInt(document.getElementById('editProcessExpectedScrewCount').value, 0),
+            specialProcesses: normalizePromptText(document.getElementById('editProcessSpecialProcesses').value),
+            specialParts: normalizePromptText(document.getElementById('editProcessSpecialParts').value),
+            extraFocus: normalizePromptText(document.getElementById('editProcessExtraFocus').value),
+            prePrompt: normalizePromptText(document.getElementById('editProcessPrePrompt').value),
+            responsibleDepartments: getSelectedResponsibleDepartments('editProcessResponsibleDepartments'),
+        };
+
+        // 添加productType字段
+        processData.productType = productTypeName;
+
+        const result = await apiRequest(`/api/process-config/projects/${encodeURIComponent(projectName)}/processes/${encodeURIComponent(processId)}`, {
+            method: 'PUT',
+            body: JSON.stringify(processData)
+        });
+
+        if (result.success) {
+            showMessage(result.message, 'success');
+            closeModal('editProcessModal');
+            location.reload();
+        } else {
+            showMessage(result.message, 'error');
+        }
+    }
+
+    async function deleteProcess(productTypeName, processId) {
+        if (!confirmAction(`确定要删除这个工序吗？`)) {
+            return;
+        }
+
+        const result = await apiRequest(`/api/process-config/projects/${encodeURIComponent(projectName)}/processes/${encodeURIComponent(processId)}?productType=${encodeURIComponent(productTypeName)}`, {
+            method: 'DELETE'
+        });
+
+        if (result.success) {
+            showMessage(result.message, 'success');
+
+            const productType = getProductTypeConfig(productTypeName);
+            if (productType && Array.isArray(productType.processSteps)) {
+                productType.processSteps = productType.processSteps.filter((process) => String(process?.id || '') !== String(processId || ''));
+            }
+            renderDepartmentSummaries();
+
+            const row = document.querySelector(`tr[data-type="${productTypeName}"][data-process="${processId}"]`);
+            if (row) row.remove();
+        } else {
+            showMessage(result.message, 'error');
+        }
+    }
+</script>
+{% endblock %}

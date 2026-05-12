@@ -1,0 +1,1474 @@
+{% extends "base.html" %}
+
+{% block title %}工序照片管理{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/photo-viewer.css">
+<style>
+/* v2.1 - 多列网格布局 */
+.photo-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.photo-card {
+    background: #141d2e;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.photo-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.photo-img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    cursor: pointer;
+    background: #0f1a2a;
+}
+
+.photo-img.lazy {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.photo-img.lazy.loaded {
+    opacity: 1;
+}
+
+.photo-info {
+    padding: 1rem;
+}
+
+.photo-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    color: #e8edf5;
+    word-break: break-all;
+}
+
+.photo-meta {
+    font-size: 0.75rem;
+    color: #5a6f85;
+    margin-bottom: 0.25rem;
+}
+
+.photo-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+.search-section {
+    margin-bottom: 1.5rem;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+    color: #e8edf5;
+    font-size: 0.9rem;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 0.5rem;
+    border: 1px solid #1e2d3d;
+    border-radius: 3px;
+    font-size: 0.9rem;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.filter-group input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(76%) sepia(63%) saturate(644%) hue-rotate(170deg) brightness(105%) contrast(101%);
+    opacity: 1;
+    cursor: pointer;
+}
+
+.filter-group input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    filter: invert(70%) sepia(78%) saturate(1177%) hue-rotate(174deg) brightness(108%) contrast(103%);
+}
+
+.filter-group input[type="date"] {
+    color-scheme: dark;
+}
+
+.stats-grid-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card-photo {
+    background: #141d2e;
+    padding: 1.5rem;
+    border-radius: 4px;
+    border: 2px solid #1e2d3d;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.stat-card-photo:hover {
+    border-color: #00b0ff;
+    box-shadow: 0 4px 12px rgba(0, 176, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+.stat-number {
+    font-size: 2em;
+    font-weight: bold;
+    color: #00b0ff;
+    margin-bottom: 0.3rem;
+}
+
+.stat-label {
+    color: #5a6f85;
+    font-size: 0.9rem;
+}
+
+/* 工序分组样式 */
+.process-group {
+    margin-bottom: 1.5rem;
+    border: 2px solid #1e2d3d;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #141d2e;
+}
+
+.process-group-header {
+    background: #141d2e;
+    padding: 1rem 1.5rem;
+    border-bottom: 2px solid #1e2d3d;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.process-group-header:hover {
+    background: #1a2335;
+    border-color: #00b0ff;
+}
+
+.process-group-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #e8edf5;
+}
+
+.process-group-count {
+    background: #667eea;
+    color: #e2e8f0;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.process-group-body {
+    padding: 1.5rem;
+}
+
+.process-group-body.collapsed {
+    display: none;
+}
+
+/* 分组视图内的照片网格 - 使用 !important 覆盖默认样式 */
+.process-group-body .photo-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
+    gap: 1rem !important;
+}
+
+/* 确保分组视图容器本身不影响布局 */
+#photoGroupedContainer {
+    display: block;
+}
+
+#photoGroupedContainer .photo-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
+    gap: 1rem !important;
+}
+
+.view-toggle {
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+}
+
+.modal-content-large {
+    background: #141d2e;
+    margin: 2% auto;
+    padding: 0;
+    width: 90%;
+    max-width: 900px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 1rem 1.5rem;
+    background: #0f1a2a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1e2d3d;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #e8edf5;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-body-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    background: #0f1a2a;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    border-top: 1px solid #1e2d3d;
+}
+
+.preview-img {
+    max-width: 100%;
+    max-height: 500px;
+    border-radius: 4px;
+    transform-origin: center center;
+    transition: transform 0.2s ease;
+}
+
+.photo-modal-toolbar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.photo-modal-rotation-label {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #e2e8f0;
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+.info-table {
+    width: 100%;
+    font-size: 0.85rem;
+}
+
+.info-table td {
+    padding: 0.4rem 0;
+    vertical-align: top;
+}
+
+.info-table td:first-child {
+    color: #5a6f85;
+    font-weight: 500;
+    width: 40%;
+}
+
+.info-table td:last-child {
+    color: #e8edf5;
+}
+
+.metadata-box {
+    background: #0f1a2a;
+    padding: 0.8rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    max-height: 240px;
+    overflow-y: auto;
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.loading {
+    text-align: center;
+    padding: 3rem;
+    color: #5a6f85;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #5a6f85;
+}
+
+.close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #5a6f85;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close:hover {
+    color: #e8edf5;
+}
+
+.upload-status {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.upload-status.uploaded {
+    background: #0f2e1a;
+    color: #4ade80;
+    border: 1px solid #1a4d2e;
+}
+
+.upload-status.pending {
+    background: #2a1f00;
+    color: #f59e0b;
+    border: 1px solid #5c4000;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #1e2d3d;
+    background: #141d2e;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: #667eea;
+    color: #e2e8f0;
+    border-color: #00b0ff;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination button.active {
+    background: #667eea;
+    color: #e2e8f0;
+    border-color: #00b0ff;
+}
+
+input[type="text"],
+input[type="date"],
+select,
+textarea {
+    background: #0f1a2a !important;
+    color: #e8edf5 !important;
+    border: 1px solid #1e2d3d !important;
+    border-radius: 3px !important;
+}
+input[type="text"]::placeholder,
+input[type="date"]::placeholder,
+select::placeholder,
+textarea::placeholder {
+    color: #5a6f85 !important;
+}
+select option {
+    background: #0f1a2a !important;
+    color: #e8edf5 !important;
+}
+
+
+/* Transitions */
+.photo-card { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.photo-card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,176,255,0.1); }
+.stat-card-photo { transition: all 0.3s ease; }
+.process-group { transition: all 0.25s ease; }
+.process-group-header { transition: all 0.25s ease; }
+
+/* 20260424 wide photo management refinement */
+.container {
+    max-width: none;
+    width: min(1760px, calc(100vw - 280px));
+}
+.card:has(#statsCards),
+.photo-workbench-card {
+    border: 1px solid rgba(56, 189, 248, 0.18);
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(10, 15, 26, 0.98));
+}
+.photo-container,
+.process-group-body .photo-container,
+#photoGroupedContainer .photo-container {
+    grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)) !important;
+    gap: 1.15rem !important;
+}
+.photo-img {
+    height: 300px;
+}
+.photo-meta,
+.stat-label,
+.card-header p {
+    color: #cbd5e1 !important;
+}
+.filter-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+@media (max-width: 980px) {
+    .container { width: auto; max-width: 100%; }
+    .photo-container,
+    .process-group-body .photo-container,
+    #photoGroupedContainer .photo-container {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>📷 工序照片管理</h2>
+        <p style="margin: 0.5rem 0 0 0; color: #5a6f85;">查看、管理和删除工序记录照片，支持按工序分组查看</p>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stats-grid-photos" id="statsCards">
+        <div class="stat-card-photo">
+            <div class="stat-number" id="totalPhotos">0</div>
+            <div class="stat-label">总照片数</div>
+        </div>
+        <div class="stat-card-photo">
+            <div class="stat-number" id="totalProcesses">0</div>
+            <div class="stat-label" id="totalProcessesLabel">工序数量</div>
+        </div>
+        <div class="stat-card-photo">
+            <div class="stat-number" id="uploadedPhotos">0</div>
+            <div class="stat-label">已上传</div>
+        </div>
+        <div class="stat-card-photo">
+            <div class="stat-number" id="totalSize">0 B</div>
+            <div class="stat-label">总大小</div>
+        </div>
+    </div>
+
+    <!-- 视图切换 -->
+    <div class="view-toggle">
+        <button type="button" class="btn btn-secondary" onclick="toggleView('grid')" id="btnGridView">
+            📋 网格视图
+        </button>
+        <button type="button" class="btn btn-primary" onclick="toggleView('grouped')" id="btnGroupedView">
+            📁 分组视图（默认）
+        </button>
+    </div>
+
+    <!-- 搜索过滤器 -->
+    <div class="search-section">
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label for="productSerialFilter">产品序列号</label>
+                <input type="text" id="productSerialFilter" placeholder="输入产品序列号">
+            </div>
+            <div class="filter-group">
+                <label for="processStepFilter">工序步骤</label>
+                <select id="processStepFilter">
+                    <option value="">全部工序</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="projectFilter">项目</label>
+                <select id="projectFilter">
+                    <option value="">全部项目</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="productTypeFilter">产品</label>
+                <select id="productTypeFilter">
+                    <option value="">全部产品</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="uploaderFilter">上传人</label>
+                <select id="uploaderFilter">
+                    <option value="">全部上传人</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="dateFromFilter">开始日期</label>
+                <input type="date" id="dateFromFilter">
+            </div>
+            <div class="filter-group">
+                <label for="dateToFilter">结束日期</label>
+                <input type="date" id="dateToFilter">
+            </div>
+            <div class="filter-group">
+                <label for="groupBySelect">分组方式</label>
+                <select id="groupBySelect" onchange="changeGroupBy(this.value)">
+                    <option value="product">按产品序列号</option>
+                    <option value="process">按工序</option>
+                    <option value="date" selected>按日期（默认）</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button type="button" class="btn btn-primary" onclick="searchPhotos()">
+                🔍 搜索
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="clearFilters()">
+                ✖ 清空
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="refreshPhotos()" style="margin-left: auto;">
+                🔄 刷新
+            </button>
+            <button type="button" class="btn btn-warning" onclick="clearCacheAndReload()" title="清除浏览器缓存并重新加载">
+                🗑️ 清除缓存
+            </button>
+        </div>
+        <div id="photoScopeHint" style="margin-top: 0.75rem; color: #5a6f85; font-size: 0.9rem;"></div>
+    </div>
+
+    <!-- 照片网格视图 -->
+    <div id="photoContainer" class="photo-container" style="display: none;">
+        <div class="loading">
+            <p>🔄 正在加载照片...</p>
+        </div>
+    </div>
+
+    <!-- 分组视图（默认显示） -->
+    <div id="photoGroupedContainer" style="display: block;">
+        <div class="loading">
+            <p>🔄 正在加载照片...</p>
+        </div>
+    </div>
+
+    <!-- 空状态 -->
+    <div id="emptyState" class="empty-state" style="display: none;">
+        <p>📷 暂无照片数据</p>
+    </div>
+
+    <!-- 分页 -->
+    <nav aria-label="照片分页">
+        <ul class="pagination" id="pagination"></ul>
+    </nav>
+</div>
+
+<!-- 照片详情模态框 -->
+<div class="modal" id="photoModal">
+    <div class="modal-content-large">
+        <div class="modal-header">
+            <h3 id="photoModalTitle">照片详情</h3>
+            <button class="close" onclick="closeModal('photoModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-body-grid">
+                <div style="text-align: center; position: relative;">
+                    <img id="photoModalImage" src="" alt="照片" class="preview-img" style="cursor: pointer;" onclick="openFullscreenViewer()">
+                    <div class="photo-modal-toolbar">
+                        <button class="btn btn-secondary" type="button" onclick="rotateModalPhotoClockwise()" title="顺时针旋转 90°">
+                            <i class="bi bi-arrow-clockwise"></i> 旋转
+                        </button>
+                        <button class="btn btn-primary" type="button" onclick="openFullscreenViewer()">
+                            <i class="bi bi-arrows-fullscreen"></i> 全屏查看
+                        </button>
+                    </div>
+                    <div id="modalRotationLabel" class="photo-modal-rotation-label">0°</div>
+                </div>
+                <div>
+                    <h6 style="margin-bottom: 1rem; color: #e8edf5;">基本信息</h6>
+                    <table class="info-table">
+                        <tr>
+                            <td>产品序列号:</td>
+                            <td id="modalProductSerial">-</td>
+                        </tr>
+                        <tr>
+                            <td>工序步骤:</td>
+                            <td id="modalProcessStep">-</td>
+                        </tr>
+                        <tr>
+                            <td>拍摄时间:</td>
+                            <td id="modalCapturedAt">-</td>
+                        </tr>
+                        <tr>
+                            <td>拍摄用户:</td>
+                            <td id="modalCapturedBy">-</td>
+                        </tr>
+                        <tr>
+                            <td>文件大小:</td>
+                            <td id="modalFileSize">-</td>
+                        </tr>
+                        <tr>
+                            <td>上传状态:</td>
+                            <td id="modalUploadStatus">-</td>
+                        </tr>
+                    </table>
+                    
+                    <h6 style="margin: 1.5rem 0 0.5rem 0; color: #e8edf5;">元数据</h6>
+                    <div id="modalMetadata" class="metadata-box">-</div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" onclick="deletePhoto()" id="deletePhotoBtn">
+                🗑️ 删除照片
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="closeModal('photoModal')">关闭</button>
+        </div>
+    </div>
+</div>
+
+<!-- 删除确认模态框 -->
+<div class="modal" id="deleteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>确认删除</h3>
+            <button class="close" onclick="closeModal('deleteModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>确定要删除这张照片吗？</p>
+            <p style="color: #f56565;">⚠️ 此操作不可撤销！</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('deleteModal')">取消</button>
+            <button class="btn btn-danger" onclick="confirmDeletePhoto()">确认删除</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/photo-viewer.js"></script>
+<script src="/static/js/photo-management-v2.js"></script>
+<script>
+// 覆盖 photo-management-v2.js 中使用 Bootstrap 的函数
+// 使用 base.html 提供的 openModal/closeModal 函数
+
+function buildPhotoUrlFromFilePath(filePath, isThumbnail) {
+    if (!filePath) return '';
+
+    let relPath = filePath;
+    const lower = relPath.toLowerCase();
+    const idxUnix = lower.indexOf('/picture/');
+    const idxWin = lower.indexOf('\\picture\\');
+
+    if (idxUnix >= 0) {
+        relPath = relPath.substring(idxUnix + '/picture/'.length);
+    } else if (idxWin >= 0) {
+        relPath = relPath.substring(idxWin + '\\picture\\'.length);
+    }
+
+    relPath = relPath.replace(/^[\\/]+/, '').replace(/\\/g, '/');
+
+    const base = isThumbnail ? '/api/photos/thumbnail-direct?path=' : '/api/photos/file-direct?path=';
+    return base + encodeURIComponent(relPath);
+}
+
+let modalPhotoRotationDeg = 0;
+
+function applyModalPhotoRotation() {
+    const imgElement = document.getElementById('photoModalImage');
+    const label = document.getElementById('modalRotationLabel');
+    if (!imgElement) return;
+    imgElement.style.transform = `rotate(${modalPhotoRotationDeg}deg)`;
+    if (label) {
+        label.textContent = `${modalPhotoRotationDeg}°`;
+    }
+}
+
+window.rotateModalPhotoClockwise = function() {
+    modalPhotoRotationDeg = (modalPhotoRotationDeg + 90) % 360;
+    applyModalPhotoRotation();
+};
+
+window.resetModalPhotoRotation = function() {
+    modalPhotoRotationDeg = 0;
+    applyModalPhotoRotation();
+};
+
+// 保存原始的 showPhotoDetailsFromFile 函数
+const originalShowPhotoDetailsFromFile = window.showPhotoDetailsFromFile;
+
+// 重写函数以使用自定义模态框
+window.showPhotoDetailsFromFile = function(filePath) {
+    console.log('查找照片:', filePath);
+    console.log('当前照片列表:', window.currentPhotos);
+    
+    const photoList = Array.isArray(window.currentPhotos) ? window.currentPhotos : [];
+    const photo = photoList.find(p => {
+        console.log('比较:', p.file_path, '===', filePath, '?', p.file_path === filePath);
+        return p.file_path === filePath;
+    });
+    
+    if (!photo) {
+        console.error('照片未找到:', filePath);
+        console.error('可用的照片路径:', photoList.map(p => p.file_path));
+        alert('照片未找到: ' + filePath + '\n\n请检查浏览器控制台获取详细信息');
+        return;
+    }
+
+    const fileName = photo.file_name || photo.filename || photo.file_path || '照片';
+
+    // 填充模态框内容
+    document.getElementById('photoModalTitle').textContent = `照片详情 - ${fileName}`;
+    // 使用原图URL（originalUrl）而不是压缩图
+    const imageUrl = photo.originalUrl || photo.url || buildPhotoUrlFromFilePath(photo.file_path, false);
+    document.getElementById('photoModalImage').src = imageUrl;
+    window.resetModalPhotoRotation();
+    
+    // 保存原图URL供全屏查看使用
+    window.currentPhotoUrl = imageUrl;
+    window.currentPhotoFileName = fileName;
+    window.currentPhotoFileSize = photo.file_size;
+    document.getElementById('modalProductSerial').textContent = photo.product_serial || '-';
+    document.getElementById('modalProcessStep').textContent = photo.process_step || '-';
+    document.getElementById('modalCapturedAt').textContent = photo.captured_at ? formatDateTime(photo.captured_at) : '-';
+    document.getElementById('modalCapturedBy').textContent =
+        (typeof resolveUploaderLabel === 'function' ? resolveUploaderLabel(photo) : (photo.captured_by || '系统'));
+    document.getElementById('modalFileSize').textContent = formatFileSize(photo.file_size || 0);
+    document.getElementById('modalUploadStatus').innerHTML = '<span class="upload-status uploaded">已上传</span>';
+
+    // 显示元数据
+    const metadata = {
+        '项目': photo.project_name,
+        '产品类型': photo.product_type,
+        '产品序列号': photo.product_serial,
+        '工序步骤': photo.process_step,
+        '文件名': fileName,
+        '文件路径': photo.file_path
+    };
+    document.getElementById('modalMetadata').textContent = JSON.stringify(metadata, null, 2);
+
+    // 保存当前照片路径
+    window.currentPhotoId = filePath;
+
+    // 使用自定义模态框函数
+    openModal('photoModal');
+};
+
+// 打开全屏照片查看器
+window.openFullscreenViewer = function() {
+    console.log('openFullscreenViewer 被调用');
+    console.log('currentPhotoUrl:', window.currentPhotoUrl);
+    console.log('openPhotoViewer 函数存在:', typeof window.openPhotoViewer);
+    
+    if (!window.currentPhotoUrl) {
+        alert('无法获取照片URL，请重新打开照片详情');
+        return;
+    }
+    
+    // 检查 openPhotoViewer 函数是否存在
+    if (typeof window.openPhotoViewer !== 'function') {
+        console.error('openPhotoViewer 函数不存在，尝试延迟加载');
+        // 延迟 100ms 重试（等待 photo-viewer.js 加载）
+        setTimeout(function() {
+            if (typeof window.openPhotoViewer === 'function') {
+                window.openPhotoViewer(
+                    window.currentPhotoUrl,
+                    window.currentPhotoFileName || '照片',
+                    window.currentPhotoFileSize || 0
+                );
+            } else {
+                alert('照片查看器未加载，请刷新页面（Ctrl+Shift+R）后重试');
+            }
+        }, 100);
+        return;
+    }
+    
+    // 调用全局函数
+    window.openPhotoViewer(
+        window.currentPhotoUrl,
+        window.currentPhotoFileName || '照片',
+        window.currentPhotoFileSize || 0
+    );
+};
+
+// toggleView 已统一收敛到 /static/js/photo-management-v2.js，避免状态分裂
+
+const projectConfigPromiseCacheForStatus = {};
+const requiredPhotoProcessCache = {};
+let projectListForStatusPromise = null;
+let groupedRenderToken = 0;
+
+function escapeStatusText(value) {
+    return String(value || '').replace(/[&<>"']/g, (c) => {
+        const m = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+        return m[c] || c;
+    });
+}
+
+function normalizeStatusText(value) {
+    return String(value || '').trim();
+}
+
+function isPlaceholderProjectName(projectName) {
+    const loose = buildLooseMatchKey(projectName);
+    if (!loose) return true;
+    return (
+        loose === 'defaultproject' ||
+        loose === 'default' ||
+        loose === '未命名' ||
+        loose === '未知项目' ||
+        loose === 'unknownproject'
+    );
+}
+
+function buildLooseMatchKey(value) {
+    return normalizeStatusText(value)
+        .toLowerCase()
+        .replace(/[\s._\-()/\\]+/g, '')
+        .replace(/[^0-9a-z\u4e00-\u9fa5]/g, '');
+}
+
+function stripTrailingCodeSegment(name) {
+    const text = normalizeStatusText(name);
+    if (!text.includes('_')) return text;
+    const idx = text.lastIndexOf('_');
+    if (idx <= 0) return text;
+    const suffix = text.slice(idx + 1);
+    // 典型编码后缀，如 PCLiGFLBDA / PCSaYHeT0B-001
+    if (/^[A-Za-z0-9-]{4,}$/.test(suffix)) {
+        return text.slice(0, idx);
+    }
+    return text;
+}
+
+function getSerialStatusKey(photo) {
+    const project = normalizeStatusText(photo && photo.project_name);
+    const productType = normalizeStatusText(photo && photo.product_type);
+    const serial = normalizeStatusText(photo && photo.product_serial) || '未填写序列号';
+    return `${project}::${productType}::${serial}`;
+}
+
+async function fetchProjectConfigForStatus(projectName) {
+    const normalizedProject = normalizeStatusText(projectName);
+    if (!normalizedProject) return null;
+    if (isPlaceholderProjectName(normalizedProject)) return null;
+
+    if (!projectConfigPromiseCacheForStatus[normalizedProject]) {
+        projectConfigPromiseCacheForStatus[normalizedProject] = (async () => {
+            const tryFetchConfig = async (projectLabel) => {
+                const label = normalizeStatusText(projectLabel);
+                if (!label) return null;
+                try {
+                    const response = await fetch(`/api/projects/${encodeURIComponent(label)}/config`);
+                    const data = await response.json();
+                    if (data && data.success && data.config) {
+                        return data.config;
+                    }
+                } catch (error) {
+                    console.warn('加载项目配置失败:', label, error);
+                }
+                return null;
+            };
+
+            // 1) 直接匹配
+            let config = await tryFetchConfig(normalizedProject);
+            if (config) return config;
+
+            // 2) 去掉目录编码后缀（_PCxxxxx）
+            const stripped = stripTrailingCodeSegment(normalizedProject);
+            if (stripped && stripped !== normalizedProject) {
+                config = await tryFetchConfig(stripped);
+                if (config) return config;
+            }
+
+            // 3) 从项目列表做宽松匹配
+            if (!projectListForStatusPromise) {
+                projectListForStatusPromise = (async () => {
+                    try {
+                        const response = await fetch('/api/projects');
+                        const data = await response.json();
+                        if (data && data.success && Array.isArray(data.projects)) {
+                            return data.projects;
+                        }
+                    } catch (error) {
+                        console.warn('加载项目列表失败:', error);
+                    }
+                    return [];
+                })();
+            }
+
+            const projectList = await projectListForStatusPromise;
+            const targetKey = buildLooseMatchKey(normalizedProject);
+            const strippedKey = buildLooseMatchKey(stripped);
+            let bestCandidate = '';
+            let bestLen = -1;
+
+            (projectList || []).forEach((candidate) => {
+                const cand = normalizeStatusText(candidate);
+                const candKey = buildLooseMatchKey(cand);
+                if (!candKey) return;
+                const matched =
+                    targetKey === candKey ||
+                    strippedKey === candKey ||
+                    (targetKey && targetKey.startsWith(candKey)) ||
+                    (strippedKey && strippedKey.startsWith(candKey));
+                if (!matched) return;
+                if (candKey.length > bestLen) {
+                    bestLen = candKey.length;
+                    bestCandidate = cand;
+                }
+            });
+
+            if (bestCandidate) {
+                config = await tryFetchConfig(bestCandidate);
+                if (config) return config;
+            }
+
+            if (!isPlaceholderProjectName(normalizedProject)) {
+                try {
+                    console.warn('项目配置匹配失败:', normalizedProject);
+                } catch (_) {
+                    // noop
+                }
+            }
+            return null;
+        })();
+    }
+
+    return projectConfigPromiseCacheForStatus[normalizedProject];
+}
+
+function shouldCountAsPhotoRequired(step) {
+    if (!step || typeof step !== 'object') return false;
+    // 业务规则：只要勾选“需要拍照”就是必拍工序
+    if (step.photoRequired === true) return true;
+    if (step.photoRequired === false) return false;
+
+    // 向后兼容旧配置：缺少 photoRequired 时，再根据附件类型兜底
+    const attachmentType = normalizeStatusText(step.attachmentType).toLowerCase();
+    if (attachmentType === 'pdf') return false;
+    if (attachmentType === 'photo' || attachmentType === 'both' || attachmentType === '拍照') return true;
+    return false;
+}
+
+function getRequiredPhotoProcesses(config, projectName, productType) {
+    const cacheKey = `${normalizeStatusText(projectName)}::${normalizeStatusText(productType)}`;
+    if (requiredPhotoProcessCache[cacheKey]) {
+        return requiredPhotoProcessCache[cacheKey];
+    }
+
+    const required = [];
+    const seen = new Set();
+    const normalizedType = normalizeStatusText(productType);
+    const normalizedTypeLoose = buildLooseMatchKey(normalizedType);
+    const addStep = (step, fallbackIndex) => {
+        const stepName = normalizeStatusText(step && step.name);
+        if (!stepName || !shouldCountAsPhotoRequired(step)) return;
+        const key = stepName.toLowerCase();
+        if (seen.has(key)) return;
+        seen.add(key);
+        const orderValue = Number(step && step.order);
+        required.push({
+            name: stepName,
+            order: Number.isFinite(orderValue) ? orderValue : Number.MAX_SAFE_INTEGER,
+            index: Number.isFinite(fallbackIndex) ? fallbackIndex : Number.MAX_SAFE_INTEGER
+        });
+    };
+
+    const productTypes = config && Array.isArray(config.productTypes) ? config.productTypes : [];
+    let matchedProduct = productTypes.find((pt) => normalizeStatusText(pt && pt.typeName) === normalizedType);
+    if (!matchedProduct && normalizedTypeLoose) {
+        matchedProduct = productTypes.find((pt) => {
+            const typeName = normalizeStatusText(pt && pt.typeName);
+            const typeLoose = buildLooseMatchKey(typeName);
+            return (
+                typeLoose === normalizedTypeLoose ||
+                (normalizedTypeLoose && normalizedTypeLoose.startsWith(typeLoose)) ||
+                (typeLoose && typeLoose.startsWith(normalizedTypeLoose))
+            );
+        });
+    }
+    if (matchedProduct && Array.isArray(matchedProduct.processSteps)) {
+        matchedProduct.processSteps.forEach((step, idx) => addStep(step, idx));
+    }
+
+    // 回退兼容：旧配置可能在顶层
+    if (!required.length && config && Array.isArray(config.processSteps)) {
+        config.processSteps.forEach((step, idx) => addStep(step, idx));
+    }
+    if (!required.length && config && Array.isArray(config.processAttributes)) {
+        config.processAttributes.forEach((step, idx) => addStep(step, idx));
+    }
+
+    const orderedRequired = required
+        .sort((a, b) => (a.order - b.order) || (a.index - b.index))
+        .map((item) => item.name);
+
+    requiredPhotoProcessCache[cacheKey] = orderedRequired;
+    return orderedRequired;
+}
+
+function computeSerialProcessStatus(serialPhotos, requiredProcesses) {
+    const recordedSet = new Set();
+    (serialPhotos || []).forEach((photo) => {
+        const step = normalizeStatusText(photo && photo.process_step);
+        if (step && step !== '未知工序') {
+            recordedSet.add(step.toLowerCase());
+        }
+    });
+
+    const missing = [];
+    let recordedCount = 0;
+    (requiredProcesses || []).forEach((stepName) => {
+        if (recordedSet.has(stepName.toLowerCase())) {
+            recordedCount += 1;
+        } else {
+            missing.push(stepName);
+        }
+    });
+
+    const requiredTotal = (requiredProcesses || []).length;
+    const missingCount = missing.length;
+    const hasRequirements = requiredTotal > 0;
+    let inferredCurrentProcess = '';
+    let nextRequiredProcess = '';
+    let lastCompletedProcess = '';
+
+    if (hasRequirements) {
+        nextRequiredProcess = missing[0] || '';
+        if (missingCount === 0) {
+            inferredCurrentProcess = '全部工序已完成';
+            lastCompletedProcess = requiredProcesses[requiredProcesses.length - 1] || '';
+        } else {
+            inferredCurrentProcess = nextRequiredProcess || '待开始';
+            const currentIndex = requiredProcesses.findIndex((name) => name === nextRequiredProcess);
+            for (let i = (currentIndex > 0 ? currentIndex - 1 : requiredProcesses.length - 1); i >= 0; i--) {
+                if (recordedSet.has((requiredProcesses[i] || '').toLowerCase())) {
+                    lastCompletedProcess = requiredProcesses[i];
+                    break;
+                }
+                if (currentIndex > 0 && i === 0) break;
+            }
+        }
+    }
+
+    return {
+        required_total: requiredTotal,
+        recorded_count: recordedCount,
+        missing_count: missingCount,
+        missing_processes: missing,
+        inferred_current_process: inferredCurrentProcess,
+        next_required_process: nextRequiredProcess,
+        last_completed_process: lastCompletedProcess,
+        complete: hasRequirements && missingCount === 0,
+        has_requirements: hasRequirements
+    };
+}
+
+function renderProcessStatusBadge(status) {
+    if (!status || !status.has_requirements) {
+        return `<div class="photo-meta" style="color:#6c757d;">🧾 工序状态：未配置必拍工序</div>`;
+    }
+
+    const color = status.complete ? '#198754' : '#dc3545';
+    const preview = status.complete
+        ? '已完成'
+        : `缺失: ${status.missing_processes.slice(0, 3).map((p) => escapeStatusText(p)).join('、')}${status.missing_processes.length > 3 ? ' ...' : ''}`;
+    const currentProcess = status.inferred_current_process
+        ? escapeStatusText(status.inferred_current_process)
+        : '待开始';
+    const lastDone = status.last_completed_process
+        ? `<div class="photo-meta" style="color:${color}; margin-top:0.12rem;">最近完成: ${escapeStatusText(status.last_completed_process)}</div>`
+        : '';
+
+    return `
+        <div style="margin: 0.45rem 0; padding: 0.45rem 0.55rem; border-radius: 3px; border: 1px solid ${status.complete ? '#1a4d2e' : '#5c1a1a'}; background: ${status.complete ? '#0f2e1a' : '#2a0f0f'};">
+            <div class="photo-meta" style="margin-bottom:0.12rem; color:${color}; font-weight:600;">
+                🧾 工序状态：${status.recorded_count}/${status.required_total}
+            </div>
+            <div class="photo-meta" style="color:${color}; font-weight:600;">📍 推测当前工序: ${currentProcess}</div>
+            <div class="photo-meta" style="color:${color};">${preview}</div>
+            ${lastDone}
+        </div>
+    `;
+}
+
+async function buildSerialProcessStatusMap(photos) {
+    const list = Array.isArray(photos) ? photos : [];
+    const grouped = {};
+    const projectSet = new Set();
+
+    list.forEach((photo) => {
+        const key = getSerialStatusKey(photo);
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(photo);
+        const projectName = normalizeStatusText(photo && photo.project_name);
+        if (projectName) projectSet.add(projectName);
+    });
+
+    const projectConfigMap = {};
+    await Promise.all(Array.from(projectSet).map(async (projectName) => {
+        projectConfigMap[projectName] = await fetchProjectConfigForStatus(projectName);
+    }));
+
+    const statusMap = {};
+    Object.keys(grouped).forEach((key) => {
+        const serialPhotos = grouped[key];
+        const firstPhoto = serialPhotos[0] || {};
+        const projectName = normalizeStatusText(firstPhoto.project_name);
+        const productType = normalizeStatusText(firstPhoto.product_type);
+        const config = projectConfigMap[projectName] || null;
+        const requiredProcesses = getRequiredPhotoProcesses(config, projectName, productType);
+        const status = computeSerialProcessStatus(serialPhotos, requiredProcesses);
+        statusMap[key] = status;
+        serialPhotos.forEach((photo) => {
+            photo.__serialProcessStatus = status;
+        });
+    });
+
+    return statusMap;
+}
+
+// 添加 displayPhotosGrouped 函数
+window.displayPhotosGrouped = async function(photos) {
+    const container = document.getElementById('photoGroupedContainer');
+    const list = Array.isArray(photos) ? photos : [];
+    const renderToken = ++groupedRenderToken;
+
+    if (!container) return;
+
+    if (list.length === 0) {
+        container.innerHTML = '<div class="empty-state">📷 暂无照片数据</div>';
+        return;
+    }
+
+    let serialStatusMap = {};
+    try {
+        serialStatusMap = await buildSerialProcessStatusMap(list);
+    } catch (error) {
+        console.warn('计算工序状态失败:', error);
+    }
+    if (renderToken !== groupedRenderToken) {
+        return;
+    }
+
+    // 按不同分组方式构建分组视图
+    if (window.currentGroupBy === 'date') {
+        // 日期 -> 序列号 -> 照片
+        const byDate = {};
+        list.forEach(photo => {
+            const key = photo.captured_at ? formatDateKey(photo.captured_at) : '未知日期';
+            if (!byDate[key]) byDate[key] = [];
+            byDate[key].push(photo);
+        });
+
+        let html = '';
+        Object.keys(byDate).sort().reverse().forEach(dateKey => {
+            const datePhotos = byDate[dateKey];
+
+            // 日期下按产品序列号分组
+            const bySerial = {};
+            datePhotos.forEach(photo => {
+                const serial = photo.product_serial || '未填写序列号';
+                if (!bySerial[serial]) bySerial[serial] = [];
+                bySerial[serial].push(photo);
+            });
+
+            const productCount = Object.keys(bySerial).length;
+            const photoCount = datePhotos.length;
+            const safeDateId = dateKey.replace(/[^a-zA-Z0-9]/g, '_');
+            const readableDate = dateKey.length === 8
+                ? `${dateKey.slice(0,4)}-${dateKey.slice(4,6)}-${dateKey.slice(6,8)}`
+                : dateKey;
+
+            html += `
+                <div class="process-group">
+                    <div class="process-group-header" onclick="toggleProcessGroup('date-${safeDateId}')">
+                        <span class="process-group-title">${readableDate}</span>
+                        <span class="process-group-count">${productCount} 个产品 / ${photoCount} 张照片</span>
+                    </div>
+                    <div class="process-group-body" id="date-${safeDateId}">
+                        <div class="photo-container">
+            `;
+
+            Object.keys(bySerial).sort().forEach(serial => {
+                const serialPhotos = bySerial[serial];
+                const firstPhoto = serialPhotos[0];
+                const serialStatus = serialStatusMap[getSerialStatusKey(firstPhoto)] || firstPhoto.__serialProcessStatus || null;
+                const processSet = new Set();
+                serialPhotos.forEach(p => {
+                    if (p.process_step) processSet.add(p.process_step);
+                });
+
+                const thumbUrl = firstPhoto.thumbnailUrl || firstPhoto.url || buildPhotoUrlFromFilePath(firstPhoto.file_path, true);
+                const serialArg = JSON.stringify(serial || '');
+                const dateArg = JSON.stringify(dateKey || '');
+
+                html += `
+                    <div class="photo-card">
+                        <img data-src="${thumbUrl}"
+                             class="photo-img lazy"
+                             onclick='showSerialPhotos(${serialArg}, ${dateArg})'
+                             alt="${serial}">
+                        <div class="photo-info">
+                            <h4 title="${serial}">${serial}</h4>
+                            <div class="photo-meta">⚙️ 工序：${processSet.size} 个；照片：${serialPhotos.length} 张</div>
+                            ${renderProcessStatusBadge(serialStatus)}
+                            <div class="photo-meta">📅 ${firstPhoto.captured_at ? formatDateTime(firstPhoto.captured_at) : '-'}</div>
+                            <div class="photo-actions">
+                                <button class="btn btn-primary btn-small" onclick='showSerialPhotos(${serialArg}, ${dateArg})'>
+                                    👁️ 查看该产品全部照片
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        initLazyLoading();
+        return;
+    }
+
+    // 其它分组方式：保持单层分组，但修复文件名 undefined 问题
+    const groups = {};
+    list.forEach(photo => {
+        let key = '';
+        if (window.currentGroupBy === 'product') {
+            key = photo.product_serial || '未填写序列号';
+        } else if (window.currentGroupBy === 'process') {
+            key = photo.process_step || '未分类';
+        } else {
+            key = photo.captured_at ? formatDateKey(photo.captured_at) : '未知日期';
+        }
+        if (!groups[key]) {
+            groups[key] = [];
+        }
+        groups[key].push(photo);
+    });
+
+    let html = '';
+    Object.keys(groups).sort().forEach(groupKey => {
+        const processPhotos = groups[groupKey];
+        const safeId = groupKey.replace(/[^a-zA-Z0-9]/g, '_');
+        html += `
+            <div class="process-group">
+                <div class="process-group-header" onclick="toggleProcessGroup('process-${safeId}')">
+                    <span class="process-group-title">${groupKey}</span>
+                    <span class="process-group-count">${processPhotos.length} 张照片</span>
+                </div>
+                <div class="process-group-body" id="process-${safeId}">
+                    <div class="photo-container">
+        `;
+
+        processPhotos.forEach(photo => {
+            const fileName = photo.file_name || photo.filename || photo.file_path || '';
+            const thumbUrl = photo.thumbnailUrl || photo.url || buildPhotoUrlFromFilePath(photo.file_path, true);
+            const filePathArg = JSON.stringify(photo.file_path || '');
+            const serialStatus = serialStatusMap[getSerialStatusKey(photo)] || photo.__serialProcessStatus || null;
+            html += `
+                <div class="photo-card">
+                    <img data-src="${thumbUrl}"
+                         class="photo-img lazy"
+                         onclick='showPhotoDetailsFromFile(${filePathArg})'
+                         alt="${fileName}">
+                    <div class="photo-info">
+                        <h4 title="${fileName}">${fileName}</h4>
+                        <div class="photo-meta">📦 ${photo.product_serial || '-'}</div>
+                        ${window.currentGroupBy === 'process' ? renderProcessStatusBadge(serialStatus) : ''}
+                        <div class="photo-meta">📅 ${photo.captured_at ? formatDateTime(photo.captured_at) : '-'}</div>
+                        <div class="photo-actions">
+                            <button class="btn btn-primary btn-small" onclick='showPhotoDetailsFromFile(${filePathArg})'>
+                                👁️ 查看
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+
+    // 初始化懒加载
+    initLazyLoading();
+};
+
+// 点击“查看该产品全部照片”时，切换到网格视图并按日期+序列号过滤
+window.showSerialPhotos = function(serial, dateKey) {
+    if (!serial && !dateKey) return;
+
+    const normalizedSerial = (serial || '').trim() || '未填写序列号';
+
+    const source = Array.isArray(window.allPhotosCache) ? window.allPhotosCache : (Array.isArray(window.currentPhotos) ? window.currentPhotos : []);
+    const filtered = source.filter(p => {
+        const okSerial = (p.product_serial || '未填写序列号') === normalizedSerial;
+        const okDate = !dateKey || (p.captured_at && formatDateKey(p.captured_at) === dateKey);
+        return okSerial && okDate;
+    });
+
+    window.currentPhotos = filtered;
+    window.currentPage = 1;
+
+    // 切回网格视图查看详细照片
+    if (typeof window.toggleView === 'function') {
+        window.toggleView('grid');
+    }
+    if (typeof window.loadPhotoStatistics === 'function') {
+        window.loadPhotoStatistics();
+    }
+    if (typeof window.displayPhotos === 'function') {
+        window.displayPhotos();
+    }
+};
+
+// 添加切换分组折叠的函数
+window.toggleProcessGroup = function(groupId) {
+    const body = document.getElementById(groupId);
+    if (body) {
+        body.classList.toggle('collapsed');
+    }
+};
+
+// 强制应用网格布局样式
+function forceGridLayout() {
+    const containers = document.querySelectorAll('.photo-container');
+    containers.forEach(container => {
+        container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
+        container.style.gap = '1rem';
+        container.style.width = '100%';
+    });
+}
+
+// 懒加载图片实现
+let lazyLoadObserver = null;
+
+function initLazyLoading() {
+    // 如果已有观察器，先断开
+    if (lazyLoadObserver) {
+        lazyLoadObserver.disconnect();
+    }
+
+    // 创建 Intersection Observer
+    lazyLoadObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                const src = img.getAttribute('data-src');
+
+                if (src) {
+                    img.src = src;
+                    img.classList.add('loaded');
+                    img.classList.remove('lazy');
+                    observer.unobserve(img);
+                }
+            }
+        });
+    }, {
+        root: null,
+        rootMargin: '50px', // 提前 50px 开始加载
+        threshold: 0.01
+    });
+
+    // 观察所有懒加载图片
+    document.querySelectorAll('img.lazy').forEach(img => {
+        lazyLoadObserver.observe(img);
+    });
+}
+
+// 页面加载时应用
+document.addEventListener('DOMContentLoaded', () => {
+    forceGridLayout();
+    initLazyLoading();
+});
+
+// 监听分组视图的变化
+const photoGroupedContainer = document.getElementById('photoGroupedContainer');
+if (photoGroupedContainer) {
+    const observer = new MutationObserver(forceGridLayout);
+    observer.observe(photoGroupedContainer, {
+        childList: true,
+        subtree: true
+    });
+}
+</script>
+{% endblock %}
